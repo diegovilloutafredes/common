@@ -6,5 +6,5 @@ import UIKit
 
 // MARK: - ClosestTabBarHeight
 extension UIViewController {
-    var closestTabBarHeight: CGFloat { tabBarController?.tabBarHeight ?? .zero }
+    public var closestTabBarHeight: CGFloat { tabBarController?.tabBarHeight ?? .zero }
 }

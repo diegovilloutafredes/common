@@ -6,13 +6,6 @@ import UIKit
 
 // MARK: - AutoLayout Helpers
 extension UIView {
-    @discardableResult public func alignCenter(with view: UIView) -> Self {
-        with {
-            $0.alignCenterX(with: view)
-            $0.alignCenterY(with: view)
-        }
-    }
-
     @discardableResult public func alignCenterX(with view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: inset).with { $0.isActive = true }
@@ -21,6 +14,15 @@ extension UIView {
     @discardableResult public func alignCenterY(with view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: inset).with { $0.isActive = true }
+    }
+}
+
+extension UIView {
+    @discardableResult public func alignCenter(with view: UIView) -> Self {
+        with {
+            $0.alignCenterX(with: view)
+            $0.alignCenterY(with: view)
+        }
     }
 }
 
@@ -68,6 +70,14 @@ extension UIView {
     @discardableResult public func pinTrailingTo(anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
         pinXAnchor(origin: trailingAnchor, to: anchor, multiplier: multiplier)
     }
+
+    @discardableResult public func pinCenterXTo(anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
+        pinXAnchor(origin: centerXAnchor, to: anchor, multiplier: multiplier)
+    }
+
+    @discardableResult public func pinCenterYTo(anchor: NSLayoutYAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
+        pinYAnchor(origin: centerYAnchor, to: anchor, multiplier: multiplier)
+    }
 }
 
 extension UIView {
@@ -89,6 +99,16 @@ extension UIView {
     @discardableResult public func pinTrailing(to anchor: NSLayoutXAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return trailingAnchor.constraint(equalTo: anchor, constant: -inset).with { $0.isActive = true }
+    }
+
+    @discardableResult public func pinCenterX(to anchor: NSLayoutXAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
+        translatesAutoresizingMaskIntoConstraints = false
+        return centerXAnchor.constraint(equalTo: anchor, constant: inset).with { $0.isActive = true }
+    }
+
+    @discardableResult public func pinCenterY(to anchor: NSLayoutYAxisAnchor, inset: CGFloat = 0) -> NSLayoutConstraint {
+        translatesAutoresizingMaskIntoConstraints = false
+        return centerYAnchor.constraint(equalTo: anchor, constant: inset).with { $0.isActive = true }
     }
 }
 
@@ -133,35 +153,39 @@ extension UIView {
             $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
         }
     }
+}
 
+extension UIView {
     @discardableResult public func snapLeadTop(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
             $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
         }
     }
-
+    
     @discardableResult public func snapTopTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
             $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
         }
     }
-
+    
     @discardableResult public func snapLeadBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
             $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
         }
     }
-
+    
     @discardableResult public func snapBottomTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
             $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
         }
     }
+}
 
+extension UIView {
     @discardableResult public func snapLeadTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
@@ -186,35 +210,39 @@ extension UIView {
             $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
         }
     }
+}
 
+extension UIView {
     @discardableResult public func snapLeadTop(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
             $0.pinTop(to: view.topAnchor, inset: insets.top)
         }
     }
-
+    
     @discardableResult public func snapTopTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinTop(to: view.topAnchor, inset: insets.top)
             $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
         }
     }
-
+    
     @discardableResult public func snapLeadBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
             $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
         }
     }
-
+    
     @discardableResult public func snapBottomTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
             $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
         }
     }
+}
 
+extension UIView {
     @discardableResult public func snapLeadTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinLeading(to: view.leadingAnchor, inset: insets.left)

@@ -32,6 +32,8 @@ public final class CircularActivityIndicatorView: UIView {
     required init(coder aDecoder: NSCoder) {
         fatalError("NSCoder is not supported")
     }
+    
+    private lazy var shapeLayer: ProgressShapeLayer = { .init(strokeColor: colors.first ?? .green, lineWidth: lineWidth, lineCap: lineCap) }()
 
     public override func layoutSubviews() {
         super.layoutSubviews()
@@ -50,9 +52,7 @@ public final class CircularActivityIndicatorView: UIView {
         shapeLayer.path = path
     }
 
-    private lazy var shapeLayer: ProgressShapeLayer = { .init(strokeColor: colors.first ?? .green, lineWidth: lineWidth, lineCap: lineCap) }()
-
-    private var isAnimating: Bool = false {
+    public var isAnimating: Bool = false {
         didSet {
             if isAnimating {
                 animateStroke()

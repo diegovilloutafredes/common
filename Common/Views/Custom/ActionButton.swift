@@ -11,6 +11,7 @@ public protocol ButtonTheme {
     var borderColor: UIColor { get }
     var borderWidth: Double { get }
     var titleColor: UIColor { get }
+    var titleFont: UIFont { get }
 }
 
 // MARK: - DefaultButtonTheme
@@ -48,6 +49,8 @@ extension DefaultButtonTheme: ButtonTheme {
         case .border: .black
         }
     }
+
+    public var titleFont: UIFont { .systemFont(ofSize: 14) }
 }
 
 // MARK: - ActionButton
@@ -67,7 +70,7 @@ public final class ActionButton: BaseButton {
         backgroundColor(theme.backgroundColor)
         .borderColor(theme.borderColor)
         .borderWidth(theme.borderWidth)
-        .font(.systemFont(ofSize: 14))
+        .font(theme.titleFont)
         .setAsRoundedView()
         .titleColor(theme.titleColor)
         .with { if shouldApplyDefaultRatio { $0.setRatio(328/40) } }

@@ -5,7 +5,7 @@
 import UIKit
 
 extension UIImage {
-    public static func symbol(_ named: String, with configuration: UIImage.SymbolConfiguration? = nil) -> UIImage? {
+    public static func symbol(_ named: String, configuration: UIImage.SymbolConfiguration? = nil) -> UIImage? {
         .init(systemName: named, withConfiguration: configuration)
     }
 }
