@@ -47,8 +47,9 @@ extension String {
 }
 
 extension String {
-    public func isRUT() -> Bool {
+    public var isRUT: Bool {
         removeRUTFormat()
+
         let rut = uppercased()
 
         guard rut.count >= 8 || rut.count <= 10 else { return false }
@@ -71,7 +72,7 @@ extension String {
     @discardableResult public func formatAsRUT(onlyIfValid: Bool = true) -> Self {
         removeRUTFormat()
             .with {
-                guard onlyIfValid ? $0.isRUT() : true else { return }
+                guard onlyIfValid ? $0.isRUT : true else { return }
 
                 let components = getRUTComponents()
                 let number = components.number
