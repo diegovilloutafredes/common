@@ -28,7 +28,7 @@ public final class Separator: BaseView {
     }
 }
 
-extension UITextField {
+extension UIView {
     @discardableResult public func addSeparator() -> UIView {
         VStack {
             self
