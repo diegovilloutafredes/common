@@ -31,3 +31,7 @@ public typealias UIViewsBuilder = ArrayBuilder<UIView>
 
 // MARK: - Storable
 public typealias Storable = Codable
+
+
+// MARK: - KeyStorable
+public typealias KeyStorable = Keyable & Storable

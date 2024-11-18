@@ -381,7 +381,6 @@
 		37BE8FDE2C459014002E103E /* DismissRequestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E2F2C459013002E103E /* DismissRequestable.swift */; };
 		37BE8FDF2C459014002E103E /* GoBackRequestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E302C459013002E103E /* GoBackRequestable.swift */; };
 		37BE8FE02C459014002E103E /* KeyboardDismissable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E312C459013002E103E /* KeyboardDismissable.swift */; };
-		37BE8FE12C459014002E103E /* KeyStorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E322C459013002E103E /* KeyStorable.swift */; };
 		37BE8FE22C459014002E103E /* KeyValueStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E332C459013002E103E /* KeyValueStorage.swift */; };
 		37BE8FE32C459014002E103E /* LargeTitleSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E342C459013002E103E /* LargeTitleSettable.swift */; };
 		37BE8FE42C459014002E103E /* Navigationable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E352C459013002E103E /* Navigationable.swift */; };
@@ -444,6 +443,7 @@
 		37BE901E2C459014002E103E /* CoordinatorParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E7D2C459013002E103E /* CoordinatorParent.swift */; };
 		37BE90202C459343002E103E /* UIView+Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE901F2C459343002E103E /* UIView+Identity.swift */; };
 		37BE90222C461C63002E103E /* UITextField+AddDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE90212C461C63002E103E /* UITextField+AddDatePicker.swift */; };
+		37E297412CEB25EA009430DA /* Keyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E297402CEB25EA009430DA /* Keyable.swift */; };
 		37E602242CB7A165006A4541 /* String+AsMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E602232CB7A165006A4541 /* String+AsMutableAttributedString.swift */; };
 		37E602262CB7A1B3006A4541 /* NSMutableAttributedString+ApplyAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E602252CB7A1B3006A4541 /* NSMutableAttributedString+ApplyAttributes.swift */; };
 /* End PBXBuildFile section */
@@ -824,7 +824,6 @@
 		37BE8E2F2C459013002E103E /* DismissRequestable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DismissRequestable.swift; sourceTree = "<group>"; };
 		37BE8E302C459013002E103E /* GoBackRequestable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoBackRequestable.swift; sourceTree = "<group>"; };
 		37BE8E312C459013002E103E /* KeyboardDismissable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDismissable.swift; sourceTree = "<group>"; };
-		37BE8E322C459013002E103E /* KeyStorable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyStorable.swift; sourceTree = "<group>"; };
 		37BE8E332C459013002E103E /* KeyValueStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueStorage.swift; sourceTree = "<group>"; };
 		37BE8E342C459013002E103E /* LargeTitleSettable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LargeTitleSettable.swift; sourceTree = "<group>"; };
 		37BE8E352C459013002E103E /* Navigationable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Navigationable.swift; sourceTree = "<group>"; };
@@ -887,6 +886,7 @@
 		37BE8E7D2C459013002E103E /* CoordinatorParent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinatorParent.swift; sourceTree = "<group>"; };
 		37BE901F2C459343002E103E /* UIView+Identity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Identity.swift"; sourceTree = "<group>"; };
 		37BE90212C461C63002E103E /* UITextField+AddDatePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+AddDatePicker.swift"; sourceTree = "<group>"; };
+		37E297402CEB25EA009430DA /* Keyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Keyable.swift; path = ../../../common/Common/Protocols/Keyable.swift; sourceTree = "<group>"; };
 		37E602232CB7A165006A4541 /* String+AsMutableAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+AsMutableAttributedString.swift"; sourceTree = "<group>"; };
 		37E602252CB7A1B3006A4541 /* NSMutableAttributedString+ApplyAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+ApplyAttributes.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2108,8 +2108,8 @@
 				37BE8E2E2C459013002E103E /* ContentReloadable.swift */,
 				37BE8E2F2C459013002E103E /* DismissRequestable.swift */,
 				37BE8E302C459013002E103E /* GoBackRequestable.swift */,
+				37E297402CEB25EA009430DA /* Keyable.swift */,
 				37BE8E312C459013002E103E /* KeyboardDismissable.swift */,
-				37BE8E322C459013002E103E /* KeyStorable.swift */,
 				37BE8E332C459013002E103E /* KeyValueStorage.swift */,
 				37BE8E342C459013002E103E /* LargeTitleSettable.swift */,
 				37BE8E352C459013002E103E /* Navigationable.swift */,
@@ -2648,7 +2648,6 @@
 				37BE8FA72C459013002E103E /* VNDetectBarcodesRequest+Symbologies.swift in Sources */,
 				372005982C633463006A150A /* UIScrollView+Delegate.swift in Sources */,
 				37BE8F232C459013002E103E /* UILabel+Font.swift in Sources */,
-				37BE8FE12C459014002E103E /* KeyStorable.swift in Sources */,
 				37BE8FA12C459013002E103E /* URL+FileSize.swift in Sources */,
 				37BE8EBF2C459013002E103E /* Int+IsZero.swift in Sources */,
 				37BE8F4F2C459013002E103E /* UITextField+ContentType.swift in Sources */,
@@ -2787,6 +2786,7 @@
 				37BE8EB92C459013002E103E /* DateComponents+ValueWithable.swift in Sources */,
 				37BE8FC22C459014002E103E /* URLEncodedFormParameterEncoder.swift in Sources */,
 				37BE8F442C459013002E103E /* UISwitch+OnValueChanged.swift in Sources */,
+				37E297412CEB25EA009430DA /* Keyable.swift in Sources */,
 				37BE8EFD2C459013002E103E /* UICollectionView+IsPrefetchingEnabled.swift in Sources */,
 				37BE8FAA2C459013002E103E /* VNRecognizeTextRequest+MinimumTextHeight.swift in Sources */,
 				37BE900A2C459014002E103E /* PillUILabel.swift in Sources */,

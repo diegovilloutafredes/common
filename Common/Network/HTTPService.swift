@@ -6,8 +6,6 @@ import Foundation
 
 // MARK: - HTTPService
 public enum HTTPService {
-    private static var urlSession: URLSession { .shared }
-
     @discardableResult public static func request<T: Decodable>(_ resource: URLRequestConvertible, decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), queue: DispatchQueue = .global(qos: .userInitiated), result: @escaping NetworkResultHandler<T>) -> URLSessionTask? {
         guard let urlRequest = resource.urlRequest else {
             result(.failure(.invalidRequest(resource)))
@@ -15,25 +13,32 @@ public enum HTTPService {
         }
 
         let dataTask = urlSession.dataTask(with: urlRequest) { (data, response, error) in
+            if
+                shouldLog,
+                let beforeRequestTime: Int64 = store.get(using: "beforeRequestTime")
+            {
+                let afterRequestTime = Date.asMilliseconds
+                let delta = afterRequestTime - beforeRequestTime
+                Logger.log(["Request Delta of \(resource.urlRequest!)": "\(delta)ms"])
+            }
+
             guard error.isNil else {
-                Logger.log(["error": error!])
+                if shouldLog { Logger.log(["error": error!]) }
                 dispatchOnMain { result(.failure(.requestError(error!))) }
                 return
             }
 
             guard let data else {
-                Logger.log(urlRequest, response: response)
+                if shouldLog { Logger.log(urlRequest, response: response) }
                 dispatchOnMain { result(.failure(.noDataReceived)) }
                 return
             }
 
-            Logger.log(urlRequest, data: data, response: response)
+            if shouldLog { Logger.log(urlRequest, data: data, response: response) }
 
             guard let httpResponse = response as? HTTPURLResponse else { return }
 
             let statusCode = httpResponse.statusCode
-
-            Logger.log(["statusCode": statusCode])
 
             do {
                 switch statusCode {
@@ -42,13 +47,20 @@ public enum HTTPService {
                     dispatchOnMain { result(.success(decodedResponse)) }
                 default:
                     guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
-                    Logger.log(["response as jsonObject": jsonObject])
+
+                    if shouldLog { Logger.log(["response as jsonObject": jsonObject]) }
+
                     dispatchOnMain { result(.failure(.responseError(code: statusCode, response: jsonObject))) }
                 }
             } catch { dispatchOnMain { result(.failure(.decodingError)) } }
         }
 
-        queue.async { dataTask.resume() }
+        queue.async {
+            store.remove(using: "beforeRequestTime")
+            let beforeRequestTime = Date.asMilliseconds
+            store.add(item: ("beforeRequestTime", beforeRequestTime))
+            dataTask.resume()
+        }
 
         return dataTask
     }
@@ -59,7 +71,7 @@ public enum HTTPService {
             return nil
         }
 
-        Logger.log(["multipart": multipart])
+        if shouldLog { Logger.log(["multipart": multipart]) }
 
         let contentType = multipart.contentTypeHeaderValue
         urlRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
@@ -67,4 +79,18 @@ public enum HTTPService {
 
         return request(urlRequest, decoder: decoder, queue: queue, result: result)
     }
+}
+
+// MARK: - KeyValueStore
+extension HTTPService {
+    private static var store: KeyValueStore { .init() }
+}
+
+// MARK: - Loggable
+extension HTTPService: Loggable {}
+
+
+// MARK: - URLSession
+extension HTTPService {
+    private static var urlSession: URLSession { .shared }
 }
