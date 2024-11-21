@@ -10,7 +10,7 @@ public final class DNITextField: BaseDNITextField {
         .enablesReturnKeyAutomatically(true)
         .font(.systemFont(ofSize: 16))
         .placeholder(
-            "RUT (Ej: 123456789)",
+            "DNI",
             color: .black.withAlphaComponent(0.9),
             font: .systemFont(ofSize: 16)
         )

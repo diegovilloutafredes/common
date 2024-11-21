@@ -443,6 +443,7 @@
 		37BE901E2C459014002E103E /* CoordinatorParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8E7D2C459013002E103E /* CoordinatorParent.swift */; };
 		37BE90202C459343002E103E /* UIView+Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE901F2C459343002E103E /* UIView+Identity.swift */; };
 		37BE90222C461C63002E103E /* UITextField+AddDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE90212C461C63002E103E /* UITextField+AddDatePicker.swift */; };
+		37DE95C02CEF237F00067E60 /* NotificationRegisterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37DE95BF2CEF237F00067E60 /* NotificationRegisterManager.swift */; };
 		37E297412CEB25EA009430DA /* Keyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E297402CEB25EA009430DA /* Keyable.swift */; };
 		37E602242CB7A165006A4541 /* String+AsMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E602232CB7A165006A4541 /* String+AsMutableAttributedString.swift */; };
 		37E602262CB7A1B3006A4541 /* NSMutableAttributedString+ApplyAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E602252CB7A1B3006A4541 /* NSMutableAttributedString+ApplyAttributes.swift */; };
@@ -886,6 +887,7 @@
 		37BE8E7D2C459013002E103E /* CoordinatorParent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinatorParent.swift; sourceTree = "<group>"; };
 		37BE901F2C459343002E103E /* UIView+Identity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Identity.swift"; sourceTree = "<group>"; };
 		37BE90212C461C63002E103E /* UITextField+AddDatePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+AddDatePicker.swift"; sourceTree = "<group>"; };
+		37DE95BF2CEF237F00067E60 /* NotificationRegisterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRegisterManager.swift; sourceTree = "<group>"; };
 		37E297402CEB25EA009430DA /* Keyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Keyable.swift; path = ../../../common/Common/Protocols/Keyable.swift; sourceTree = "<group>"; };
 		37E602232CB7A165006A4541 /* String+AsMutableAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+AsMutableAttributedString.swift"; sourceTree = "<group>"; };
 		37E602252CB7A1B3006A4541 /* NSMutableAttributedString+ApplyAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+ApplyAttributes.swift"; sourceTree = "<group>"; };
@@ -2172,9 +2174,10 @@
 		37BE8E552C459013002E103E /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				37BE8E522C459013002E103E /* Authorization */,
 				37BE8E532C459013002E103E /* CameraManager.swift */,
 				37BE8E542C459013002E103E /* NFCReadingAvailability.swift */,
+				37DE95BF2CEF237F00067E60 /* NotificationRegisterManager.swift */,
+				37BE8E522C459013002E103E /* Authorization */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2536,6 +2539,7 @@
 				37BE8EE62C459013002E103E /* UIActivityIndicatorView+Color.swift in Sources */,
 				37BE8EAD2C459013002E103E /* CVPixelBuffer+Size.swift in Sources */,
 				37BE8F2E2C459013002E103E /* UINavigationController+IsThereA.swift in Sources */,
+				37DE95C02CEF237F00067E60 /* NotificationRegisterManager.swift in Sources */,
 				37BE8F812C459013002E103E /* UIViewController+DismissPresentedViewController.swift in Sources */,
 				37BE8EEE2C459013002E103E /* UIBarButtonItem+Target.swift in Sources */,
 				37BE8EA02C459013002E103E /* Collection+isNotEmpty.swift in Sources */,
