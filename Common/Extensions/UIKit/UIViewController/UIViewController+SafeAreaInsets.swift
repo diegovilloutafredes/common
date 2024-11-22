@@ -5,9 +5,9 @@
 import UIKit
 
 extension UIViewController {
-    var safeAreaInsets: UIEdgeInsets { UIApplication.shared.keyWindow?.safeAreaInsets ?? .zero }
-    var safeAreaTopInset: CGFloat { UIApplication.shared.keyWindow?.safeAreaInsets.top ?? .zero }
-    var safeAreaBottomInset: CGFloat { UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? .zero }
-    var safeAreaLeftInset: CGFloat { UIApplication.shared.keyWindow?.safeAreaInsets.left ?? .zero }
-    var safeAreaRightInset: CGFloat { UIApplication.shared.keyWindow?.safeAreaInsets.right ?? .zero }
+    public var safeAreaInsets: UIEdgeInsets { UIApplication.shared.keyWindow?.safeAreaInsets ?? .zero }
+    public var safeAreaTopInset: CGFloat { safeAreaInsets.top }
+    public var safeAreaBottomInset: CGFloat { safeAreaInsets.bottom }
+    public var safeAreaLeftInset: CGFloat { safeAreaInsets.left }
+    public var safeAreaRightInset: CGFloat { safeAreaInsets.right }
 }
