@@ -28,6 +28,7 @@
 		3733FB0E2C526ECA009DE056 /* UIViewController+LargeTitleSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3733FB0D2C526ECA009DE056 /* UIViewController+LargeTitleSettable.swift */; };
 		3733FB102C52730B009DE056 /* BaseViewModelableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */; };
 		376B87802C57C20C002BD0C6 /* CACornerMask+Corners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */; };
+		3774A0CB2CF4EB0100C0F179 /* UIButton+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */; };
 		37750F6D2CC2A23C004E828B /* String+QueryItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37750F6C2CC2A23C004E828B /* String+QueryItems.swift */; };
 		377CC8CF2C6CD43A00C8601E /* Array+FloatingPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8CE2C6CD43A00C8601E /* Array+FloatingPoint.swift */; };
 		377CC8D12C6CD49B00C8601E /* CVPixelBuffer+AsCMSampleBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8D02C6CD49B00C8601E /* CVPixelBuffer+AsCMSampleBuffer.swift */; };
@@ -471,6 +472,7 @@
 		3733FB0D2C526ECA009DE056 /* UIViewController+LargeTitleSettable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+LargeTitleSettable.swift"; sourceTree = "<group>"; };
 		3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModelableCell.swift; sourceTree = "<group>"; };
 		376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CACornerMask+Corners.swift"; sourceTree = "<group>"; };
+		3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Menu.swift"; sourceTree = "<group>"; };
 		37750F6C2CC2A23C004E828B /* String+QueryItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+QueryItems.swift"; sourceTree = "<group>"; };
 		377CC8CE2C6CD43A00C8601E /* Array+FloatingPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+FloatingPoint.swift"; sourceTree = "<group>"; };
 		377CC8D02C6CD49B00C8601E /* CVPixelBuffer+AsCMSampleBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+AsCMSampleBuffer.swift"; sourceTree = "<group>"; };
@@ -1429,6 +1431,7 @@
 				37BE8D0D2C459013002E103E /* UIButton+BackgroundImage.swift */,
 				37BE8D0E2C459013002E103E /* UIButton+Font.swift */,
 				37BE8D0F2C459013002E103E /* UIButton+Image.swift */,
+				3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */,
 				37BE8D102C459013002E103E /* UIButton+SemanticContentAttribute.swift */,
 				37BE8D112C459013002E103E /* UIButton+Symbol.swift */,
 				37BE8D122C459013002E103E /* UIButton+TintColor.swift */,
@@ -2780,6 +2783,7 @@
 				37BE8EE02C459013002E103E /* String+ToData.swift in Sources */,
 				37BE8F552C459013002E103E /* UITextField+LeftViewMode.swift in Sources */,
 				37BE8E9B2C459013002E103E /* CMSampleBuffer+AsCVPixelBuffer.swift in Sources */,
+				3774A0CB2CF4EB0100C0F179 /* UIButton+Menu.swift in Sources */,
 				37BE90192C459014002E103E /* Separator.swift in Sources */,
 				37BE8F362C459013002E103E /* UIScrollView+ContentInsetAdjustmentBehavior.swift in Sources */,
 				37BE8FCB2C459014002E103E /* URLConvertible.swift in Sources */,
