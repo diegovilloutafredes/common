@@ -87,7 +87,7 @@
 		37BE8EB02C459013002E103E /* Data+AsReadableDeviceToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CB82C459013002E103E /* Data+AsReadableDeviceToken.swift */; };
 		37BE8EB12C459013002E103E /* Data+Decoded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CB92C459013002E103E /* Data+Decoded.swift */; };
 		37BE8EB22C459013002E103E /* Data+HexEncodedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CBA2C459013002E103E /* Data+HexEncodedString.swift */; };
-		37BE8EB32C459013002E103E /* Data+KeyStorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CBB2C459013002E103E /* Data+KeyStorable.swift */; };
+		37BE8EB32C459013002E103E /* Data+Keyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CBB2C459013002E103E /* Data+Keyable.swift */; };
 		37BE8EB42C459013002E103E /* Data+ToString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CBC2C459013002E103E /* Data+ToString.swift */; };
 		37BE8EB52C459013002E103E /* Date+AddDateComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CBE2C459013002E103E /* Date+AddDateComponents.swift */; };
 		37BE8EB62C459013002E103E /* Date+AsMilliseconds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CBF2C459013002E103E /* Date+AsMilliseconds.swift */; };
@@ -532,7 +532,7 @@
 		37BE8CB82C459013002E103E /* Data+AsReadableDeviceToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+AsReadableDeviceToken.swift"; sourceTree = "<group>"; };
 		37BE8CB92C459013002E103E /* Data+Decoded.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Decoded.swift"; sourceTree = "<group>"; };
 		37BE8CBA2C459013002E103E /* Data+HexEncodedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+HexEncodedString.swift"; sourceTree = "<group>"; };
-		37BE8CBB2C459013002E103E /* Data+KeyStorable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+KeyStorable.swift"; sourceTree = "<group>"; };
+		37BE8CBB2C459013002E103E /* Data+Keyable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Keyable.swift"; sourceTree = "<group>"; };
 		37BE8CBC2C459013002E103E /* Data+ToString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+ToString.swift"; sourceTree = "<group>"; };
 		37BE8CBE2C459013002E103E /* Date+AddDateComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+AddDateComponents.swift"; sourceTree = "<group>"; };
 		37BE8CBF2C459013002E103E /* Date+AsMilliseconds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+AsMilliseconds.swift"; sourceTree = "<group>"; };
@@ -1225,7 +1225,7 @@
 				37BE8CB82C459013002E103E /* Data+AsReadableDeviceToken.swift */,
 				37BE8CB92C459013002E103E /* Data+Decoded.swift */,
 				37BE8CBA2C459013002E103E /* Data+HexEncodedString.swift */,
-				37BE8CBB2C459013002E103E /* Data+KeyStorable.swift */,
+				37BE8CBB2C459013002E103E /* Data+Keyable.swift */,
 				37BE8CBC2C459013002E103E /* Data+ToString.swift */,
 			);
 			path = Data;
@@ -2575,7 +2575,7 @@
 				37BE8ED52C459013002E103E /* String+DateFormats.swift in Sources */,
 				37BE8EA82C459013002E103E /* CGRect+Center.swift in Sources */,
 				37BE90092C459014002E103E /* GradientView.swift in Sources */,
-				37BE8EB32C459013002E103E /* Data+KeyStorable.swift in Sources */,
+				37BE8EB32C459013002E103E /* Data+Keyable.swift in Sources */,
 				37BE8F9A2C459013002E103E /* UIViewController+Vibrate.swift in Sources */,
 				37BE8FAC2C459013002E103E /* VNRecognizeTextRequest+RecognitionLevel.swift in Sources */,
 				37BE8FAD2C459013002E103E /* VNRecognizeTextRequest+UsesLanguageCorrection.swift in Sources */,
