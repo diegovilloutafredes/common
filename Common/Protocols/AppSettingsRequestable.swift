@@ -11,15 +11,5 @@ public protocol AppSettingsRequestable: AnyObject {
 
 // MARK: - Default implementation
 extension AppSettingsRequestable {
-    public func onAppSettingsRequested() {
-        let application = UIApplication.shared
-        let urlAsString = UIApplication.openSettingsURLString
-
-        guard
-            let url = URL(string: urlAsString),
-            application.canOpenURL(url)
-        else { return }
-
-        application.open(url, options: [:])
-    }
+    public func onAppSettingsRequested() { UIApplication.openAppSettings() }
 }

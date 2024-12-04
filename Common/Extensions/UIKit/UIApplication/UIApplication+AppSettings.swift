@@ -8,8 +8,8 @@ extension UIApplication {
     public static func openAppSettings() {
         guard
             let appSettingsUrl = URL(string: openSettingsURLString),
-            UIApplication.shared.canOpenURL(appSettingsUrl)
+            shared.canOpenURL(appSettingsUrl)
         else { return }
-        UIApplication.shared.open(appSettingsUrl)
+        shared.open(appSettingsUrl)
     }
 }

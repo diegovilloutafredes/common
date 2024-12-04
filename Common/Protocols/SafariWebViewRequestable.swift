@@ -9,10 +9,10 @@ public protocol SafariWebViewRequestable: AnyObject {
     func onSafariWebViewRequested(url: URL)
 }
 
-// MARK: - Default implementation where Self: BaseCoordinator
-extension SafariWebViewRequestable where Self: BaseCoordinator {
+// MARK: - Default implementation
+extension SafariWebViewRequestable {
     public func onSafariWebViewRequested(url: URL) {
         let vc = SFSafariViewController(url: url)
-        navigationController.present(vc, animated: true)
+        dispatchOnMain { UIApplication.shared.topMostViewController?.present(vc, animated: true) }
     }
 }

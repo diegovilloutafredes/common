@@ -66,10 +66,7 @@ public enum HTTPService {
     }
 
     @discardableResult public static func upload<T: Decodable>(multipart: MultipartRequest, to resource: URLRequestConvertible, decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), queue: DispatchQueue = .global(qos: .userInitiated), result: @escaping NetworkResultHandler<T>) -> URLSessionTask? {
-        guard var urlRequest = resource.urlRequest else {
-            result(.failure(.invalidRequest(resource)))
-            return nil
-        }
+        guard var urlRequest = resource.urlRequest else { result(.failure(.invalidRequest(resource))); return nil }
 
         if shouldLog { Logger.log(["multipart": multipart]) }
 
