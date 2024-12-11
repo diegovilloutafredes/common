@@ -78,7 +78,7 @@ extension String {
                 let number = components.number
                 let verifyingDigit = components.verifyingDigit
 
-                guard let formattedNumber = number.formatAsDecimalNumber() else { return }
+                guard let formattedNumber = number.asDecimalNumber else { return }
 
                 $0 = "\(formattedNumber)-\(verifyingDigit)"
             }

@@ -124,7 +124,7 @@
 		37BE8ED52C459013002E103E /* String+DateFormats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CEC2C459013002E103E /* String+DateFormats.swift */; };
 		37BE8ED62C459013002E103E /* String+DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CED2C459013002E103E /* String+DefaultValues.swift */; };
 		37BE8ED72C459013002E103E /* String+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CEE2C459013002E103E /* String+Error.swift */; };
-		37BE8ED82C459013002E103E /* String+FormatAsDecimalNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CEF2C459013002E103E /* String+FormatAsDecimalNumber.swift */; };
+		37BE8ED82C459013002E103E /* String+AsDecimalNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CEF2C459013002E103E /* String+AsDecimalNumber.swift */; };
 		37BE8ED92C459013002E103E /* String+GetQueryParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CF02C459013002E103E /* String+GetQueryParameter.swift */; };
 		37BE8EDA2C459013002E103E /* String+GetFromPlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CF12C459013002E103E /* String+GetFromPlist.swift */; };
 		37BE8EDB2C459013002E103E /* String+Hyphened.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8CF22C459013002E103E /* String+Hyphened.swift */; };
@@ -569,7 +569,7 @@
 		37BE8CEC2C459013002E103E /* String+DateFormats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+DateFormats.swift"; sourceTree = "<group>"; };
 		37BE8CED2C459013002E103E /* String+DefaultValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+DefaultValues.swift"; sourceTree = "<group>"; };
 		37BE8CEE2C459013002E103E /* String+Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Error.swift"; sourceTree = "<group>"; };
-		37BE8CEF2C459013002E103E /* String+FormatAsDecimalNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+FormatAsDecimalNumber.swift"; sourceTree = "<group>"; };
+		37BE8CEF2C459013002E103E /* String+AsDecimalNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+AsDecimalNumber.swift"; sourceTree = "<group>"; };
 		37BE8CF02C459013002E103E /* String+GetQueryParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+GetQueryParameter.swift"; sourceTree = "<group>"; };
 		37BE8CF12C459013002E103E /* String+GetFromPlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+GetFromPlist.swift"; sourceTree = "<group>"; };
 		37BE8CF22C459013002E103E /* String+Hyphened.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Hyphened.swift"; sourceTree = "<group>"; };
@@ -1357,6 +1357,7 @@
 		37BE8CFB2C459013002E103E /* String */ = {
 			isa = PBXGroup;
 			children = (
+				37BE8CEF2C459013002E103E /* String+AsDecimalNumber.swift */,
 				37BE8CE52C459013002E103E /* String+AsInt.swift */,
 				37E602232CB7A165006A4541 /* String+AsMutableAttributedString.swift */,
 				37BE8CE62C459013002E103E /* String+Base64.swift */,
@@ -1368,7 +1369,6 @@
 				37BE8CEC2C459013002E103E /* String+DateFormats.swift */,
 				37BE8CED2C459013002E103E /* String+DefaultValues.swift */,
 				37BE8CEE2C459013002E103E /* String+Error.swift */,
-				37BE8CEF2C459013002E103E /* String+FormatAsDecimalNumber.swift */,
 				37BE8CF12C459013002E103E /* String+GetFromPlist.swift */,
 				37BE8CF02C459013002E103E /* String+GetQueryParameter.swift */,
 				37BE8CF22C459013002E103E /* String+Hyphened.swift */,
@@ -2746,7 +2746,7 @@
 				37BE8EF62C459013002E103E /* UIButton+TintColor.swift in Sources */,
 				3733FAC02C4F7EE3009DE056 /* UIFont+Register.swift in Sources */,
 				37BE8EE32C459013002E103E /* String+ValueWithable.swift in Sources */,
-				37BE8ED82C459013002E103E /* String+FormatAsDecimalNumber.swift in Sources */,
+				37BE8ED82C459013002E103E /* String+AsDecimalNumber.swift in Sources */,
 				37BE90202C459343002E103E /* UIView+Identity.swift in Sources */,
 				37BE8EB22C459013002E103E /* Data+HexEncodedString.swift in Sources */,
 				37BE8F3D2C459013002E103E /* UIStackView+Horizontal.swift in Sources */,

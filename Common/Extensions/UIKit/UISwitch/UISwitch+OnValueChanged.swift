@@ -5,19 +5,19 @@
 import UIKit
 
 extension UISwitch {
-    private var onValueChangedHandler: Handler<Bool>? {
-        get { associatedObject(for: "onValueChangedHandler") as? Handler<Bool> }
+    private var onValueChangedHandler: Handler<UISwitch>? {
+        get { associatedObject(for: "onValueChangedHandler") as? Handler<UISwitch> }
         set { set(associatedObject: newValue, for: "onValueChangedHandler") }
     }
 
-    @discardableResult public func onValueChanged(_ handler: @escaping Handler<Bool>) -> Self {
+    @discardableResult public func onValueChanged(_ handler: @escaping Handler<UISwitch>) -> Self {
         with {
             $0.onValueChangedHandler = handler
-            addTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
+            addTarget($0, action: #selector(valueChanged), for: .valueChanged)
         }
     }
 
-    @objc private func valueChanged(sender: UISwitch) {
-        onValueChangedHandler?(sender.isOn)
+    @objc private func valueChanged() {
+        onValueChangedHandler?(self)
     }
 }
