@@ -27,6 +27,8 @@
 		3733FAC12C4F7EE3009DE056 /* UIFont+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3733FABD2C4F7EE3009DE056 /* UIFont+Style.swift */; };
 		3733FB0E2C526ECA009DE056 /* UIViewController+LargeTitleSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3733FB0D2C526ECA009DE056 /* UIViewController+LargeTitleSettable.swift */; };
 		3733FB102C52730B009DE056 /* BaseViewModelableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */; };
+		376B57782D0A63F60012AA5C /* UIColor+Inverted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57772D0A63F60012AA5C /* UIColor+Inverted.swift */; };
+		376B577A2D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */; };
 		376B87802C57C20C002BD0C6 /* CACornerMask+Corners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */; };
 		3774A0CB2CF4EB0100C0F179 /* UIButton+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */; };
 		37750F6D2CC2A23C004E828B /* String+QueryItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37750F6C2CC2A23C004E828B /* String+QueryItems.swift */; };
@@ -471,6 +473,8 @@
 		3733FABD2C4F7EE3009DE056 /* UIFont+Style.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Style.swift"; sourceTree = "<group>"; };
 		3733FB0D2C526ECA009DE056 /* UIViewController+LargeTitleSettable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+LargeTitleSettable.swift"; sourceTree = "<group>"; };
 		3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModelableCell.swift; sourceTree = "<group>"; };
+		376B57772D0A63F60012AA5C /* UIColor+Inverted.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Inverted.swift"; sourceTree = "<group>"; };
+		376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActivityIndicatorable.swift"; sourceTree = "<group>"; };
 		376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CACornerMask+Corners.swift"; sourceTree = "<group>"; };
 		3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Menu.swift"; sourceTree = "<group>"; };
 		37750F6C2CC2A23C004E828B /* String+QueryItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+QueryItems.swift"; sourceTree = "<group>"; };
@@ -1478,6 +1482,7 @@
 			isa = PBXGroup;
 			children = (
 				37BE8D252C459013002E103E /* UIColor+Hex.swift */,
+				376B57772D0A63F60012AA5C /* UIColor+Inverted.swift */,
 				37BE8D262C459013002E103E /* UIColor+ModifiedByPercentage.swift */,
 				37BE8D272C459013002E103E /* UIColor+Named.swift */,
 			);
@@ -1717,6 +1722,7 @@
 		37BE8DB12C459013002E103E /* UIView */ = {
 			isa = PBXGroup;
 			children = (
+				376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */,
 				37BE8D942C459013002E103E /* UIView+Alpha.swift */,
 				37BE8D952C459013002E103E /* UIView+ApplyBlurredBackground.swift */,
 				37BE8D962C459013002E103E /* UIView+ApplyBlurredForeground.swift */,
@@ -2661,6 +2667,7 @@
 				37BE8FEF2C459014002E103E /* Stringable.swift in Sources */,
 				37BE8FC12C459013002E103E /* ParameterEncoder.swift in Sources */,
 				37BE8EF22C459013002E103E /* UIButton+Font.swift in Sources */,
+				376B577A2D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift in Sources */,
 				37BE8FA82C459013002E103E /* VNRecognizedTextObservation+TopRecognizedText.swift in Sources */,
 				37BE8E872C459013002E103E /* AVCaptureDevice+TorchMode.swift in Sources */,
 				37BE8E9C2C459013002E103E /* CMSampleBuffer+AsUIImage.swift in Sources */,
@@ -2709,6 +2716,7 @@
 				37BE8EB72C459013002E103E /* Date+EpochTime.swift in Sources */,
 				37BE8F562C459013002E103E /* UITextField+OnEditingBegin.swift in Sources */,
 				37BE8E9A2C459013002E103E /* CMSampleBuffer+AsCGImage.swift in Sources */,
+				376B57782D0A63F60012AA5C /* UIColor+Inverted.swift in Sources */,
 				37BE8F732C459013002E103E /* UIView+RoundCorners.swift in Sources */,
 				37BE8F6E2C459013002E103E /* UIView+MaskedCorners.swift in Sources */,
 				37BE8E832C459013002E103E /* AVCaptureDevice+ExposureMode.swift in Sources */,

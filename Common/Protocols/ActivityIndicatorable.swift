@@ -37,6 +37,46 @@ extension ActivityIndicatorable where Self: UITextField {
     }
 }
 
+// MARK: - Default implementation where Self: UIView
+extension ActivityIndicatorable where Self: UIView {
+    public func startActivityIndicator() {
+        dispatchOnMain {
+            var activityColor: UIColor { self.backgroundColor?.inverted ?? .black }
+            self.startActivityIndicator(with: activityColor)
+        }
+    }
+
+    public func startActivityIndicator(with color: UIColor) {
+        let activityIndicator = UIActivityIndicatorView()
+            .color(color)
+            .with { $0.sizeToFit() }
+            .setConstraints { $0.alignCenter(with: $1) }
+
+        defer { activityIndicator.startAnimating() }
+
+        subviews
+            .forEach {
+                ($0 as? UIActivityIndicatorView)?.removeFromSuperview()
+                $0.hide(animated: false)
+            }
+
+        subviews { activityIndicator }
+    }
+
+    public func stopActivityIndicator() {
+        dispatchOnMain { [weak self] in guard let self else { return }
+            subviews
+                .compactMap { $0 as? UIActivityIndicatorView }
+                .forEach {
+                    $0.stopAnimating()
+                    $0.removeFromSuperview()
+                }
+
+            subviews.forEach { $0.show(animated: false) }
+        }
+    }
+}
+
 // MARK: - Default implementation where Self: UIViewController
 extension ActivityIndicatorable where Self: UIViewController {
     public func startActivityIndicator() {
@@ -59,7 +99,7 @@ extension ActivityIndicatorable where Self: UIViewController {
         else {
             view
                 .subviews
-                .filter { $0 is UIActivityIndicatorView }
+                .compactMap { $0 as? UIActivityIndicatorView }
                 .forEach { $0.removeFromSuperview() }
 
             view.subviews { activityIndicator.setConstraints { $0.alignCenter(with: $1) } }
