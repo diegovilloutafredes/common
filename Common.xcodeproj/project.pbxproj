@@ -29,6 +29,7 @@
 		3733FB102C52730B009DE056 /* BaseViewModelableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */; };
 		376B57782D0A63F60012AA5C /* UIColor+Inverted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57772D0A63F60012AA5C /* UIColor+Inverted.swift */; };
 		376B577A2D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */; };
+		376B57962D10338A0012AA5C /* BaseViewModelableReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57952D1033890012AA5C /* BaseViewModelableReusableView.swift */; };
 		376B87802C57C20C002BD0C6 /* CACornerMask+Corners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */; };
 		3774A0CB2CF4EB0100C0F179 /* UIButton+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */; };
 		37750F6D2CC2A23C004E828B /* String+QueryItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37750F6C2CC2A23C004E828B /* String+QueryItems.swift */; };
@@ -475,6 +476,7 @@
 		3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModelableCell.swift; sourceTree = "<group>"; };
 		376B57772D0A63F60012AA5C /* UIColor+Inverted.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Inverted.swift"; sourceTree = "<group>"; };
 		376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActivityIndicatorable.swift"; sourceTree = "<group>"; };
+		376B57952D1033890012AA5C /* BaseViewModelableReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModelableReusableView.swift; sourceTree = "<group>"; };
 		376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CACornerMask+Corners.swift"; sourceTree = "<group>"; };
 		3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Menu.swift"; sourceTree = "<group>"; };
 		37750F6C2CC2A23C004E828B /* String+QueryItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+QueryItems.swift"; sourceTree = "<group>"; };
@@ -2220,6 +2222,7 @@
 				37BE8E5E2C459013002E103E /* BaseTextField.swift */,
 				37BE8E5F2C459013002E103E /* BaseView.swift */,
 				3733FB0F2C52730B009DE056 /* BaseViewModelableCell.swift */,
+				376B57952D1033890012AA5C /* BaseViewModelableReusableView.swift */,
 				37BE8E602C459013002E103E /* BaseViewModelableView.swift */,
 			);
 			path = Base;
@@ -2531,6 +2534,7 @@
 				37BE8FA22C459013002E103E /* URL+GetValueFromQueryItem.swift in Sources */,
 				37BE8F692C459013002E103E /* UIView+Init.swift in Sources */,
 				372005882C5C2B5C006A150A /* AVCaptureVideoDataOutput+SetSampleBufferDelegate.swift in Sources */,
+				376B57962D10338A0012AA5C /* BaseViewModelableReusableView.swift in Sources */,
 				37BE8EEB2C459013002E103E /* UIApplication+TopMostViewController.swift in Sources */,
 				37BE8F402C459013002E103E /* UIStackView+Vertical.swift in Sources */,
 				37BE8EFC2C459013002E103E /* UICollectionView+Delegate.swift in Sources */,
