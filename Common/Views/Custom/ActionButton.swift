@@ -58,7 +58,7 @@ public final class ActionButton: BaseButton {
     private let shouldApplyDefaultRatio: Bool
     private let theme: ButtonTheme
 
-    public init(_ title: String = .empty, isEnabled: Bool = true, shouldApplyDefaultRatio: Bool = true, theme: ButtonTheme = DefaultButtonTheme.filled) {
+    public init(_ title: String? = nil, isEnabled: Bool = true, shouldApplyDefaultRatio: Bool = true, theme: ButtonTheme = DefaultButtonTheme.filled) {
         self.shouldApplyDefaultRatio = shouldApplyDefaultRatio
         self.theme = theme
         super.init()

@@ -106,11 +106,10 @@ open class BasePresentableViewController<PresenterType>: PresentableViewControll
     }
 
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let defaultInset: CGFloat = .zero
         switch section {
         case (asCollectionViewable?.getNumberOfSections() ?? 1) - 1:
             let bottomInset = closestTabBarHeight + 4
-            return .init(top: defaultInset, left: defaultInset, bottom: bottomInset, right: defaultInset)
+            return .init(top: .zero, left: .zero, bottom: bottomInset, right: .zero)
         default:
             return .zero
         }

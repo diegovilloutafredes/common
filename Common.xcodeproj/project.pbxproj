@@ -38,6 +38,7 @@
 		377CC8DE2C7553DF00C8601E /* UISwitch+isOff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8DD2C7553DF00C8601E /* UISwitch+isOff.swift */; };
 		377CC8E02C7554BC00C8601E /* ARSCNView+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8DF2C7554BC00C8601E /* ARSCNView+Delegate.swift */; };
 		377CC8F62C8841B800C8601E /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8F52C8841B800C8601E /* Global.swift */; };
+		378F31C02D1135BB007C8C04 /* Actionable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378F31BF2D1135BB007C8C04 /* Actionable.swift */; };
 		37BE8C5E2C458DF0002E103E /* Common.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BE8C5D2C458DF0002E103E /* Common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37BE8E7F2C459013002E103E /* AES.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8C712C459013002E103E /* AES.swift */; };
 		37BE8E802C459013002E103E /* Array+Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8C732C459013002E103E /* Array+Coordinator.swift */; };
@@ -237,7 +238,6 @@
 		37BE8F462C459013002E103E /* UITabBarController+TabBarHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D782C459013002E103E /* UITabBarController+TabBarHeight.swift */; };
 		37BE8F472C459013002E103E /* UITapGestureRecognizer+DidTapAttributedTextInLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D7A2C459013002E103E /* UITapGestureRecognizer+DidTapAttributedTextInLabel.swift */; };
 		37BE8F482C459013002E103E /* UITapGestureRecognizer+NumberOfTapsRequired.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D7B2C459013002E103E /* UITapGestureRecognizer+NumberOfTapsRequired.swift */; };
-		37BE8F492C459013002E103E /* UITextField+ActivityIndicatorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D7D2C459013002E103E /* UITextField+ActivityIndicatorable.swift */; };
 		37BE8F4A2C459013002E103E /* UITextField+AddRightButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D7E2C459013002E103E /* UITextField+AddRightButton.swift */; };
 		37BE8F4B2C459013002E103E /* UITextField+AddToggleVisibilityButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D7F2C459013002E103E /* UITextField+AddToggleVisibilityButton.swift */; };
 		37BE8F4C2C459013002E103E /* UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BE8D802C459013002E103E /* UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift */; };
@@ -485,6 +485,7 @@
 		377CC8DD2C7553DF00C8601E /* UISwitch+isOff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISwitch+isOff.swift"; sourceTree = "<group>"; };
 		377CC8DF2C7554BC00C8601E /* ARSCNView+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSCNView+Delegate.swift"; sourceTree = "<group>"; };
 		377CC8F52C8841B800C8601E /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		378F31BF2D1135BB007C8C04 /* Actionable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Actionable.swift; sourceTree = "<group>"; };
 		37BE8C5A2C458DF0002E103E /* Common.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Common.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BE8C5D2C458DF0002E103E /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		37BE8C712C459013002E103E /* AES.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AES.swift; sourceTree = "<group>"; };
@@ -685,7 +686,6 @@
 		37BE8D782C459013002E103E /* UITabBarController+TabBarHeight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITabBarController+TabBarHeight.swift"; sourceTree = "<group>"; };
 		37BE8D7A2C459013002E103E /* UITapGestureRecognizer+DidTapAttributedTextInLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITapGestureRecognizer+DidTapAttributedTextInLabel.swift"; sourceTree = "<group>"; };
 		37BE8D7B2C459013002E103E /* UITapGestureRecognizer+NumberOfTapsRequired.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITapGestureRecognizer+NumberOfTapsRequired.swift"; sourceTree = "<group>"; };
-		37BE8D7D2C459013002E103E /* UITextField+ActivityIndicatorable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+ActivityIndicatorable.swift"; sourceTree = "<group>"; };
 		37BE8D7E2C459013002E103E /* UITextField+AddRightButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+AddRightButton.swift"; sourceTree = "<group>"; };
 		37BE8D7F2C459013002E103E /* UITextField+AddToggleVisibilityButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+AddToggleVisibilityButton.swift"; sourceTree = "<group>"; };
 		37BE8D802C459013002E103E /* UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift"; sourceTree = "<group>"; };
@@ -1694,7 +1694,6 @@
 		37BE8D932C459013002E103E /* UITextField */ = {
 			isa = PBXGroup;
 			children = (
-				37BE8D7D2C459013002E103E /* UITextField+ActivityIndicatorable.swift */,
 				37BE90212C461C63002E103E /* UITextField+AddDatePicker.swift */,
 				37BE8D7E2C459013002E103E /* UITextField+AddRightButton.swift */,
 				37BE8D7F2C459013002E103E /* UITextField+AddToggleVisibilityButton.swift */,
@@ -2105,6 +2104,7 @@
 		37BE8E482C459013002E103E /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				378F31BF2D1135BB007C8C04 /* Actionable.swift */,
 				37BE8E212C459013002E103E /* ActivityControllerRequestable.swift */,
 				37BE8E222C459013002E103E /* ActivityIndicatorable.swift */,
 				37BE8E232C459013002E103E /* AlertPresentable.swift */,
@@ -2399,7 +2399,6 @@
 				37BE8FC92C459014002E103E /* MultipartRequest.swift in Sources */,
 				37BE8FFA2C459014002E103E /* CameraAuthorizationManager.swift in Sources */,
 				37E602242CB7A165006A4541 /* String+AsMutableAttributedString.swift in Sources */,
-				37BE8F492C459013002E103E /* UITextField+ActivityIndicatorable.swift in Sources */,
 				37BE8E892C459013002E103E /* AVCaptureSession+AddInputIfPossible.swift in Sources */,
 				37BE8F8F2C459013002E103E /* UIViewController+OnViewWillAppear.swift in Sources */,
 				37BE8F2D2C459013002E103E /* UINavigationController+IsNotThereA.swift in Sources */,
@@ -2540,6 +2539,7 @@
 				37BE8EFC2C459013002E103E /* UICollectionView+Delegate.swift in Sources */,
 				37BE8E802C459013002E103E /* Array+Coordinator.swift in Sources */,
 				37BE8EFF2C459013002E103E /* UICollectionView+Register.swift in Sources */,
+				378F31C02D1135BB007C8C04 /* Actionable.swift in Sources */,
 				37BE8FD62C459014002E103E /* BackButtonAddable.swift in Sources */,
 				37BE8E8C2C459013002E103E /* AVCaptureVideoDataOutput+AlwaysDiscardsLateVideoFrames.swift in Sources */,
 				37BE8F412C459013002E103E /* UIStackView+Views.swift in Sources */,
