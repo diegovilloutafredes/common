@@ -5,5 +5,5 @@
 import Foundation
 
 extension Int {
-    var asString: String { .init(self) }
+    public var asString: String { .init(self) }
 }

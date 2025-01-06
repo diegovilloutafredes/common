@@ -5,5 +5,5 @@
 import Foundation
 
 extension Int {
-    var isZero: Bool { self == .zero }
+    public var isZero: Bool { self == .zero }
 }

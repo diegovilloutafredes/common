@@ -62,16 +62,16 @@ open class BasePresentableViewController<PresenterType>: PresentableViewControll
     // MARK: - UICollectionViewable
     open func numberOfSections(in collectionView: UICollectionView) -> Int { asCollectionViewable?.getNumberOfSections() ?? 1 }
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { asCollectionViewable?.getNumberOfItems(in: section) ?? .zero }
-
+    
     open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var reuseIdentifier: String { asCollectionViewable?.onHeaderItemReuseIdentifierRequested(in: indexPath.section) ?? .empty }
-
+        
         let headerView = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: reuseIdentifier,
             for: indexPath
         )
-
+        
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             guard
@@ -128,4 +128,10 @@ open class BasePresentableViewController<PresenterType>: PresentableViewControll
         let height = size.height
         return .init(width: width, height: height)
     }
+
+    // MARK: - UIScrollViewDelegate
+    open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {}
+    open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {}
+    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {}
+    open func scrollViewDidScroll(_ scrollView: UIScrollView) {}
 }

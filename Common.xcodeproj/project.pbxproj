@@ -31,8 +31,14 @@
 		376B577A2D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */; };
 		376B57962D10338A0012AA5C /* BaseViewModelableReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B57952D1033890012AA5C /* BaseViewModelableReusableView.swift */; };
 		376B87802C57C20C002BD0C6 /* CACornerMask+Corners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */; };
+		3771DDE62D1CC42500EA855A /* UICollectionView+CenterItemIndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3771DDE52D1CC42500EA855A /* UICollectionView+CenterItemIndexPath.swift */; };
+		3771DDE82D1CC4B700EA855A /* IndexPath+Zero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3771DDE72D1CC4B700EA855A /* IndexPath+Zero.swift */; };
+		3771DDEB2D1CC87600EA855A /* UITabBar+BarTintColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3771DDEA2D1CC87600EA855A /* UITabBar+BarTintColor.swift */; };
+		3771DDED2D1CC88500EA855A /* UITabBar+TintColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3771DDEC2D1CC88500EA855A /* UITabBar+TintColor.swift */; };
+		3771DDEF2D1CC8B800EA855A /* UITabBar+UnselectedItemTintColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3771DDEE2D1CC8B800EA855A /* UITabBar+UnselectedItemTintColor.swift */; };
 		3774A0CB2CF4EB0100C0F179 /* UIButton+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */; };
 		37750F6D2CC2A23C004E828B /* String+QueryItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37750F6C2CC2A23C004E828B /* String+QueryItems.swift */; };
+		377AD1602D2C018600876960 /* UIImage+FromDeviceOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377AD15F2D2C018600876960 /* UIImage+FromDeviceOrientation.swift */; };
 		377CC8CF2C6CD43A00C8601E /* Array+FloatingPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8CE2C6CD43A00C8601E /* Array+FloatingPoint.swift */; };
 		377CC8D12C6CD49B00C8601E /* CVPixelBuffer+AsCMSampleBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8D02C6CD49B00C8601E /* CVPixelBuffer+AsCMSampleBuffer.swift */; };
 		377CC8DE2C7553DF00C8601E /* UISwitch+isOff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CC8DD2C7553DF00C8601E /* UISwitch+isOff.swift */; };
@@ -478,8 +484,14 @@
 		376B57792D0A66BC0012AA5C /* UIView+ActivityIndicatorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActivityIndicatorable.swift"; sourceTree = "<group>"; };
 		376B57952D1033890012AA5C /* BaseViewModelableReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModelableReusableView.swift; sourceTree = "<group>"; };
 		376B877F2C57C20C002BD0C6 /* CACornerMask+Corners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CACornerMask+Corners.swift"; sourceTree = "<group>"; };
+		3771DDE52D1CC42500EA855A /* UICollectionView+CenterItemIndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+CenterItemIndexPath.swift"; sourceTree = "<group>"; };
+		3771DDE72D1CC4B700EA855A /* IndexPath+Zero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexPath+Zero.swift"; sourceTree = "<group>"; };
+		3771DDEA2D1CC87600EA855A /* UITabBar+BarTintColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBar+BarTintColor.swift"; sourceTree = "<group>"; };
+		3771DDEC2D1CC88500EA855A /* UITabBar+TintColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBar+TintColor.swift"; sourceTree = "<group>"; };
+		3771DDEE2D1CC8B800EA855A /* UITabBar+UnselectedItemTintColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBar+UnselectedItemTintColor.swift"; sourceTree = "<group>"; };
 		3774A0CA2CF4EB0100C0F179 /* UIButton+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Menu.swift"; sourceTree = "<group>"; };
 		37750F6C2CC2A23C004E828B /* String+QueryItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+QueryItems.swift"; sourceTree = "<group>"; };
+		377AD15F2D2C018600876960 /* UIImage+FromDeviceOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+FromDeviceOrientation.swift"; sourceTree = "<group>"; };
 		377CC8CE2C6CD43A00C8601E /* Array+FloatingPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+FloatingPoint.swift"; sourceTree = "<group>"; };
 		377CC8D02C6CD49B00C8601E /* CVPixelBuffer+AsCMSampleBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+AsCMSampleBuffer.swift"; sourceTree = "<group>"; };
 		377CC8DD2C7553DF00C8601E /* UISwitch+isOff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISwitch+isOff.swift"; sourceTree = "<group>"; };
@@ -940,6 +952,24 @@
 				3733FABD2C4F7EE3009DE056 /* UIFont+Style.swift */,
 			);
 			path = UIFont;
+			sourceTree = "<group>";
+		};
+		3771DDE92D1CC4F300EA855A /* IndexPath */ = {
+			isa = PBXGroup;
+			children = (
+				3771DDE72D1CC4B700EA855A /* IndexPath+Zero.swift */,
+			);
+			path = IndexPath;
+			sourceTree = "<group>";
+		};
+		3771DDF02D1CC90600EA855A /* UITabBar */ = {
+			isa = PBXGroup;
+			children = (
+				3771DDEA2D1CC87600EA855A /* UITabBar+BarTintColor.swift */,
+				3771DDEC2D1CC88500EA855A /* UITabBar+TintColor.swift */,
+				3771DDEE2D1CC8B800EA855A /* UITabBar+UnselectedItemTintColor.swift */,
+			);
+			path = UITabBar;
 			sourceTree = "<group>";
 		};
 		37750F922CC6A6EF004E828B /* Protocols */ = {
@@ -1459,6 +1489,7 @@
 			isa = PBXGroup;
 			children = (
 				37BE8D182C459013002E103E /* UICollectionView+BackgroundView.swift */,
+				3771DDE52D1CC42500EA855A /* UICollectionView+CenterItemIndexPath.swift */,
 				37BE8D192C459013002E103E /* UICollectionView+DataSource.swift */,
 				37BE8D1A2C459013002E103E /* UICollectionView+Delegate.swift */,
 				37BE8D1B2C459013002E103E /* UICollectionView+IsPrefetchingEnabled.swift */,
@@ -1542,6 +1573,7 @@
 				37BE8D382C459013002E103E /* UIImage+CroppedTo.swift */,
 				37BE8D392C459013002E103E /* UIImage+CroppedToOval.swift */,
 				37BE8D3A2C459013002E103E /* UIImage+FixOrientation.swift */,
+				377AD15F2D2C018600876960 /* UIImage+FromDeviceOrientation.swift */,
 				37BE8D3B2C459013002E103E /* UIImage+GradientImage.swift */,
 				37BE8D3C2C459013002E103E /* UIImage+ImageWithColor.swift */,
 				37BE8D3D2C459013002E103E /* UIImage+Init.swift */,
@@ -1835,6 +1867,7 @@
 				3701F5CF2C897CA700D9C539 /* UISlider */,
 				37BE8D722C459013002E103E /* UIStackView */,
 				37BE8D762C459013002E103E /* UISwitch */,
+				3771DDF02D1CC90600EA855A /* UITabBar */,
 				37BE8D792C459013002E103E /* UITabBarController */,
 				37BE8D7C2C459013002E103E /* UITapGestureRecognizer */,
 				37BE8D932C459013002E103E /* UITextField */,
@@ -1944,6 +1977,7 @@
 				37BE8CC22C459013002E103E /* Date */,
 				37BE8CC42C459013002E103E /* DateComponents */,
 				37BE8CC72C459013002E103E /* Encodable */,
+				3771DDE92D1CC4F300EA855A /* IndexPath */,
 				37BE8CCC2C459013002E103E /* Int */,
 				37BE8CCF2C459013002E103E /* JSONDecoder */,
 				37BE8CD22C459013002E103E /* JSONEncoder */,
@@ -2424,6 +2458,7 @@
 				37BE8EEF2C459013002E103E /* UIBarButtonItem+TintColor.swift in Sources */,
 				37BE8F662C459013002E103E /* UIView+ClipsToBounds.swift in Sources */,
 				37BE8EE72C459013002E103E /* UIApplication+AppSettings.swift in Sources */,
+				3771DDEF2D1CC8B800EA855A /* UITabBar+UnselectedItemTintColor.swift in Sources */,
 				37BE8F3A2C459013002E103E /* UIScrollView+ShowsVerticalScrollIndicator.swift in Sources */,
 				37BE8F0E2C459013002E103E /* UIImage+ApplyImageMask.swift in Sources */,
 				37BE8FF12C459014002E103E /* UIViewBuildable.swift in Sources */,
@@ -2472,6 +2507,7 @@
 				37BE8EAC2C459013002E103E /* CVPixelBuffer+Resized.swift in Sources */,
 				3733FB102C52730B009DE056 /* BaseViewModelableCell.swift in Sources */,
 				37BE8FD22C459014002E103E /* AlertPresentable.swift in Sources */,
+				3771DDE62D1CC42500EA855A /* UICollectionView+CenterItemIndexPath.swift in Sources */,
 				37BE8F452C459013002E103E /* UITabBarController+Init.swift in Sources */,
 				37BE8EF82C459013002E103E /* UIButton+TitleColor.swift in Sources */,
 				37BE8E9F2C459013002E103E /* CMSampleBuffer+Width.swift in Sources */,
@@ -2597,6 +2633,7 @@
 				37BE8EEC2C459013002E103E /* UIBarButtonItem+Action.swift in Sources */,
 				37BE8FBD2C459013002E103E /* KeyValueStore.swift in Sources */,
 				37BE8F612C459013002E103E /* UIView+ApplyBlurredForeground.swift in Sources */,
+				3771DDED2D1CC88500EA855A /* UITabBar+TintColor.swift in Sources */,
 				377CC8CF2C6CD43A00C8601E /* Array+FloatingPoint.swift in Sources */,
 				37BE8F9C2C459013002E103E /* UIWindow+SetRootViewController.swift in Sources */,
 				37BE8F1C2C459013002E103E /* UIImageView+ContentMode.swift in Sources */,
@@ -2663,6 +2700,7 @@
 				37BE8E852C459013002E103E /* AVCaptureDevice+SetTorch.swift in Sources */,
 				37BE8E942C459013002E103E /* Bundle+GetValueFromPlist.swift in Sources */,
 				37BE8FA72C459013002E103E /* VNDetectBarcodesRequest+Symbologies.swift in Sources */,
+				377AD1602D2C018600876960 /* UIImage+FromDeviceOrientation.swift in Sources */,
 				372005982C633463006A150A /* UIScrollView+Delegate.swift in Sources */,
 				37BE8F232C459013002E103E /* UILabel+Font.swift in Sources */,
 				37BE8FA12C459013002E103E /* URL+FileSize.swift in Sources */,
@@ -2726,6 +2764,7 @@
 				37BE8E832C459013002E103E /* AVCaptureDevice+ExposureMode.swift in Sources */,
 				37BE8FD42C459014002E103E /* AppSettingsRequestable.swift in Sources */,
 				37BE8FB92C459013002E103E /* KeyboardDismissableViewController.swift in Sources */,
+				3771DDE82D1CC4B700EA855A /* IndexPath+Zero.swift in Sources */,
 				37BE8FB02C459013002E103E /* WKWebView+SetCookies.swift in Sources */,
 				37BE8EE12C459013002E103E /* String+ToDate.swift in Sources */,
 				37750F6D2CC2A23C004E828B /* String+QueryItems.swift in Sources */,
@@ -2776,6 +2815,7 @@
 				37BE8FF72C459014002E103E /* StatusBarStylableNavigationController.swift in Sources */,
 				37BE8EC52C459013002E103E /* Locale+PreferredLanguageCode.swift in Sources */,
 				37BE8F1A2C459013002E103E /* UIImage+Rotate.swift in Sources */,
+				3771DDEB2D1CC87600EA855A /* UITabBar+BarTintColor.swift in Sources */,
 				37BE8FD12C459014002E103E /* ActivityIndicatorable.swift in Sources */,
 				37BE8F942C459013002E103E /* UIViewController+SetNavigationBar.swift in Sources */,
 				37BE8F062C459013002E103E /* UIColor+ModifiedByPercentage.swift in Sources */,

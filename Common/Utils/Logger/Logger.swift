@@ -20,7 +20,7 @@ extension Loggable {
 
 // MARK: - Logger
 public enum Logger {
-    public static func log(caller: String = #function, _ item: Any) { log(caller: caller, ["value": item]) }
+    public static func log(caller: String = #function, _ item: Any) { log(caller: caller, [.init(describing: item): item]) }
 
     public static func log(caller: String = #function, _ request: URLRequest, data: Data? = nil, response: URLResponse?) {
         let httpResponse = response as? HTTPURLResponse
