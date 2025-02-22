@@ -65,14 +65,13 @@ extension ActivityIndicatorable where Self: UIView {
 
     public func stopActivityIndicator() {
         dispatchOnMain { [weak self] in guard let self else { return }
+            subviews.forEach { $0.show(animated: false) }
             subviews
                 .compactMap { $0 as? UIActivityIndicatorView }
                 .forEach {
                     $0.stopAnimating()
                     $0.removeFromSuperview()
                 }
-
-            subviews.forEach { $0.show(animated: false) }
         }
     }
 }
@@ -81,7 +80,7 @@ extension ActivityIndicatorable where Self: UIView {
 extension ActivityIndicatorable where Self: UIViewController {
     public func startActivityIndicator() {
         dispatchOnMain {
-            var activityColor: UIColor { self.navigationController?.navigationBar.titleColor ?? .black }
+            var activityColor: UIColor { self.navigationController?.navigationBar.backgroundColor?.inverted ?? self.navigationController?.navigationBar.titleColor ?? .black }
             self.startActivityIndicator(with: activityColor)
         }
     }

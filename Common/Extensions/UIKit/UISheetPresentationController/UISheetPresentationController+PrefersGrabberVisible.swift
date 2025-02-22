@@ -1,8 +1,6 @@
 //
-//  UISheetPresentationController++.swift
+//  UISheetPresentationController+PrefersGrabberVisible.swift
 //
-
-import UIKit
 
 import UIKit
 
