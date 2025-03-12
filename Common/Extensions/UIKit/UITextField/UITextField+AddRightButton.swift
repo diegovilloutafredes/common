@@ -16,8 +16,8 @@ extension UITextField {
 
 extension UITextField {
     @discardableResult public func addRightButton(
-        using icon: UIImage? = .symbol("arrowtriangle.up.fill"),//.named("ArrowDown")
-        selectedIcon: UIImage? = .symbol("arrowtriangle.down.fill"),//.named("ArrowDown")
+        using icon: UIImage? = .symbol("arrowtriangle.up.fill"),
+        selectedIcon: UIImage? = .symbol("arrowtriangle.down.fill"),
         tintColor: UIColor? = .black,
         onButtonPressed: @escaping Handler<(UITextField, UIButton)>
     ) -> Self {

@@ -6,9 +6,8 @@ extension Bundle {
     public func getValueFromPlist<T>(for key: String, on resource: String) -> T? {
         guard
             let path = path(forResource: resource, ofType: "plist"),
-            let plist = NSDictionary(contentsOfFile: path),
-            let privateKey = plist.object(forKey: key) as? T
+            let plist = NSDictionary(contentsOfFile: path)
         else { return nil }
-        return privateKey
+        return plist.object(forKey: key) as? T
     }
 }

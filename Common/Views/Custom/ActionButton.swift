@@ -73,7 +73,7 @@ public final class ActionButton: BaseButton {
         .font(theme.titleFont)
         .setAsRoundedView()
         .titleColor(theme.titleColor)
-        .with { if shouldApplyDefaultRatio { $0.setRatio(328/40) } }
+        .with { if shouldApplyDefaultRatio { $0.setRatio(327/40) } }
     }
 }
 

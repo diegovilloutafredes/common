@@ -6,11 +6,8 @@ import Foundation
 
 // MARK: - HTTPService
 public enum HTTPService {
-    @discardableResult public static func request<T: Decodable>(_ resource: URLRequestConvertible, decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), queue: DispatchQueue = .global(qos: .userInitiated), result: @escaping NetworkResultHandler<T>) -> URLSessionTask? {
-        guard let urlRequest = resource.urlRequest else {
-            result(.failure(.invalidRequest(resource)))
-            return nil
-        }
+    @discardableResult public static func request<T: Decodable>(_ resource: URLRequestConvertible, urlSession: URLSession = .shared, decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), queue: DispatchQueue = .global(qos: .userInitiated), result: @escaping NetworkResultHandler<T>) -> URLSessionTask? {
+        guard let urlRequest = resource.urlRequest else { result(.failure(.invalidRequest(resource))); return nil }
 
         let dataTask = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             if
@@ -47,9 +44,7 @@ public enum HTTPService {
                     dispatchOnMain { result(.success(decodedResponse)) }
                 default:
                     guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
-
                     if shouldLog { Logger.log(["response as jsonObject": jsonObject]) }
-
                     dispatchOnMain { result(.failure(.responseError(code: statusCode, response: jsonObject))) }
                 }
             } catch { dispatchOnMain { result(.failure(.decodingError)) } }
@@ -85,9 +80,3 @@ extension HTTPService {
 
 // MARK: - Loggable
 extension HTTPService: Loggable {}
-
-
-// MARK: - URLSession
-extension HTTPService {
-    private static var urlSession: URLSession { .shared }
-}

@@ -6,7 +6,7 @@ import Foundation
 
 // MARK: - Is Valid Email
 extension String {
-    public func isValidEmail() -> Bool {
+    public var isValidEmail: Bool {
         guard !lowercased().hasPrefix("mailto:") else { return false }
 
         guard

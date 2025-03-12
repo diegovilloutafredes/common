@@ -4,6 +4,13 @@
 
 // MARK: - DNITextField
 public final class DNITextField: BaseDNITextField {
+    private let shouldApplyDefaultRatio: Bool
+
+    public init(shouldApplyDefaultRatio: Bool = true) {
+        self.shouldApplyDefaultRatio = shouldApplyDefaultRatio
+        super.init()
+    }
+
     public override func setupView() {
         super.setupView()
         backgroundColor(.white)
@@ -18,8 +25,10 @@ public final class DNITextField: BaseDNITextField {
             using: [.layerMinXMinYCorner, .layerMaxXMinYCorner],
             radius: 4
         )
-        .setRatio(328/56)
         .textColor(.black)
-        .with { $0.leftView(.init(frame: .init(x: .zero, y: .zero, width: 16, height: $0.frame.height))) }
+        .with {
+            $0.leftView(.init(frame: .init(x: .zero, y: .zero, width: 16, height: $0.frame.height)))
+            if shouldApplyDefaultRatio { $0.setRatio(327/56) }
+        }
     }
 }
