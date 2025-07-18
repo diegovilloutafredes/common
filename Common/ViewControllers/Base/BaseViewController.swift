@@ -20,6 +20,11 @@ extension BaseViewController {
     open override var preferredStatusBarStyle: UIStatusBarStyle { .darkContent }
 }
 
+// MARK: - Default prefersHomeIndicatorAutoHidden
+extension BaseViewController {
+    open override var prefersHomeIndicatorAutoHidden: Bool { true }
+}
+
 // MARK: - Lifecycle
 extension BaseViewController {
     open override func viewDidLoad() {
@@ -63,7 +68,8 @@ extension BaseViewController {
     }
 }
 
+/// Restores the swipe to go back gesture when using a custom back button.
 // MARK: - UIGestureRecognizerDelegate
 extension BaseViewController: UIGestureRecognizerDelegate {
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool { true }
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool { navigationController?.viewControllers.count ?? .zero > 1 }
 }

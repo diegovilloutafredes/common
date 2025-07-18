@@ -13,7 +13,7 @@ public struct FileStorage: KeyValueStorage {
 extension FileStorage {
     public func add(item: KeyValue<Storable>, completion: CompletionHandler) {
         guard
-            let data = item.value.encoded,
+            let data = item.value.asData(),
             let documentsDirectory = URL.documentsDirectory
         else { return }
         let fileURL = documentsDirectory.appendingPathComponent(item.key)

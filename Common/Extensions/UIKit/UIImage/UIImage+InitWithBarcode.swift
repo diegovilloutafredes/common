@@ -1,6 +1,5 @@
 //
 //  UIImage+InitWithBarcode.swift
-//  UniPay
 //
 
 import UIKit

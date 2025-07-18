@@ -4,17 +4,19 @@
 
 import UIKit
 
-// MARK: - onViewDidLoad Swizzle
 extension UIViewController {
-    private var onViewDidLoadAction: ViewControllerHandler? {
-        get { associatedObject(for: "onViewDidLoadAction") as? ViewControllerHandler }
+    private var onViewDidLoadAction: Handler<UIViewController>? {
+        get { associatedObject(for: "onViewDidLoadAction") as? Handler<UIViewController> }
         set { swizzleViewDidLoadIfNeeded(); set(associatedObject: newValue, for: "onViewDidLoadAction") }
     }
-
-    @discardableResult public func onViewDidLoad(_ onViewDidLoad: @escaping ViewControllerHandler) -> Self {
+    
+    @discardableResult public func onViewDidLoad(_ onViewDidLoad: @escaping Handler<UIViewController>) -> Self {
         with { $0.onViewDidLoadAction = onViewDidLoad }
     }
+}
 
+// MARK: - onViewDidLoad Swizzle
+extension UIViewController {
     private static var notSwizzledViewDidLoad = true
     @objc private func originalViewDidLoad() {}
 

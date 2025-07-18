@@ -6,7 +6,7 @@ import Foundation
 
 extension UserDefaults: KeyValueStorage {
     public func add(item: (key: String, value: Storable), completion: CompletionHandler) {
-        guard let data = item.value.encoded else { return }
+        guard let data = item.value.asData() else { return }
         set(data, forKey: item.key)
         completion?()
     }

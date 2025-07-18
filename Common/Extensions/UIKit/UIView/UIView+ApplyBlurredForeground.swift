@@ -18,7 +18,7 @@ extension UIView {
                 $0.subviews { visualEffectView }
             }
 
-            $0.bringSubviewToFront(visualEffectView)
+            $0.bringToFront(visualEffectView)
         }
     }
 }

@@ -17,8 +17,8 @@ extension UIView {
             default:
                 $0.subviews { visualEffectView }
             }
-            
-            $0.sendSubviewToBack(visualEffectView)
+
+            $0.sendToBack(visualEffectView)
         }
     }
 }

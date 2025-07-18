@@ -11,7 +11,7 @@ public protocol ActivityIndicatorable: AnyObject {
     func stopActivityIndicator()
 }
 
-// MARK: - Default implementation where Self: BaseCoordinator
+// MARK: - where Self: BaseCoordinator
 extension ActivityIndicatorable where Self: BaseCoordinator {
     private var activityIndicatorable: ActivityIndicatorable? { navigationController.topViewController }
     public func startActivityIndicator() { activityIndicatorable?.startActivityIndicator() }
@@ -19,7 +19,7 @@ extension ActivityIndicatorable where Self: BaseCoordinator {
     public func stopActivityIndicator() { activityIndicatorable?.stopActivityIndicator() }
 }
 
-// MARK: - Default implementation where Self: UITextField
+// MARK: - where Self: UITextField
 extension ActivityIndicatorable where Self: UITextField {
     public func startActivityIndicator() { startActivityIndicator(with: textColor ?? .black) }
 
@@ -37,12 +37,12 @@ extension ActivityIndicatorable where Self: UITextField {
     }
 }
 
-// MARK: - Default implementation where Self: UIView
+// MARK: - where Self: UIView
 extension ActivityIndicatorable where Self: UIView {
     public func startActivityIndicator() {
-        dispatchOnMain {
-            var activityColor: UIColor { self.backgroundColor?.inverted ?? .black }
-            self.startActivityIndicator(with: activityColor)
+        dispatchOnMain { [weak self] in guard let self else { return }
+            var activityColor: UIColor { backgroundColor?.inverted ?? .black }
+            startActivityIndicator(with: activityColor)
         }
     }
 
@@ -76,12 +76,17 @@ extension ActivityIndicatorable where Self: UIView {
     }
 }
 
-// MARK: - Default implementation where Self: UIViewController
+// MARK: - where Self: UIViewController
 extension ActivityIndicatorable where Self: UIViewController {
     public func startActivityIndicator() {
-        dispatchOnMain {
-            var activityColor: UIColor { self.navigationController?.navigationBar.backgroundColor?.inverted ?? self.navigationController?.navigationBar.titleColor ?? .black }
-            self.startActivityIndicator(with: activityColor)
+        dispatchOnMain { [weak self] in guard let self else { return }
+            var color: UIColor {
+                navigationController?.navigationBar.backgroundColor?.inverted ??
+                navigationController?.navigationBar.titleColor ??
+                .black
+            }
+
+            startActivityIndicator(with: color)
         }
     }
 
@@ -126,10 +131,10 @@ extension ActivityIndicatorable where Self: UIViewController {
     public func stopActivityIndicator() {
         dispatchOnMain { [weak self] in guard let self else { return }
             guard
-                let nc = self.navigationController,
+                let nc = navigationController,
                 !nc.isNavigationBarHidden
             else {
-                self.view
+                view
                     .subviews
                     .compactMap { $0 as? UIActivityIndicatorView }
                     .forEach {
@@ -139,13 +144,13 @@ extension ActivityIndicatorable where Self: UIViewController {
                 return
             }
 
-            self.navigationItem
+            navigationItem
                 .rightBarButtonItems?
                 .compactMap { $0.customView as? UIActivityIndicatorView }
                 .forEach { $0.stopAnimating() }
 
-            let itemsToAdd = self.navigationItem.rightBarButtonItems?.filter { !($0.customView is UIActivityIndicatorView) }
-            self.navigationItem.setRightBarButtonItems(itemsToAdd, animated: true)
+            let itemsToAdd = navigationItem.rightBarButtonItems?.filter { !($0.customView is UIActivityIndicatorView) }
+            navigationItem.setRightBarButtonItems(itemsToAdd, animated: true)
         }
     }
 }

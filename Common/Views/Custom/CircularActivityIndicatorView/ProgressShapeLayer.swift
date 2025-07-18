@@ -6,16 +6,16 @@ import UIKit
 
 final class ProgressShapeLayer: CAShapeLayer {
     init(
-        strokeColor: UIColor,
-        lineWidth: CGFloat,
         fillColor: UIColor = .clear,
-        lineCap: CAShapeLayerLineCap = .round
+        lineCap: CAShapeLayerLineCap = .round,
+        lineWidth: CGFloat,
+        strokeColor: UIColor
     ) {
         super.init()
-        self.strokeColor = strokeColor.cgColor
-        self.lineWidth = lineWidth
         self.fillColor = fillColor.cgColor
         self.lineCap = lineCap
+        self.lineWidth = lineWidth
+        self.strokeColor = strokeColor.cgColor
     }
 
     required init?(coder: NSCoder) {

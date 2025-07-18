@@ -8,37 +8,37 @@ public final class CircularActivityIndicatorView: UIView {
     public override class var requiresConstraintBasedLayout: Bool { true }
 
     private let colors: [UIColor]
-    private let lineWidth: CGFloat
     private let lineCap: CAShapeLayerLineCap
+    private let lineWidth: CGFloat
 
     public init(
         frame: CGRect,
         colors: [UIColor],
-        lineWidth: CGFloat,
-        lineCap: CAShapeLayerLineCap
+        lineCap: CAShapeLayerLineCap,
+        lineWidth: CGFloat
     ) {
         self.colors = colors
-        self.lineWidth = lineWidth
         self.lineCap = lineCap
+        self.lineWidth = lineWidth
         super.init(frame: frame)
         self.backgroundColor(.clear)
     }
 
-    public convenience init(colors: [UIColor], lineWidth: CGFloat, lineCap: CAShapeLayerLineCap = .round) {
-        self.init(frame: .zero, colors: colors, lineWidth: lineWidth, lineCap: lineCap)
+    public convenience init(colors: [UIColor], lineCap: CAShapeLayerLineCap = .butt, lineWidth: CGFloat = 4) {
+        self.init(frame: .zero, colors: colors, lineCap: lineCap, lineWidth: lineWidth)
     }
 
     @available(*, unavailable)
     required init(coder aDecoder: NSCoder) {
         fatalError("NSCoder is not supported")
     }
-    
-    private lazy var shapeLayer: ProgressShapeLayer = { .init(strokeColor: colors.first ?? .green, lineWidth: lineWidth, lineCap: lineCap) }()
+
+    private lazy var progressShapeLayer: ProgressShapeLayer = { .init(lineCap: lineCap, lineWidth: lineWidth, strokeColor: colors.first ?? .green) }()
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-
-        layer.cornerRadius = frame.width/2
+        setRatio()
+        setAsRoundedView()
 
         let path = UIBezierPath(
             ovalIn: CGRect(
@@ -48,24 +48,21 @@ public final class CircularActivityIndicatorView: UIView {
                 height: bounds.height
             )
         ).cgPath
-
-        shapeLayer.path = path
+        
+        progressShapeLayer.path = path
     }
-
+    
     public var isAnimating: Bool = false {
         didSet {
             if isAnimating {
                 animateStroke()
                 animateRotation()
             } else {
-                shapeLayer.removeFromSuperlayer()
+                progressShapeLayer.removeFromSuperlayer()
                 layer.removeAllAnimations()
             }
         }
     }
-
-    @discardableResult public func animate() -> Self { with { $0.isAnimating = true } }
-    @discardableResult public func stopAnimating() -> Self { with { $0.isAnimating = false } }
 }
 
 // MARK: - Animations
@@ -91,16 +88,16 @@ extension CircularActivityIndicatorView {
         strokeAnimationGroup.repeatDuration = .infinity
         strokeAnimationGroup.animations = [startAnimation, endAnimation]
 
-        shapeLayer.add(strokeAnimationGroup, forKey: nil)
+        progressShapeLayer.add(strokeAnimationGroup, forKey: nil)
 
-        let colorAnimation = StrokeColorAnimation(
+        let colorKeyframeAnimation = StrokeColorKeyframeAnimation(
             colors: colors.map { $0.cgColor },
             duration: strokeAnimationGroup.duration * Double(colors.count)
         )
 
-        shapeLayer.add(colorAnimation, forKey: nil)
+        progressShapeLayer.add(colorKeyframeAnimation, forKey: nil)
 
-        layer.addSublayer(shapeLayer)
+        layer.addSublayer(progressShapeLayer)
     }
 
     private func animateRotation() {
@@ -112,5 +109,18 @@ extension CircularActivityIndicatorView {
         )
 
         layer.add(rotationAnimation, forKey: nil)
+    }
+}
+
+// MARK: - ActivityIndicatorAnimatableView
+extension CircularActivityIndicatorView: ActivityIndicatorAnimatableView {
+    public func startAnimating() { with { $0.isAnimating = true } }
+    public func stopAnimating() { with { $0.isAnimating = false } }
+}
+
+// MARK: - Animate
+extension CircularActivityIndicatorView {
+    @discardableResult public func animate() -> Self {
+        with { $0.startAnimating() }
     }
 }

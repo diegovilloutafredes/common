@@ -7,9 +7,13 @@ public protocol ViewModelable: AnyObject {
     associatedtype ViewModelType
 }
 
-// MARK: - ViewModelHolder
-public protocol ViewModelHolder: ViewModelable {
+// MARK: - OptionalViewModelHolder
+public protocol OptionalViewModelHolder: ViewModelable {
     var viewModel: ViewModelType? { get set }
+}
+
+public protocol ViewModelHolder: ViewModelable {
+    var viewModel: ViewModelType { get set }
 }
 
 // MARK: - ViewModelInitializable
@@ -26,9 +30,16 @@ public protocol ViewModelSettable: ViewModelable {
     func set(viewModel: ViewModel)
 }
 
+// MARK: - where Self: OptionalViewModelHolder
+extension ViewModelSettable where Self: OptionalViewModelHolder {
+    public func set(viewModel: ViewModel) {
+        self.viewModel = viewModel as? ViewModelType
+    }
+}
+
 // MARK: - where Self: ViewModelHolder
 extension ViewModelSettable where Self: ViewModelHolder {
     public func set(viewModel: ViewModel) {
-        self.viewModel = viewModel as? ViewModelType
+        self.viewModel = viewModel as! ViewModelType
     }
 }

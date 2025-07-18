@@ -8,19 +8,19 @@ import UIKit
 public final class AlertView: BaseViewModelableView<AlertViewModel> {
     private lazy var iconImageView = UIImageView()
         .contentMode(.scaleAspectFit)
-        .image(viewModel?.icon)
-        .tintColor(viewModel?.iconTintColor)
+        .image(viewModel.icon)
+        .tintColor(viewModel.iconTintColor)
         .setRatio()
         .setConstraints { $0.setWidth(to: $1.widthAnchor, multiplier: 0.3) }
 
     private lazy var actionButton = ActionButton(shouldApplyDefaultRatio: false)
-        .onTap { self.viewModel?.onActionButtonPressedHandler?() }
+        .onTap { self.viewModel.onActionButtonPressedHandler?() }
         .setAsRoundedView(radius: .DefaultValues.Button.cornerRadius)
-        .title(viewModel?.actionButtonTitle)
+        .title(viewModel.actionButtonTitle)
         .setConstraints { $0.set(height: 40) }
 
-    private var shouldAddIconImageView: Bool { viewModel?.icon.isNotNil ?? false }
-    private var shouldAddCancelButton: Bool { viewModel?.onCancelButtonPressedHandler.isNotNil ?? false }
+    private var shouldAddIconImageView: Bool { viewModel.icon.isNotNil }
+    private var shouldAddCancelButton: Bool { viewModel.onCancelButtonPressedHandler.isNotNil }
 
     @UIViewBuilder public override var mainView: UIView {
         VStack(
@@ -32,17 +32,17 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
             UILabel()
                 .font(.boldSystemFont(ofSize: 21))
                 .numberOfLines(.zero)
-                .text(viewModel?.title)
+                .text(viewModel.title)
                 .textAlignment(.center)
-                .textColor(viewModel?.titleColor)
+                .textColor(viewModel.titleColor)
 
             UILabel()
                 .adjustsFontSizeToFitWidth(true)
-                .attributedText(viewModel?.attributedMessage)
+                .attributedText(viewModel.attributedMessage)
                 .font(.systemFont(ofSize: 16))
                 .numberOfLines(.zero)
-                .textAlignment(viewModel?.messageAlignment)
-                .textColor(viewModel?.messageColor)
+                .textAlignment(viewModel.messageAlignment)
+                .textColor(viewModel.messageColor)
 
             shouldAddCancelButton ?
             HStack(
@@ -51,9 +51,9 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
                 spacing: .DefaultValues.StackView.spacing
             ) {
                 ActionButton(shouldApplyDefaultRatio: false, theme: DefaultButtonTheme.border)
-                    .onTap { self.viewModel?.onCancelButtonPressedHandler?() }
+                    .onTap { self.viewModel.onCancelButtonPressedHandler?() }
                     .setAsRoundedView(radius: .DefaultValues.Button.cornerRadius)
-                    .title(viewModel?.cancelButtonTitle)
+                    .title(viewModel.cancelButtonTitle)
 
                 actionButton
             } :
@@ -65,6 +65,6 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
     }
 
     public override func setupView() {
-        backgroundColor(viewModel?.backgroundColor)
+        backgroundColor(viewModel.backgroundColor)
     }
 }

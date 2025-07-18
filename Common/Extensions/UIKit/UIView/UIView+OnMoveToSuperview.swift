@@ -4,24 +4,11 @@
 
 import UIKit
 
-// MARK: - ViewAction
-extension UIView {
-    public typealias ViewHandler = Handler<UIView>
-}
-
-// MARK: - ViewAndSuperviewAction
-extension UIView {
-    public typealias ViewAndSuperviewHandler = Handler<(view: UIView, superview: UIView)>
-}
-
 // MARK: - onMoveToSuperview
 extension UIView {
     private var onMoveToSuperview: ViewHandler? {
         get { associatedObject(for: "onMoveToSuperview") as? ViewHandler }
-        set {
-            swizzleIfNeeded()
-            set(associatedObject: newValue, for: "onMoveToSuperview")
-        }
+        set { swizzleIfNeeded(); set(associatedObject: newValue, for: "onMoveToSuperview") }
     }
 
     @discardableResult public func onMoveToSuperview(_ onMoveToSuperview: @escaping ViewHandler) -> Self {
@@ -30,9 +17,9 @@ extension UIView {
 
     @discardableResult public func onMoveToSuperview(_ onMoveToSuperview: @escaping ViewAndSuperviewHandler) -> Self {
         with {
-            $0.onMoveToSuperview = { view in
-                guard let superview = view.superview else { return }
-                onMoveToSuperview((view, superview))
+            $0.onMoveToSuperview = {
+                guard let superview = $0.superview else { return }
+                onMoveToSuperview(($0, superview))
             }
         }
     }
@@ -46,10 +33,9 @@ extension UIView {
 
     @objc private func swizzledDidMoveToSuperview() {
         originalDidMoveToSuperview()
-        if superview.isNotNil {
-            onMoveToSuperview?(self)
-            onMoveToSuperview = nil
-        }
+        guard superview.isNotNil else { return }
+        onMoveToSuperview?(self)
+        onMoveToSuperview = nil
     }
 
     private func swizzleIfNeeded() {

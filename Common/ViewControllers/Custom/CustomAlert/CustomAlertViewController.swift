@@ -6,10 +6,12 @@ import UIKit
 
 // MARK: - CustomAlertViewController
 public final class CustomAlertViewController: BaseViewController {
+    private let backgroundColor: UIColor
     private let contentView: UIView
     private var onDismissRequestedHandler: CompletionHandler
 
-    public init(contentView: UIView, onDismissRequested handler: CompletionHandler = nil) {
+    public init(backgroundColor: UIColor = .black.withAlphaComponent(0.5), contentView: UIView, onDismissRequested handler: CompletionHandler = nil) {
+        self.backgroundColor = backgroundColor
         self.contentView = contentView
         self.onDismissRequestedHandler = handler
         super.init(nibName: nil, bundle: nil)
@@ -22,8 +24,8 @@ public final class CustomAlertViewController: BaseViewController {
 
     @UIViewBuilder public override var mainView: UIView {
         UIButton()
-            .backgroundColor(.black.withAlphaComponent(0.5))
-            .onTap { self.onDismissRequestedHandler?() }
+            .backgroundColor(backgroundColor)
+            .onTap { _ in self.onDismissRequestedHandler?() }
             .setConstraints { $0.snap(to: $1) }
         contentView
             .cornerRadius(.DefaultValues.AlertView.cornerRadius)

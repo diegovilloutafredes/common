@@ -5,9 +5,9 @@
 import Foundation
 
 extension String {
-    public func decodeFromBase64() -> String? { Data(base64Encoded: self)?.toString() }
+    public var decodedFromBase64: String? { Data(base64Encoded: self)?.asString() }
 }
 
 extension String {
-    public func encodeAsBase64() -> String { toData().base64EncodedString() }
+    public var encodedAsBase64: String { asData.base64EncodedString() }
 }

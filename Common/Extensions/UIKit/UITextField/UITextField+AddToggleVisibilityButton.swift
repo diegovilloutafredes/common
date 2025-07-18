@@ -24,19 +24,26 @@ extension UITextField {
                 .image(notVisibleVisiblePasswordIcon, for: .selected)
                 .setRatio()
                 .tintColor(tintColor)
+                .onTap { self.onTapped($0.0 as! UIButton) }
 
-            rightButton.addTarget($0, action: #selector(onRightButtonPressed(sender:)), for: .touchUpInside)
-
-            $0.rightViewMode = .always
-            $0.rightView = rightButton
+            $0.rightView(
+                HStack(alignment: .center) {
+                    rightButton
+                    UIView()
+                        .setRatio()
+                        .setConstraints { $0.set(width: 16) }
+                }
+            )
         }
     }
 
-    @objc private func onRightButtonPressed(sender: UIButton) {
+    private func onTapped(_ button: UIButton) {
         isSecureTextEntry.toggle()
-        sender.isSelected.toggle()
+        button.isSelected.toggle()
 
-        if let existingText = text, isSecureTextEntry {
+        if
+            let existingText = text,
+            isSecureTextEntry {
             deleteBackward()
             if let textRange = textRange(from: beginningOfDocument, to: endOfDocument) {
                 replace(textRange, withText: existingText)

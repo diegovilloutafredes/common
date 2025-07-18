@@ -12,7 +12,7 @@ extension UIViewController {
             withDuration: duration,
             delay: .zero,
             options: options,
-            animations: { self.view.layoutIfNeeded() },
+            animations: { [weak self] in guard let self else { return }; view.layoutIfNeeded() },
             completion: { _ in completion?() }
         )
     }

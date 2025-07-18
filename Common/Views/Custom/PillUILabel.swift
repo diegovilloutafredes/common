@@ -6,7 +6,7 @@ import UIKit
 
 final class PillUILabel: BaseLabel {
     private var verticalPad: CGFloat = 8
-    private var horizontalPad: CGFloat = 4
+    private var horizontalPad: CGFloat = 8
 
     override var intrinsicContentSize: CGSize {
         let contentSize = super.intrinsicContentSize
@@ -16,12 +16,12 @@ final class PillUILabel: BaseLabel {
     }
 
     override func setupView() {
-        adjustsFontSizeToFitWidth(true)
+        adjustsFontSizeToFitWidth()
         backgroundColor(.black)
         font(.systemFont(ofSize: 16))
         numberOfLines()
         textAlignment(.center)
         textColor(.white)
-        setAsRoundedView()
+        onLayoutSubviews { $0.setAsRoundedView() }
     }
 }

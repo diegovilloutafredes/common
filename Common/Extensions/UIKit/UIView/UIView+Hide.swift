@@ -11,19 +11,19 @@ extension UIView {
 
         guard animated else {
             alpha(.zero)
-            isHidden = !animated
+            isHidden(!animated)
             completion?()
             return
         }
 
-        dispatchOnMain { [weak self] in guard let self else { return }
+        dispatchOnMain {
             UIView.animate(
                 withDuration: duration,
                 delay: .zero,
-                options: .curveEaseIn,
+                options: .curveEaseOut,
                 animations: { self.alpha(.zero) }
             ) { _ in
-                self.isHidden = animated
+                self.isHidden(animated)
                 completion?()
             }
         }

@@ -7,10 +7,15 @@ import UIKit
 // MARK: - FontStyle
 extension UIFont {
     public enum FontStyle: String, Uppercaseable, CaseIterable {
+        case black
         case bold
-        case regular
         case extraBold
-        case semiBold
+        case extraLight
+        case italic
+        case light
         case medium
+        case regular
+        case semiBold
+        case thin
     }
 }

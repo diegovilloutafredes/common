@@ -27,8 +27,6 @@ extension AlertViewModel {
     public var titleColor: UIColor { .black }
     public var messageAlignment: NSTextAlignment { .center }
     public var messageColor: UIColor { .black }
-    public var actionButtonTitle: String { .DefaultValues.Alerts.acceptActionTitle }
-    public var cancelButtonTitle: String { .DefaultValues.Alerts.cancelActionTitle }
 }
 
 // MARK: - AlertViewModelPayload
@@ -36,14 +34,18 @@ public struct AlertViewModelPayload {
     public let icon: UIImage?
     public let title: String
     public let attributedMessage: NSAttributedString
+    public let actionButtonTitle: String
+    public let cancelButtonTitle: String
     public let onActionButtonPressedHandler: CompletionHandler
     public let onCancelButtonPressedHandler: CompletionHandler
     public let shouldHandleBackgroundClick: Bool
 
-    public init(icon: UIImage? = nil, title: String, attributedMessage: NSAttributedString, onActionButtonPressedHandler: CompletionHandler, onCancelButtonPressedHandler: CompletionHandler = nil, shouldHandleBackgroundClick: Bool = true) {
+    public init(icon: UIImage? = nil, title: String, attributedMessage: NSAttributedString, actionButtonTitle: String = .DefaultValues.Alerts.acceptActionTitle, cancelButtonTitle: String = .DefaultValues.Alerts.cancelActionTitle, onActionButtonPressedHandler: CompletionHandler, onCancelButtonPressedHandler: CompletionHandler = nil, shouldHandleBackgroundClick: Bool = true) {
         self.icon = icon
         self.title = title
         self.attributedMessage = attributedMessage
+        self.actionButtonTitle = actionButtonTitle
+        self.cancelButtonTitle = cancelButtonTitle
         self.onActionButtonPressedHandler = onActionButtonPressedHandler
         self.onCancelButtonPressedHandler = onCancelButtonPressedHandler
         self.shouldHandleBackgroundClick = shouldHandleBackgroundClick

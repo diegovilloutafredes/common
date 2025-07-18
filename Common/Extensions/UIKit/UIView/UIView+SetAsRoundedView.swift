@@ -11,20 +11,20 @@ extension UIView {
             dispatchOnMain { [weak self] in guard let self else { return }
                 self.clipsToBounds(true)
 
-                let actions: CompletionHandler = {
+                let actions: Action = {
                     self.round(corners: maskedCorners, radius: radius ?? self.frame.height / 2)
                 }
 
                 guard animated else {
-                    actions?()
+                    actions()
                     return
                 }
 
                 UIView.animate(
                     withDuration: .DefaultValues.animationDuration,
                     delay: .zero,
-                    options: .curveEaseIn,
-                    animations: { actions?() }
+                    options: .curveEaseInOut,
+                    animations: { actions() }
                 )
             }
         }

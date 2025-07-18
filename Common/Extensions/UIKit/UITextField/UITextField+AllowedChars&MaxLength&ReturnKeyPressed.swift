@@ -5,45 +5,14 @@
 import UIKit
 
 extension UITextField {
-    private var allowedChars: String? {
-        get { associatedObject(for: "allowedChars") as? String }
-        set {
-            delegate = self
-            autocorrectionType = .no
-            set(associatedObject: newValue, for: "allowedChars")
-        }
-    }
-}
-
-extension UITextField {
     @discardableResult public func allowedChars(_ allowedChars: String? = nil) -> Self {
         with { $0.allowedChars = allowedChars }
     }
 }
 
 extension UITextField {
-    private var maxLength: Int {
-        get { associatedObject(for: "maxLength") as? Int ?? Int.max }
-        set {
-            delegate = self
-            set(associatedObject: newValue, for: "maxLength")
-        }
-    }
-}
-
-extension UITextField {
     @discardableResult public func maxLength(_ maxLength: Int) -> Self {
         with { $0.maxLength = maxLength }
-    }
-}
-
-extension UITextField {
-    private var onReturnKeyPressed: Handler<UITextField>? {
-        get { associatedObject(for: "onReturnKeyPressed") as? Handler<UITextField> }
-        set {
-            delegate = self
-            set(associatedObject: newValue, for: "onReturnKeyPressed")
-        }
     }
 }
 
@@ -69,5 +38,37 @@ extension UITextField: @retroactive UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         onReturnKeyPressed?(self)
         return onReturnKeyPressed.isNotNil
+    }
+}
+
+// MARK: - Convenience
+extension UITextField {
+    private var allowedChars: String? {
+        get { associatedObject(for: "allowedChars") as? String }
+        set {
+            delegate = self
+            autocorrectionType = .no
+            set(associatedObject: newValue, for: "allowedChars")
+        }
+    }
+}
+
+extension UITextField {
+    private var maxLength: Int {
+        get { associatedObject(for: "maxLength") as? Int ?? Int.max }
+        set {
+            delegate = self
+            set(associatedObject: newValue, for: "maxLength")
+        }
+    }
+}
+
+extension UITextField {
+    private var onReturnKeyPressed: Handler<UITextField>? {
+        get { associatedObject(for: "onReturnKeyPressed") as? Handler<UITextField> }
+        set {
+            delegate = self
+            set(associatedObject: newValue, for: "onReturnKeyPressed")
+        }
     }
 }

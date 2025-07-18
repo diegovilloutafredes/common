@@ -6,7 +6,7 @@ import Foundation
 
 // MARK: - Logger
 public enum Logger {
-    public static func log(caller: String = #function, _ item: Any) { log(caller: caller, [.init(describing: item): item]) }
+    public static func log(caller: String = #function, _ item: Any) { log(caller: caller, ["item": item]) }
 
     public static func log(caller: String = #function, _ request: URLRequest, data: Data? = nil, response: URLResponse?) {
         let httpResponse = response as? HTTPURLResponse
@@ -16,7 +16,7 @@ public enum Logger {
         let url = request.url!
         let httpMethod = request.httpMethod!
         let httpBody = request.httpBody ?? Data()
-        let body = String(data: httpBody, encoding: .utf8) ?? "Body is not a String"
+        let body = httpBody.asString() ?? "Body is not a String"
         let headers = request.allHTTPHeaderFields
         let headersString = headers!.isEmpty ? "Empty headers" : "\(headers!)"
 
@@ -27,7 +27,7 @@ public enum Logger {
                 "URL": url,
                 "HEADERS": headersString,
                 "METHOD": httpMethod,
-                "DATA": data?.toString() ?? .empty,
+                "DATA": data?.asString() ?? .empty,
                 "BODY": body
             ]
         )

@@ -17,3 +17,10 @@ public func dispatchOnMain(_ action: @escaping Action) { DispatchQueue.main.asyn
 
 // MARK: - dispatchOnMainAfter
 public func dispatchOnMainAfter(_ deadline: DispatchTime, action: @escaping Action) { DispatchQueue.main.asyncAfter(deadline: deadline, execute: action) }
+
+
+// MARK: - EmptyResult
+public enum EmptyResult<Failure: Error> {
+    case success
+    case failure(Failure)
+}

@@ -4,17 +4,19 @@
 
 import UIKit
 
-// MARK: - onViewWillAppear Swizzle
 extension UIViewController {
-    private var onViewWillAppearAction: ViewControllerHandler? {
-        get { associatedObject(for: "onViewWillAppearAction") as? ViewControllerHandler }
+    private var onViewWillAppearAction: Handler<UIViewController>? {
+        get { associatedObject(for: "onViewWillAppearAction") as? Handler<UIViewController> }
         set { swizzleViewWillAppearIfNeeded(); set(associatedObject: newValue, for: "onViewWillAppearAction") }
     }
-
-    @discardableResult public func onViewWillAppear(_ onViewWillAppear: @escaping ViewControllerHandler) -> Self {
+    
+    @discardableResult public func onViewWillAppear(_ onViewWillAppear: @escaping Handler<UIViewController>) -> Self {
         with { $0.onViewWillAppearAction = onViewWillAppear }
     }
+}
 
+// MARK: - onViewWillAppear Swizzle
+extension UIViewController {
     private static var notSwizzledViewWillAppear = true
     @objc private func originalViewWillAppear() {}
 

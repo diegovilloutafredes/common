@@ -16,7 +16,7 @@ public enum HTTPService {
             {
                 let afterRequestTime = Date.asMilliseconds
                 let delta = afterRequestTime - beforeRequestTime
-                Logger.log(["Request Delta of \(resource.urlRequest!)": "\(delta)ms"])
+                Logger.log(["Request delta of \(resource.urlRequest!)": "\(delta)ms"])
             }
 
             guard error.isNil else {
@@ -43,9 +43,9 @@ public enum HTTPService {
                     let decodedResponse = try decoder.decode(T.self, from: data)
                     dispatchOnMain { result(.success(decodedResponse)) }
                 default:
-                    guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+                    guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { dispatchOnMain { result(.failure(.decodingError)) }; return }
                     if shouldLog { Logger.log(["response as jsonObject": jsonObject]) }
-                    dispatchOnMain { result(.failure(.responseError(code: statusCode, response: jsonObject))) }
+                    dispatchOnMain { result(.failure(.responseError(code: statusCode, jsonObject: jsonObject, responseAsData: data))) }
                 }
             } catch { dispatchOnMain { result(.failure(.decodingError)) } }
         }

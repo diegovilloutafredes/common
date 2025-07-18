@@ -9,8 +9,8 @@ extension UIApplication {
     public var keyWindow: UIWindow? {
         connectedScenes
             .filter { $0.activationState == .foregroundActive }
-            .first { $0 is UIWindowScene }
-            .flatMap { $0 as? UIWindowScene }?
+            .compactMap { $0 as? UIWindowScene }
+            .first?
             .windows
             .first { $0.isKeyWindow }
         }
