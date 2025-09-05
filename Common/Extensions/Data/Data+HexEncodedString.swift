@@ -5,12 +5,16 @@
 import Foundation
 
 extension Data {
-    struct HexEncodingOptions: OptionSet {
-        let rawValue: Int
+    public struct HexEncodingOptions: OptionSet {
+        public let rawValue: Int
         static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
+
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
     }
 
-    func hexEncodedString(options: HexEncodingOptions = []) -> String {
+    public func hexEncodedString(options: HexEncodingOptions = []) -> String {
         let hexDigits = Array((options.contains(.upperCase) ? "0123456789ABCDEF" : "0123456789abcdef").utf16)
         var chars = [unichar]()
 

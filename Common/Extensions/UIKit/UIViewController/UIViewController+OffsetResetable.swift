@@ -42,19 +42,19 @@ extension UIViewController {
 }
 
 extension UIViewController {
-    public func closestCollectionView(from view: UIView) -> UICollectionView? { getClosest(from: view) }
-    public func closestScrollView(from view: UIView) -> UIScrollView? { getClosest(from: view) }
-}
-
-extension UIViewController {
-    public func getClosest<T: UIView>(from view: UIView) -> T? {
+    public func getClosest<T: UIView>() -> T? {
         guard let sv = view as? T else { return view.subviews.compactMap { getClosest(from: $0) }.first }
         return sv
     }
 }
 
 extension UIViewController {
-    public func getClosest<T: UIView>() -> T? {
+    public func closestCollectionView(from view: UIView) -> UICollectionView? { getClosest(from: view) }
+    public func closestScrollView(from view: UIView) -> UIScrollView? { getClosest(from: view) }
+}
+
+extension UIViewController {
+    public func getClosest<T: UIView>(from view: UIView) -> T? {
         guard let sv = view as? T else { return view.subviews.compactMap { getClosest(from: $0) }.first }
         return sv
     }

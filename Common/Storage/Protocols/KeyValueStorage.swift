@@ -2,6 +2,7 @@
 //  KeyValueStorage.swift
 //
 
+// MARK: - Typealias
 public typealias Tuple<Key, Value> = (key: Key, value: Value)
 public typealias KeyValue<Value> = Tuple<String, Value>
 

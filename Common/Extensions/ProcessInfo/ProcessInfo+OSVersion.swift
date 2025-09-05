@@ -5,5 +5,5 @@
 import Foundation
 
 extension ProcessInfo {
-    var osVersion: String { "\(operatingSystemVersion.majorVersion).\(operatingSystemVersion.minorVersion).\(operatingSystemVersion.patchVersion)" }
+    public var osVersion: String { "\(operatingSystemVersion.majorVersion).\(operatingSystemVersion.minorVersion).\(operatingSystemVersion.patchVersion)" }
 }

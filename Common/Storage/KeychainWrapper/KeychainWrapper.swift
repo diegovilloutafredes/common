@@ -280,11 +280,6 @@ final public class KeychainWrapper {
         }
     }
 
-    @available(*, deprecated, message: "remove is deprecated since version 2.2.1, use removeObject instead")
-    @discardableResult public func remove(key: String, withAccessibility accessibility: KeychainItemAccessibility? = nil, isSynchronizable: Bool = false) -> Bool {
-        removeObject(forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
-    }
-
     /// Remove an object associated with a specified key. If re-using a key but with a different accessibility, first remove the previous key value using removeObjectForKey(:withAccessibility) using the same accessibilty it was saved with.
     ///
     /// - parameter forKey: The key value to remove data for.

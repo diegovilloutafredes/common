@@ -13,15 +13,9 @@ public enum AlertViewType {
 
 // MARK: - AlertPresentable
 public protocol AlertPresentable: AnyObject {
-    var viewController: UIViewController? { get }
     func presentAlertView(type: AlertViewType, acceptAction: Handler<UIAlertAction>?, cancelAction: Handler<UIAlertAction>?)
     func presentAlertView(viewModel: AlertViewModel, onDismissRequested handler: CompletionHandler)
     func presentTextInputAlertView(title: String, message: String, placeholder: String, handler: @escaping Handler<String?>)
-}
-
-// MARK: - Default implementation where Self: UIViewController
-extension AlertPresentable where Self: UIViewController {
-    public var viewController: UIViewController? { self }
 }
 
 // MARK: - Default implementation
@@ -127,6 +121,7 @@ extension AlertPresentable {
     }
 }
 
+// MARK: - Convenience
 extension AlertPresentable {
     private func applyDefaultAlertStyle(to alertController: UIAlertController, alertTitle: String, alertMessage: String) {
         alertController.view.tintColor = .black

@@ -49,6 +49,8 @@ extension NSObject {
                     name: name,
                     object: nil
                 )
+            Logger.log(["observer": $0])
+            Logger.log(["name": name])
         }
     }
 
@@ -60,6 +62,7 @@ extension NSObject {
                     name: name,
                     object: nil
                 )
+            Logger.log(["name": name])
         }
     }
 
@@ -73,6 +76,8 @@ extension NSObject {
                     name: name,
                     object: nil
                 )
+            Logger.log(["observer": $0])
+            Logger.log(["name": name])
         }
     }
 }

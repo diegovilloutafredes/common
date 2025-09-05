@@ -6,14 +6,16 @@ import UIKit
 
 // MARK: - Animate constraint changes
 extension UIViewController {
-    public func animate(_ duration: TimeInterval = .DefaultValues.animationDuration, options: UIView.AnimationOptions = [.curveEaseIn], constraintChanges: () -> Void, completion: CompletionHandler = nil) {
-        constraintChanges()
-        UIView.animate(
-            withDuration: duration,
-            delay: .zero,
-            options: options,
-            animations: { [weak self] in guard let self else { return }; view.layoutIfNeeded() },
-            completion: { _ in completion?() }
-        )
+    public func animateConstraints(_ duration: TimeInterval = .DefaultValues.animationDuration, options: UIView.AnimationOptions = .curveEaseInOut, constraintChanges: @escaping Action, completion: Handler<Bool>? = nil) {
+        if Thread.isMainThread {
+            constraintChanges()
+            UIView.animate(
+                withDuration: duration,
+                delay: .zero,
+                options: options,
+                animations: { [weak self] in guard let self else { return }; view.layoutIfNeeded() },
+                completion: completion
+            )
+        } else { dispatchOnMain { [weak self] in guard let self else { return }; animateConstraints(duration, options: options, constraintChanges: constraintChanges, completion: completion) } }
     }
 }

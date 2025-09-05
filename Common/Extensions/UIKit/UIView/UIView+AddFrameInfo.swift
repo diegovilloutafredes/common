@@ -13,7 +13,7 @@ extension UIView {
                     VStack {
                         [
                             UILabel("X: \(Int(view.frame.origin.x)) Y: \(Int(view.frame.origin.y))"),
-                            UILabel("Width: \(Int(view.frame.size.width)) Height: \(Int(view.frame.size.height))")
+                            UILabel("W: \(Int(view.frame.size.width)) H: \(Int(view.frame.size.height))")
                         ].map {
                             $0
                                 .adjustsFontSizeToFitWidth()
@@ -29,7 +29,7 @@ extension UIView {
                     VStack {
                         [
                             UILabel("X: \(Int(view.frame.origin.x)) Y: \(Int(view.frame.origin.y))"),
-                            UILabel("Width: \(Int(view.frame.size.width)) Height: \(Int(view.frame.size.height))")
+                            UILabel("W: \(Int(view.frame.size.width)) H: \(Int(view.frame.size.height))")
                         ].map {
                             $0
                                 .adjustsFontSizeToFitWidth()

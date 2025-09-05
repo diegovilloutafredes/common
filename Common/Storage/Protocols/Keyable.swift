@@ -21,5 +21,5 @@ extension Keyable where Self: RawRepresentable, RawValue == String {
 
 // MARK: - where Self: Stringable
 extension Keyable where Self: Stringable {
-    public var key: String { self.asString }
+    public var key: String { asString }
 }

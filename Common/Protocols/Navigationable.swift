@@ -4,6 +4,87 @@
 
 import UIKit
 
+// MARK: - DismissType
+public enum DismissType {
+    case fromRoot
+    case topMost
+}
+
+// MARK: - Dismissable
+public protocol Dismissable {
+    func dismiss(_ type: DismissType, animated: Bool, completion: CompletionHandler)
+}
+
+extension Dismissable {
+    public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
+
+    public func dismiss(_ type: DismissType = .topMost, animated: Bool = true, completion: CompletionHandler = nil) {
+        switch type {
+        case .fromRoot: viewController?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
+        case .topMost: viewController?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
+        }
+    }
+}
+
+// MARK: - where Self: Navigationable
+extension Dismissable where Self: Navigationable {
+    public var viewController: UIViewController? { navigationController }
+
+    public func dismiss(_ type: DismissType = .topMost, animated: Bool = true, completion: CompletionHandler = nil) {
+        switch type {
+        case .fromRoot: viewController?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
+        case .topMost: viewController?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
+        }
+    }
+}
+
+
+
+
+
+// MARK: - PresentType
+public enum PresentType {
+    case dismissingCurrent
+    case overCurrent
+}
+
+// MARK: - Presentable
+public protocol Presentable {
+    func present(_ type: PresentType, viewController: UIViewController, animated: Bool, completion: CompletionHandler)
+}
+
+extension Presentable {
+    public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
+
+    public func present(_ type: PresentType = .dismissingCurrent, viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
+        switch type {
+        case .dismissingCurrent:
+            self.viewController?.dismiss(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
+        case .overCurrent:
+            self.viewController?.present(viewController, animated: animated, completion: completion)
+        }
+    }
+}
+
+// MARK: - where Self: Navigationable
+extension Presentable where Self: Navigationable {
+    public var viewController: UIViewController? { navigationController }
+
+    public func present(_ type: PresentType = .dismissingCurrent, viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
+        switch type {
+        case .dismissingCurrent:
+            self.viewController?.dismissTopMostPresentedViewController(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
+//            self.viewController?.dismiss(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
+        case .overCurrent:
+            (self.viewController?.topMostPresentedViewController ?? self.viewController)?.present(viewController, animated: animated, completion: completion)
+        }
+    }
+}
+
+
+
+
+
 // MARK: - PopType
 public enum PopType {
     case back
@@ -14,19 +95,14 @@ public enum PopType {
 // MARK: - Navigationable
 public protocol Navigationable {
     var navigationController: UINavigationController { get }
-    func dismiss(animated: Bool, completion: CompletionHandler)
     func pop(_ type: PopType, animated: Bool)
-    func present(_ viewController: UIViewController, animated: Bool, completion: CompletionHandler)
     func push(_ viewController: UIViewController, animated: Bool)
+    func set(_ viewController: UIViewController, animated: Bool)
     func set(_ viewControllers: [UIViewController], animated: Bool)
 }
 
 // MARK: - Default implementation
 extension Navigationable {
-    public func dismiss(animated: Bool = true, completion: CompletionHandler = nil) {
-        navigationController.dismissPresentedViewController(animated: animated, completion: completion)
-    }
-
     public func pop(_ type: PopType = .back, animated: Bool = true) {
         switch type {
         case .back:
@@ -42,9 +118,7 @@ extension Navigationable {
         navigationController.pushViewController(viewController, animated: animated)
     }
 
-    public func present(_ viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
-        navigationController.present(viewController, animated: animated, completion: completion)
-    }
+    public func set(_ viewController: UIViewController, animated: Bool = false) { set([viewController], animated: animated) }
 
     public func set(_ viewControllers: [UIViewController], animated: Bool = false) {
         navigationController.setViewControllers(viewControllers, animated: animated)

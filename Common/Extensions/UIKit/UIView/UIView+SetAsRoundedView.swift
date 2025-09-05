@@ -9,22 +9,19 @@ extension UIView {
     @discardableResult public func setAsRoundedView(using maskedCorners: CACornerMask = .all, radius: CGFloat? = nil, animated: Bool = false) -> Self {
         with { _ in
             dispatchOnMain { [weak self] in guard let self else { return }
-                self.clipsToBounds(true)
+                clipsToBounds(true)
 
-                let actions: Action = {
-                    self.round(corners: maskedCorners, radius: radius ?? self.frame.height / 2)
+                let animations: Action = { [weak self] in guard let self else { return }
+                    round(corners: maskedCorners, radius: radius ?? frame.height / 2)
                 }
 
-                guard animated else {
-                    actions()
-                    return
-                }
+                guard animated else { animations(); return }
 
                 UIView.animate(
                     withDuration: .DefaultValues.animationDuration,
                     delay: .zero,
                     options: .curveEaseInOut,
-                    animations: { actions() }
+                    animations: animations
                 )
             }
         }

@@ -6,6 +6,7 @@
 import Common
 import UIKit
 
+// MARK: - SceneDelegate
 final class SceneDelegate: UIResponder {
     var window: UIWindow?
 }
@@ -13,14 +14,17 @@ final class SceneDelegate: UIResponder {
 // MARK: - UIWindowSceneDelegate
 extension SceneDelegate: UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        Logger.log(scene)
+        Logger.log(session)
+        Logger.log(connectionOptions)
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         window?.set(rootViewController: ViewController())
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {}
-    func sceneDidBecomeActive(_ scene: UIScene) {}
-    func sceneWillResignActive(_ scene: UIScene) {}
-    func sceneWillEnterForeground(_ scene: UIScene) {}
-    func sceneDidEnterBackground(_ scene: UIScene) {}
+    func sceneDidDisconnect(_ scene: UIScene) { Logger.log(self) }
+    func sceneDidBecomeActive(_ scene: UIScene) { Logger.log(self) }
+    func sceneWillResignActive(_ scene: UIScene) { Logger.log(self) }
+    func sceneWillEnterForeground(_ scene: UIScene) { Logger.log(self) }
+    func sceneDidEnterBackground(_ scene: UIScene) { Logger.log(self) }
 }

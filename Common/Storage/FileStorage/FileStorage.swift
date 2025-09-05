@@ -6,7 +6,7 @@ import Foundation
 
 // MARK: - FileStorage
 public struct FileStorage: KeyValueStorage {
-    static var shared = FileStorage()
+    public static var shared = FileStorage()
     private init() {}
 }
 
@@ -14,9 +14,8 @@ extension FileStorage {
     public func add(item: KeyValue<Storable>, completion: CompletionHandler) {
         guard
             let data = item.value.asData(),
-            let documentsDirectory = URL.documentsDirectory
+            let fileURL = fileURL(using: item.key)
         else { return }
-        let fileURL = documentsDirectory.appendingPathComponent(item.key)
         try? data.write(to: fileURL)
         completion?()
     }
@@ -26,15 +25,17 @@ extension FileStorage {
     }
 
     public func get<T: Storable>(using key: String) -> T? {
-        guard let documentsDirectory = URL.documentsDirectory else { return nil }
-        let fileURL = documentsDirectory.appendingPathComponent(key)
+        guard let fileURL = fileURL(using: key) else { return nil }
         return try? Data(contentsOf: fileURL).decoded()
     }
 
     public func remove(using key: String, completion: CompletionHandler) {
-        guard let documentsDirectory = URL.documentsDirectory else { return }
-        let fileURL = documentsDirectory.appendingPathComponent(key)
+        guard let fileURL = fileURL(using: key) else { return }
         try? FileManager.default.removeItem(at: fileURL)
         completion?()
     }
+}
+
+extension FileStorage {
+    private func fileURL(using pathComponent: String) -> URL? { URL.documentsDirectory?.appendingPathComponent(pathComponent) }
 }

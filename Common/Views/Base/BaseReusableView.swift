@@ -6,7 +6,8 @@ import UIKit
 
 // MARK: - BaseReusableView
 open class BaseReusableView: UICollectionReusableView, UIViewBuildable {
-    @UIViewBuilder open var mainView: UIView { UIView() }
+    @UIViewBuilder
+    open var mainView: UIView { UIView() }
 
     override public init(frame: CGRect) {
         super.init(frame: frame)

@@ -6,7 +6,8 @@ import UIKit
 
 // MARK: - BaseViewController
 open class BaseViewController: UIViewController, UIViewBuildable {
-    @UIViewBuilder open var mainView: UIView { UIView() }
+    @UIViewBuilder
+    open var mainView: UIView { UIView() }
 
     public override func loadView() {
         self.view = mainView

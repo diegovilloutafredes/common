@@ -33,7 +33,7 @@ public final class CircularActivityIndicatorView: UIView {
         fatalError("NSCoder is not supported")
     }
 
-    private lazy var progressShapeLayer: ProgressShapeLayer = { .init(lineCap: lineCap, lineWidth: lineWidth, strokeColor: colors.first ?? .green) }()
+    private lazy var progressShapeLayer: ProgressShapeLayer = { .init(lineCap: lineCap, lineWidth: lineWidth, strokeColor: colors.first ?? .green) } ()
 
     public override func layoutSubviews() {
         super.layoutSubviews()
