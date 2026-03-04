@@ -6,6 +6,12 @@ import UIKit
 
 // MARK: - Hide
 extension UIView {
+    
+    /// Hides the view with optional animation.
+    /// - Parameters:
+    ///   - animated: Whether to animate. Defaults to `true`.
+    ///   - duration: The animation duration.
+    ///   - completion: Completion handler.
     public func hide(animated: Bool = true, with duration: TimeInterval = .DefaultValues.animationDuration, completion: CompletionHandler = nil) {
         guard isNotHidden else { return }
 

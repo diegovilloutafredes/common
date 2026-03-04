@@ -5,6 +5,9 @@
 import UIKit
 
 extension UIView {
+    
+    /// Applies a blurred background effect and returns self (chainable).
+    /// - Parameter style: The blur effect style. Defaults to `.regular`.
     @discardableResult public func applyBlurredBackground(with style: UIBlurEffect.Style = .regular) -> Self {
         with {
             let blurEffect = UIBlurEffect(style: style)

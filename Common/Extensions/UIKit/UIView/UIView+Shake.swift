@@ -5,6 +5,13 @@
 import UIKit
 
 extension UIView {
+    
+    /// Plays a shake animation on the view.
+    /// - Parameters:
+    ///   - duration: The animation duration. Defaults to `0.3`.
+    ///   - intensity: The maximum shake offset. Defaults to `15`.
+    ///   - stepDecrement: The amount to reduce intensity each step. Defaults to `5`.
+    ///   - completion: Completion handler.
     public func shake(_ duration: Double = 0.3, intensity: CGFloat = 15, stepDecrement: CGFloat = 5, completion: CompletionHandler = nil) {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
             .with {

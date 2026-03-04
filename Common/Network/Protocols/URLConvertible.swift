@@ -5,7 +5,11 @@
 import Foundation
 
 // MARK: - URLConvertible
+// MARK: - URLConvertible
+/// A type that can be converted into a `URL`.
 public protocol URLConvertible {
+    
+    /// Returns a `URL` representation or throws an error.
     func asURL() throws -> URL
 }
 

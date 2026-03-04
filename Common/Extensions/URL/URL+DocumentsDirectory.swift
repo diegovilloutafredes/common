@@ -5,5 +5,7 @@
 import Foundation
 
 extension URL {
-    static var documentsDirectory: URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
+    
+    /// Returns the URL to the Documents directory of the app.
+    public static var documentsDirectory: URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 }

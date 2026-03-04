@@ -5,7 +5,12 @@
 import UIKit
 
 // MARK: - Toast
+// MARK: - Toast
+
+/// A utility for presenting toast messages.
 public enum Toast {
+    
+    /// Defines the duration of the toast presentation.
     public enum Duration: Int {
         case short = 1
         case medium = 3
@@ -14,6 +19,11 @@ public enum Toast {
         var asTimeInterval: TimeInterval { .init(self.rawValue) }
     }
 
+    /// Presents a toast message.
+    /// - Parameters:
+    ///   - message: The message to display.
+    ///   - duration: The duration of the toast. Defaults to `.medium`.
+    ///   - completion: A closure called after the toast has been dismissed.
     public static func present(with message: String, duration: Duration = .medium, completion: CompletionHandler = nil) {
         dispatchOnMain {
             guard let view = UIApplication.shared.topMostView else { return }

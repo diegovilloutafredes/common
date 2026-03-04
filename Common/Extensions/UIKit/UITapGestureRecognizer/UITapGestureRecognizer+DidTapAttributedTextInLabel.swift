@@ -5,7 +5,14 @@
 import UIKit
 
 // MARK: - UITapGestureRecognizer+didTapAttributedTextInLabel
+// MARK: - UITapGestureRecognizer+didTapAttributedTextInLabel
 extension UITapGestureRecognizer {
+    
+    /// Checks if a tap occurred within a specific range of attributed text in a label.
+    /// - Parameters:
+    ///   - label: The label containing the attributed text.
+    ///   - inRange: The target range of the attributed text.
+    /// - Returns: `true` if the tap was within the specified range, `false` otherwise.
     public func didTapAttributedTextInLabel(label: UILabel, inRange: NSRange) -> Bool {
             guard let attributedString = label.attributedText else { return false }
             let targetRange = inRange

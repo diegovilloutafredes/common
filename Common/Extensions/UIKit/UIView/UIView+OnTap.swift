@@ -10,6 +10,8 @@ extension UIView {
         set { set(associatedObject: newValue, for: "onTapHandler") }
     }
 
+    /// Adds a tap gesture handler and returns self (chainable).
+    /// - Parameter handler: The handler to execute with view and gesture.
     @discardableResult public func onTap(_ handler: @escaping Handler<(UIView, UITapGestureRecognizer)>) -> Self {
         with {
             $0.onTapHandler = handler

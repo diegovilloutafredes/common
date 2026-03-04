@@ -9,7 +9,9 @@ extension UIControl {
         get { associatedObject(for: "onTapAction") as? Action }
         set { set(associatedObject: newValue, for: "onTapAction") }
     }
-
+    
+    /// Adds a closure to be executed when the control is tapped (.touchUpInside).
+    /// - Parameter action: The closure to execute.
     @discardableResult public func onTap(_ action: @escaping Action) -> Self {
         with {
             $0.onTap = action

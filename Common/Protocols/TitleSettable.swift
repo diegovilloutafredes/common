@@ -5,7 +5,12 @@
 import UIKit
 
 // MARK: - TitleSettable
+// MARK: - TitleSettable
+/// A protocol for objects that can have a title string set.
 public protocol TitleSettable: AnyObject {
+    
+    /// Sets the title of the object.
+    /// - Parameter title: The title string to set.
     func set(title: String)
 }
 

@@ -11,10 +11,14 @@ extension UIView {
         set { swizzleIfNeeded(); set(associatedObject: newValue, for: "onMoveToSuperview") }
     }
 
+    /// Sets a handler to execute when the view moves to a superview and returns self (chainable).
+    /// - Parameter onMoveToSuperview: The handler to execute with the view.
     @discardableResult public func onMoveToSuperview(_ onMoveToSuperview: @escaping ViewHandler) -> Self {
         with { $0.onMoveToSuperview = onMoveToSuperview }
     }
 
+    /// Sets a handler to execute when the view moves to a superview and returns self (chainable).
+    /// - Parameter onMoveToSuperview: The handler to execute with view and superview.
     @discardableResult public func onMoveToSuperview(_ onMoveToSuperview: @escaping ViewAndSuperviewHandler) -> Self {
         with {
             $0.onMoveToSuperview = {

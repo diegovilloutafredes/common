@@ -5,6 +5,9 @@
 import UIKit
 
 // MARK: - AlertViewModel
+// MARK: - AlertViewModel
+
+/// Defines the requirements for an alert view model.
 public protocol AlertViewModel: ViewModel {
     var backgroundColor: UIColor { get }
     var icon: UIImage? { get }
@@ -16,11 +19,12 @@ public protocol AlertViewModel: ViewModel {
     var messageColor: UIColor { get }
     var actionButtonTitle: String { get }
     var cancelButtonTitle: String { get }
-    var onActionButtonPressedHandler: CompletionHandler { get }
-    var onCancelButtonPressedHandler: CompletionHandler { get }
+    var onAction: CompletionHandler { get }
+    var onCancel: CompletionHandler { get }
     var shouldHandleBackgroundClick: Bool { get }
 }
 
+/// Default implementations for `AlertViewModel`.
 extension AlertViewModel {
     public var backgroundColor: UIColor { .white }
     public var iconTintColor: UIColor { .black }
@@ -30,24 +34,36 @@ extension AlertViewModel {
 }
 
 // MARK: - AlertViewModelPayload
+
+/// A concrete implementation of `AlertViewModel` used to pass data to the alert.
 public struct AlertViewModelPayload {
     public let icon: UIImage?
     public let title: String
     public let attributedMessage: NSAttributedString
     public let actionButtonTitle: String
     public let cancelButtonTitle: String
-    public let onActionButtonPressedHandler: CompletionHandler
-    public let onCancelButtonPressedHandler: CompletionHandler
+    public let onAction: CompletionHandler
+    public let onCancel: CompletionHandler
     public let shouldHandleBackgroundClick: Bool
 
+    /// Initializes a new alert payload.
+    /// - Parameters:
+    ///   - icon: Optional icon image.
+    ///   - title: Title text.
+    ///   - attributedMessage: Message text as an attributed string.
+    ///   - actionButtonTitle: Title for the primary action button.
+    ///   - cancelButtonTitle: Title for the cancel button.
+    ///   - onActionButtonPressedHandler: Handler for the primary action.
+    ///   - onCancelButtonPressedHandler: Handler for the cancel action.
+    ///   - shouldHandleBackgroundClick: Whether background tap dismisses the alert. Defaults to `true`.
     public init(icon: UIImage? = nil, title: String, attributedMessage: NSAttributedString, actionButtonTitle: String = .DefaultValues.Alerts.acceptActionTitle, cancelButtonTitle: String = .DefaultValues.Alerts.cancelActionTitle, onActionButtonPressedHandler: CompletionHandler, onCancelButtonPressedHandler: CompletionHandler = nil, shouldHandleBackgroundClick: Bool = true) {
         self.icon = icon
         self.title = title
         self.attributedMessage = attributedMessage
         self.actionButtonTitle = actionButtonTitle
         self.cancelButtonTitle = cancelButtonTitle
-        self.onActionButtonPressedHandler = onActionButtonPressedHandler
-        self.onCancelButtonPressedHandler = onCancelButtonPressedHandler
+        self.onAction = onActionButtonPressedHandler
+        self.onCancel = onCancelButtonPressedHandler
         self.shouldHandleBackgroundClick = shouldHandleBackgroundClick
     }
 }

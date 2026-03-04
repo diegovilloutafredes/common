@@ -4,10 +4,15 @@
 
 import UIKit
 
+/// A view representing a visual separator line.
 public final class Separator: BaseView {
     private let color: UIColor
     private let height: Double
 
+    /// Initializes a new separator.
+    /// - Parameters:
+    ///   - color: The color of the separator. Defaults to black.
+    ///   - height: The height of the separator. Defaults to 1.
     public init(color: UIColor = .black, height: Double = 1) {
         self.color = color
         self.height = height
@@ -29,10 +34,19 @@ public final class Separator: BaseView {
 }
 
 extension UIView {
+    
+    /// Adds a separator below the view.
+    /// - Parameters:
+    ///   - color: The color of the separator.
+    ///   - height: The height of the separator.
+    /// - Returns: A container view wrapping self and the separator.
     @discardableResult public func addSeparator(color: UIColor = .black, height: Double = 1) -> UIView {
         addSeparator(.init(color: color, height: height))
     }
 
+    /// Adds a separator below the view.
+    /// - Parameter separator: The separator view to add.
+    /// - Returns: A container view wrapping self and the separator.
     @discardableResult public func addSeparator(_ separator: Separator = .init(color: .black, height: 1)) -> UIView {
         VStack {
             self

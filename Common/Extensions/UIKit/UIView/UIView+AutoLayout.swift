@@ -5,12 +5,23 @@
 import UIKit
 
 // MARK: - Align Center X/Y
+
+/// Auto Layout extension methods for constraining views.
 extension UIView {
+    
+    /// Aligns center X with another view.
+    /// - Parameters:
+    ///   - view: The view to align with.
+    ///   - inset: The constant offset.
     @discardableResult public func alignCenterX(with view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: inset).with { $0.isActive = true }
     }
 
+    /// Aligns center Y with another view.
+    /// - Parameters:
+    ///   - view: The view to align with.
+    ///   - inset: The constant offset.
     @discardableResult public func alignCenterY(with view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: inset).with { $0.isActive = true }
@@ -19,6 +30,12 @@ extension UIView {
 
 // MARK: - Pin X/Y Anchors with an Inset
 extension UIView {
+    
+    /// Pins an X axis anchor to another anchor.
+    /// - Parameters:
+    ///   - origin: The origin anchor.
+    ///   - anchor: The target anchor.
+    ///   - inset: The constant offset.
     @discardableResult public func pinXAnchor(origin: NSLayoutXAxisAnchor, to anchor: NSLayoutXAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return origin.constraint(equalTo: anchor, constant: inset).with { $0.isActive = true }
@@ -99,11 +116,16 @@ extension UIView {
 
 // MARK: - Set Height/Width
 extension UIView {
+    
+    /// Sets a fixed height constraint.
+    /// - Parameter height: The height in points.
     @discardableResult public func set(height: CGFloat) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return heightAnchor.constraint(equalToConstant: height).with { $0.isActive = true }
     }
 
+    /// Sets a fixed width constraint.
+    /// - Parameter width: The width in points.
     @discardableResult public func set(width: CGFloat) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return widthAnchor.constraint(equalToConstant: width).with { $0.isActive = true }
@@ -177,6 +199,11 @@ extension UIView {
 
 // MARK: - Content Compression Resistance & Content Hugging Priorities
 extension UIView {
+    
+    /// Sets content compression resistance priority.
+    /// - Parameters:
+    ///   - priority: The layout priority.
+    ///   - axis: The constraint axis.
     @discardableResult public func contentCompressionResistance(priority: UILayoutPriority, axis: NSLayoutConstraint.Axis) -> Self {
         with {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -184,6 +211,10 @@ extension UIView {
         }
     }
 
+    /// Sets content hugging priority.
+    /// - Parameters:
+    ///   - priority: The layout priority.
+    ///   - axis: The constraint axis.
     @discardableResult public func contentHugging(priority: UILayoutPriority, axis: NSLayoutConstraint.Axis) -> Self {
         with {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -203,6 +234,11 @@ extension UIView {
 
 // MARK: - Snap to LayoutGuide
 extension UIView {
+    
+    /// Snaps all edges to a layout guide.
+    /// - Parameters:
+    ///   - layoutGuide: The target layout guide.
+    ///   - insets: The edge insets.
     @discardableResult public func snap(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
@@ -295,6 +331,11 @@ extension UIView {
 
 // MARK: - Snap to View
 extension UIView {
+    
+    /// Snaps all edges to another view.
+    /// - Parameters:
+    ///   - view: The target view.
+    ///   - insets: The edge insets.
     @discardableResult public func snap(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         with {
             $0.pinTop(to: view.topAnchor, inset: insets.top)

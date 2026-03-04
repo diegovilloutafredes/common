@@ -11,6 +11,8 @@ extension UIView {
         set { swizzleIfNeeded(); set(associatedObject: newValue, for: "onLayoutSubviews") }
     }
 
+    /// Sets a handler to execute when layoutSubviews is called and returns self (chainable).
+    /// - Parameter onLayoutSubviews: The handler to execute.
     @discardableResult public func onLayoutSubviews(_ onLayoutSubviews: @escaping ViewHandler) -> Self {
         with { $0.onLayoutSubviews = onLayoutSubviews }
     }

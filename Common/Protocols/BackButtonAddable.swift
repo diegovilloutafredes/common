@@ -5,7 +5,14 @@
 import UIKit
 
 // MARK: - BackButtonAddable
+// MARK: - BackButtonAddable
+/// A protocol for view controllers that support adding a custom back button to the navigation bar.
 public protocol BackButtonAddable: UIViewController {
+    
+    /// Adds a back button with the specified icon and handler.
+    /// - Parameters:
+    ///   - icon: The image to use for the back button.
+    ///   - handler: A closure to be called when the back button is pressed.
     func addBackButton(_ icon: UIImage?, handler: CompletionHandler)
 }
 

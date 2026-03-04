@@ -5,6 +5,8 @@
 import UIKit
 
 extension UIView {
+    
+    /// Adds frame information labels to the view for debugging and returns self (chainable).
     @discardableResult public func addFrameInfo() -> Self {
         onLayoutSubviews { view in
             switch view {

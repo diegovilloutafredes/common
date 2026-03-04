@@ -5,6 +5,8 @@
 import UIKit
 
 extension UIColor {
+    
+    /// Returns the hex string representation of the color (e.g., "#FF0000").
     public var asHexString: String {
         var red: CGFloat = .zero
         var green: CGFloat = .zero

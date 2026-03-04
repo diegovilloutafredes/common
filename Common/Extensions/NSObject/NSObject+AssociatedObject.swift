@@ -21,8 +21,15 @@ extension NSObject {
 
     private func remove(associatedObjectFor key: AnyHashable) { associatedObjects.removeObject(forKey: key) }
 
+    /// Retrieves an associated object for a given key.
+    /// - Parameter key: The key for the object.
+    /// - Returns: The object, if found.
     public func associatedObject(for key: AnyHashable) -> Any? { associatedObjects[key] }
 
+    /// Sets an associated object for a given key.
+    /// - Parameters:
+    ///   - associatedObject: The object to associate. Pass `nil` to remove.
+    ///   - key: The key to associate with.
     public func set(associatedObject: Any?, for key: AnyHashable) {
         associatedObject.isNotNil ? { associatedObjects[key] = associatedObject }() : remove(associatedObjectFor: key)
     }

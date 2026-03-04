@@ -5,7 +5,15 @@
 import UIKit
 
 // MARK: - BaseReusableView
+// MARK: - BaseReusableView
+
+/// A base collection reusable view (e.g., for headers or footers) that conforms to `UIViewBuildable`.
+/// It provides a consistent setup for hosting a main view.
 open class BaseReusableView: UICollectionReusableView, UIViewBuildable {
+    
+    /// The main view of the reusable view.
+    /// Subclasses should override this to provide their custom view hierarchy.
+    /// By default, returns an empty `UIView`.
     @UIViewBuilder
     open var mainView: UIView { UIView() }
 
@@ -22,5 +30,7 @@ open class BaseReusableView: UICollectionReusableView, UIViewBuildable {
 
     public override class var requiresConstraintBasedLayout: Bool { true }
 
+    /// Sets up the view.
+    /// Override this method to perform additional configuration during initialization.
     open func setupView() {}
 }

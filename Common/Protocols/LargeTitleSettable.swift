@@ -5,8 +5,14 @@
 import UIKit
 
 // MARK: - LargeTitleSettable
+// MARK: - LargeTitleSettable
+/// A protocol for objects that can enable or disable large titles in a navigation bar.
 public protocol LargeTitleSettable: AnyObject {
+    
+    /// Disables large titles.
     func disableLargeTitles()
+    
+    /// Enables large titles.
     func enableLargeTitles()
 }
 

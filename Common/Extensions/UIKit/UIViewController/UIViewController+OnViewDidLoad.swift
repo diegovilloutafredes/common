@@ -10,6 +10,9 @@ extension UIViewController {
         set { swizzleViewDidLoadIfNeeded(); set(associatedObject: newValue, for: "onViewDidLoadAction") }
     }
     
+// MARK: - onViewDidLoad
+    /// Sets a closure to be executed when `viewDidLoad` is called and returns self (chainable).
+    /// - Parameter onViewDidLoad: The closure to execute.
     @discardableResult public func onViewDidLoad(_ onViewDidLoad: @escaping Handler<UIViewController>) -> Self {
         with { $0.onViewDidLoadAction = onViewDidLoad }
     }

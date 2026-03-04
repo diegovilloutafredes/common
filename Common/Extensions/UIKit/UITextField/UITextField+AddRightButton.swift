@@ -15,6 +15,13 @@ extension UITextField {
 }
 
 extension UITextField {
+    
+    /// Adds a configurable right button to the text field and returns self (chainable).
+    /// - Parameters:
+    ///   - icon: The default icon image.
+    ///   - selectedIcon: The icon when selected.
+    ///   - tintColor: The tint color for the button.
+    ///   - onButtonPressed: Handler called when the button is pressed.
     @discardableResult public func addRightButton(
         using icon: UIImage? = .symbol("arrowtriangle.up.fill"),
         selectedIcon: UIImage? = .symbol("arrowtriangle.down.fill"),

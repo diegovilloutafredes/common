@@ -5,11 +5,15 @@
 import UIKit
 
 extension UIImage {
-    var fromDeviceOrientation: Orientation { .fromDeviceOrientation }
+    
+    /// Returns the image orientation based on the current device orientation.
+    public var fromDeviceOrientation: Orientation { .fromDeviceOrientation }
 }
 
 extension UIImage.Orientation {
-    static var fromDeviceOrientation: Self {
+    
+    /// Returns the image orientation corresponding to the current device orientation.
+    public static var fromDeviceOrientation: Self {
         switch UIDevice.current.orientation {
         case .portrait: .up
         case .landscapeLeft: .left

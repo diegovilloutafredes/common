@@ -12,10 +12,22 @@ public enum AlertViewType {
 }
 
 // MARK: - AlertPresentable
+// MARK: - AlertPresentable
+/// A protocol for objects that can present various types of alert views.
 public protocol AlertPresentable: AnyObject {
+    
+    /// Presents a standard alert view based on the specified type.
+    /// - Parameters:
+    ///   - type: The type of alert to present.
+    ///   - acceptAction: Optional handler for the accept action.
+    ///   - cancelAction: Optional handler for the cancel action.
     func presentAlertView(type: AlertViewType, acceptAction: Handler<UIAlertAction>?, cancelAction: Handler<UIAlertAction>?)
+    
+    /// Presents a custom alert view driven by a view model.
+    /// - Parameters:
+    ///   - viewModel: The view model providing the alert data.
+    ///   - handler: A closure to be called when the alert is dismissed.
     func presentAlertView(viewModel: AlertViewModel, onDismissRequested handler: CompletionHandler)
-    func presentTextInputAlertView(title: String, message: String, placeholder: String, handler: @escaping Handler<String?>)
 }
 
 // MARK: - Default implementation
@@ -73,51 +85,13 @@ extension AlertPresentable {
             return
         }
 
-        viewController?.dismiss(animated: false) { self.viewController?.present(alertController, animated: true) }
+        viewController?.present(alertController, animated: true)
     }
 
     public func presentAlertView(viewModel: AlertViewModel, onDismissRequested handler: CompletionHandler) {
         let view = AlertView(viewModel: viewModel)
         let vc = CustomAlertWireframe.createModule(view, onDismissRequested: viewModel.shouldHandleBackgroundClick ? handler : nil)
-        viewController?.dismiss(animated: false) { self.viewController?.present(vc, animated: true) }
-    }
-
-    public func presentTextInputAlertView(title: String, message: String, placeholder: String, handler: @escaping Handler<String?>) {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        alert.addTextField { $0.placeholder = placeholder }
-
-        alert.addAction(
-            .init(
-                title: .DefaultValues.Alerts.acceptActionTitle,
-                style: .default,
-                handler: { _ in
-                    guard
-                        let text = alert.textFields?.first?.text,
-                        text.isNotEmpty
-                    else {
-                        handler(nil)
-                        return
-                    }
-
-                    handler(text)
-                }
-            )
-        )
-
-        alert.addAction(
-            .init(
-                title: .DefaultValues.Alerts.cancelActionTitle,
-                style: .cancel,
-                handler: { _ in handler(nil) }
-            )
-        )
-
-        viewController?.present(alert, animated: true)
+        viewController?.present(vc, animated: true)
     }
 }
 

@@ -3,9 +3,14 @@
 //
 
 // MARK: - DNITextField
+// MARK: - DNITextField
+
+/// A custom text field for DNI input with specific styling and behavior.
 public final class DNITextField: BaseDNITextField {
     private let shouldApplyDefaultRatio: Bool
 
+    /// Initializes a new DNI text field.
+    /// - Parameter shouldApplyDefaultRatio: Whether to apply the default aspect ratio constraint. Defaults to `true`.
     public init(shouldApplyDefaultRatio: Bool = true) {
         self.shouldApplyDefaultRatio = shouldApplyDefaultRatio
         super.init()
@@ -14,19 +19,19 @@ public final class DNITextField: BaseDNITextField {
     public override func setupView() {
         super.setupView()
         backgroundColor(.white)
-        .enablesReturnKeyAutomatically(true)
-        .font(.systemFont(ofSize: 16))
-        .placeholder(
+        enablesReturnKeyAutomatically(true)
+        font(.systemFont(ofSize: 16))
+        placeholder(
             "DNI",
             color: .black.withAlphaComponent(0.9),
             font: .systemFont(ofSize: 16)
         )
-        .setAsRoundedView(
+        setAsRoundedView(
             using: [.layerMinXMinYCorner, .layerMaxXMinYCorner],
             radius: 4
         )
-        .textColor(.black)
-        .with {
+        textColor(.black)
+        with {
             $0.leftView(.init(frame: .init(x: .zero, y: .zero, width: 16, height: $0.frame.height)))
             if shouldApplyDefaultRatio { $0.setRatio(327/56) }
         }

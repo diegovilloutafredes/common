@@ -6,6 +6,9 @@ import UIKit
 
 // MARK: - Generate QRCode
 extension UIImageView {
+    
+    /// Generates a QR code image from the specified string and sets it as the image.
+    /// - Parameter string: The string to encode as a QR code.
     public func generateQRCode(using string: String) {
         guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return }
         let data = string.data(using: .ascii)

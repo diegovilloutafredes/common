@@ -5,7 +5,20 @@
 import UIKit
 
 // MARK: - UIViewController Extension
+// MARK: - UIViewController Extension
 extension UIViewController {
+    
+    /// Configures the navigation bar with specific styles and attributes.
+    /// - Parameters:
+    ///   - backgroundColor: The background color of the navigation bar.
+    ///   - titleColor: The color of the navigation bar title.
+    ///   - titleFont: The font of the navigation bar title.
+    ///   - largeTitleFont: The font to use for large titles.
+    ///   - leftBarButtonItemTintColor: The tint color for the left bar button item.
+    ///   - rightBarButtonItemTintColor: The tint color for the right bar button item.
+    ///   - barButtonItemFont: The font for bar button items.
+    ///   - hasShadow: Whether the navigation bar shows a shadow.
+    ///   - isTranslucent: Whether the navigation bar is translucent.
     public func setNavigationBar(
         backgroundColor: UIColor? = nil,
         titleColor: UIColor = .black,

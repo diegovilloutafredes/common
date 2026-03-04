@@ -5,6 +5,8 @@
 import AVFoundation
 
 extension AVCaptureDevice {
+    
+    /// Toggles the torch on or off and returns self (chainable).
     @discardableResult public func toggleTorch() -> Self {
         with {
             do {

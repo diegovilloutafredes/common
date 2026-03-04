@@ -5,11 +5,19 @@
 import UIKit
 
 // MARK: - CustomAlertViewController
+// MARK: - CustomAlertViewController
+
+/// A custom alert view controller that presents a content view with a dimming background.
 public final class CustomAlertViewController: BaseViewController {
     private let backgroundColor: UIColor
     private let contentView: UIView
     private var onDismissRequestedHandler: CompletionHandler
 
+    /// Initializes a new custom alert.
+    /// - Parameters:
+    ///   - backgroundColor: The background color of the dimming view. Defaults to black with 0.5 alpha.
+    ///   - contentView: The view to display as the alert content.
+    ///   - handler: A closure to execute when dismissal is requested (e.g., tapping the background).
     public init(backgroundColor: UIColor = .black.withAlphaComponent(0.5), contentView: UIView, onDismissRequested handler: CompletionHandler = nil) {
         self.backgroundColor = backgroundColor
         self.contentView = contentView

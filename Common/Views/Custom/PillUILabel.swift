@@ -4,6 +4,7 @@
 
 import UIKit
 
+/// A label with pill-shaped background and padding.
 final class PillUILabel: BaseLabel {
     private var verticalPad: CGFloat = 8
     private var horizontalPad: CGFloat = 8

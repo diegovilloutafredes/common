@@ -6,6 +6,10 @@ import UIKit
 
 // MARK: - image(with color: UIColor)
 extension UIImage {
+    
+    /// Creates a new image by applying a color tint to this image.
+    /// - Parameter color: The color to apply.
+    /// - Returns: The tinted image, or `nil` if tinting fails.
     public func image(with color: UIColor) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
 

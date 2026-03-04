@@ -12,6 +12,12 @@ extension UIFont {
       case registerFailed
     }
 
+    /// Registers custom fonts from the specified bundle.
+    /// - Parameters:
+    ///   - names: List of font family names.
+    ///   - styles: List of font styles to register. Defaults to all cases.
+    ///   - type: File extension (e.g., "ttf"). Defaults to "ttf".
+    ///   - bundle: The bundle containing the font files. Defaults to `.main`.
     public static func register(fonts names: [Uppercaseable], styles: [FontStyle] = FontStyle.allCases, type: String = "ttf", on bundle: Bundle = .main) {
         names.forEach { name in
             styles.forEach { style in
@@ -26,6 +32,12 @@ extension UIFont {
         }
     }
 
+    /// Registers a single font file.
+    /// - Parameters:
+    ///   - fileName: The name of the font file (without extension).
+    ///   - type: The file extension.
+    ///   - bundle: The bundle containing the file. Defaults to `.main`.
+    /// - Throws: `RegisterFontError` if registration fails.
     public static func register(_ fileName: String, type: String, on bundle: Bundle = .main) throws {
         guard let resourceBundleURL = bundle.path(forResource: fileName, ofType: type)
         else { throw RegisterFontError.fontPathNotFound }

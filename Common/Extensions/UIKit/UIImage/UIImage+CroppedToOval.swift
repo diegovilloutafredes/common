@@ -6,6 +6,10 @@ import UIKit
 
 // MARK: - Cropped to oval
 extension UIImage {
+    
+    /// Crops the image to an oval shape within the specified rectangle.
+    /// - Parameter rect: The rectangle defining the oval bounds.
+    /// - Returns: The cropped oval image.
     public func croppedToOval(in rect: CGRect) -> UIImage {
         let path = UIBezierPath(ovalIn: rect)
 

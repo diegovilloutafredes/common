@@ -5,6 +5,9 @@
 import UIKit
 
 extension UIImage {
+    
+    /// Converts the image to grayscale.
+    /// - Returns: A new grayscale image.
     public func convertToGrayScale() -> UIImage {
         // Create image rectangle with current image width/height
         let imageRect = CGRect(x:.zero, y:.zero, width: size.width, height: size.height)

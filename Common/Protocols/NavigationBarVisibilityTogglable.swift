@@ -5,8 +5,16 @@
 import UIKit
 
 // MARK: - NavigationBarVisibilityTogglable
+// MARK: - NavigationBarVisibilityTogglable
+/// A protocol for objects that can toggle the visibility of the navigation bar.
 public protocol NavigationBarVisibilityTogglable: AnyObject {
+    
+    /// Shows the navigation bar.
+    /// - Parameter animated: Whether to animate the showing of the navigation bar.
     func showNavigationBar(animated: Bool)
+    
+    /// Hides the navigation bar.
+    /// - Parameter animated: Whether to animate the hiding of the navigation bar.
     func hideNavigationBar(animated: Bool)
 }
 

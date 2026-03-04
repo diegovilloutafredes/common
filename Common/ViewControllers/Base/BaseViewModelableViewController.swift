@@ -5,13 +5,21 @@
 import UIKit
 
 // MARK: - BasePresentableViewController
+// MARK: - BasePresentableViewController
+
+/// A base view controller that is driven by a View Model.
+/// It conforms to `ViewModelableViewController`, `ContentReloadable`, and `UICollectionViewable`.
 open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewController, ContentReloadable, UICollectionViewable {
+    
+    /// The view model associated with this view controller.
     open var viewModel: ViewModelType
 
     private var asCollectionViewable: CollectionViewable? { viewModel as? CollectionViewable }
     private var asReloadContentRequestable: ReloadContentRequestable? { viewModel as? ReloadContentRequestable }
     private var asViewLifecycleable: ViewLifecycleable? { viewModel as? ViewLifecycleable }
 
+    /// Initializes a new view controller with the given view model.
+    /// - Parameter viewModel: The view model to inject.
     required public init(viewModel: ViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -55,7 +63,7 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
 
     // MARK: - ContentReloadable
     open func reloadContent() {
-        Logger.log([.empty: self])
+        Logger.log(self)
         asReloadContentRequestable?.onReloadContentRequested()
     }
 

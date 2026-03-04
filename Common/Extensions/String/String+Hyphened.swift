@@ -5,7 +5,11 @@
 import Foundation
 
 // MARK: - Hyphened
+// MARK: - Hyphened
 extension String {
+    
+    /// Inserts a hyphen before the last character of the string.
+    /// Useful for formatting Chilean RUTs (e.g., 123456789 -> 12345678-9).
     public var hyphened: String {
         var mutableSelf = self
 

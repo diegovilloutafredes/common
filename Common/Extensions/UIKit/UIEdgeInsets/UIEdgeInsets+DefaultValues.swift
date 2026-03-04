@@ -8,6 +8,8 @@ import UIKit
 extension UIEdgeInsets {
     public enum DefaultValues {
         public enum StackView {
+            
+            /// Default margins for stack views.
             public static var margins: UIEdgeInsets {
                 .init(
                     top: .DefaultValues.StackView.topMargin,

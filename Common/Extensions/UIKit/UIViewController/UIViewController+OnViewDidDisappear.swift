@@ -10,6 +10,9 @@ extension UIViewController {
         set { swizzleViewDidDisappearIfNeeded(); set(associatedObject: newValue, for: "onViewDidDisappearAction") }
     }
 
+// MARK: - onViewDidDisappear
+    /// Sets a closure to be executed when `viewDidDisappear` is called and returns self (chainable).
+    /// - Parameter onViewDidDisappear: The closure to execute.
     @discardableResult public func onViewDidDisappear(_ onViewDidDisappear: @escaping Handler<UIViewController>) -> Self {
         with { $0.onViewDidDisappearAction = onViewDidDisappear }
     }

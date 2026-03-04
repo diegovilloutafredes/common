@@ -14,12 +14,11 @@ final class SceneDelegate: UIResponder {
 // MARK: - UIWindowSceneDelegate
 extension SceneDelegate: UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        Logger.log(scene)
-        Logger.log(session)
-        Logger.log(connectionOptions)
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        window?.set(rootViewController: ViewController())
+        let viewModel = MyViewModelPayload()
+        let vc = ViewController(viewModel: viewModel)
+        window?.set(rootViewController: vc)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) { Logger.log(self) }

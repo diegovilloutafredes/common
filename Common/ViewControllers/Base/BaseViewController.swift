@@ -5,14 +5,26 @@
 import UIKit
 
 // MARK: - BaseViewController
+
+/// A base view controller that provides common functionality and lifecycle handling.
+// MARK: - BaseViewController
+
+/// A base view controller that conforms to `UIViewBuildable`.
+/// It automatically sets the `mainView` as the view controller's view in `loadView`.
 open class BaseViewController: UIViewController, UIViewBuildable {
+    
+    /// The main view of the controller.
+    /// Subclasses should override this to provide their custom view hierarchy.
+    /// By default, returns an empty `UIView`.
     @UIViewBuilder
     open var mainView: UIView { UIView() }
 
-    public override func loadView() {
+    open override func loadView() {
         self.view = mainView
     }
 
+    /// Configures the view.
+    /// Default implementation sets the background color.
     open func setupView() { backgroundColor() }
 }
 

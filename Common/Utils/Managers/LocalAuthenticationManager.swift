@@ -5,14 +5,26 @@
 import LocalAuthentication
 
 // MARK: - LocalAuthenticationType
+// MARK: - LocalAuthenticationType
+/// Represents the type of local authentication available on the device.
 public enum LocalAuthenticationType: Stringable {
+    
+    /// Biometric authentication (FaceID, TouchID, etc.).
     case biometry(BiometryType)
+    
+    /// No authentication available or enabled.
     case none
+    
+    /// Device passcode authentication.
     case passcode
 
+    /// Specific types of biometric authentication.
     public enum BiometryType: Stringable {
+        /// Face ID.
         case faceId
+        /// Optic ID.
         case opticId
+        /// Touch ID.
         case touchId
 
         public var asString: String {
@@ -34,15 +46,28 @@ public enum LocalAuthenticationType: Stringable {
 }
 
 // MARK: - LocalAuthenticationManagerProtocol
+/// Protocol defining the interface for local authentication management.
 public protocol LocalAuthenticationManagerProtocol: AnyObject {
+    
+    /// The type of biometry available (if any).
     var biometryType: LocalAuthenticationType.BiometryType? { get }
+    
+    /// Whether the device can currently authenticate the user.
     var canAuthenticate: Bool { get }
+    
+    /// Whether biometric authentication is supported on this device.
     var isBiometricAuthenticationSupported: Bool { get }
+    
+    /// The primary type of local authentication available.
     var localAuthenticationType: LocalAuthenticationType { get }
+    
+    /// Attempts to authenticate the user using the available method.
+    /// - Parameter result: Completion handler returning `true` if successful.
     func authenticate(result: @escaping Handler<Bool>)
 }
 
 // MARK: - LocalAuthenticationManager
+/// Manages local authentication using `LocalAuthentication` framework.
 final public class LocalAuthenticationManager {
     private lazy var context = LAContext()
         .with { $0.localizedCancelTitle = "Cancelar" }

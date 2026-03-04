@@ -5,5 +5,7 @@
 import Foundation
 
 extension Data {
-    var asReadableDeviceToken: String { map { .init(format: "%02.2hhx", $0) }.joined() }
+    
+    /// Converts the data (device token) into a readable hexadecimal string.
+    public var asReadableDeviceToken: String { map { .init(format: "%02.2hhx", $0) }.joined() }
 }

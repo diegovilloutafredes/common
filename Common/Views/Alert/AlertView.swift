@@ -5,6 +5,9 @@
 import UIKit
 
 // MARK: - AlertView
+// MARK: - AlertView
+
+/// A view responsible for displaying the content of an alert, driven by an `AlertViewModel`.
 public final class AlertView: BaseViewModelableView<AlertViewModel> {
     private lazy var iconImageView = UIImageView()
         .contentMode(.scaleAspectFit)
@@ -14,15 +17,16 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
         .setConstraints { $0.setWidth(to: $1.widthAnchor, multiplier: 0.3) }
 
     private lazy var actionButton = ActionButton(shouldApplyDefaultRatio: false)
-        .onTap { self.viewModel.onActionButtonPressedHandler?() }
+        .onTap { self.viewModel.onAction?() }
         .setAsRoundedView(radius: .DefaultValues.Button.cornerRadius)
         .title(viewModel.actionButtonTitle)
         .setConstraints { $0.set(height: 40) }
 
     private var shouldAddIconImageView: Bool { viewModel.icon.isNotNil }
-    private var shouldAddCancelButton: Bool { viewModel.onCancelButtonPressedHandler.isNotNil }
+    private var shouldAddCancelButton: Bool { viewModel.onCancel.isNotNil }
 
-    @UIViewBuilder public override var mainView: UIView {
+    @UIViewBuilder
+    public override var mainView: UIView {
         VStack(
             margins: .init(top: 16, left: 24, bottom: 16, right: 24),
             spacing: .DefaultValues.StackView.spacing
@@ -51,7 +55,7 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
                 spacing: .DefaultValues.StackView.spacing
             ) {
                 ActionButton(shouldApplyDefaultRatio: false, theme: DefaultButtonTheme.border)
-                    .onTap { self.viewModel.onCancelButtonPressedHandler?() }
+                    .onTap { self.viewModel.onCancel?() }
                     .setAsRoundedView(radius: .DefaultValues.Button.cornerRadius)
                     .title(viewModel.cancelButtonTitle)
 

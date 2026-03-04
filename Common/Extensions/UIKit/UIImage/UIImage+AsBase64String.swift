@@ -5,5 +5,7 @@
 import UIKit
 
 extension UIImage {
-    var asBase64String: String? { jpegData(compressionQuality: 1)?.base64EncodedString() }
+    
+    /// Returns the image as a base64-encoded string (JPEG format, quality 1.0).
+    public var asBase64String: String? { jpegData(compressionQuality: 1)?.base64EncodedString() }
 }

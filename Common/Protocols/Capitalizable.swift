@@ -3,8 +3,14 @@
 //
 
 // MARK: - Capitalizable
+// MARK: - Capitalizable
+/// A protocol for types that can provide capitalized versions of their string representation.
 public protocol Capitalizable {
+    
+    /// A capitalized version of the string.
     var capitalized: String { get }
+    
+    /// A version of the string with only the first letter capitalized.
     var capitalizingFirstLetter: String { get }
 }
 

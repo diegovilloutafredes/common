@@ -5,6 +5,13 @@
 import UIKit
 
 extension UIImage {
+    
+    /// Creates a gradient image with the specified colors and size.
+    /// - Parameters:
+    ///   - colors: Array of CGColors for the gradient.
+    ///   - locations: Gradient stop locations. Defaults to `[0, 0.5]`.
+    ///   - size: The size of the resulting image.
+    /// - Returns: The gradient image, or `nil` if creation fails.
     static public func gradientImage(using colors: [CGColor], locations: [Float] = [.zero, 0.5], size: CGSize) -> UIImage? {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = .init(x: .zero, y: .zero, width: size.width, height: size.height)

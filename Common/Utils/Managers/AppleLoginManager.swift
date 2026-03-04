@@ -5,11 +5,19 @@
 import AuthenticationServices
 
 // MARK: - AppleLoginManagerProtocol
+// MARK: - AppleLoginManagerProtocol
+/// A protocol defining the interface for performing Apple Login.
 public protocol AppleLoginManagerProtocol: AnyObject {
+    
+    /// Performs an Apple Login request.
+    /// - Parameters:
+    ///   - context: The context (usually a UIViewController) providing the presentation anchor.
+    ///   - result: The completion handler returning the credentials or an error.
     func performLogin(from context: AnyObject, result: @escaping ResultHandler<(appleIdCredential: ASAuthorizationAppleIDCredential, decodedIdentityToken: [String: Any])>)
 }
 
 // MARK: - AppleLoginManager
+/// A manager that handles Sign in with Apple authentication.
 final public class AppleLoginManager: NSObject {
     private var authController: ASAuthorizationController!
     private var context: AnyObject!
@@ -61,6 +69,14 @@ extension AppleLoginManager: ASAuthorizationControllerPresentationContextProvidi
 
 // MARK: - Convenience
 extension AppleLoginManager {
+
+
+    // MARK: - DecodeErrors
+    private enum DecodeErrors: Error {
+        case badToken
+        case other
+    }
+
     private func base64Decode(_ base64: String) throws -> Data {
         let base64 = base64
             .replacingOccurrences(of: "-", with: "+")
@@ -81,44 +97,4 @@ extension AppleLoginManager {
         let segments = jwtToken.components(separatedBy: ".")
         return try decodeJWTPart(segments[1])
     }
-}
-
-// MARK: - DecodeErrors
-private enum DecodeErrors: Error {
-    case badToken
-    case other
-}
-
-// MARK: - AppleUserInfoModel
-extension ASAuthorizationAppleIDCredential: AppleUserInfoModel {
-    var id: String { user }
-    var name: String? { fullName?.givenName }
-    var lastName: String? { fullName?.familyName }
-}
-
-// MARK: - AppleUserInfo
-struct AppleUserInfo {
-    let id: String
-    var name: String?
-    var lastName: String?
-    var email: String?
-
-    init(model: AppleUserInfoModel) {
-        id = model.id
-        name = model.name
-        lastName = model.lastName
-        email = model.email
-    }
-}
-
-// MARK: - Storable
-extension AppleUserInfo: Storable {}
-
-
-// MARK: - AppleUserInfoModel
-protocol AppleUserInfoModel: AnyObject {
-    var id: String { get }
-    var name: String? { get }
-    var lastName: String? { get }
-    var email: String? { get }
 }

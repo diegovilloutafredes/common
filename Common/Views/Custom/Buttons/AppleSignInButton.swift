@@ -5,6 +5,7 @@
 import AuthenticationServices
 import UIKit
 
+/// A wrapper around `ASAuthorizationAppleIDButton` to simplify its usage in UIKit.
 final class AppleSignInButton: UIButton {
     private let authButtonStyle = ASAuthorizationAppleIDButton.Style.white.rawValue
     private let authButtonType = ASAuthorizationAppleIDButton.ButtonType.default.rawValue

@@ -5,6 +5,9 @@
 import AVFoundation
 
 extension AVCaptureDevice {
+    
+    /// Sets the video zoom factor and returns self (chainable).
+    /// - Parameter videoZoomFactor: The zoom factor.
     @discardableResult public func videoZoomFactor(_ videoZoomFactor: Double) -> Self {
         with {
             do {

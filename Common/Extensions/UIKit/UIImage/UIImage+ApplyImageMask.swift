@@ -5,6 +5,10 @@
 import UIKit
 
 extension UIImage {
+    
+    /// Applies a mask image to this image.
+    /// - Parameter mask: The mask image to apply.
+    /// - Returns: The masked image.
     public func applyImageMask(mask: UIImage) -> UIImage {
         UIGraphicsImageRenderer(size: mask.size).image {
             let cgContext = $0.cgContext

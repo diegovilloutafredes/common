@@ -5,13 +5,21 @@
 import UIKit
 
 // MARK: - CardViewModel
+/// A protocol defining the properties for a card view model.
 public protocol CardViewModel: ViewModel {
+    /// The background color for the left image container.
     var leftImageBackgroundColor: UIColor? { get }
+    /// The image to display on the left side of the card.
     var leftImage: UIImage? { get }
+    /// The main title text.
     var title: String { get }
+    /// An attributed title text, if specified.
     var attributedTitle: NSAttributedString? { get }
+    /// The main content/description text.
     var content: String { get }
+    /// An attributed content/description text, if specified.
     var attributedContent: NSAttributedString? { get }
+    /// The image to display on the right side of the card.
     var rightImage: UIImage? { get }
 }
 
@@ -35,6 +43,7 @@ public struct CardViewModelPayload: CardViewModel {
     }
 }
 
+/// A customizable card view that displays an optional left image, title, content, and an optional right image.
 public final class CardView: BaseViewModelableView<CardViewModel> {
     @UIViewBuilder public override var mainView: UIView {
         HStack(

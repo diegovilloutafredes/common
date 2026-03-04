@@ -41,6 +41,9 @@ extension PreviewView {
 
 // MARK: - Methods
 extension PreviewView {
+    
+    /// Draws a bounding box layer for a detected object observation.
+    /// - Parameter observation: The detected object observation from Vision.
     public func draw(_ observation: VNDetectedObjectObservation) {
         removeLayers()
 

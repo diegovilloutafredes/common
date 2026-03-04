@@ -3,8 +3,14 @@
 //
 
 // MARK: - Uppercaseable
+// MARK: - Uppercaseable
+/// A protocol for types that can provide uppercased versions of their string representation.
 public protocol Uppercaseable {
+    
+    /// An uppercased version of the string.
     var uppercased: String { get }
+    
+    /// A version of the string with only the first letter uppercased.
     var uppercasingFirstLetter: String { get }
 }
 

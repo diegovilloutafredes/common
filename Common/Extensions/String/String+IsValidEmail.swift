@@ -5,7 +5,11 @@
 import Foundation
 
 // MARK: - Is Valid Email
+// MARK: - Is Valid Email
 extension String {
+    
+    /// Checks if the string is a valid email address using NSDataDetector.
+    /// Also validates that it's a "mailto" link type.
     public var isValidEmail: Bool {
         guard !lowercased().hasPrefix("mailto:") else { return false }
 

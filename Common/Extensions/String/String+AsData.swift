@@ -5,9 +5,7 @@
 import Foundation
 
 extension String {
+    
+    /// Converts the string to Data using UTF-8 encoding.
     public var asData: Data { .init(utf8) }
-}
-
-extension String {
-    public var asDataDecodedFromBase64: Data? { .init(base64Encoded: self) }
 }

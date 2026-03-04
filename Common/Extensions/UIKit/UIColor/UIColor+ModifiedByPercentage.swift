@@ -5,6 +5,10 @@
 import UIKit
 
 extension UIColor {
+    
+    /// Returns a modified color by adjusting brightness by a percentage.
+    /// - Parameter percent: The percentage to modify (positive to lighten, negative to darken).
+    /// - Returns: The modified color, or `nil` if modification fails.
     public func getModified(byPercentage percent: CGFloat) -> UIColor? {
         var red: CGFloat = .zero
         var green: CGFloat = .zero

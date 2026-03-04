@@ -5,7 +5,11 @@
 import Foundation
 
 // MARK: - RUT Utilities
+// MARK: - RUT Utilities
 extension String {
+    
+    /// Validates if the string is a valid Chilean RUT (Rol Único Tributario).
+    /// Performs format removal, length check, regex validation, and verifying digit calculation.
     public var isRUT: Bool {
         removeRUTFormat()
 
@@ -28,6 +32,10 @@ extension String {
 }
 
 extension String {
+    
+    /// Formats the string as a RUT (e.g., 12.345.678-9).
+    /// - Parameter onlyIfValid: If `true`, only formats if the current string is a valid RUT. Defaults to `true`.
+    /// - Returns: The formatted RUT string, or the original string if validation fails or formatting is not possible.
     @discardableResult public func formatAsRUT(onlyIfValid: Bool = true) -> Self {
         removeRUTFormat()
             .with {
@@ -45,6 +53,9 @@ extension String {
 }
 
 extension String {
+    
+    /// Removes RUT formatting characters (dots and hyphens).
+    /// - Returns: Cleaned string.
     @discardableResult public func removeRUTFormat() -> Self {
         with { $0 = $0.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: "-", with: "") }
     }

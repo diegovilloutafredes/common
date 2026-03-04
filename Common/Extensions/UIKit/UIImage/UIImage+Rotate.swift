@@ -5,6 +5,10 @@
 import UIKit
 
 extension UIImage {
+    
+    /// Rotates the image by the specified angle.
+    /// - Parameter radians: The rotation angle in radians.
+    /// - Returns: The rotated image, or `nil` if rotation fails.
     public func rotate(radians: CGFloat) -> UIImage? {
         var newSize = CGRect(origin: .zero, size: size)
             .applying(.init(rotationAngle: radians))

@@ -3,6 +3,8 @@
 //
 
 // MARK: - RawValueKeyValueStore
+// MARK: - RawValueKeyValueStore
+/// A protocol combining `RawValueKeyableStorage` with a key-value storage mechanism.
 public protocol RawValueKeyValueStore: RawValueKeyableStorage {}
 
 
@@ -10,8 +12,8 @@ public protocol RawValueKeyValueStore: RawValueKeyableStorage {}
 extension RawValueKeyValueStore where Keys.RawValue == String {
     private var type: KeyValueStore.StoreType { .notSecure(.userDefaults) }
     private var store: KeyValueStore { .init(type: type) }
-    public func add(item: Tuple<Keys, Storable>, completion: CompletionHandler = nil) { store.add(item: (item.key.rawValue, item.value), completion: completion) }
-    public func add(item: KeyStorable, completion: CompletionHandler = nil) { store.add(item: (item.key, item), completion: completion) }
+    public func add(item: Tuple<Keys, Storable>) { store.add(item: (item.key.rawValue, item.value)) }
+    public func add(item: KeyStorable) { store.add(item: (item.key, item)) }
     public func get<T: Storable>(using key: Keys) -> T? { store.get(using: key.rawValue) }
-    public func remove(using key: Keys, completion: CompletionHandler = nil) { store.remove(using: key.rawValue, completion: completion) }
+    public func remove(using key: Keys) { store.remove(using: key.rawValue) }
 }

@@ -11,8 +11,9 @@ public struct HTTPHeaders {
     /// Creates an empty instance.
     public init() {}
 
-    /// Creates an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
-    /// name and value encountered.
+    /// Creates an instance from an array of `HTTPHeader`s.
+    /// Duplicate case-insensitive names are collapsed into the last name and value encountered.
+    /// - Parameter headers: The array of `HTTPHeader`s to initialize with.
     public init(_ headers: [HTTPHeader]) {
         self.init()
         headers.forEach { update($0) }

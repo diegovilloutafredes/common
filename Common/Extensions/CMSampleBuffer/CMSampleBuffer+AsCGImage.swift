@@ -6,6 +6,8 @@ import CoreImage
 import CoreMedia
 
 extension CMSampleBuffer {
+    
+    /// Converts the sample buffer to a CGImage, if possible.
     public var asCGImage: CGImage? {
         guard let cvPixelBuffer = CMSampleBufferGetImageBuffer(self) else { return nil }
         let ciImage = CIImage(cvPixelBuffer: cvPixelBuffer)

@@ -4,11 +4,18 @@
 
 import UIKit
 
+/// A specialized `CABasicAnimation` for rotation.
 final class RotationAnimation: CABasicAnimation {
     override init() {
         super.init()
     }
 
+    /// Initializes a new rotation animation.
+    /// - Parameters:
+    ///   - fromValue: The starting rotation value in radians.
+    ///   - toValue: The ending rotation value in radians.
+    ///   - duration: The duration of the animation.
+    ///   - repeatCount: The number of times to repeat the animation.
     init(
         fromValue: CGFloat,
         toValue: CGFloat,

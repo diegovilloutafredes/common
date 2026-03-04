@@ -5,7 +5,10 @@
 import Foundation
 
 // MARK: - Default Values
+// MARK: - Default Values
 extension String {
+    
+    /// Default string values used throughout the application.
     public enum DefaultValues {
         public enum Alerts {
             public static let acceptActionTitle = "Aceptar"

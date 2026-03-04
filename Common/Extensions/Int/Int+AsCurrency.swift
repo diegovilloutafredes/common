@@ -3,6 +3,9 @@
 //
 
 extension Int {
+    
+    /// Formats the integer as a currency string using the Chilean locale (es_CL).
+    /// Returns the decimal formatted string with a '$' prefix if currency formatting fails.
     public var asCurrency: String {
         NumberFormatter()
             .with {

@@ -10,6 +10,8 @@ extension UILabel {
         set { set(associatedObject: newValue, for: "onTapHandler") }
     }
 
+    /// Adds a tap gesture handler for the label text.
+    /// - Parameter handler: The closure to execute when tapped, receiving the label and gesture.
     @discardableResult public func onTextTap(_ handler: @escaping Handler<(UILabel, UITapGestureRecognizer)>) -> Self {
         with {
             $0.onTapHandler = handler

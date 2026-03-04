@@ -53,10 +53,19 @@ extension DefaultButtonTheme: ButtonTheme {
 }
 
 // MARK: - ActionButton
+// MARK: - ActionButton
+
+/// A customizable button that supports theming and predefined styles.
 public final class ActionButton: BaseButton {
     private let shouldApplyDefaultRatio: Bool
     private let theme: ButtonTheme
 
+    /// Initializes a new action button.
+    /// - Parameters:
+    ///   - title: The title of the button.
+    ///   - isEnabled: Whether the button is enabled. Defaults to `true`.
+    ///   - shouldApplyDefaultRatio: Whether to apply the default aspect ratio. Defaults to `true`.
+    ///   - theme: The theme to apply. Defaults to `.filled`.
     public init(_ title: String? = nil, isEnabled: Bool = true, shouldApplyDefaultRatio: Bool = true, theme: ButtonTheme = DefaultButtonTheme.filled) {
         self.shouldApplyDefaultRatio = shouldApplyDefaultRatio
         self.theme = theme

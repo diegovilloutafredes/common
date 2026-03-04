@@ -6,6 +6,8 @@ import CoreGraphics
 
 // MARK: - Default Values
 extension CGFloat {
+    
+    /// Provides default constant values for various UI components layouts.
     public enum DefaultValues {
         public enum AlertView {
             public static var cornerRadius: CGFloat { 16 }

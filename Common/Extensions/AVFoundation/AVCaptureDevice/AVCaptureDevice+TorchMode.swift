@@ -5,6 +5,9 @@
 import AVFoundation
 
 extension AVCaptureDevice {
+    
+    /// Sets the torch mode and returns self (chainable).
+    /// - Parameter torchMode: The torch mode to set.
     @discardableResult public func torchMode(_ torchMode: TorchMode) -> Self {
         with {
             do {

@@ -5,34 +5,50 @@
 import Foundation
 
 // MARK: - Logger
+// MARK: - Logger
+/// A utility for logging messages and network requests to the console.
 public enum Logger {
+    
+    /// Logs a generic item to the console.
+    /// - Parameters:
+    ///   - caller: The calling function name.
+    ///   - item: The item to log.
     public static func log(caller: String = #function, _ item: Any) { log(caller: caller, ["item": item]) }
 
+    /// Logs a network request and its response.
+    /// - Parameters:
+    ///   - caller: The calling function name.
+    ///   - request: The URL request.
+    ///   - data: The response data.
+    ///   - response: The URL response.
     public static func log(caller: String = #function, _ request: URLRequest, data: Data? = nil, response: URLResponse?) {
         let httpResponse = response as? HTTPURLResponse
-
-        guard let statusCode = httpResponse?.statusCode else { return }
-
-        let url = request.url!
-        let httpMethod = request.httpMethod!
-        let httpBody = request.httpBody ?? Data()
-        let body = httpBody.asString() ?? "Body is not a String"
-        let headers = request.allHTTPHeaderFields
-        let headersString = headers!.isEmpty ? "Empty headers" : "\(headers!)"
-
+        let statusCode = httpResponse?.statusCode ?? -1
+        let requestHeaders = request.allHTTPHeaderFields ?? [:]
+        let responseHeaders = httpResponse?.allHeaderFields as? [String: String] ?? [:]
+        let url = request.url
+        let httpMethod = request.httpMethod
+        let httpBody = request.httpBody
+        let body = httpBody?.asString() ?? .empty
+        
         log(
             caller: caller,
             [
-                "STATUS CODE": statusCode,
-                "URL": url,
-                "HEADERS": headersString,
-                "METHOD": httpMethod,
+                "STATUS CODE": statusCode.asString,
+                "URL": url?.absoluteString ?? .empty,
+                "REQUEST HEADERS": requestHeaders.asString() ?? .empty,
+                "RESPONSE HEADERS": responseHeaders.asString() ?? .empty,
+                "METHOD": httpMethod ?? .empty,
                 "DATA": data?.asString() ?? .empty,
                 "BODY": body
-            ]
+            ].filter { $0.value.isNotEmpty }
         )
     }
 
+    /// Logs a dictionary of items to the console with a structured format.
+    /// - Parameters:
+    ///   - caller: The calling function name.
+    ///   - items: The items to log.
     public static func log(caller: String = #function, _ items: [String: Any]) {
         guard shouldLog else { return }
 
@@ -66,7 +82,7 @@ extension Logger: Loggable {}
 
 // MARK: - Convenience
 extension Logger {
-    private static var bundleIdentifier: String { Bundle.main.bundleIdentifier?.localizedUppercase ?? "\(self)" }
+    private static var bundleIdentifier: String { Bundle.main.bundleIdentifier?.uppercased() ?? "\(self)" }
     private static var currentTime: String { Date().toString(with: .DateFormats.ddMMyyyyHHmm) }
     private static func item(title: String, value: Any) -> String { "| 🔸 \(title): \(value)" }
     private static func underscores(_ count: Int) -> String { Array(repeating: "_", count: count).joined() }

@@ -5,9 +5,18 @@
 import UIKit
 
 // MARK: - ActivityIndicatorable
+// MARK: - ActivityIndicatorable
+/// A protocol for objects that can manage the visibility and state of an activity indicator.
 public protocol ActivityIndicatorable: AnyObject {
+    
+    /// Starts the activity indicator with the default color.
     func startActivityIndicator()
+    
+    /// Starts the activity indicator with a specific color.
+    /// - Parameter color: The color to apply to the activity indicator.
     func startActivityIndicator(with color: UIColor)
+    
+    /// Stops the activity indicator.
     func stopActivityIndicator()
 }
 
@@ -21,7 +30,7 @@ extension ActivityIndicatorable where Self: BaseCoordinator {
 
 // MARK: - where Self: UITextField
 extension ActivityIndicatorable where Self: UITextField {
-    public func startActivityIndicator() { startActivityIndicator(with: textColor ?? .black) }
+    public func startActivityIndicator() { startActivityIndicator(with: textColor ?? backgroundColor?.inverted ?? .black) }
 
     public func startActivityIndicator(with color: UIColor) {
         let activityIndicator = UIActivityIndicatorView()
@@ -40,10 +49,7 @@ extension ActivityIndicatorable where Self: UITextField {
 // MARK: - where Self: UIView
 extension ActivityIndicatorable where Self: UIView {
     public func startActivityIndicator() {
-        dispatchOnMain { [weak self] in guard let self else { return }
-            var activityColor: UIColor { backgroundColor?.inverted ?? .black }
-            startActivityIndicator(with: activityColor)
-        }
+        dispatchOnMain { [weak self] in guard let self else { return }; startActivityIndicator(with: backgroundColor?.inverted ?? .black) }
     }
 
     public func startActivityIndicator(with color: UIColor) {

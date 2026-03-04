@@ -5,7 +5,10 @@
 import Foundation
 
 // MARK: - URLRequestConvertible
+/// A type that can be converted into a `URLRequest`.
 public protocol URLRequestConvertible {
+    
+    /// Returns a `URLRequest` representation or throws an error.
     func asURLRequest() throws -> URLRequest
 }
 

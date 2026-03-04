@@ -5,6 +5,9 @@
 import AVFoundation
 
 extension AVCaptureDevice {
+    
+    /// Sets the exposure mode if supported and returns self (chainable).
+    /// - Parameter exposureMode: The exposure mode to set.
     @discardableResult public func exposureModeIfPossible(_ exposureMode: ExposureMode) -> Self {
         with {
             do {

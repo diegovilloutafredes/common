@@ -10,6 +10,9 @@ extension UIViewController {
         set { swizzleViewIsAppearingIfNeeded(); set(associatedObject: newValue, for: "onViewIsAppearingAction") }
     }
     
+// MARK: - onViewIsAppearing
+    /// Sets a closure to be executed when `viewIsAppearing` is called and returns self (chainable).
+    /// - Parameter onViewIsAppearing: The closure to execute.
     @discardableResult public func onViewIsAppearing(_ onViewIsAppearing: @escaping Handler<UIViewController>) -> Self {
         with { $0.onViewIsAppearingAction = onViewIsAppearing }
     }

@@ -5,5 +5,7 @@
 import Foundation
 
 extension URL {
-    var components: URLComponents? { .init(string: absoluteString) }
+    
+    /// Returns the URLComponents of the URL.
+    public var components: URLComponents? { .init(string: absoluteString) }
 }

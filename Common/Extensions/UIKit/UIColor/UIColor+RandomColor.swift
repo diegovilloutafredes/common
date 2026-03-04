@@ -5,6 +5,8 @@
 import UIKit
 
 extension UIColor {
+    
+    /// Returns a random color.
     public static var randomColor: UIColor {
         .init(
             red: .random(in: 0...1),

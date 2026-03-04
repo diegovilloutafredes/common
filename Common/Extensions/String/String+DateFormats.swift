@@ -5,7 +5,10 @@
 import Foundation
 
 // MARK: - DateFormats
+// MARK: - DateFormats
 extension String {
+    
+    /// Common date format strings used in the application.
     public enum DateFormats {
         public static let ddMMyy = "dd MM yy"
         public static let ddMMyyyy = "dd-MM-yyyy"
@@ -21,7 +24,7 @@ extension String {
         public static let yyyyMMddHHmmss = "yyyy-MM-dd HH:mm:ss"
         public static let yyyyMMddHHmmss0000 = "yyyy-MM-dd HH:mm:ss +0000"
         public static let yyyyMMddHHmmss000000 = "yyyy-MM-dd HH:mm:ss.000000"
-        public static let yyyyMMddTHHmmssSSSZ = "yyyy-MM-dd HH:mm:ss.SSS'Z'"
-        public static let YYMMdd = "YYMMdd"
+        public static let yyyyMMddTHHmmssSSSZ = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        public static let yyMMdd = "yyMMdd"
     }
 }

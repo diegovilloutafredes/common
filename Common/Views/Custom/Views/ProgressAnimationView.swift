@@ -4,9 +4,16 @@
 
 import UIKit
 
+/// A view that displays a progress animation using a gradient layer.
 public final class ProgressAnimationView: UIView {
     private var completion: CompletionHandler = nil
 
+    /// Animates the progress view.
+    /// - Parameters:
+    ///   - progressColor: The color of the progress indicator.
+    ///   - backgroundColor: The background color of the view.
+    ///   - duration: The duration of the animation.
+    ///   - completion: A closure to be called when the animation finishes.
     public func animate(progressColor: CGColor, backgroundColor: CGColor, duration: CFTimeInterval, completion: CompletionHandler) {
         self.completion = completion
 

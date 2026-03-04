@@ -4,10 +4,19 @@
 
 import Foundation
 
+/// Encodes parameters into a `URLRequest` using URL-encoded form encoding.
 public final class URLEncodedFormParameterEncoder: ParameterEncoder {
+    
+    /// Defines where the parameters should be encoded.
     public enum Destination {
+        
+        /// Applies parameters to the URL query string or HTTP body based on the HTTP method.
         case methodDependent
+        
+        /// Always applies parameters to the URL query string.
         case queryString
+        
+        /// Always applies parameters to the HTTP body.
         case httpBody
 
         func encodesParametersInURL(for method: HTTPMethod) -> Bool {
@@ -22,11 +31,13 @@ public final class URLEncodedFormParameterEncoder: ParameterEncoder {
     let encoder: URLEncodedFormEncoder
     let destination: Destination
 
+    /// Initializes the encoder with a specific underlying encoder and destination.
     public init(encoder: URLEncodedFormEncoder = .init(), destination: Destination = .methodDependent) {
         self.encoder = encoder
         self.destination = destination
     }
 
+    /// Encodes the parameters into the URLRequest.
     public func encode<Parameters: Encodable>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest {
         guard let parameters else { return request }
 

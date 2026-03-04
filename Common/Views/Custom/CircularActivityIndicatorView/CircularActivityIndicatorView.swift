@@ -4,6 +4,7 @@
 
 import UIKit
 
+/// A view that displays a circular activity indicator with animated strokes.
 public final class CircularActivityIndicatorView: UIView {
     public override class var requiresConstraintBasedLayout: Bool { true }
 
@@ -11,6 +12,12 @@ public final class CircularActivityIndicatorView: UIView {
     private let lineCap: CAShapeLayerLineCap
     private let lineWidth: CGFloat
 
+    /// Initializes a new circular activity indicator.
+    /// - Parameters:
+    ///   - frame: The frame rectangle for the view.
+    ///   - colors: An array of colors for the indicator stroke.
+    ///   - lineCap: The style for the endpoints of the stroke.
+    ///   - lineWidth: The thickness of the stroke.
     public init(
         frame: CGRect,
         colors: [UIColor],
@@ -24,6 +31,11 @@ public final class CircularActivityIndicatorView: UIView {
         self.backgroundColor(.clear)
     }
 
+    /// Initializes a new circular activity indicator with default frame.
+    /// - Parameters:
+    ///   - colors: An array of colors for the indicator stroke.
+    ///   - lineCap: The style for the endpoints of the stroke. Defaults to `.butt`.
+    ///   - lineWidth: The thickness of the stroke. Defaults to 4.
     public convenience init(colors: [UIColor], lineCap: CAShapeLayerLineCap = .butt, lineWidth: CGFloat = 4) {
         self.init(frame: .zero, colors: colors, lineCap: lineCap, lineWidth: lineWidth)
     }
@@ -33,7 +45,7 @@ public final class CircularActivityIndicatorView: UIView {
         fatalError("NSCoder is not supported")
     }
 
-    private lazy var progressShapeLayer: ProgressShapeLayer = { .init(lineCap: lineCap, lineWidth: lineWidth, strokeColor: colors.first ?? .green) } ()
+    private lazy var progressShapeLayer = ProgressShapeLayer(lineCap: lineCap, lineWidth: lineWidth, strokeColor: colors.first ?? .green)
 
     public override func layoutSubviews() {
         super.layoutSubviews()
@@ -52,6 +64,7 @@ public final class CircularActivityIndicatorView: UIView {
         progressShapeLayer.path = path
     }
     
+    /// Indicates whether the view is currently animating.
     public var isAnimating: Bool = false {
         didSet {
             if isAnimating {

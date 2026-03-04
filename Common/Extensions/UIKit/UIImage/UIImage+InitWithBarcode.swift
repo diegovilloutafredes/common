@@ -5,6 +5,9 @@
 import UIKit
 
 extension UIImage {
+    
+    /// Initializes an image from a barcode string using Code128 format.
+    /// - Parameter barcode: The barcode string to encode.
     public convenience init?(barcode: String) {
         guard let filter = CIFilter(name: "CICode128BarcodeGenerator") else { return nil }
         let data = barcode.data(using: .ascii)

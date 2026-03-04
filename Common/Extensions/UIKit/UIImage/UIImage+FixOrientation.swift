@@ -5,6 +5,9 @@
 import UIKit
 
 extension UIImage {
+    
+    /// Fixes the image orientation by redrawing it with the correct orientation.
+    /// - Returns: The image with corrected orientation, or `nil` if fixing fails.
     public func fixOrientation() -> UIImage? {
         guard imageOrientation != .up else { return self.copy() as? UIImage }
 

@@ -5,6 +5,8 @@
 import UIKit
 
 extension UIDevice {
+    
+    /// Returns the device model code (e.g. "iPhone10,6").
     var modelCode: String {
         var systemInfo = utsname()
         uname(&systemInfo)

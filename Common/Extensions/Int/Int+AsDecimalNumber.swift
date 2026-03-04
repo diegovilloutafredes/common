@@ -3,6 +3,8 @@
 //
 
 extension Int {
+    
+    /// Formats the integer as a decimal number string using the Chilean locale (es_CL).
     public var asDecimalNumber: String {
         NumberFormatter()
             .with {

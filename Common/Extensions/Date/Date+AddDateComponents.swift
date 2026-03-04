@@ -5,6 +5,14 @@
 import Foundation
 
 extension Date {
+    
+    /// Adds time components to the date.
+    /// - Parameters:
+    ///   - seconds: Seconds to add.
+    ///   - minutes: Minutes to add.
+    ///   - hours: Hours to add.
+    ///   - days: Days to add.
+    /// - Returns: A new date with the added components, or the original date if calculation fails.
     public func add(seconds: Int = .zero, minutes: Int = .zero, hours: Int = .zero, days: Int = .zero) -> Date {
         let dateComponents = DateComponents()
             .with {

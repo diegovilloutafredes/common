@@ -5,7 +5,18 @@
 import UIKit
 
 // MARK: - List
+// MARK: - List
+
+/// A base list component inheriting from `UICollectionView`.
+/// It provides common configuration like preventing content inset adjustments and handling prefetching.
 public class List: UICollectionView {
+    
+    /// Initializes a new list with the specified components.
+    /// - Parameters:
+    ///   - dataSource: The data source for the list.
+    ///   - delegate: The delegate for the list.
+    ///   - prefetchDataSource: The prefetch data source for the list.
+    ///   - collectionViewLayout: The layout to use.
     public init(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate? = nil, prefetchDataSource: UICollectionViewDataSourcePrefetching? = nil, collectionViewLayout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: collectionViewLayout)
         self.dataSource(dataSource)

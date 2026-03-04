@@ -10,6 +10,8 @@ extension UITextField {
         set { set(associatedObject: newValue, for: "onEditingDidEndHandler") }
     }
 
+    /// Sets a handler for when editing ends and returns self (chainable).
+    /// - Parameter handler: The handler to execute with the text field.
     @discardableResult public func onEditingDidEnd(_ handler: @escaping Handler<UITextField>) -> Self {
         with {
             $0.onEditingDidEndHandler = handler

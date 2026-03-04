@@ -5,23 +5,35 @@
 import AVFoundation
 
 // MARK: - CameraManager
+// MARK: - CameraManager
+/// A manager that handles camera session configuration and video data output.
 public final class CameraManager: NSObject {
 
-
     // MARK: - DefaultValues
+    /// Default configuration values for camera settings.
     public enum DefaultValues {
+        /// Default camera position (back).
         public static var position: AVCaptureDevice.Position { .back }
+        /// Default camera type (auto).
         public static var type: CameraType { .auto }
+        /// Default video orientation.
         public static var orientation: AVCaptureVideoOrientation { .defaultValue }
+        /// Default zoom factor (1.0).
         public static var zoomFactor: Double { 1 }
+        /// Default delay between frame processing in milliseconds.
         public static var delayBetweenFrames: Int64 { 200 }
     }
 
     // MARK: - CameraType
+    /// Defines the type of camera lens to use.
     public enum CameraType {
+        /// Triple camera system.
         case tripleCamera
+        /// Dual camera system.
         case dualCamera
+        /// Wide angle camera.
         case wideAngleCamera
+        /// Automatically select the best available camera.
         case auto
     }
 
@@ -33,6 +45,15 @@ public final class CameraManager: NSObject {
     private let captureDeviceHandler: Handler<AVCaptureDevice>?
     private let onSampleBufferHandler: Handler<CMSampleBuffer>
 
+    /// Initializes a new camera manager with specific configuration.
+    /// - Parameters:
+    ///   - position: The camera position (front or back).
+    ///   - type: The camera lens type.
+    ///   - orientation: The video orientation.
+    ///   - zoomFactor: The initial zoom factor.
+    ///   - delayBetweenFrames: The minimum delay between processed frames.
+    ///   - captureDeviceHandler: Optional handler to configure the capture device.
+    ///   - onSampleBufferHandler: Handler called when a new sample buffer is received.
     public init(
         position: AVCaptureDevice.Position = DefaultValues.position,
         type: CameraType = DefaultValues.type,
@@ -69,6 +90,11 @@ public final class CameraManager: NSObject {
 }
 
 extension CameraManager {
+    
+    /// Starts the camera session and configures the preview view.
+    /// - Parameters:
+    ///   - previewView: The view to display the camera preview.
+    ///   - handler: Optional handler called after session start with authorization status.
     public func begin(_ previewView: PreviewView, handler: Handler<AuthorizationStatus>? = nil) {
         switch CameraAuthorizationManager.currentStatus {
         case .authorized:
@@ -96,10 +122,14 @@ extension CameraManager {
         }
     }
 
+    /// Stops the camera session.
     public func finish() { sessionQueue.async { self.captureSession.stopRunning() } }
 
+    /// Sets the zoom factor for the camera.
+    /// - Parameter zoomFactor: The zoom factor to apply.
     public func set(zoomFactor: Double) { captureDevice?.videoZoomFactor(zoomFactor) }
 
+    /// Toggles the device torch (flashlight) if available.
     public func toggleTorch() { captureDevice?.toggleTorch() }
 }
 
@@ -152,7 +182,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard isFrameOutputAllowed else { return }
         lastFrameTime = Date.asMilliseconds
-        dispatchOnMain { [weak self] in guard let self else { return }; self.onSampleBufferHandler(sampleBuffer) }
+        dispatchOnMain { [weak self] in guard let self else { return }; onSampleBufferHandler(sampleBuffer) }
     }
 }
 

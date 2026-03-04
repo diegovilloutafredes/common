@@ -5,6 +5,12 @@
 import UIKit
 
 extension UITextField {
+    
+    /// Adds a toggle visibility button for password fields and returns self (chainable).
+    /// - Parameters:
+    ///   - visiblePasswordIcon: Icon shown when password is visible.
+    ///   - notVisibleVisiblePasswordIcon: Icon shown when password is hidden.
+    ///   - tintColor: The tint color for the button.
     @discardableResult public func addToggleVisibilityButton(
         using visiblePasswordIcon: UIImage? = .symbol("eye.fill"),
         notVisibleVisiblePasswordIcon: UIImage? = .symbol("eye.slash.fill"),

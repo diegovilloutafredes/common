@@ -5,6 +5,9 @@
 import AVFoundation
 
 extension AVCaptureDevice {
+    
+    /// Sets the focus mode if supported and returns self (chainable).
+    /// - Parameter focusMode: The focus mode to set.
     @discardableResult public func focusModeIfPossible(_ focusMode: FocusMode) -> Self {
         with {
             do {

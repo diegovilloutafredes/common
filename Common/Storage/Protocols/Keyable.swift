@@ -3,8 +3,14 @@
 //
 
 // MARK: - Keyable
+// MARK: - Keyable
+/// A protocol for types that can provide a unique key for storage.
 public protocol Keyable {
+    
+    /// The unique key for the instance.
     var key: String { get }
+    
+    /// A static unique key for the type.
     static var staticKey: String { get }
 }
 

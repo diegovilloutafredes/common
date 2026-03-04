@@ -7,14 +7,22 @@ import CoreLocation
 import UIKit
 
 // MARK: - AuthorizationStatus
+// MARK: - AuthorizationStatus
+/// Represents the authorization status for various system services.
 public enum AuthorizationStatus {
+    /// The service is authorized.
     case authorized
+    /// The service is denied or restricted.
     case denied
+    /// The authorization status has not been determined yet.
     case notDetermined
 }
 
 // MARK: - AuthorizationStatusConvertible
+/// A protocol for types that can be converted to an `AuthorizationStatus`.
 public protocol AuthorizationStatusConvertible {
+    
+    /// The authorization status value.
     var asAuthorizationStatus: AuthorizationStatus { get }
 }
 

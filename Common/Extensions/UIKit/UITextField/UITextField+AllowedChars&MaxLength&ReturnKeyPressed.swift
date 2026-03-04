@@ -5,18 +5,27 @@
 import UIKit
 
 extension UITextField {
+    
+    /// Sets the allowed characters for input and returns self (chainable).
+    /// - Parameter allowedChars: A string containing allowed characters, or nil for no restriction.
     @discardableResult public func allowedChars(_ allowedChars: String? = nil) -> Self {
         with { $0.allowedChars = allowedChars }
     }
 }
 
 extension UITextField {
+    
+    /// Sets the maximum character length and returns self (chainable).
+    /// - Parameter maxLength: The maximum number of characters allowed.
     @discardableResult public func maxLength(_ maxLength: Int) -> Self {
         with { $0.maxLength = maxLength }
     }
 }
 
 extension UITextField {
+    
+    /// Sets a handler for when the return key is pressed and returns self (chainable).
+    /// - Parameter onReturnKeyPressed: The handler to execute.
     @discardableResult public func onReturnKeyPressed(_ onReturnKeyPressed: @escaping Handler<UITextField>) -> Self {
         with { $0.onReturnKeyPressed = onReturnKeyPressed }
     }

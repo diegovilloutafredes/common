@@ -1,0 +1,2056 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 12,
+      "symbol": "CGFloat.DefaultValues.AlertView",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 13,
+      "symbol": "CGFloat.DefaultValues.AlertView.cornerRadius",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 15,
+      "symbol": "CGFloat.DefaultValues.BottomSheet",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 16,
+      "symbol": "CGFloat.DefaultValues.BottomSheet.cornerRadius",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 18,
+      "symbol": "CGFloat.DefaultValues.Button",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 19,
+      "symbol": "CGFloat.DefaultValues.Button.cornerRadius",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 21,
+      "symbol": "CGFloat.DefaultValues.Cell",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 22,
+      "symbol": "CGFloat.DefaultValues.Cell.cornerRadius",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 24,
+      "symbol": "CGFloat.DefaultValues.StackView",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 25,
+      "symbol": "CGFloat.DefaultValues.StackView.topMargin",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 26,
+      "symbol": "CGFloat.DefaultValues.StackView.leftMargin",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 27,
+      "symbol": "CGFloat.DefaultValues.StackView.bottomMargin",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 28,
+      "symbol": "CGFloat.DefaultValues.StackView.rightMargin",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 29,
+      "symbol": "CGFloat.DefaultValues.StackView.spacing",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 31,
+      "symbol": "CGFloat.DefaultValues.TextField",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 32,
+      "symbol": "CGFloat.DefaultValues.TextField.cornerRadius",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 34,
+      "symbol": "CGFloat.DefaultValues.View",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/CoreGraphics/CGFloat/CGFloat+DefaultValues.swift",
+      "line": 35,
+      "symbol": "CGFloat.DefaultValues.View.cornerRadius",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/NSObject/NSObject+ObserveAppLifecycleEvent.swift",
+      "line": 13,
+      "symbol": "NSObject.AppLifecycleEvent.onDidBecomeActive",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/NSObject/NSObject+ObserveAppLifecycleEvent.swift",
+      "line": 14,
+      "symbol": "NSObject.AppLifecycleEvent.onDidEnterBackground",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/NSObject/NSObject+ObserveAppLifecycleEvent.swift",
+      "line": 15,
+      "symbol": "NSObject.AppLifecycleEvent.onWillEnterForeground",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/NSObject/NSObject+ObserveAppLifecycleEvent.swift",
+      "line": 16,
+      "symbol": "NSObject.AppLifecycleEvent.onWillResignActive",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/NSObject/NSObject+ObserveAppLifecycleEvent.swift",
+      "line": 17,
+      "symbol": "NSObject.AppLifecycleEvent.onWillTerminate",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 13,
+      "symbol": "String.DateFormats.ddMMyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 14,
+      "symbol": "String.DateFormats.ddMMyyyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 15,
+      "symbol": "String.DateFormats.ddMMMyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 16,
+      "symbol": "String.DateFormats.ddMMMMyyyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 17,
+      "symbol": "String.DateFormats.ddMMyyyyHHmm",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 18,
+      "symbol": "String.DateFormats.ddDEMMMMDELyyyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 19,
+      "symbol": "String.DateFormats.EEEEddDEMMMM",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 20,
+      "symbol": "String.DateFormats.EEEEddDEMMMMyyyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 21,
+      "symbol": "String.DateFormats.HHmm",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 22,
+      "symbol": "String.DateFormats.MMyy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 23,
+      "symbol": "String.DateFormats.yyyyMMdd",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 24,
+      "symbol": "String.DateFormats.yyyyMMddHHmmss",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 25,
+      "symbol": "String.DateFormats.yyyyMMddHHmmss0000",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 26,
+      "symbol": "String.DateFormats.yyyyMMddHHmmss000000",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 27,
+      "symbol": "String.DateFormats.yyyyMMddTHHmmssSSSZ",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DateFormats.swift",
+      "line": 28,
+      "symbol": "String.DateFormats.yyMMdd",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 13,
+      "symbol": "String.DefaultValues.Alerts",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 14,
+      "symbol": "String.DefaultValues.Alerts.acceptActionTitle",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 15,
+      "symbol": "String.DefaultValues.Alerts.cancelActionTitle",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 16,
+      "symbol": "String.DefaultValues.Alerts.title",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 17,
+      "symbol": "String.DefaultValues.Alerts.message",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 19,
+      "symbol": "String.DefaultValues.App",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 20,
+      "symbol": "String.DefaultValues.App.name",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 22,
+      "symbol": "String.DefaultValues.UIElements",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 23,
+      "symbol": "String.DefaultValues.UIElements.goBack",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 24,
+      "symbol": "String.DefaultValues.UIElements.search",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 25,
+      "symbol": "String.DefaultValues.UIElements.finish",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 27,
+      "symbol": "String.DefaultValues.Locale",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/String/String+DefaultValues.swift",
+      "line": 28,
+      "symbol": "String.DefaultValues.Locale.esCL",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UICollectionView/UICollectionView+Register.swift",
+      "line": 29,
+      "symbol": "SupplementaryViewKind",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UICollectionView/UICollectionView+Register.swift",
+      "line": 30,
+      "symbol": "SupplementaryViewKind.header",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UICollectionView/UICollectionView+Register.swift",
+      "line": 31,
+      "symbol": "SupplementaryViewKind.footer",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIEdgeInsets/UIEdgeInsets+DefaultValues.swift",
+      "line": 9,
+      "symbol": "UIEdgeInsets.DefaultValues",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIEdgeInsets/UIEdgeInsets+DefaultValues.swift",
+      "line": 10,
+      "symbol": "UIEdgeInsets.DefaultValues.StackView",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Register.swift",
+      "line": 8,
+      "symbol": "UIFont.RegisterFontError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Register.swift",
+      "line": 9,
+      "symbol": "UIFont.RegisterFontError.invalidFontFile",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Register.swift",
+      "line": 10,
+      "symbol": "UIFont.RegisterFontError.fontPathNotFound",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Register.swift",
+      "line": 11,
+      "symbol": "UIFont.RegisterFontError.initFontError",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Register.swift",
+      "line": 12,
+      "symbol": "UIFont.RegisterFontError.registerFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 11,
+      "symbol": "UIFont.FontStyle.black",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 12,
+      "symbol": "UIFont.FontStyle.bold",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 13,
+      "symbol": "UIFont.FontStyle.extraBold",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 14,
+      "symbol": "UIFont.FontStyle.extraLight",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 15,
+      "symbol": "UIFont.FontStyle.italic",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 16,
+      "symbol": "UIFont.FontStyle.light",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 17,
+      "symbol": "UIFont.FontStyle.medium",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 18,
+      "symbol": "UIFont.FontStyle.regular",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 19,
+      "symbol": "UIFont.FontStyle.semiBold",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIFont/UIFont+Style.swift",
+      "line": 20,
+      "symbol": "UIFont.FontStyle.thin",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIImage/UIImage+AverageColor.swift",
+      "line": 15,
+      "symbol": "UIImage.AverageColorAlgorithm.simple",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIImage/UIImage+AverageColor.swift",
+      "line": 16,
+      "symbol": "UIImage.AverageColorAlgorithm.squareRoot",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UITextField/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
+      "line": 40,
+      "symbol": "UITextField.textField(_:shouldChangeCharactersIn:replacementString:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UITextField/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
+      "line": 47,
+      "symbol": "UITextField.textFieldShouldReturn(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 44,
+      "symbol": "UIView.pinYAnchor(origin:to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 52,
+      "symbol": "UIView.pinXAnchor(origin:to:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 57,
+      "symbol": "UIView.pinYAnchor(origin:to:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 65,
+      "symbol": "UIView.pinTop(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 69,
+      "symbol": "UIView.pinBottom(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 73,
+      "symbol": "UIView.pinLeading(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 77,
+      "symbol": "UIView.pinTrailing(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 81,
+      "symbol": "UIView.pinCenterX(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 85,
+      "symbol": "UIView.pinCenterY(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 92,
+      "symbol": "UIView.pinTopTo(anchor:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 96,
+      "symbol": "UIView.pinBottomTo(anchor:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 100,
+      "symbol": "UIView.pinLeadingTo(anchor:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 104,
+      "symbol": "UIView.pinTrailingTo(anchor:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 108,
+      "symbol": "UIView.pinCenterXTo(anchor:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 112,
+      "symbol": "UIView.pinCenterYTo(anchor:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 137,
+      "symbol": "UIView.setHeight(to:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 142,
+      "symbol": "UIView.setWidth(to:multiplier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 150,
+      "symbol": "UIView.snapTop(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 154,
+      "symbol": "UIView.snapBottom(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 158,
+      "symbol": "UIView.snapLeading(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 162,
+      "symbol": "UIView.snapTrailing(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 169,
+      "symbol": "UIView.snapTop(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 173,
+      "symbol": "UIView.snapBottom(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 177,
+      "symbol": "UIView.snapLeading(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 181,
+      "symbol": "UIView.snapTrailing(to:inset:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 192,
+      "symbol": "UIView.alignCenter(with:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 253,
+      "symbol": "UIView.snapLeadTop(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 260,
+      "symbol": "UIView.snapTopTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 267,
+      "symbol": "UIView.snapLeadBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 274,
+      "symbol": "UIView.snapBottomTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 283,
+      "symbol": "UIView.snapLeadTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 290,
+      "symbol": "UIView.snapTopBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 299,
+      "symbol": "UIView.snapTopLeadBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 307,
+      "symbol": "UIView.snapLeadTopTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 315,
+      "symbol": "UIView.snapTopTrailBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 323,
+      "symbol": "UIView.snapLeadBottomTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 350,
+      "symbol": "UIView.snapLeadTop(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 357,
+      "symbol": "UIView.snapTopTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 364,
+      "symbol": "UIView.snapLeadBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 371,
+      "symbol": "UIView.snapBottomTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 380,
+      "symbol": "UIView.snapLeadTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 387,
+      "symbol": "UIView.snapTopBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 396,
+      "symbol": "UIView.snapTopLeadBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 404,
+      "symbol": "UIView.snapLeadTopTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 412,
+      "symbol": "UIView.snapTopTrailBottom(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Extensions/UIKit/UIView/UIView+AutoLayout.swift",
+      "line": 420,
+      "symbol": "UIView.snapLeadBottomTrail(to:insets:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 7,
+      "symbol": "URLEncodedFormEncoder",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 8,
+      "symbol": "URLEncodedFormEncoder.ArrayEncoding",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 9,
+      "symbol": "URLEncodedFormEncoder.ArrayEncoding.brackets",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 10,
+      "symbol": "URLEncodedFormEncoder.ArrayEncoding.noBrackets",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 11,
+      "symbol": "URLEncodedFormEncoder.ArrayEncoding.indexInBrackets",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 12,
+      "symbol": "URLEncodedFormEncoder.ArrayEncoding.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 24,
+      "symbol": "URLEncodedFormEncoder.BoolEncoding",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 25,
+      "symbol": "URLEncodedFormEncoder.BoolEncoding.numeric",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 26,
+      "symbol": "URLEncodedFormEncoder.BoolEncoding.literal",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 36,
+      "symbol": "URLEncodedFormEncoder.DataEncoding",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 37,
+      "symbol": "URLEncodedFormEncoder.DataEncoding.deferredToData",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 38,
+      "symbol": "URLEncodedFormEncoder.DataEncoding.base64",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 39,
+      "symbol": "URLEncodedFormEncoder.DataEncoding.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 50,
+      "symbol": "URLEncodedFormEncoder.DateEncoding",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 57,
+      "symbol": "URLEncodedFormEncoder.DateEncoding.deferredToDate",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 58,
+      "symbol": "URLEncodedFormEncoder.DateEncoding.secondsSince1970",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 59,
+      "symbol": "URLEncodedFormEncoder.DateEncoding.millisecondsSince1970",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 60,
+      "symbol": "URLEncodedFormEncoder.DateEncoding.iso8601",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 61,
+      "symbol": "URLEncodedFormEncoder.DateEncoding.formatted(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 62,
+      "symbol": "URLEncodedFormEncoder.DateEncoding.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Encoders/URLEncodedFormEncoder.swift",
+      "line": 82,
+      "symbol": "URLEncodedFormEncoder.KeyEncoding",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Protocols/URLRequestConvertible.swift",
+      "line": 16,
+      "symbol": "URLRequestConvertible.urlRequest",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Network/Protocols/URLRequestConvertible.swift",
+      "line": 24,
+      "symbol": "URLRequest.init(url:method:headers:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/AlertPresentable.swift",
+      "line": 8,
+      "symbol": "AlertViewType",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/AlertPresentable.swift",
+      "line": 9,
+      "symbol": "AlertViewType.emptyAlert",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/AlertPresentable.swift",
+      "line": 10,
+      "symbol": "AlertViewType.genericError",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/AlertPresentable.swift",
+      "line": 11,
+      "symbol": "AlertViewType.customAlert(title:message:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/AlertPresentable.swift",
+      "line": 35,
+      "symbol": "AlertPresentable.viewController",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/BackButtonAddable.swift",
+      "line": 25,
+      "symbol": "UIViewController.BackButtonAddableDefaultValues",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/BackButtonAddable.swift",
+      "line": 26,
+      "symbol": "UIViewController.BackButtonAddableDefaultValues.icon",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/BackButtonAddable.swift",
+      "line": 34,
+      "symbol": "UIViewController.addBackButton(_:action:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/CollectionViewSizeable.swift",
+      "line": 5,
+      "symbol": "Inset",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/CollectionViewSizeable.swift",
+      "line": 6,
+      "symbol": "Size",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/Dismissable.swift",
+      "line": 31,
+      "symbol": "Dismissable.viewController",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/Dismissable.swift",
+      "line": 43,
+      "symbol": "Dismissable.viewController",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/Presentable.swift",
+      "line": 32,
+      "symbol": "Presentable.viewController",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/Presentable.swift",
+      "line": 46,
+      "symbol": "Presentable.viewController",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/ValueWithable.swift",
+      "line": 11,
+      "symbol": "ValueWithable.T",
+      "symbol_kind": "source.lang.swift.decl.associatedtype",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/ValueWithable.swift",
+      "line": 20,
+      "symbol": "ValueWithable.with(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/Withable.swift",
+      "line": 11,
+      "symbol": "Withable.T",
+      "symbol_kind": "source.lang.swift.decl.associatedtype",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Protocols/Withable.swift",
+      "line": 20,
+      "symbol": "Withable.with(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ResultBuilders/UIViewBuilder.swift",
+      "line": 9,
+      "symbol": "UIViewBuilder",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 56,
+      "symbol": "KeychainWrapper.accessibilityOfKey(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 114,
+      "symbol": "KeychainWrapper.integer(forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 119,
+      "symbol": "KeychainWrapper.float(forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 124,
+      "symbol": "KeychainWrapper.double(forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 129,
+      "symbol": "KeychainWrapper.bool(forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 210,
+      "symbol": "KeychainWrapper.set(_:forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 214,
+      "symbol": "KeychainWrapper.set(_:forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 218,
+      "symbol": "KeychainWrapper.set(_:forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/KeychainWrapper/KeychainWrapper.swift",
+      "line": 222,
+      "symbol": "KeychainWrapper.set(_:forKey:withAccessibility:isSynchronizable:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/Protocols/KeyValueStorage.swift",
+      "line": 6,
+      "symbol": "Tuple",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Storage/Protocols/KeyValueStorage.swift",
+      "line": 7,
+      "symbol": "KeyValue",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/AppleLoginManager.swift",
+      "line": 47,
+      "symbol": "AppleLoginManager.authorizationController(controller:didCompleteWithAuthorization:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/AppleLoginManager.swift",
+      "line": 59,
+      "symbol": "AppleLoginManager.authorizationController(controller:didCompleteWithError:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/AppleLoginManager.swift",
+      "line": 67,
+      "symbol": "AppleLoginManager.presentationAnchor(for:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/Authorization/LocationAuthorizationManager.swift",
+      "line": 39,
+      "symbol": "LocationAuthorizationManager.locationManagerDidChangeAuthorization(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/CameraManager.swift",
+      "line": 182,
+      "symbol": "CameraManager.captureOutput(_:didOutput:from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/CameraManager.swift",
+      "line": 190,
+      "symbol": "CameraSessionHandler",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/CameraManager.swift",
+      "line": 191,
+      "symbol": "CameraSessionHandler.beginSession()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/CameraManager.swift",
+      "line": 192,
+      "symbol": "CameraSessionHandler.finishSession()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Utils/Managers/LocalAuthenticationManager.swift",
+      "line": 75,
+      "symbol": "LocalAuthenticationManager.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 22,
+      "symbol": "BaseViewController.loadView()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 33,
+      "symbol": "BaseViewController.preferredStatusBarStyle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 38,
+      "symbol": "BaseViewController.prefersHomeIndicatorAutoHidden",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 43,
+      "symbol": "BaseViewController.viewDidLoad()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 49,
+      "symbol": "BaseViewController.viewWillLayoutSubviews()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 54,
+      "symbol": "BaseViewController.viewDidLayoutSubviews()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 59,
+      "symbol": "BaseViewController.viewWillAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 73,
+      "symbol": "BaseViewController.viewDidAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 78,
+      "symbol": "BaseViewController.viewWillDisappear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewController.swift",
+      "line": 87,
+      "symbol": "BaseViewController.gestureRecognizerShouldBegin(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 34,
+      "symbol": "BaseViewModelableViewController.viewDidLoad()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 39,
+      "symbol": "BaseViewModelableViewController.viewWillLayoutSubviews()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 44,
+      "symbol": "BaseViewModelableViewController.viewWillAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 54,
+      "symbol": "BaseViewModelableViewController.viewDidAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 59,
+      "symbol": "BaseViewModelableViewController.viewWillDisappear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 71,
+      "symbol": "BaseViewModelableViewController.numberOfSections(in:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 72,
+      "symbol": "BaseViewModelableViewController.collectionView(_:numberOfItemsInSection:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 74,
+      "symbol": "BaseViewModelableViewController.collectionView(_:viewForSupplementaryElementOfKind:at:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 95,
+      "symbol": "BaseViewModelableViewController.collectionView(_:cellForItemAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 107,
+      "symbol": "BaseViewModelableViewController.collectionView(_:didSelectItemAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 109,
+      "symbol": "BaseViewModelableViewController.collectionView(_:layout:minimumInteritemSpacingForSectionAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 113,
+      "symbol": "BaseViewModelableViewController.collectionView(_:layout:minimumLineSpacingForSectionAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 117,
+      "symbol": "BaseViewModelableViewController.collectionView(_:layout:insetForSectionAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 127,
+      "symbol": "BaseViewModelableViewController.collectionView(_:layout:referenceSizeForHeaderInSection:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 134,
+      "symbol": "BaseViewModelableViewController.collectionView(_:layout:sizeForItemAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 142,
+      "symbol": "BaseViewModelableViewController.scrollViewDidEndDecelerating(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 143,
+      "symbol": "BaseViewModelableViewController.scrollViewDidEndDragging(_:willDecelerate:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 144,
+      "symbol": "BaseViewModelableViewController.scrollViewDidEndScrollingAnimation(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/ViewControllers/Base/BaseViewModelableViewController.swift",
+      "line": 145,
+      "symbol": "BaseViewModelableViewController.scrollViewDidScroll(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 12,
+      "symbol": "AlertViewModel.backgroundColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 13,
+      "symbol": "AlertViewModel.icon",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 14,
+      "symbol": "AlertViewModel.iconTintColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 15,
+      "symbol": "AlertViewModel.title",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 16,
+      "symbol": "AlertViewModel.titleColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 17,
+      "symbol": "AlertViewModel.attributedMessage",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 18,
+      "symbol": "AlertViewModel.messageAlignment",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 19,
+      "symbol": "AlertViewModel.messageColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 20,
+      "symbol": "AlertViewModel.actionButtonTitle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 21,
+      "symbol": "AlertViewModel.cancelButtonTitle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 22,
+      "symbol": "AlertViewModel.onAction",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 23,
+      "symbol": "AlertViewModel.onCancel",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 24,
+      "symbol": "AlertViewModel.shouldHandleBackgroundClick",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 29,
+      "symbol": "AlertViewModel.backgroundColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 30,
+      "symbol": "AlertViewModel.iconTintColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 31,
+      "symbol": "AlertViewModel.titleColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 32,
+      "symbol": "AlertViewModel.messageAlignment",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 33,
+      "symbol": "AlertViewModel.messageColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 40,
+      "symbol": "AlertViewModelPayload.icon",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 41,
+      "symbol": "AlertViewModelPayload.title",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 42,
+      "symbol": "AlertViewModelPayload.attributedMessage",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 43,
+      "symbol": "AlertViewModelPayload.actionButtonTitle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 44,
+      "symbol": "AlertViewModelPayload.cancelButtonTitle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 45,
+      "symbol": "AlertViewModelPayload.onAction",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 46,
+      "symbol": "AlertViewModelPayload.onCancel",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Alert/AlertViewModel.swift",
+      "line": 47,
+      "symbol": "AlertViewModelPayload.shouldHandleBackgroundClick",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseButton.swift",
+      "line": 31,
+      "symbol": "BaseButton.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseCell.swift",
+      "line": 19,
+      "symbol": "BaseCell.init(frame:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseCell.swift",
+      "line": 30,
+      "symbol": "BaseCell.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseLabel.swift",
+      "line": 31,
+      "symbol": "BaseLabel.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseReusableView.swift",
+      "line": 20,
+      "symbol": "BaseReusableView.init(frame:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseReusableView.swift",
+      "line": 31,
+      "symbol": "BaseReusableView.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseTextField.swift",
+      "line": 31,
+      "symbol": "BaseTextField.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Base/BaseView.swift",
+      "line": 39,
+      "symbol": "BaseView.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 8,
+      "symbol": "ButtonTheme",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 9,
+      "symbol": "ButtonTheme.backgroundColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 10,
+      "symbol": "ButtonTheme.borderColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 11,
+      "symbol": "ButtonTheme.borderWidth",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 12,
+      "symbol": "ButtonTheme.titleColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 13,
+      "symbol": "ButtonTheme.titleFont",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 17,
+      "symbol": "DefaultButtonTheme",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 18,
+      "symbol": "DefaultButtonTheme.filled",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 19,
+      "symbol": "DefaultButtonTheme.border",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 23,
+      "symbol": "DefaultButtonTheme",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 24,
+      "symbol": "DefaultButtonTheme.backgroundColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 31,
+      "symbol": "DefaultButtonTheme.borderColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 38,
+      "symbol": "DefaultButtonTheme.borderWidth",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 45,
+      "symbol": "DefaultButtonTheme.titleColor",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 52,
+      "symbol": "DefaultButtonTheme.titleFont",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Buttons/ActionButton.swift",
+      "line": 89,
+      "symbol": "ActionButton.set(isEnabled:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/CircularActivityIndicatorView/CircularActivityIndicatorView.swift",
+      "line": 9,
+      "symbol": "CircularActivityIndicatorView.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/CircularActivityIndicatorView/CircularActivityIndicatorView.swift",
+      "line": 50,
+      "symbol": "CircularActivityIndicatorView.layoutSubviews()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/CircularActivityIndicatorView/CircularActivityIndicatorView.swift",
+      "line": 136,
+      "symbol": "CircularActivityIndicatorView.animate()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Snackbar/Snackbar.swift",
+      "line": 15,
+      "symbol": "Snackbar.Duration.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Snackbar/Snackbar.swift",
+      "line": 16,
+      "symbol": "Snackbar.Duration.short",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Snackbar/Snackbar.swift",
+      "line": 17,
+      "symbol": "Snackbar.Duration.medium",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Snackbar/Snackbar.swift",
+      "line": 18,
+      "symbol": "Snackbar.Duration.long",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Toast.swift",
+      "line": 15,
+      "symbol": "Toast.Duration.short",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Toast.swift",
+      "line": 16,
+      "symbol": "Toast.Duration.medium",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Toast.swift",
+      "line": 17,
+      "symbol": "Toast.Duration.long",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/CardView.swift",
+      "line": 26,
+      "symbol": "CardViewModelPayload",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/CardView.swift",
+      "line": 35,
+      "symbol": "CardViewModelPayload.init(leftImageBackgroundColor:leftImage:title:attributedTitle:content:attributedContent:rightImage:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/GradientView.swift",
+      "line": 23,
+      "symbol": "GradientView.layerClass",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/GradientView.swift",
+      "line": 28,
+      "symbol": "GradientView.layoutSubviews()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/GradientView.swift",
+      "line": 57,
+      "symbol": "GradientView.colors(startColor:endColor:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/GradientView.swift",
+      "line": 66,
+      "symbol": "GradientView.horizontalMode(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/GradientView.swift",
+      "line": 72,
+      "symbol": "GradientView.endLocation(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 10,
+      "symbol": "PreviewView",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 11,
+      "symbol": "PreviewView.layerClass",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 24,
+      "symbol": "PreviewView",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 25,
+      "symbol": "PreviewView.session(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 30,
+      "symbol": "PreviewView",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 31,
+      "symbol": "PreviewView.videoGravity(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 36,
+      "symbol": "PreviewView",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 37,
+      "symbol": "PreviewView.videoOrientation(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/PreviewView.swift",
+      "line": 43,
+      "symbol": "PreviewView",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Custom/Views/ProgressAnimationView.swift",
+      "line": 47,
+      "symbol": "ProgressAnimationView.animationDidStop(_:finished:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Lists/List.swift",
+      "line": 41,
+      "symbol": "List.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Stacks/Stack.swift",
+      "line": 12,
+      "symbol": "Stack.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library/Common/Common/Views/Stacks/Stack.swift",
+      "line": 43,
+      "symbol": "Stack.requiresConstraintBasedLayout",
+      "symbol_kind": "source.lang.swift.decl.var.class",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/diegovillouta/iOS/Libraries/Trust/lat_trust_mobile_ios_bioidentity-v3_library"
+}

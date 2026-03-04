@@ -6,6 +6,8 @@ import Accelerate
 import CoreMedia
 
 extension CVPixelBuffer {
+    
+    /// Creates a CMSampleBuffer from the CVPixelBuffer.
     public var asCMSampleBuffer: CMSampleBuffer? {
         var sampleBuffer: CMSampleBuffer?
         var timimgInfo  = CMSampleTimingInfo()

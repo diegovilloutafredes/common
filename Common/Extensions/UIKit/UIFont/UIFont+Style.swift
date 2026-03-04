@@ -6,6 +6,7 @@ import UIKit
 
 // MARK: - FontStyle
 extension UIFont {
+    /// Enumeration of common font styles.
     public enum FontStyle: String, Uppercaseable, CaseIterable {
         case black
         case bold
