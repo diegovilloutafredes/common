@@ -1,7 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
-// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
-// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+// swift-compiler-version: Apple Swift version 6.3 effective-5.10 (swiftlang-6.3.0.123.5 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3
 import ARKit
 import AVFoundation
 import Accelerate
@@ -28,9 +28,7 @@ import _SwiftConcurrencyShims
 @objc open class BaseCoordinator : ObjectiveC.NSObject, Common.Coordinator, Common.BaseModuleDelegate {
   final public let navigationController: UIKit.UINavigationController
   final public let onPerformed: Common.Handler<any Common.Coordinator>?
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(navigationController: UIKit.UINavigationController, onPerformed: Common.Handler<any Common.Coordinator>? = nil)
-  #endif
   public var childCoordinators: [any Common.Coordinator]
   open func start()
   open func onDismissRequested()
@@ -40,9 +38,7 @@ import _SwiftConcurrencyShims
 extension Common.BaseCoordinator {
   public func addChild(_ coordinator: some Coordinator)
   public func addChildAndStart(_ coordinator: some Coordinator)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getChild<T>(_ type: T.Type) -> T? where T : Common.Coordinator
-  #endif
   public func removeChild<T>(_ coordinator: T) where T : Common.Coordinator
 }
 extension Common.BaseCoordinator : Common.ActivityIndicatorable {
@@ -59,23 +55,13 @@ public protocol Coordinator : AnyObject {
   func start()
 }
 public struct AES {
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(key: Swift.String, iv: Swift.String)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func encrypt(_ string: Swift.String) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func encrypt(_ data: Foundation.Data) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func decrypt(_ data: Foundation.Data) -> Foundation.Data?
-  #endif
 }
 extension Swift.Array where Element == any Common.Coordinator {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getFirst<T>(_ type: T.Type) -> T? where T : Common.Coordinator
-  #endif
   public mutating func removeAll<T>(_ type: T.Type) where T : Common.Coordinator
 }
 extension Swift.Array where Element : Swift.FloatingPoint {
@@ -99,10 +85,8 @@ extension Swift.Array where Element : Swift.FloatingPoint {
   }
 }
 extension ARKit.ARSCNView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func delegate(_ delegate: (any ARKit.ARSCNViewDelegate)?) -> Self
-  #endif
 }
 extension Foundation.AttributeContainer : Common.ValueWithable {
   @available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
@@ -167,10 +151,8 @@ extension AVFoundation.AVCaptureVideoDataOutput {
   public func videoSettings(_ videoSettings: [Swift.String : Any]) -> Self
 }
 extension AVFoundation.AVCaptureVideoPreviewLayer {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   public func session(_ session: AVFoundation.AVCaptureSession?) -> Self
-  #endif
 }
 extension AVFoundation.AVCaptureVideoPreviewLayer {
   @discardableResult
@@ -191,11 +173,9 @@ extension Foundation.Bundle {
   }
 }
 extension Foundation.Bundle {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var bundleIdentifier: Swift.String? {
     get
   }
-  #endif
 }
 extension Foundation.Bundle {
   public var displayName: Swift.String {
@@ -203,9 +183,7 @@ extension Foundation.Bundle {
   }
 }
 extension Foundation.Bundle {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getValueFromPlist<T>(for key: Swift.String, on resource: Swift.String) -> T?
-  #endif
 }
 extension Foundation.Bundle {
   public var targetName: Swift.String {
@@ -295,46 +273,34 @@ extension CoreLocation.CLLocationManager {
   public func delegate(_ delegate: any CoreLocation.CLLocationManagerDelegate) -> Self
 }
 extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asCGImage: CoreGraphics.CGImage? {
     get
   }
-  #endif
 }
 extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asCVPixelBuffer: CoreVideo.CVPixelBuffer? {
     get
   }
-  #endif
 }
 extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asUIImage: UIKit.UIImage? {
     get
   }
-  #endif
 }
 extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var height: Swift.Double? {
     get
   }
-  #endif
 }
 extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var size: CoreFoundation.CGSize? {
     get
   }
-  #endif
 }
 extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var width: Swift.Double? {
     get
   }
-  #endif
 }
 extension Swift.Collection {
   public var isNotEmpty: Swift.Bool {
@@ -430,11 +396,9 @@ extension Swift.CustomStringConvertible {
   }
 }
 extension CoreVideo.CVBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asCMSampleBuffer: CoreMedia.CMSampleBuffer? {
     get
   }
-  #endif
 }
 extension CoreVideo.CVBuffer {
   public var height: Swift.Double {
@@ -442,9 +406,7 @@ extension CoreVideo.CVBuffer {
   }
 }
 extension CoreVideo.CVBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func resized(to size: CoreFoundation.CGSize) -> CoreVideo.CVPixelBuffer?
-  #endif
 }
 extension CoreVideo.CVBuffer {
   public var size: CoreFoundation.CGSize {
@@ -465,14 +427,10 @@ extension Foundation.Data {
   }
 }
 extension Foundation.Data {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func asString(using encoding: Swift.String.Encoding = .utf8) -> Swift.String?
-  #endif
 }
 extension Foundation.Data {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func decoded<T>() -> T? where T : Swift.Decodable
-  #endif
 }
 extension Foundation.Data {
   public struct HexEncodingOptions : Swift.OptionSet {
@@ -526,19 +484,13 @@ extension Swift.Double {
   public func isClose(to other: Swift.Double, tolerance: Swift.Double = 1e-9) -> Swift.Bool
 }
 extension Swift.Encodable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func asData(encoder: Foundation.JSONEncoder = .init()) -> Foundation.Data?
-  #endif
 }
 extension Swift.Encodable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func asJsonObject(encoder: Foundation.JSONEncoder = .init().keyEncodingStrategy(.convertToSnakeCase)) -> [Swift.String : Any]?
-  #endif
 }
 extension Swift.Encodable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func asString(encoder: Foundation.JSONEncoder = .init()) -> Swift.String?
-  #endif
 }
 extension Swift.Float {
   public func isClose(to other: Swift.Float, tolerance: Swift.Float = 1e-7) -> Swift.Bool
@@ -600,9 +552,7 @@ extension Foundation.JSONEncoder : Common.ValueWithable {
 extension Common.KeychainWrapper : Common.KeyValueStorage {
   final public func add(item: (key: Swift.String, value: any Swift.Decodable & Swift.Encodable))
   final public func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   final public func remove(using key: Swift.String)
 }
 extension UIKit.NSDirectionalEdgeInsets {
@@ -631,12 +581,8 @@ extension Foundation.NSMutableAttributedString {
   public func apply(_ attributes: [Foundation.NSAttributedString.Key : Any], range: Swift.Range<Swift.String.Index>) -> Self
 }
 extension ObjectiveC.NSObject {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func associatedObject(for key: Swift.AnyHashable) -> Any?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func set(associatedObject: Any?, for key: Swift.AnyHashable)
-  #endif
 }
 extension ObjectiveC.NSObject {
   public enum AppLifecycleEvent {
@@ -671,20 +617,16 @@ extension ObjectiveC.NSObject : Common.Withable {
 extension Foundation._NSRange {
   public init(range: Swift.Range<Swift.String.Index>, originalText: Swift.String)
 }
-#if compiler(>=5.3) && $NonescapableTypes
 extension Swift.Optional {
   public var isNil: Swift.Bool {
     get
   }
 }
-#endif
-#if compiler(>=5.3) && $NonescapableTypes
 extension Swift.Optional {
   public var isNotNil: Swift.Bool {
     get
   }
 }
-#endif
 extension PDFKit.PDFView {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func autoScales(_ autoScales: Swift.Bool) -> Self
@@ -702,10 +644,8 @@ extension PDFKit.PDFView {
   @_Concurrency.MainActor @preconcurrency public func displaysPageBreaks(_ displaysPageBreaks: Swift.Bool) -> Self
 }
 extension PDFKit.PDFView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func document(_ document: PDFKit.PDFDocument?) -> Self
-  #endif
 }
 extension Foundation.ProcessInfo {
   public var osVersion: Swift.String {
@@ -718,37 +658,27 @@ extension Swift.String {
   }
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asDataDecodedFromBase64: Foundation.Data? {
     get
   }
-  #endif
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func asDate(with format: Swift.String, locale: Foundation.Locale = .init(identifier: .DefaultValues.Locale.esCL)) -> Foundation.Date?
-  #endif
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asDecimalNumber: Swift.String? {
     get
   }
-  #endif
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asDouble: Swift.Double? {
     get
   }
-  #endif
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asInt: Swift.Int? {
     get
   }
-  #endif
 }
 extension Swift.String {
   public var asMutableAttributedString: Foundation.NSMutableAttributedString {
@@ -767,11 +697,9 @@ extension Swift.String {
   }
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var decodedFromBase64: Swift.String? {
     get
   }
-  #endif
 }
 extension Swift.String {
   public var encodedAsBase64: Swift.String {
@@ -791,9 +719,7 @@ extension Swift.String {
   public func containsOnlyCharactersIn(matchCharacters: Swift.String) -> Swift.Bool
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func convertBase64StringToImage() -> UIKit.UIImage?
-  #endif
 }
 extension Swift.String {
   public func copyToPasteboard()
@@ -842,14 +768,10 @@ extension Swift.String {
 extension Swift.String : @retroactive Swift.Error {
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getFromPlist(for key: Swift.String, on resource: Swift.String = "Info", using bundle: Foundation.Bundle = .main) -> Swift.String?
-  #endif
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getQueryItemValue(_ key: Swift.String) -> Swift.String?
-  #endif
 }
 extension Swift.String {
   public var hyphened: Swift.String {
@@ -862,11 +784,9 @@ extension Swift.String {
   }
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var queryItems: [Foundation.URLQueryItem]? {
     get
   }
-  #endif
 }
 extension Swift.String {
   public static func random(length: Swift.Int, chars: Swift.String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") -> Swift.String
@@ -922,58 +842,42 @@ extension UIKit.UIApplication {
   @_Concurrency.MainActor @preconcurrency public func isIdleTimerDisabled(_ isIdleTimerDisabled: Swift.Bool) -> Self
 }
 extension UIKit.UIApplication {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var keyWindow: UIKit.UIWindow? {
     get
   }
-  #endif
 }
 extension UIKit.UIApplication {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func set(rootViewController: UIKit.UIViewController?)
-  #endif
 }
 extension UIKit.UIApplication {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var topMostView: UIKit.UIView? {
     get
   }
-  #endif
 }
 extension UIKit.UIApplication {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var topMostViewController: UIKit.UIViewController? {
     get
   }
-  #endif
 }
 extension UIKit.UIBarButtonItem {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func action(_ action: ObjectiveC.Selector?) -> Self
-  #endif
 }
 extension UIKit.UIBarButtonItem {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func hidesSharedBackground(_ hidesSharedBackground: Swift.Bool = true) -> Self
 }
 extension UIKit.UIBarButtonItem {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func image(_ image: UIKit.UIImage?) -> Self
-  #endif
 }
 extension UIKit.UIBarButtonItem {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func target(_ target: Swift.AnyObject?) -> Self
-  #endif
 }
 extension UIKit.UIBarButtonItem {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func tintColor(_ tintColor: UIKit.UIColor?) -> Self
-  #endif
 }
 extension UIKit.UIButton.Configuration {
   @discardableResult
@@ -984,10 +888,8 @@ extension UIKit.UIButton.Configuration {
   public func baseForegroundColor(_ baseForegroundColor: UIKit.UIColor) -> UIKit.UIButton.Configuration
   @discardableResult
   public func cornerStyle(_ cornerStyle: UIKit.UIButton.Configuration.CornerStyle) -> UIKit.UIButton.Configuration
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   public func image(_ image: UIKit.UIImage?) -> UIKit.UIButton.Configuration
-  #endif
   @discardableResult
   public func imagePadding(_ imagePadding: CoreFoundation.CGFloat) -> UIKit.UIButton.Configuration
   @discardableResult
@@ -1003,10 +905,8 @@ extension UIKit.UIButton {
   @_Concurrency.MainActor @preconcurrency public func adjustsFontSizeToFitWidth(_ adjustsFontSizeToFitWidth: Swift.Bool = true) -> Self
 }
 extension UIKit.UIButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func backgroundImage(_ backgroundImage: UIKit.UIImage?, for state: UIKit.UIControl.State = .normal) -> Self
-  #endif
 }
 extension UIKit.UIButton {
   @discardableResult
@@ -1017,10 +917,8 @@ extension UIKit.UIButton {
   @_Concurrency.MainActor @preconcurrency public func font(_ font: UIKit.UIFont) -> Self
 }
 extension UIKit.UIButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func image(_ image: UIKit.UIImage?, for state: UIKit.UIControl.State = .normal, insets: UIKit.NSDirectionalEdgeInsets = .zero, semanticContentAttribute: UIKit.UISemanticContentAttribute = .forceLeftToRight) -> Self
-  #endif
 }
 extension UIKit.UIButton {
   @discardableResult
@@ -1031,28 +929,20 @@ extension UIKit.UIButton {
   @_Concurrency.MainActor @preconcurrency public func semanticContentAttribute(_ semanticContentAttribute: UIKit.UISemanticContentAttribute) -> Self
 }
 extension UIKit.UIButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func symbol(_ named: Swift.String, configuration: UIKit.UIImage.SymbolConfiguration? = nil, for state: UIKit.UIControl.State = .normal, insets: UIKit.NSDirectionalEdgeInsets = .zero, semanticContentAttribute: UIKit.UISemanticContentAttribute = .forceLeftToRight) -> Self
-  #endif
 }
 extension UIKit.UIButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func tintColor(_ tintColor: UIKit.UIColor?) -> Self
-  #endif
 }
 extension UIKit.UIButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func title(_ title: Swift.String?, for state: UIKit.UIControl.State = .normal) -> Self
-  #endif
 }
 extension UIKit.UIButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func titleColor(_ titleColor: UIKit.UIColor?, for state: UIKit.UIControl.State = .normal) -> Self
-  #endif
 }
 extension UIKit.UICollectionReusableView {
   @_Concurrency.MainActor @preconcurrency public static var reuseIdentifier: Swift.String {
@@ -1064,11 +954,9 @@ extension UIKit.UICollectionView {
   @_Concurrency.MainActor @preconcurrency public func backgroundView(_ backgroundView: UIKit.UIView) -> Self
 }
 extension UIKit.UICollectionView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var centerItemIndexPath: Foundation.IndexPath? {
     get
   }
-  #endif
 }
 extension UIKit.UICollectionView {
   @discardableResult
@@ -1146,14 +1034,10 @@ extension UIKit.UIColor {
   }
 }
 extension UIKit.UIColor {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getModified(byPercentage percent: CoreFoundation.CGFloat) -> UIKit.UIColor?
-  #endif
 }
 extension UIKit.UIColor {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func named(_ named: Swift.String) -> UIKit.UIColor?
-  #endif
 }
 extension UIKit.UIColor {
   public static var randomColor: UIKit.UIColor {
@@ -1161,11 +1045,9 @@ extension UIKit.UIColor {
   }
 }
 extension UIKit.UIColor {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var rgbaComponents: (red: CoreFoundation.CGFloat, green: CoreFoundation.CGFloat, blue: CoreFoundation.CGFloat, alpha: CoreFoundation.CGFloat)? {
     get
   }
-  #endif
 }
 extension UIKit.UIControl {
   @discardableResult
@@ -1190,10 +1072,8 @@ extension UIKit.UIDatePicker {
   @_Concurrency.MainActor @preconcurrency public func locale(_ locale: Swift.String = .DefaultValues.Locale.esCL) -> Self
 }
 extension UIKit.UIDatePicker {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func maximumDate(_ maximumDate: Foundation.Date? = .now) -> Self
-  #endif
 }
 extension UIKit.UIDatePicker {
   @discardableResult
@@ -1243,9 +1123,7 @@ extension UIKit.UIFont {
     case regular
     case semiBold
     case thin
-    #if compiler(>=5.3) && $NonescapableTypes
     public init?(rawValue: Swift.String)
-    #endif
     @available(iOS 2.0, *)
     public typealias AllCases = [UIKit.UIFont.FontStyle]
     @available(iOS 2.0, *)
@@ -1262,11 +1140,9 @@ extension UIKit.UIImage {
   public func applyImageMask(mask: UIKit.UIImage) -> UIKit.UIImage
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var asBase64String: Swift.String? {
     get
   }
-  #endif
 }
 extension UIKit.UIImage {
   public var asPDFData: Foundation.Data {
@@ -1283,25 +1159,19 @@ extension UIKit.UIImage {
       get
     }
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public func averageColor(algorithm: UIKit.UIImage.AverageColorAlgorithm = .simple) -> UIKit.UIColor?
-  #endif
 }
 extension UIKit.UIImage {
   public func convertToGrayScale() -> UIKit.UIImage
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func cropped(to boundingBox: CoreFoundation.CGRect) -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImage {
   public func croppedToOval(in rect: CoreFoundation.CGRect) -> UIKit.UIImage
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func fixOrientation() -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImage {
   public var fromDeviceOrientation: UIKit.UIImage.Orientation {
@@ -1314,45 +1184,29 @@ extension UIKit.UIImage.Orientation {
   }
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func gradientImage(using colors: [CoreGraphics.CGColor], locations: [Swift.Float] = [.zero, 0.5], size: CoreFoundation.CGSize) -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func image(with color: UIKit.UIColor) -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   convenience public init?(_ named: Swift.String, in bundle: Foundation.Bundle = .main)
-  #endif
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   convenience public init?(barcode: Swift.String)
-  #endif
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func named(_ named: Swift.String, in bundle: Foundation.Bundle = .main) -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func rotate(radians: CoreFoundation.CGFloat) -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func symbol(_ named: Swift.String, configuration: UIKit.UIImage.SymbolConfiguration? = nil) -> UIKit.UIImage?
-  #endif
 }
 @available(iOS 16.0, *)
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func symbol(_ named: Swift.String, variableValue: Swift.Double = .zero, configuration: UIKit.UIImage.SymbolConfiguration? = nil) -> UIKit.UIImage?
-  #endif
 }
 extension UIKit.UIImageView {
   @discardableResult
@@ -1362,10 +1216,8 @@ extension UIKit.UIImageView {
   @_Concurrency.MainActor @preconcurrency public func generateQRCode(using string: Swift.String)
 }
 extension UIKit.UIImageView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func image(_ image: UIKit.UIImage?) -> Self
-  #endif
 }
 extension UIKit.UIImageView {
   @discardableResult
@@ -1376,35 +1228,27 @@ extension UIKit.UIImageView {
   @_Concurrency.MainActor @preconcurrency public func image(systemName: Swift.String) -> Self
 }
 extension UIKit.UIImageView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func symbol(_ named: Swift.String, with configuration: UIKit.UIImage.SymbolConfiguration? = nil) -> Self
-  #endif
 }
 extension UIKit.UIImageView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func tintColor(_ tintColor: UIKit.UIColor?) -> Self
-  #endif
 }
 extension UIKit.UILabel {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func adjustsFontSizeToFitWidth(_ adjustsFontSizeToFitWidth: Swift.Bool = true) -> Self
 }
 extension UIKit.UILabel {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func attributedText(_ attributedText: Foundation.NSAttributedString?) -> Self
-  #endif
 }
 extension UIKit.UILabel {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func font(_ font: UIKit.UIFont = .systemFont(ofSize: 14)) -> Self
 }
 extension UIKit.UILabel {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency convenience public init(_ text: Swift.String?)
-  #endif
 }
 extension UIKit.UILabel {
   @discardableResult
@@ -1415,22 +1259,16 @@ extension UIKit.UILabel {
   @_Concurrency.MainActor @preconcurrency public func onTextTap(_ handler: @escaping Common.Handler<(UIKit.UILabel, UIKit.UITapGestureRecognizer)>) -> Self
 }
 extension UIKit.UILabel {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func text(_ text: Swift.String?) -> Self
-  #endif
 }
 extension UIKit.UILabel {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func textAlignment(_ textAlignment: UIKit.NSTextAlignment? = .left) -> Self
-  #endif
 }
 extension UIKit.UILabel {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func textColor(_ textColor: UIKit.UIColor? = .black) -> Self
-  #endif
 }
 extension UIKit.UILabel {
   @discardableResult
@@ -1444,11 +1282,9 @@ extension UIKit.UINavigationBar {
   @_Concurrency.MainActor @preconcurrency public func prefersLargeTitles(_ prefersLargeTitles: Swift.Bool) -> Self
 }
 extension UIKit.UINavigationBar {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var titleColor: UIKit.UIColor? {
     get
   }
-  #endif
 }
 extension UIKit.UINavigationController {
   @_Concurrency.MainActor @preconcurrency public func isNotThereA<T>(_ type: T.Type) -> Swift.Bool
@@ -1642,16 +1478,12 @@ extension UIKit.UITabBarController {
   }
 }
 extension UIKit.UITabBarItem {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func image(_ image: UIKit.UIImage?) -> Self
-  #endif
 }
 extension UIKit.UITabBarItem {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func title(_ title: Swift.String?) -> Self
-  #endif
 }
 extension UIKit.UITapGestureRecognizer {
   @_Concurrency.MainActor @preconcurrency public func didTapAttributedTextInLabel(label: UIKit.UILabel, inRange: Foundation.NSRange) -> Swift.Bool
@@ -1665,22 +1497,16 @@ extension UIKit.UITextField {
   @_Concurrency.MainActor @preconcurrency public func addDatePicker(dateFormatAsString: Swift.String = .DateFormats.ddDEMMMMDELyyyy, datePickerHandler: (UIKit.UIDatePicker) -> UIKit.UIDatePicker = { $0 }) -> Self
 }
 extension UIKit.UITextField {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func addRightButton(using icon: UIKit.UIImage? = .symbol("arrowtriangle.up.fill"), selectedIcon: UIKit.UIImage? = .symbol("arrowtriangle.down.fill"), tintColor: UIKit.UIColor? = .black, onButtonPressed: @escaping Common.Handler<(UIKit.UITextField, UIKit.UIButton)>) -> Self
-  #endif
 }
 extension UIKit.UITextField {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func addToggleVisibilityButton(using visiblePasswordIcon: UIKit.UIImage? = .symbol("eye.fill"), notVisibleVisiblePasswordIcon: UIKit.UIImage? = .symbol("eye.slash.fill"), tintColor: UIKit.UIColor? = .black) -> Self
-  #endif
 }
 extension UIKit.UITextField {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func allowedChars(_ allowedChars: Swift.String? = nil) -> Self
-  #endif
 }
 extension UIKit.UITextField {
   @discardableResult
@@ -1759,20 +1585,16 @@ extension UIKit.UITextField {
   @_Concurrency.MainActor @preconcurrency public func rightViewMode(_ rightViewMode: UIKit.UITextField.ViewMode) -> Self
 }
 extension UIKit.UITextField {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func text(_ text: Swift.String?) -> Self
-  #endif
 }
 extension UIKit.UITextField {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func textAlignment(_ textAlignment: UIKit.NSTextAlignment) -> Self
 }
 extension UIKit.UITextField {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func textColor(_ textColor: UIKit.UIColor? = .black) -> Self
-  #endif
 }
 extension UIKit.UITextField {
   @discardableResult
@@ -1985,9 +1807,7 @@ extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public func debugMode(applyToSubviews: Swift.Bool = false) -> Self
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func hide(animated: Swift.Bool = true, with duration: Foundation.TimeInterval = .DefaultValues.animationDuration, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension UIKit.UIView {
   @discardableResult
@@ -2014,11 +1834,9 @@ extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public func isUserInteractionEnabled(_ isUserInteractionEnabled: Swift.Bool) -> Self
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var keyWindow: UIKit.UIWindow? {
     get
   }
-  #endif
 }
 extension UIKit.UIView {
   @discardableResult
@@ -2065,10 +1883,8 @@ extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public func set(alpha value: CoreFoundation.CGFloat, animated: Swift.Bool = true)
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func setAsRoundedView(using maskedCorners: QuartzCore.CACornerMask = .all, radius: CoreFoundation.CGFloat? = nil, animated: Swift.Bool = false) -> Self
-  #endif
 }
 extension UIKit.UIView {
   @discardableResult
@@ -2077,10 +1893,8 @@ extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public func setConstraints(_ setConstraints: @escaping UIKit.UIView.ViewAndSuperviewHandler) -> Self
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func shadowColor(_ shadowColor: UIKit.UIColor?) -> Self
-  #endif
 }
 extension UIKit.UIView {
   @discardableResult
@@ -2095,20 +1909,14 @@ extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public func shadowRadius(_ shadowRadius: CoreFoundation.CGFloat) -> Self
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func shadow(color: UIKit.UIColor?, offset: CoreFoundation.CGSize = .init(width: .zero, height: -3), opacity: Swift.Float = .zero, radius: CoreFoundation.CGFloat = 3) -> Self
-  #endif
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func shake(_ duration: Swift.Double = 0.3, intensity: CoreFoundation.CGFloat = 15, stepDecrement: CoreFoundation.CGFloat = 5, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func show(animated: Swift.Bool = true, with duration: Foundation.TimeInterval = .DefaultValues.animationDuration, maxAlpha: CoreFoundation.CGFloat = 1, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension UIKit.UIView {
   @discardableResult
@@ -2135,19 +1943,13 @@ extension UIKit.UIViewController : Common.ActivityIndicatorable {
 extension UIKit.UIViewController : Common.AlertPresentable {
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func animate(_ duration: Foundation.TimeInterval = .DefaultValues.animationDuration, delay: Foundation.TimeInterval = .zero, options: UIKit.UIView.AnimationOptions = .curveEaseInOut, animations: @escaping Common.Action, completion: Common.Handler<Swift.Bool>? = nil)
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func animateConstraints(_ duration: Foundation.TimeInterval = .DefaultValues.animationDuration, options: UIKit.UIView.AnimationOptions = .curveEaseInOut, constraintChanges: @escaping Common.Action, completion: Common.Handler<Swift.Bool>? = nil)
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func closestParentViewController(class someClass: Swift.AnyClass) -> UIKit.UIViewController?
-  #endif
 }
 extension UIKit.UIViewController {
   @_Concurrency.MainActor @preconcurrency public var closestTabBarHeight: CoreFoundation.CGFloat {
@@ -2159,14 +1961,10 @@ extension UIKit.UIViewController {
   @_Concurrency.MainActor @preconcurrency public func debugMode() -> Self
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func dismissFromRootPresentingViewController(animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func dismissTopMostPresentedViewController(animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension UIKit.UIViewController {
   @discardableResult
@@ -2233,34 +2031,22 @@ extension Common.OffsetResetable where Self : UIKit.UIViewController {
 extension UIKit.UIViewController : Common.OffsetResetable {
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var closestCollectionView: UIKit.UICollectionView? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public var closestScrollView: UIKit.UIScrollView? {
     get
   }
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func getClosest<T>() -> T? where T : UIKit.UIView
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func closestCollectionView(from view: UIKit.UIView) -> UIKit.UICollectionView?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func closestScrollView(from view: UIKit.UIView) -> UIKit.UIScrollView?
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func getClosest<T>(from view: UIKit.UIView) -> T? where T : UIKit.UIView
-  #endif
 }
 extension UIKit.UIViewController {
   @discardableResult
@@ -2306,9 +2092,7 @@ extension UIKit.UIViewController {
 extension UIKit.UIViewController : Common.ScreenSizeMeasurable {
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func setNavigationBar(backgroundColor: UIKit.UIColor? = nil, titleColor: UIKit.UIColor = .black, titleFont: UIKit.UIFont = .systemFont(ofSize: 16), largeTitleFont: UIKit.UIFont = .systemFont(ofSize: 28), leftBarButtonItemTintColor: UIKit.UIColor? = .black, rightBarButtonItemTintColor: UIKit.UIColor? = .black, barButtonItemFont: UIKit.UIFont? = nil, hasShadow: Swift.Bool = true, isTranslucent: Swift.Bool = true)
-  #endif
 }
 extension UIKit.UIViewController {
   @_Concurrency.MainActor @preconcurrency public func setupAsKeyboardDismissable()
@@ -2322,10 +2106,8 @@ extension UIKit.UIViewController {
 extension UIKit.UIViewController : Common.TitleSettable {
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func titleView(_ titleView: UIKit.UIView?) -> Self
-  #endif
 }
 extension UIKit.UIViewController {
   @_Concurrency.MainActor @preconcurrency public var topMostPresentedViewController: UIKit.UIViewController {
@@ -2349,9 +2131,7 @@ extension UIKit.UIWindow {
   @_Concurrency.MainActor @preconcurrency public static func initWithScreenFrame() -> Self
 }
 extension UIKit.UIWindow {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func set(rootViewController: UIKit.UIViewController?)
-  #endif
 }
 extension UserNotifications.UNAuthorizationStatus : Common.AuthorizationStatusConvertible {
 }
@@ -2359,40 +2139,30 @@ extension Foundation.URL {
   public func add(queryItem: Foundation.URLQueryItem) -> Foundation.URL
 }
 extension Foundation.URL {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var components: Foundation.URLComponents? {
     get
   }
-  #endif
 }
 extension Foundation.URL {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static var documentsDirectory: Foundation.URL? {
     get
   }
-  #endif
 }
 extension Foundation.URL {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var fileSize: Swift.Int? {
     get
   }
-  #endif
 }
 extension Foundation.URL {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getValueFromQueryItem(_ key: Swift.String) -> Swift.String?
-  #endif
 }
 extension Foundation.URL {
   public func isCustomURLScheme() -> Swift.Bool
 }
 extension Foundation.URL {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var queryItems: [Foundation.URLQueryItem]? {
     get
   }
-  #endif
 }
 extension Foundation.URL {
   public func remove(queryItem: Foundation.URLQueryItem) -> Foundation.URL
@@ -2400,9 +2170,7 @@ extension Foundation.URL {
 extension Foundation.UserDefaults : Common.KeyValueStorage {
   public func add(item: (key: Swift.String, value: any Swift.Decodable & Swift.Encodable))
   public func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   public func remove(using key: Swift.String)
 }
 extension Vision.VNDetectBarcodesRequest {
@@ -2410,11 +2178,9 @@ extension Vision.VNDetectBarcodesRequest {
   public func symbologies(_ symbologies: [Vision.VNBarcodeSymbology]) -> Self
 }
 extension Vision.VNRecognizedTextObservation {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var topRecognizedText: Vision.VNRecognizedText? {
     get
   }
-  #endif
 }
 extension Vision.VNRecognizeTextRequest {
   @discardableResult
@@ -2445,14 +2211,10 @@ extension WebKit.WKWebView {
   @_Concurrency.MainActor @preconcurrency public func navigationDelegate(_ navigationDelegate: any WebKit.WKNavigationDelegate) -> Self
 }
 extension WebKit.WKWebView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func set(cookie: Foundation.HTTPCookie, completion: Common.CompletionHandler)
-  #endif
 }
 extension WebKit.WKWebView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public func set(cookies: [Foundation.HTTPCookie], completion: Common.CompletionHandler)
-  #endif
 }
 open class BaseClient {
   public var requests: [Swift.String : Foundation.URLSessionTask] {
@@ -2475,9 +2237,7 @@ extension Common.ClientProtocol {
 }
 final public class JSONParameterEncoder {
   public init(encoder: Foundation.JSONEncoder = .init())
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func encode<T>(_ parameters: T?, into request: Foundation.URLRequest) throws -> Foundation.URLRequest where T : Swift.Encodable
-  #endif
   @objc deinit
 }
 final public class URLEncodedFormParameterEncoder {
@@ -2492,9 +2252,7 @@ final public class URLEncodedFormParameterEncoder {
     }
   }
   public init(encoder: Common.URLEncodedFormEncoder = .init(), destination: Common.URLEncodedFormParameterEncoder.Destination = .methodDependent)
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func encode<Parameters>(_ parameters: Parameters?, into request: Foundation.URLRequest) throws -> Foundation.URLRequest where Parameters : Swift.Encodable
-  #endif
   @objc deinit
 }
 final public class URLEncodedFormEncoder {
@@ -2554,20 +2312,14 @@ final public class URLEncodedFormEncoder {
   @objc deinit
 }
 public protocol Endpoint : Common.URLRequestConvertible {
-  #if compiler(>=5.3) && $NonescapableTypes
   var baseURL: Foundation.URL? { get }
-  #endif
   var version: Swift.String { get }
   var basePath: Swift.String { get }
   var path: Swift.String { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var url: Foundation.URL? { get }
-  #endif
   var headers: Common.HTTPHeaders { get }
   var method: Common.HTTPMethod { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var parameters: (any Swift.Encodable)? { get }
-  #endif
   var jsonEncoder: Foundation.JSONEncoder { get }
   var urlEncodedFormEncoder: Common.URLEncodedFormEncoder { get }
 }
@@ -2578,11 +2330,9 @@ extension Common.Endpoint {
   public var basePath: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public var url: Foundation.URL? {
     get
   }
-  #endif
   public var jsonEncoder: Foundation.JSONEncoder {
     get
   }
@@ -2596,16 +2346,12 @@ extension Common.Endpoint {
 public protocol Environment {
   static var current: Self { get }
   static var baseURLAsString: Swift.String { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   static var baseURL: Foundation.URL? { get }
-  #endif
 }
 extension Common.Environment {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static var baseURL: Foundation.URL? {
     get
   }
-  #endif
 }
 public protocol URLConvertible {
   func asURL() throws -> Foundation.URL
@@ -2623,19 +2369,15 @@ public protocol URLRequestConvertible {
   func asURLRequest() throws -> Foundation.URLRequest
 }
 extension Common.URLRequestConvertible {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var urlRequest: Foundation.URLRequest? {
     get
   }
-  #endif
 }
 extension Foundation.URLRequest : Common.URLRequestConvertible {
   public func asURLRequest() throws -> Foundation.URLRequest
 }
 extension Foundation.URLRequest {
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(url: any Common.URLConvertible, method: Common.HTTPMethod, headers: Common.HTTPHeaders? = nil) throws
-  #endif
 }
 public struct HTTPHeaders {
   public init()
@@ -2648,15 +2390,11 @@ public struct HTTPHeaders {
   public mutating func remove(name: Swift.String)
   public mutating func sort()
   public func sorted() -> Common.HTTPHeaders
-  #if compiler(>=5.3) && $NonescapableTypes
   public func value(for name: Swift.String) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public subscript(name: Swift.String) -> Swift.String? {
     get
     set
   }
-  #endif
   public var dictionary: [Swift.String : Swift.String] {
     get
   }
@@ -2767,14 +2505,10 @@ public struct HTTPMethod : Swift.RawRepresentable, Swift.Equatable, Swift.Hashab
   public typealias RawValue = Swift.String
 }
 public enum HTTPService {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   public static func request<T>(_ resource: any Common.URLRequestConvertible, urlSession: Foundation.URLSession = .shared, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common.NetworkResultHandler<T>) -> Foundation.URLSessionTask? where T : Swift.Decodable
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   public static func upload<T>(multipart: Common.MultipartRequest, to resource: any Common.URLRequestConvertible, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common.NetworkResultHandler<T>) -> Foundation.URLSessionTask? where T : Swift.Decodable
-  #endif
 }
 extension Common.HTTPService : Common.Loggable {
 }
@@ -2845,36 +2579,22 @@ public enum AlertViewType {
   case customAlert(title: Swift.String = .DefaultValues.Alerts.title, message: Swift.String = .empty)
 }
 public protocol AlertPresentable : AnyObject {
-  #if compiler(>=5.3) && $NonescapableTypes
   func presentAlertView(type: Common.AlertViewType, acceptAction: Common.Handler<UIKit.UIAlertAction>?, cancelAction: Common.Handler<UIKit.UIAlertAction>?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   func presentAlertView(viewModel: any Common.AlertViewModel, onDismissRequested handler: Common.CompletionHandler)
-  #endif
 }
 extension Common.AlertPresentable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var viewController: UIKit.UIViewController? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func presentAlertView(type: Common.AlertViewType, acceptAction: ((UIKit.UIAlertAction) -> Swift.Void)? = nil, cancelAction: ((UIKit.UIAlertAction) -> Swift.Void)? = nil)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func presentAlertView(viewModel: any Common.AlertViewModel, onDismissRequested handler: Common.CompletionHandler)
-  #endif
 }
 public protocol AlertRequestable : AnyObject {
-  #if compiler(>=5.3) && $NonescapableTypes
   func onPresentAlertRequested(title: Swift.String, message: Swift.String, handler: Common.CompletionHandler, cancelHandler: Common.CompletionHandler)
-  #endif
   func onPresentAlertRequested(viewModel: any Common.AlertViewModel)
 }
 extension Common.AlertRequestable where Self : Common.AlertPresentable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func onPresentAlertRequested(title: Swift.String = .DefaultValues.Alerts.title, message: Swift.String, handler: Common.CompletionHandler = nil, cancelHandler: Common.CompletionHandler = nil)
-  #endif
 }
 extension Common.AlertRequestable where Self : Common.BaseCoordinator {
   public func onPresentAlertRequested(viewModel: any Common.AlertViewModel)
@@ -2914,39 +2634,27 @@ extension Common.AuthorizationStatusConvertible where Self == UserNotifications.
   }
 }
 public protocol BackButtonAddable : UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   func addBackButton(_ icon: UIKit.UIImage?, handler: Common.CompletionHandler)
-  #endif
 }
 extension Common.BackButtonAddable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func addBackButton(_ icon: UIKit.UIImage? = BackButtonAddableDefaultValues.icon, handler: Common.CompletionHandler)
-  #endif
 }
 extension UIKit.UIViewController {
   public enum BackButtonAddableDefaultValues {
-    #if compiler(>=5.3) && $NonescapableTypes
     public static var icon: UIKit.UIImage? {
       get
     }
-    #endif
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func addBackButton(_ icon: UIKit.UIImage? = BackButtonAddableDefaultValues.icon, action: @escaping Common.Action) -> Self
-  #endif
 }
 extension UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func backgroundColor(_ backgroundColor: UIKit.UIColor? = .white) -> Self
-  #endif
 }
 extension UIKit.UIViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func backgroundColor(_ backgroundColor: UIKit.UIColor? = .white) -> Self
-  #endif
 }
 public protocol Capitalizable {
   var capitalized: Swift.String { get }
@@ -2971,20 +2679,14 @@ extension Common.Capitalizable where Self : Common.Stringable, Self : Swift.RawR
 public protocol CollectionViewDataSourceable : AnyObject {
   func getNumberOfSections() -> Swift.Int
   func getNumberOfItems(in section: Swift.Int) -> Swift.Int
-  #if compiler(>=5.3) && $NonescapableTypes
   func onCellForItem(in section: Swift.Int, at index: Swift.Int) -> (any Common.ViewModel)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   func onHeaderItemDataSourceRequested(in section: Swift.Int) -> (any Common.ViewModel)?
-  #endif
   func onHeaderItemReuseIdentifierRequested(in section: Swift.Int) -> Swift.String
   func onReuseIdentifierRequested(in section: Swift.Int, at index: Swift.Int) -> Swift.String
 }
 extension Common.CollectionViewDataSourceable {
   public func getNumberOfSections() -> Swift.Int
-  #if compiler(>=5.3) && $NonescapableTypes
   public func onHeaderItemDataSourceRequested(in section: Swift.Int) -> (any Common.ViewModel)?
-  #endif
   public func onHeaderItemReuseIdentifierRequested(in section: Swift.Int) -> Swift.String
 }
 public protocol CollectionViewDelegateable : AnyObject {
@@ -3021,29 +2723,19 @@ public enum DismissType {
   }
 }
 public protocol Dismissable {
-  #if compiler(>=5.3) && $NonescapableTypes
   func dismiss(_ type: Common.DismissType, animated: Swift.Bool, completion: Common.CompletionHandler)
-  #endif
 }
 extension Common.Dismissable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var viewController: UIKit.UIViewController? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func dismiss(_ type: Common.DismissType = .topMost, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension Common.Dismissable where Self : Common.Navigationable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var viewController: UIKit.UIViewController? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func dismiss(_ type: Common.DismissType = .topMost, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-  #endif
 }
 public protocol DismissRequestable : AnyObject {
   func onDismissRequested()
@@ -3105,29 +2797,19 @@ public enum PresentType {
   }
 }
 public protocol Presentable {
-  #if compiler(>=5.3) && $NonescapableTypes
   func present(_ type: Common.PresentType, viewController: UIKit.UIViewController, animated: Swift.Bool, completion: Common.CompletionHandler)
-  #endif
 }
 extension Common.Presentable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var viewController: UIKit.UIViewController? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func present(_ type: Common.PresentType = .dismissingCurrent, viewController: UIKit.UIViewController, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-  #endif
 }
 extension Common.Presentable where Self : Common.Navigationable {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var viewController: UIKit.UIViewController? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func present(_ type: Common.PresentType = .dismissingCurrent, viewController: UIKit.UIViewController, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-  #endif
 }
 public protocol ReloadContentRequestable : AnyObject {
   func onReloadContentRequested()
@@ -3218,9 +2900,7 @@ public protocol ViewModelable : AnyObject {
   associatedtype ViewModelType
 }
 public protocol OptionalViewModelHolder : Common.ViewModelable {
-  #if compiler(>=5.3) && $NonescapableTypes
   var viewModel: Self.ViewModelType? { get set }
-  #endif
 }
 public protocol ViewModelHolder : Common.ViewModelable {
   var viewModel: Self.ViewModelType { get set }
@@ -3255,9 +2935,7 @@ extension Common.Withable {
   public static func buildEither(second item: [T]) -> [T]
   public static func buildExpression(_ item: T) -> [T]
   public static func buildExpression(_ item: [T]) -> [T]
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func buildOptional(_ items: [T]?) -> [T]
-  #endif
 }
 @_functionBuilder public struct UIViewBuilder {
   public static func buildBlock(_ components: UIKit.UIView...) -> UIKit.UIView
@@ -3268,9 +2946,7 @@ public struct FileStorage : Common.KeyValueStorage {
 extension Common.FileStorage {
   public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
   public func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   public func remove(using key: Swift.String)
 }
 public enum KeychainItemAccessibility {
@@ -3290,69 +2966,33 @@ public enum KeychainItemAccessibility {
 }
 @_hasMissingDesignatedInitializers final public class KeychainWrapper {
   public static let standard: Common.KeychainWrapper
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func hasValue(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func accessibilityOfKey(_ key: Swift.String) -> Common.KeychainItemAccessibility?
-  #endif
   final public func allKeys() -> Swift.Set<Swift.String>
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func integer(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Int?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func float(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Float?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func double(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Double?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func bool(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func string(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func object<DecodedObjectType>(forKey key: Swift.String, ofClass cls: DecodedObjectType.Type, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> DecodedObjectType? where DecodedObjectType : ObjectiveC.NSObject, DecodedObjectType : Foundation.NSCoding
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func data(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func dataRef(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: Swift.Int, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: Swift.Float, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: Swift.Double, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: Swift.Bool, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: Swift.String, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: any Foundation.NSCoding, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func set(_ value: Foundation.Data, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   final public func removeObject(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  #endif
   @discardableResult
   final public func removeAllKeys() -> Swift.Bool
   final public class func wipeKeychain()
@@ -3381,9 +3021,7 @@ public struct KeyValueStore {
 extension Common.KeyValueStore : Common.KeyValueStorage {
   public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
   public func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   public func remove(using key: Swift.String)
 }
 public protocol Keyable {
@@ -3413,9 +3051,7 @@ public typealias KeyValue<Value> = Common.Tuple<Swift.String, Value>
 public protocol KeyValueStorage {
   func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
   func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   func remove(using key: Swift.String)
 }
 extension Common.KeyValueStorage {
@@ -3423,9 +3059,7 @@ extension Common.KeyValueStorage {
 }
 extension Common.KeyValueStorage where Self : Common.RawValueKeyableStorage, Self.Keys.RawValue == Swift.String {
   public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   public func remove(using key: Swift.String)
 }
 public protocol RawValueKeyable {
@@ -3434,9 +3068,7 @@ public protocol RawValueKeyable {
 public protocol RawValueKeyableStorage : Common.RawValueKeyable {
   func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
   func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   func remove(using key: Self.Keys)
 }
 extension Common.RawValueKeyableStorage where Self.Keys.RawValue == Swift.String {
@@ -3445,9 +3077,7 @@ extension Common.RawValueKeyableStorage where Self.Keys.RawValue == Swift.String
 extension Common.RawValueKeyableStorage where Self : Common.KeyValueStorage, Self.Keys.RawValue == Swift.String {
   public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
   public func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   public func remove(using key: Self.Keys)
 }
 public protocol RawValueKeyValueStore : Common.RawValueKeyableStorage {
@@ -3455,34 +3085,24 @@ public protocol RawValueKeyValueStore : Common.RawValueKeyableStorage {
 extension Common.RawValueKeyValueStore where Self.Keys.RawValue == Swift.String {
   public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
   public func add(item: any Common.Keyable & Common.Storable)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  #endif
   public func remove(using key: Self.Keys)
 }
 public protocol SingleObjectStorage {
   associatedtype Item : Swift.Decodable, Swift.Encodable
   func add(item: Self.Item)
   func delete()
-  #if compiler(>=5.3) && $NonescapableTypes
   func get() -> Self.Item?
-  #endif
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class StatusBarStylableNavigationController : UIKit.UINavigationController {
   @_Concurrency.MainActor @preconcurrency @objc override final public var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
     @objc get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(iOS 5.0, *)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(navigationBarClass: Swift.AnyClass?, toolbarClass: Swift.AnyClass?)
-  #endif
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(rootViewController: UIKit.UIViewController)
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
-  #endif
   @objc deinit
 }
 public protocol Loggable : Common.Keyable {
@@ -3496,9 +3116,7 @@ extension Common.Loggable {
 }
 public enum Logger {
   public static func log(caller: Swift.String = #function, _ item: Any)
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func log(caller: Swift.String = #function, _ request: Foundation.URLRequest, data: Foundation.Data? = nil, response: Foundation.URLResponse?)
-  #endif
   public static func log(caller: Swift.String = #function, _ items: [Swift.String : Any])
 }
 extension Common.Logger : Common.Loggable {
@@ -3519,9 +3137,7 @@ public enum CameraAuthorizationManager {
       get
     }
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func request(_ authorizationType: Common.LocationAuthorizationManager.AuthorizationType, handler: Common.Handler<Common.AuthorizationStatus>? = nil)
-  #endif
   @objc override dynamic public init()
   @objc deinit
 }
@@ -3570,15 +3186,9 @@ extension Common.AppleUserConvertible where Self : Common.AppleUserModel {
 }
 public protocol AppleUserModel {
   var id: Swift.String { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var name: Swift.String? { get }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   var lastName: Swift.String? { get }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   var email: Swift.String? { get }
-  #endif
 }
 extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.AppleUserConvertible {
 }
@@ -3586,16 +3196,12 @@ extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.Apple
   public var id: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public var name: Swift.String? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public var lastName: Swift.String? {
     get
   }
-  #endif
 }
 @objc final public class CameraManager : ObjectiveC.NSObject {
   public enum DefaultValues {
@@ -3626,15 +3232,11 @@ extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.Apple
       get
     }
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(position: AVFoundation.AVCaptureDevice.Position = DefaultValues.position, type: Common.CameraManager.CameraType = DefaultValues.type, orientation: AVFoundation.AVCaptureVideoOrientation = DefaultValues.orientation, zoomFactor: Swift.Double = DefaultValues.zoomFactor, delayBetweenFrames: Swift.Int64 = DefaultValues.delayBetweenFrames, captureDeviceHandler: Common.Handler<AVFoundation.AVCaptureDevice>? = nil, onSampleBufferHandler: @escaping Common.Handler<CoreMedia.CMSampleBuffer>)
-  #endif
   @objc deinit
 }
 extension Common.CameraManager {
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func begin(_ previewView: Common.PreviewView, handler: Common.Handler<Common.AuthorizationStatus>? = nil)
-  #endif
   final public func finish()
   final public func set(zoomFactor: Swift.Double)
   final public func toggleTorch()
@@ -3668,9 +3270,7 @@ public enum LocalAuthenticationType : Common.Stringable {
   }
 }
 public protocol LocalAuthenticationManagerProtocol : AnyObject {
-  #if compiler(>=5.3) && $NonescapableTypes
   var biometryType: Common.LocalAuthenticationType.BiometryType? { get }
-  #endif
   var canAuthenticate: Swift.Bool { get }
   var isBiometricAuthenticationSupported: Swift.Bool { get }
   var localAuthenticationType: Common.LocalAuthenticationType { get }
@@ -3681,11 +3281,9 @@ final public class LocalAuthenticationManager {
   @objc deinit
 }
 extension Common.LocalAuthenticationManager : Common.LocalAuthenticationManagerProtocol {
-  #if compiler(>=5.3) && $NonescapableTypes
   final public var biometryType: Common.LocalAuthenticationType.BiometryType? {
     get
   }
-  #endif
   final public var canAuthenticate: Swift.Bool {
     get
   }
@@ -3715,12 +3313,8 @@ public struct Debouncer {
   }
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func loadView()
   @_Concurrency.MainActor @preconcurrency open func setupView()
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
   @objc deinit
 }
 extension Common.BaseViewController {
@@ -3748,10 +3342,8 @@ extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
 @_Concurrency.MainActor @preconcurrency open class BaseViewModelableViewController<ViewModelType> : Common.ViewModelableViewController, Common.ContentReloadable, Common.UICollectionViewable {
   @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType
   @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, unavailable)
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
@@ -3776,9 +3368,7 @@ extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
   @objc deinit
 }
 @objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class CustomAlertViewController : Common.BaseViewController {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public init(backgroundColor: UIKit.UIColor = .black.withAlphaComponent(0.5), contentView: UIKit.UIView, onDismissRequested handler: Common.CompletionHandler = nil)
-  #endif
   @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
     get
   }
@@ -3786,9 +3376,7 @@ extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
   @objc deinit
 }
 public enum CustomAlertWireframe {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func createModule(_ contentView: UIKit.UIView, onDismissRequested handler: Common.CompletionHandler = nil) -> UIKit.UIViewController
-  #endif
 }
 @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class AlertView : Common.BaseViewModelableView<any Common.AlertViewModel> {
   @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
@@ -3800,9 +3388,7 @@ public enum CustomAlertWireframe {
 }
 public protocol AlertViewModel : Common.ViewModel {
   var backgroundColor: UIKit.UIColor { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var icon: UIKit.UIImage? { get }
-  #endif
   var iconTintColor: UIKit.UIColor { get }
   var title: Swift.String { get }
   var titleColor: UIKit.UIColor { get }
@@ -3811,12 +3397,8 @@ public protocol AlertViewModel : Common.ViewModel {
   var messageColor: UIKit.UIColor { get }
   var actionButtonTitle: Swift.String { get }
   var cancelButtonTitle: Swift.String { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var onAction: Common.CompletionHandler { get }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   var onCancel: Common.CompletionHandler { get }
-  #endif
   var shouldHandleBackgroundClick: Swift.Bool { get }
 }
 extension Common.AlertViewModel {
@@ -3845,9 +3427,7 @@ public struct AlertViewModelPayload {
   public let onAction: Common.CompletionHandler
   public let onCancel: Common.CompletionHandler
   public let shouldHandleBackgroundClick: Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(icon: UIKit.UIImage? = nil, title: Swift.String, attributedMessage: Foundation.NSAttributedString, actionButtonTitle: Swift.String = .DefaultValues.Alerts.acceptActionTitle, cancelButtonTitle: Swift.String = .DefaultValues.Alerts.cancelActionTitle, onActionButtonPressedHandler: Common.CompletionHandler, onCancelButtonPressedHandler: Common.CompletionHandler = nil, shouldHandleBackgroundClick: Swift.Bool = true)
-  #endif
 }
 extension Common.AlertViewModelPayload : Common.AlertViewModel {
 }
@@ -3982,9 +3562,7 @@ extension Common.DefaultButtonTheme : Common.ButtonTheme {
   }
 }
 @objc @_Concurrency.MainActor @preconcurrency final public class ActionButton : Common.BaseButton {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public init(_ title: Swift.String? = nil, isEnabled: Swift.Bool = true, shouldApplyDefaultRatio: Swift.Bool = true, theme: any Common.ButtonTheme = DefaultButtonTheme.filled)
-  #endif
   @_Concurrency.MainActor @preconcurrency override final public func setupView()
   @objc deinit
 }
@@ -4021,30 +3599,18 @@ public enum Snackbar {
     case long
   }
   public struct ViewModel {
-    #if compiler(>=5.3) && $NonescapableTypes
     public init(message: Swift.String, messageFont: UIKit.UIFont = .systemFont(ofSize: 14), duration: Common.Snackbar.Duration = .medium, actionTitle: Swift.String? = nil, actionFont: UIKit.UIFont = .systemFont(ofSize: 12, weight: .medium), onAction: Common.CompletionHandler = nil, onDismiss: Common.CompletionHandler = nil)
-    #endif
   }
   public static func show(_ viewModel: Common.Snackbar.ViewModel)
 }
 public protocol CardViewModel : Common.ViewModel {
-  #if compiler(>=5.3) && $NonescapableTypes
   var leftImageBackgroundColor: UIKit.UIColor? { get }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   var leftImage: UIKit.UIImage? { get }
-  #endif
   var title: Swift.String { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var attributedTitle: Foundation.NSAttributedString? { get }
-  #endif
   var content: Swift.String { get }
-  #if compiler(>=5.3) && $NonescapableTypes
   var attributedContent: Foundation.NSAttributedString? { get }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   var rightImage: UIKit.UIImage? { get }
-  #endif
 }
 public struct CardViewModelPayload : Common.CardViewModel {
   public var leftImageBackgroundColor: UIKit.UIColor?
@@ -4054,9 +3620,7 @@ public struct CardViewModelPayload : Common.CardViewModel {
   public var content: Swift.String
   public var attributedContent: Foundation.NSAttributedString?
   public var rightImage: UIKit.UIImage?
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(leftImageBackgroundColor: UIKit.UIColor? = nil, leftImage: UIKit.UIImage? = nil, title: Swift.String = .empty, attributedTitle: Foundation.NSAttributedString? = nil, content: Swift.String = .empty, attributedContent: Foundation.NSAttributedString? = nil, rightImage: UIKit.UIImage? = nil)
-  #endif
 }
 @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class CardView : Common.BaseViewModelableView<any Common.CardViewModel> {
   @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
@@ -4072,9 +3636,7 @@ public struct CardViewModelPayload : Common.CardViewModel {
   }
   @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
   @objc deinit
 }
 extension Common.GradientView {
@@ -4094,16 +3656,12 @@ extension Common.GradientView {
     @objc get
   }
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
   @objc deinit
 }
 extension Common.PreviewView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   @_Concurrency.MainActor @preconcurrency final public func session(_ session: AVFoundation.AVCaptureSession?) -> Self
-  #endif
 }
 extension Common.PreviewView {
   @discardableResult
@@ -4117,13 +3675,9 @@ extension Common.PreviewView {
   @_Concurrency.MainActor @preconcurrency final public func draw(_ observation: Vision.VNDetectedObjectObservation)
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class ProgressAnimationView : UIKit.UIView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency final public func animate(progressColor: CoreGraphics.CGColor, backgroundColor: CoreGraphics.CGColor, duration: CoreFoundation.CFTimeInterval, completion: Common.CompletionHandler)
-  #endif
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
   @objc deinit
 }
 extension Common.ProgressAnimationView : QuartzCore.CAAnimationDelegate {
@@ -4153,37 +3707,27 @@ public enum Toast {
     case short
     case medium
     case long
-    #if compiler(>=5.3) && $NonescapableTypes
     public init?(rawValue: Swift.Int)
-    #endif
     public typealias RawValue = Swift.Int
     public var rawValue: Swift.Int {
       get
     }
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func present(with message: Swift.String, duration: Common.Toast.Duration = .medium, completion: Common.CompletionHandler = nil)
-  #endif
 }
 @objc @_Concurrency.MainActor @preconcurrency final public class HList : Common.List {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, layoutHandler: Common.Handler<UIKit.UICollectionViewFlowLayout>? = nil)
-  #endif
   @objc deinit
 }
 @objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency public class List : UIKit.UICollectionView {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, collectionViewLayout: UIKit.UICollectionViewLayout)
-  #endif
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
     @objc get
   }
   @objc deinit
 }
 @objc @_Concurrency.MainActor @preconcurrency final public class VList : Common.List {
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, layoutHandler: Common.Handler<UIKit.UICollectionViewFlowLayout>? = nil)
-  #endif
   @objc deinit
 }
 @objc @_Concurrency.MainActor @preconcurrency final public class HStack : Common.Stack {
