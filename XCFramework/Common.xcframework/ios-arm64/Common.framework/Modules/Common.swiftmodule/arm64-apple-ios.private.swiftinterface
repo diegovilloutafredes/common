@@ -1,96 +1,55 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.3 effective-5.10 (swiftlang-6.3.0.123.5 clang-2100.0.123.102)
-// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
-// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3
+// swift-compiler-version: Apple Swift version 6.3.1 effective-5.10 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios16.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
 import ARKit
-import AVFoundation
+@_exported import AVFoundation
 import Accelerate
 import AudioToolbox
 import AuthenticationServices
 @_exported import Common
 import CommonCrypto
-import CoreGraphics
-import CoreImage
+@_exported import CoreGraphics
+@_exported import CoreImage
 import CoreLocation
 import CoreMedia
 import CoreNFC
-import Foundation
-import LocalAuthentication
+@_exported import Foundation
+@_exported import LocalAuthentication
+@_exported import ObjectiveC
 import PDFKit
+@_exported import QuartzCore
 import SafariServices
 import Swift
-import UIKit
-import Vision
+@_exported import UIKit
+@_exported import UniformTypeIdentifiers
+@_exported import Vision
 import WebKit
 import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
-@objc open class BaseCoordinator : ObjectiveC.NSObject, Common.Coordinator, Common.BaseModuleDelegate {
-  final public let navigationController: UIKit.UINavigationController
-  final public let onPerformed: Common.Handler<any Common.Coordinator>?
-  public init(navigationController: UIKit.UINavigationController, onPerformed: Common.Handler<any Common.Coordinator>? = nil)
-  public var childCoordinators: [any Common.Coordinator]
-  open func start()
-  open func onDismissRequested()
-  open func onGoBackRequested()
-  @objc deinit
-}
-extension Common.BaseCoordinator {
-  public func addChild(_ coordinator: some Coordinator)
-  public func addChildAndStart(_ coordinator: some Coordinator)
-  public func getChild<T>(_ type: T.Type) -> T? where T : Common.Coordinator
-  public func removeChild<T>(_ coordinator: T) where T : Common.Coordinator
-}
-extension Common.BaseCoordinator : Common.ActivityIndicatorable {
-}
-extension Common.BaseCoordinator : Common.AlertPresentable {
-}
-extension Common.BaseCoordinator : Common.Dismissable {
-}
-extension Common.BaseCoordinator : Common.Navigationable {
-}
-extension Common.BaseCoordinator : Common.Presentable {
-}
-public protocol Coordinator : AnyObject {
-  func start()
-}
 public struct AES {
   public init?(key: Swift.String, iv: Swift.String)
   public func encrypt(_ string: Swift.String) -> Foundation.Data?
   public func encrypt(_ data: Foundation.Data) -> Foundation.Data?
   public func decrypt(_ data: Foundation.Data) -> Foundation.Data?
 }
-extension Swift.Array where Element == any Common.Coordinator {
-  public func getFirst<T>(_ type: T.Type) -> T? where T : Common.Coordinator
-  public mutating func removeAll<T>(_ type: T.Type) where T : Common.Coordinator
-}
-extension Swift.Array where Element : Swift.FloatingPoint {
-  public var sum: Element {
-    get
-  }
-}
-extension Swift.Array where Element : Swift.FloatingPoint {
-  public var average: Element {
-    get
-  }
-}
-extension Swift.Array where Element : Swift.FloatingPoint {
-  public var variance: Element {
-    get
-  }
-}
-extension Swift.Array where Element : Swift.FloatingPoint {
-  public var standardDeviation: Element {
-    get
-  }
-}
 extension ARKit.ARSCNView {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func delegate(_ delegate: (any ARKit.ARSCNViewDelegate)?) -> Self
 }
-extension Foundation.AttributeContainer : Common.ValueWithable {
-  @available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
-  public typealias T = Foundation.AttributeContainer
+extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.AppleUserConvertible {
+}
+extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.AppleUserModel {
+  public var id: Swift.String {
+    get
+  }
+  public var name: Swift.String? {
+    get
+  }
+  public var lastName: Swift.String? {
+    get
+  }
 }
 extension AVFoundation.AVAuthorizationStatus : Common.AuthorizationStatusConvertible {
 }
@@ -161,6 +120,504 @@ extension AVFoundation.AVCaptureVideoPreviewLayer {
 extension AVFoundation.AVCaptureVideoPreviewLayer {
   @discardableResult
   public func videoOrientation(_ videoOrientation: AVFoundation.AVCaptureVideoOrientation) -> Self
+}
+public protocol ButtonTheme {
+  var backgroundColor: UIKit.UIColor { get }
+  var borderColor: UIKit.UIColor { get }
+  var borderWidth: Swift.Double { get }
+  var titleColor: UIKit.UIColor { get }
+  var titleFont: UIKit.UIFont { get }
+}
+public enum DefaultButtonTheme {
+  case filled
+  case border
+  public static func == (a: Common.DefaultButtonTheme, b: Common.DefaultButtonTheme) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Common.DefaultButtonTheme : Common.ButtonTheme {
+  public var backgroundColor: UIKit.UIColor {
+    get
+  }
+  public var borderColor: UIKit.UIColor {
+    get
+  }
+  public var borderWidth: Swift.Double {
+    get
+  }
+  public var titleColor: UIKit.UIColor {
+    get
+  }
+  public var titleFont: UIKit.UIFont {
+    get
+  }
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class ActionButton : Common.BaseButton {
+  @_Concurrency.MainActor @preconcurrency public init(_ title: Swift.String? = nil, isEnabled: Swift.Bool = true, shouldApplyDefaultRatio: Swift.Bool = true, theme: any Common.ButtonTheme = DefaultButtonTheme.filled)
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @objc deinit
+}
+extension Common.ActionButton {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func set(isEnabled: Swift.Bool) -> Self
+}
+public protocol Actionable {
+  var onAction: Common.Action { get }
+}
+public protocol ActivityControllerRequestable : AnyObject {
+  func onPresentActivityControllerRequested(with item: Any)
+}
+extension Common.ActivityControllerRequestable {
+  public func onPresentActivityControllerRequested(with item: Any)
+}
+public protocol ActivityIndicatorable : AnyObject {
+  func startActivityIndicator()
+  func startActivityIndicator(with color: UIKit.UIColor)
+  func stopActivityIndicator()
+}
+extension Common.ActivityIndicatorable where Self : Common.BaseCoordinator {
+  public func startActivityIndicator()
+  public func startActivityIndicator(with color: UIKit.UIColor)
+  public func stopActivityIndicator()
+}
+extension Common.ActivityIndicatorable where Self : UIKit.UITextField {
+  public func startActivityIndicator()
+  public func startActivityIndicator(with color: UIKit.UIColor)
+  public func stopActivityIndicator()
+}
+extension Common.ActivityIndicatorable where Self : UIKit.UIView {
+  public func startActivityIndicator()
+  public func startActivityIndicator(with color: UIKit.UIColor)
+  public func stopActivityIndicator()
+}
+extension Common.ActivityIndicatorable where Self : UIKit.UIViewController {
+  public func startActivityIndicator()
+  public func startActivityIndicator(with color: UIKit.UIColor)
+  public func stopActivityIndicator()
+}
+public enum AlertViewType {
+  case emptyAlert
+  case genericError
+  case customAlert(title: Swift.String = .DefaultValues.Alerts.title, message: Swift.String = .empty)
+}
+public protocol AlertPresentable : AnyObject {
+  func presentAlertView(type: Common.AlertViewType, acceptAction: Common.Handler<UIKit.UIAlertAction>?, cancelAction: Common.Handler<UIKit.UIAlertAction>?)
+  func presentAlertView(viewModel: any Common.AlertViewModel, onDismissRequested handler: Common.CompletionHandler)
+}
+extension Common.AlertPresentable {
+  public var viewController: UIKit.UIViewController? {
+    get
+  }
+  public func presentAlertView(type: Common.AlertViewType, acceptAction: ((UIKit.UIAlertAction) -> Swift.Void)? = nil, cancelAction: ((UIKit.UIAlertAction) -> Swift.Void)? = nil)
+  public func presentAlertView(viewModel: any Common.AlertViewModel, onDismissRequested handler: Common.CompletionHandler)
+}
+public protocol AlertRequestable : AnyObject {
+  func onPresentAlertRequested(title: Swift.String, message: Swift.String, handler: Common.CompletionHandler, cancelHandler: Common.CompletionHandler)
+  func onPresentAlertRequested(viewModel: any Common.AlertViewModel)
+}
+extension Common.AlertRequestable where Self : Common.AlertPresentable {
+  public func onPresentAlertRequested(title: Swift.String = .DefaultValues.Alerts.title, message: Swift.String, handler: Common.CompletionHandler = nil, cancelHandler: Common.CompletionHandler = nil)
+}
+extension Common.AlertRequestable where Self : Common.BaseCoordinator {
+  public func onPresentAlertRequested(viewModel: any Common.AlertViewModel)
+}
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class AlertView : Common.BaseViewModelableView<any Common.AlertViewModel> {
+  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @_Concurrency.MainActor @preconcurrency required public init(viewModel: any Common.AlertViewModel)
+  @objc deinit
+}
+public protocol AlertViewModel : Common.ViewModel {
+  var backgroundColor: UIKit.UIColor { get }
+  var icon: UIKit.UIImage? { get }
+  var iconTintColor: UIKit.UIColor { get }
+  var title: Swift.String { get }
+  var titleColor: UIKit.UIColor { get }
+  var attributedMessage: Foundation.NSAttributedString { get }
+  var messageAlignment: UIKit.NSTextAlignment { get }
+  var messageColor: UIKit.UIColor { get }
+  var actionButtonTitle: Swift.String { get }
+  var cancelButtonTitle: Swift.String { get }
+  var onAction: Common.CompletionHandler { get }
+  var onCancel: Common.CompletionHandler { get }
+  var shouldHandleBackgroundClick: Swift.Bool { get }
+}
+extension Common.AlertViewModel {
+  public var backgroundColor: UIKit.UIColor {
+    get
+  }
+  public var iconTintColor: UIKit.UIColor {
+    get
+  }
+  public var titleColor: UIKit.UIColor {
+    get
+  }
+  public var messageAlignment: UIKit.NSTextAlignment {
+    get
+  }
+  public var messageColor: UIKit.UIColor {
+    get
+  }
+}
+public struct AlertViewModelPayload {
+  public let icon: UIKit.UIImage?
+  public let title: Swift.String
+  public let attributedMessage: Foundation.NSAttributedString
+  public let actionButtonTitle: Swift.String
+  public let cancelButtonTitle: Swift.String
+  public let onAction: Common.CompletionHandler
+  public let onCancel: Common.CompletionHandler
+  public let shouldHandleBackgroundClick: Swift.Bool
+  public init(icon: UIKit.UIImage? = nil, title: Swift.String, attributedMessage: Foundation.NSAttributedString, actionButtonTitle: Swift.String = .DefaultValues.Alerts.acceptActionTitle, cancelButtonTitle: Swift.String = .DefaultValues.Alerts.cancelActionTitle, onActionButtonPressedHandler: Common.CompletionHandler, onCancelButtonPressedHandler: Common.CompletionHandler = nil, shouldHandleBackgroundClick: Swift.Bool = true)
+}
+extension Common.AlertViewModelPayload : Common.AlertViewModel {
+}
+extension Common.AlertViewModelPayload : Common.ValueWithable {
+  public typealias T = Common.AlertViewModelPayload
+}
+public protocol AppSettingsRequestable : AnyObject {
+  func onAppSettingsRequested()
+}
+extension Common.AppSettingsRequestable {
+  public func onAppSettingsRequested()
+}
+public protocol AppleLoginManagerProtocol : AnyObject {
+  func performLogin(from context: Swift.AnyObject, result: @escaping Common.ResultHandler<(appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])>)
+}
+@objc @_inheritsConvenienceInitializers final public class AppleLoginManager : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension Common.AppleLoginManager : Common.AppleLoginManagerProtocol {
+  final public func performLogin(from context: Swift.AnyObject, result: @escaping Common.ResultHandler<(appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])>)
+}
+extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationControllerDelegate {
+  @_Concurrency.MainActor @preconcurrency @objc final public func authorizationController(controller: AuthenticationServices.ASAuthorizationController, didCompleteWithAuthorization authorization: AuthenticationServices.ASAuthorization)
+  @_Concurrency.MainActor @preconcurrency @objc final public func authorizationController(controller: AuthenticationServices.ASAuthorizationController, didCompleteWithError error: any Swift.Error)
+}
+extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationControllerPresentationContextProviding {
+  @_Concurrency.MainActor @preconcurrency @objc final public func presentationAnchor(for controller: AuthenticationServices.ASAuthorizationController) -> AuthenticationServices.ASPresentationAnchor
+}
+public struct AppleUser {
+  public let id: Swift.String
+  public let name: Swift.String?
+  public let lastName: Swift.String?
+  public let email: Swift.String?
+  public init(appleUserModel: any Common.AppleUserModel)
+}
+extension Common.AppleUser : Common.Storable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol AppleUserConvertible {
+  var asAppleUser: Common.AppleUser { get }
+}
+extension Common.AppleUserConvertible where Self : Common.AppleUserModel {
+  public var asAppleUser: Common.AppleUser {
+    get
+  }
+}
+public protocol AppleUserModel {
+  var id: Swift.String { get }
+  var name: Swift.String? { get }
+  var lastName: Swift.String? { get }
+  var email: Swift.String? { get }
+}
+extension Swift.Array where Element == any Common.Coordinator {
+  public func getFirst<T>(_ type: T.Type) -> T? where T : Common.Coordinator
+  public mutating func removeAll<T>(_ type: T.Type) where T : Common.Coordinator
+}
+extension Swift.Array where Element : Swift.FloatingPoint {
+  public var sum: Element {
+    get
+  }
+}
+extension Swift.Array where Element : Swift.FloatingPoint {
+  public var average: Element {
+    get
+  }
+}
+extension Swift.Array where Element : Swift.FloatingPoint {
+  public var variance: Element {
+    get
+  }
+}
+extension Swift.Array where Element : Swift.FloatingPoint {
+  public var standardDeviation: Element {
+    get
+  }
+}
+@_functionBuilder public struct ArrayBuilder<T> {
+  public static func buildBlock(_ items: T...) -> [T]
+  public static func buildBlock(_ items: [T]...) -> [T]
+  public static func buildEither(first item: [T]) -> [T]
+  public static func buildEither(second item: [T]) -> [T]
+  public static func buildExpression(_ item: T) -> [T]
+  public static func buildExpression(_ item: [T]) -> [T]
+  public static func buildOptional(_ items: [T]?) -> [T]
+  public static func buildArray(_ components: [[T]]) -> [T]
+  public static func buildLimitedAvailability(_ component: [T]) -> [T]
+}
+open class AsyncBaseClient {
+  public init()
+  @objc deinit
+}
+extension Common.AsyncBaseClient : Common.AsyncClientProtocol {
+}
+public protocol AsyncClientProtocol : AnyObject {
+}
+extension Common.AsyncClientProtocol {
+  public func request<T>(from function: Swift.String = #function, _ request: any Common.URLRequestConvertible) async throws -> T where T : Swift.Decodable
+  public func upload<T>(from function: Swift.String = #function, multipart: Common.MultipartRequest, to request: any Common.URLRequestConvertible) async throws -> T where T : Swift.Decodable
+}
+extension Foundation.AttributeContainer : Common.ValueWithable {
+  @available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
+  public typealias T = Foundation.AttributeContainer
+}
+public enum AuthorizationStatus {
+  case authorized
+  case denied
+  case notDetermined
+  public static func == (a: Common.AuthorizationStatus, b: Common.AuthorizationStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol AuthorizationStatusConvertible {
+  var asAuthorizationStatus: Common.AuthorizationStatus { get }
+}
+extension Common.AuthorizationStatusConvertible where Self == AVFoundation.AVAuthorizationStatus {
+  public var asAuthorizationStatus: Common.AuthorizationStatus {
+    get
+  }
+}
+extension Common.AuthorizationStatusConvertible where Self == CoreLocation.CLAuthorizationStatus {
+  public var asAuthorizationStatus: Common.AuthorizationStatus {
+    get
+  }
+}
+extension Common.AuthorizationStatusConvertible where Self == UserNotifications.UNAuthorizationStatus {
+  public var asAuthorizationStatus: Common.AuthorizationStatus {
+    get
+  }
+}
+public protocol BackButtonAddable : UIKit.UIViewController {
+  func addBackButton(_ icon: UIKit.UIImage?, handler: Common.CompletionHandler)
+}
+extension Common.BackButtonAddable {
+  public func addBackButton(_ icon: UIKit.UIImage? = BackButtonAddableDefaultValues.icon, handler: Common.CompletionHandler)
+}
+extension UIKit.UIViewController {
+  public enum BackButtonAddableDefaultValues {
+    public static var icon: UIKit.UIImage? {
+      get
+    }
+  }
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func addBackButton(_ icon: UIKit.UIImage? = BackButtonAddableDefaultValues.icon, action: @escaping Common.Action) -> Self
+}
+extension UIKit.UIView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func backgroundColor(_ backgroundColor: UIKit.UIColor? = .white) -> Self
+}
+extension UIKit.UIViewController {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func backgroundColor(_ backgroundColor: UIKit.UIColor? = .white) -> Self
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseButton : UIKit.UIButton {
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency open func setupView()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseCell : UIKit.UICollectionViewCell, Common.UIViewBuildable {
+  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency open func setupCell()
+  @objc deinit
+}
+open class BaseClient {
+  public var requests: [Swift.String : Foundation.URLSessionTask] {
+    get
+    set
+  }
+  public init()
+  @objc deinit
+}
+extension Common.BaseClient : Common.ClientProtocol {
+}
+@objc open class BaseCoordinator : ObjectiveC.NSObject, Common.Coordinator, Common.BaseModuleDelegate {
+  final public let navigationController: UIKit.UINavigationController
+  final public let onPerformed: Common.Handler<any Common.Coordinator>?
+  public init(navigationController: UIKit.UINavigationController, onPerformed: Common.Handler<any Common.Coordinator>? = nil)
+  public var childCoordinators: [any Common.Coordinator]
+  open func start()
+  open func onDismissRequested()
+  open func onGoBackRequested()
+  @objc deinit
+}
+extension Common.BaseCoordinator {
+  public func addChild(_ coordinator: some Coordinator)
+  public func addChildAndStart(_ coordinator: some Coordinator)
+  public func getChild<T>(_ type: T.Type) -> T? where T : Common.Coordinator
+  public func removeChild<T>(_ coordinator: T) where T : Common.Coordinator
+}
+extension Common.BaseCoordinator : Common.ActivityIndicatorable {
+}
+extension Common.BaseCoordinator : Common.AlertPresentable {
+}
+extension Common.BaseCoordinator : Common.Dismissable {
+}
+extension Common.BaseCoordinator : Common.Navigationable {
+}
+extension Common.BaseCoordinator : Common.Presentable {
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseDNITextField : Common.BaseTextField {
+  @_Concurrency.MainActor @preconcurrency override open func setupView()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseLabel : UIKit.UILabel {
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency open func setupView()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseReusableView : UIKit.UICollectionReusableView, Common.UIViewBuildable {
+  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency open func setupView()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseTextField : UIKit.UITextField {
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency open func setupView()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseView : UIKit.UIView, Common.UIViewBuildable {
+  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency open func setupView()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewController : UIKit.UIViewController, Common.UIViewBuildable {
+  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func loadView()
+  @_Concurrency.MainActor @preconcurrency open func setupView()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+extension Common.BaseViewController {
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
+    @objc get
+  }
+}
+extension Common.BaseViewController {
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open var prefersHomeIndicatorAutoHidden: Swift.Bool {
+    @objc get
+  }
+}
+extension Common.BaseViewController {
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLayoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewIsAppearing(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift.Bool)
+}
+extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIKit.UIGestureRecognizer) -> Swift.Bool
+}
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewModelableCell<ViewModelType> : Common.ViewModelableCell {
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType?
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewModelableReusableView<ViewModelType> : Common.ViewModelableReusableView {
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType?
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+}
+@_Concurrency.MainActor @preconcurrency open class BaseViewModelableView<ViewModelType> : Common.ViewModelableView, Common.ViewLifecycleable {
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType
+  @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
+  @objc deinit
+}
+@_Concurrency.MainActor @preconcurrency open class BaseViewModelableViewController<ViewModelType> : Common.ViewModelableViewController, Common.ContentReloadable, Common.UICollectionViewable {
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType
+  @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewIsAppearing(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency open func reloadContent()
+  @_Concurrency.MainActor @preconcurrency @objc open func numberOfSections(in collectionView: UIKit.UICollectionView) -> Swift.Int
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, numberOfItemsInSection section: Swift.Int) -> Swift.Int
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, viewForSupplementaryElementOfKind kind: Swift.String, at indexPath: Foundation.IndexPath) -> UIKit.UICollectionReusableView
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, cellForItemAt indexPath: Foundation.IndexPath) -> UIKit.UICollectionViewCell
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, didSelectItemAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Swift.Int) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, minimumLineSpacingForSectionAt section: Swift.Int) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, insetForSectionAt section: Swift.Int) -> UIKit.UIEdgeInsets
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, referenceSizeForHeaderInSection section: Swift.Int) -> CoreFoundation.CGSize
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, sizeForItemAt indexPath: Foundation.IndexPath) -> CoreFoundation.CGSize
+  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDecelerating(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndScrollingAnimation(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidScroll(_ scrollView: UIKit.UIScrollView)
+  @objc deinit
 }
 extension Foundation.Bundle {
   public var appVersion: Swift.String {
@@ -234,10 +691,6 @@ extension QuartzCore.CALayer {
   @discardableResult
   public func frame(_ frame: CoreFoundation.CGRect) -> Self
 }
-extension Foundation.Calendar {
-  public func numberOfDaysBetween(_ from: Foundation.Date, and to: Foundation.Date) -> Swift.Int
-  public func numberOfDaysConsideringHoursBetween(_ from: Foundation.Date, and to: Foundation.Date) -> Swift.Int
-}
 extension QuartzCore.CAShapeLayer {
   @discardableResult
   public func fillColor(_ fillColor: UIKit.UIColor) -> Self
@@ -265,47 +718,6 @@ extension QuartzCore.CAShapeLayer {
 extension QuartzCore.CAShapeLayer {
   @discardableResult
   public func strokeEnd(_ strokeEnd: CoreFoundation.CGFloat) -> Self
-}
-extension CoreLocation.CLAuthorizationStatus : Common.AuthorizationStatusConvertible {
-}
-extension CoreLocation.CLLocationManager {
-  @discardableResult
-  public func delegate(_ delegate: any CoreLocation.CLLocationManagerDelegate) -> Self
-}
-extension CoreMedia.CMSampleBuffer {
-  public var asCGImage: CoreGraphics.CGImage? {
-    get
-  }
-}
-extension CoreMedia.CMSampleBuffer {
-  public var asCVPixelBuffer: CoreVideo.CVPixelBuffer? {
-    get
-  }
-}
-extension CoreMedia.CMSampleBuffer {
-  public var asUIImage: UIKit.UIImage? {
-    get
-  }
-}
-extension CoreMedia.CMSampleBuffer {
-  public var height: Swift.Double? {
-    get
-  }
-}
-extension CoreMedia.CMSampleBuffer {
-  public var size: CoreFoundation.CGSize? {
-    get
-  }
-}
-extension CoreMedia.CMSampleBuffer {
-  public var width: Swift.Double? {
-    get
-  }
-}
-extension Swift.Collection {
-  public var isNotEmpty: Swift.Bool {
-    get
-  }
 }
 extension CoreFoundation.CGFloat {
   public enum DefaultValues {
@@ -390,8 +802,39 @@ extension CoreFoundation.CGRect {
 extension CoreFoundation.CGRect {
   public func isClose(to other: CoreFoundation.CGRect, tolerance: CoreFoundation.CGFloat = 1e-9) -> Swift.Bool
 }
-extension Swift.CustomStringConvertible {
-  public var description: Swift.String {
+extension CoreLocation.CLAuthorizationStatus : Common.AuthorizationStatusConvertible {
+}
+extension CoreLocation.CLLocationManager {
+  @discardableResult
+  public func delegate(_ delegate: any CoreLocation.CLLocationManagerDelegate) -> Self
+}
+extension CoreMedia.CMSampleBuffer {
+  public var asCGImage: CoreGraphics.CGImage? {
+    get
+  }
+}
+extension CoreMedia.CMSampleBuffer {
+  public var asCVPixelBuffer: CoreVideo.CVPixelBuffer? {
+    get
+  }
+}
+extension CoreMedia.CMSampleBuffer {
+  public var asUIImage: UIKit.UIImage? {
+    get
+  }
+}
+extension CoreMedia.CMSampleBuffer {
+  public var height: Swift.Double? {
+    get
+  }
+}
+extension CoreMedia.CMSampleBuffer {
+  public var size: CoreFoundation.CGSize? {
+    get
+  }
+}
+extension CoreMedia.CMSampleBuffer {
+  public var width: Swift.Double? {
     get
   }
 }
@@ -417,6 +860,204 @@ extension CoreVideo.CVBuffer {
   public var width: Swift.Double {
     get
   }
+}
+extension Foundation.Calendar {
+  public func numberOfDaysBetween(_ from: Foundation.Date, and to: Foundation.Date) -> Swift.Int
+  public func numberOfDaysConsideringHoursBetween(_ from: Foundation.Date, and to: Foundation.Date) -> Swift.Int
+}
+public enum CameraAuthorizationManager {
+  public static var currentStatus: Common.AuthorizationStatus {
+    get
+  }
+  public static func requestAuthorization(handler: @escaping Common.Handler<Swift.Bool>)
+}
+@objc final public class CameraManager : ObjectiveC.NSObject {
+  public enum DefaultValues {
+    public static var position: AVFoundation.AVCaptureDevice.Position {
+      get
+    }
+    public static var type: Common.CameraManager.CameraType {
+      get
+    }
+    public static var orientation: AVFoundation.AVCaptureVideoOrientation {
+      get
+    }
+    public static var zoomFactor: Swift.Double {
+      get
+    }
+    public static var delayBetweenFrames: Swift.Int64 {
+      get
+    }
+  }
+  public enum CameraType {
+    case tripleCamera
+    case dualCamera
+    case wideAngleCamera
+    case auto
+    public static func == (a: Common.CameraManager.CameraType, b: Common.CameraManager.CameraType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public init(position: AVFoundation.AVCaptureDevice.Position = DefaultValues.position, type: Common.CameraManager.CameraType = DefaultValues.type, orientation: AVFoundation.AVCaptureVideoOrientation = DefaultValues.orientation, zoomFactor: Swift.Double = DefaultValues.zoomFactor, delayBetweenFrames: Swift.Int64 = DefaultValues.delayBetweenFrames, captureDeviceHandler: Common.Handler<AVFoundation.AVCaptureDevice>? = nil, onSampleBufferHandler: @escaping Common.Handler<CoreMedia.CMSampleBuffer>)
+  @objc deinit
+}
+extension Common.CameraManager {
+  final public func begin(_ previewView: Common.PreviewView, handler: Common.Handler<Common.AuthorizationStatus>? = nil)
+  final public func finish()
+  final public func set(zoomFactor: Swift.Double)
+  final public func toggleTorch()
+}
+extension Common.CameraManager : AVFoundation.AVCaptureVideoDataOutputSampleBufferDelegate {
+  @objc final public func captureOutput(_ output: AVFoundation.AVCaptureOutput, didOutput sampleBuffer: CoreMedia.CMSampleBuffer, from connection: AVFoundation.AVCaptureConnection)
+}
+public protocol CameraSessionHandler : AnyObject {
+  func beginSession()
+  func finishSession()
+}
+public protocol Capitalizable {
+  var capitalized: Swift.String { get }
+  var capitalizingFirstLetter: Swift.String { get }
+}
+extension Common.Capitalizable where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
+  public var capitalized: Swift.String {
+    get
+  }
+  public var capitalizingFirstLetter: Swift.String {
+    get
+  }
+}
+extension Common.Capitalizable where Self : Common.Stringable, Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
+  public var capitalized: Swift.String {
+    get
+  }
+  public var capitalizingFirstLetter: Swift.String {
+    get
+  }
+}
+public protocol CardViewModel : Common.ViewModel {
+  var leftImageBackgroundColor: UIKit.UIColor? { get }
+  var leftImage: UIKit.UIImage? { get }
+  var title: Swift.String { get }
+  var attributedTitle: Foundation.NSAttributedString? { get }
+  var content: Swift.String { get }
+  var attributedContent: Foundation.NSAttributedString? { get }
+  var rightImage: UIKit.UIImage? { get }
+}
+public struct CardViewModelPayload : Common.CardViewModel {
+  public var leftImageBackgroundColor: UIKit.UIColor?
+  public var leftImage: UIKit.UIImage?
+  public var title: Swift.String
+  public var attributedTitle: Foundation.NSAttributedString?
+  public var content: Swift.String
+  public var attributedContent: Foundation.NSAttributedString?
+  public var rightImage: UIKit.UIImage?
+  public init(leftImageBackgroundColor: UIKit.UIColor? = nil, leftImage: UIKit.UIImage? = nil, title: Swift.String = .empty, attributedTitle: Foundation.NSAttributedString? = nil, content: Swift.String = .empty, attributedContent: Foundation.NSAttributedString? = nil, rightImage: UIKit.UIImage? = nil)
+}
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class CardView : Common.BaseViewModelableView<any Common.CardViewModel> {
+  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @_Concurrency.MainActor @preconcurrency required public init(viewModel: any Common.CardViewModel)
+  @objc deinit
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class CircularActivityIndicatorView : UIKit.UIView {
+  @_Concurrency.MainActor @preconcurrency @objc override final public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency public init(frame: CoreFoundation.CGRect, colors: [UIKit.UIColor], lineCap: QuartzCore.CAShapeLayerLineCap, lineWidth: CoreFoundation.CGFloat)
+  @_Concurrency.MainActor @preconcurrency convenience public init(colors: [UIKit.UIColor], lineCap: QuartzCore.CAShapeLayerLineCap = .butt, lineWidth: CoreFoundation.CGFloat = 4)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
+  @_Concurrency.MainActor @preconcurrency final public var isAnimating: Swift.Bool {
+    get
+    set
+  }
+  @objc deinit
+}
+extension Common.CircularActivityIndicatorView {
+  @_Concurrency.MainActor @preconcurrency final public func startAnimating()
+  @_Concurrency.MainActor @preconcurrency final public func stopAnimating()
+}
+extension Common.CircularActivityIndicatorView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func animate() -> Self
+}
+public protocol ClientProtocol : AnyObject {
+  var requests: [Swift.String : Foundation.URLSessionTask] { get set }
+  func request<T>(from function: Swift.String, _ request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
+  func upload<T>(from function: Swift.String, multipart: Common.MultipartRequest, to request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
+}
+extension Common.ClientProtocol {
+  public func request<T>(from function: Swift.String = #function, _ request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
+  public func upload<T>(from function: Swift.String = #function, multipart: Common.MultipartRequest, to request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
+}
+extension Swift.Collection {
+  public var isNotEmpty: Swift.Bool {
+    get
+  }
+}
+public protocol CollectionViewDataSourceable : AnyObject {
+  func getNumberOfSections() -> Swift.Int
+  func getNumberOfItems(in section: Swift.Int) -> Swift.Int
+  func onCellForItem(in section: Swift.Int, at index: Swift.Int) -> (any Common.ViewModel)?
+  func onHeaderItemDataSourceRequested(in section: Swift.Int) -> (any Common.ViewModel)?
+  func onHeaderItemReuseIdentifierRequested(in section: Swift.Int) -> Swift.String
+  func onReuseIdentifierRequested(in section: Swift.Int, at index: Swift.Int) -> Swift.String
+}
+extension Common.CollectionViewDataSourceable {
+  public func getNumberOfSections() -> Swift.Int
+  public func onHeaderItemDataSourceRequested(in section: Swift.Int) -> (any Common.ViewModel)?
+  public func onHeaderItemReuseIdentifierRequested(in section: Swift.Int) -> Swift.String
+}
+public protocol CollectionViewDelegateable : AnyObject {
+  func onItemSelected(in section: Swift.Int, at index: Swift.Int)
+}
+extension Common.CollectionViewDelegateable {
+  public func onItemSelected(in section: Swift.Int, at index: Swift.Int)
+}
+public typealias Inset = (top: Swift.Double, left: Swift.Double, bottom: Swift.Double, right: Swift.Double)
+public typealias Size = (width: Swift.Double, height: Swift.Double)
+public protocol CollectionViewSizeable : AnyObject {
+  func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
+  func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
+  func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
+  func onSizeForItem(in section: Swift.Int, at index: Swift.Int) -> Common.Size
+  func onInsetFor(section: Swift.Int) -> Common.Inset
+}
+extension Common.CollectionViewSizeable {
+  public func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
+  public func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
+  public func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
+  public func onInsetFor(section: Swift.Int) -> Common.Inset
+}
+public protocol ContentReloadable {
+  func reloadContent()
+}
+public protocol Coordinator : AnyObject {
+  func start()
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class CustomAlertViewController : Common.BaseViewController {
+  @_Concurrency.MainActor @preconcurrency public init(backgroundColor: UIKit.UIColor = .black.withAlphaComponent(0.5), contentView: UIKit.UIView, onDismissRequested handler: Common.CompletionHandler = nil)
+  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @objc deinit
+}
+public enum CustomAlertWireframe {
+  public static func createModule(_ contentView: UIKit.UIView, onDismissRequested handler: Common.CompletionHandler = nil) -> UIKit.UIViewController
+}
+extension Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class DNITextField : Common.BaseDNITextField {
+  @_Concurrency.MainActor @preconcurrency public init(shouldApplyDefaultRatio: Swift.Bool = true)
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @objc deinit
 }
 extension Foundation.Data {
   public mutating func append(_ string: Swift.String, encoding: Swift.String.Encoding = .utf8)
@@ -470,6 +1111,36 @@ extension Foundation.DateComponents : Common.ValueWithable {
   @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.9, *)
   public typealias T = Foundation.DateComponents
 }
+public struct Debouncer {
+  public static func debounce(from: Swift.String = #function, id: Swift.String = .empty, seconds: Foundation.TimeInterval, function: @escaping () -> Swift.Void)
+}
+public protocol DismissRequestable : AnyObject {
+  func onDismissRequested()
+}
+public enum DismissType {
+  case fromRoot
+  case topMost
+  public static func == (a: Common.DismissType, b: Common.DismissType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol Dismissable {
+  func dismiss(_ type: Common.DismissType, animated: Swift.Bool, completion: Common.CompletionHandler)
+}
+extension Common.Dismissable {
+  public var viewController: UIKit.UIViewController? {
+    get
+  }
+  public func dismiss(_ type: Common.DismissType = .topMost, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
+}
+extension Common.Dismissable where Self : Common.Navigationable {
+  public var viewController: UIKit.UIViewController? {
+    get
+  }
+  public func dismiss(_ type: Common.DismissType = .topMost, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
+}
 extension Swift.Double {
   public var asInt: Swift.Int {
     get
@@ -492,8 +1163,236 @@ extension Swift.Encodable {
 extension Swift.Encodable {
   public func asString(encoder: Foundation.JSONEncoder = .init()) -> Swift.String?
 }
+public protocol Endpoint : Common.URLRequestConvertible {
+  var baseURL: Foundation.URL? { get }
+  var version: Swift.String { get }
+  var basePath: Swift.String { get }
+  var path: Swift.String { get }
+  var url: Foundation.URL? { get }
+  var headers: Common.HTTPHeaders { get }
+  var method: Common.HTTPMethod { get }
+  var parameters: (any Swift.Encodable)? { get }
+  var jsonEncoder: Foundation.JSONEncoder { get }
+  var urlEncodedFormEncoder: Common.URLEncodedFormEncoder { get }
+}
+extension Common.Endpoint {
+  public var version: Swift.String {
+    get
+  }
+  public var basePath: Swift.String {
+    get
+  }
+  public var url: Foundation.URL? {
+    get
+  }
+  public var jsonEncoder: Foundation.JSONEncoder {
+    get
+  }
+  public var urlEncodedFormEncoder: Common.URLEncodedFormEncoder {
+    get
+  }
+}
+extension Common.Endpoint {
+  public func asURLRequest() throws -> Foundation.URLRequest
+}
+public protocol Environment {
+  static var current: Self { get }
+  static var baseURLAsString: Swift.String { get }
+  static var baseURL: Foundation.URL? { get }
+}
+extension Common.Environment {
+  public static var baseURL: Foundation.URL? {
+    get
+  }
+}
+public struct FileStorage : Common.KeyValueStorage {
+  public static var shared: Common.FileStorage
+}
+extension Common.FileStorage {
+  public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
+  public func add(item: any Common.Keyable & Common.Storable)
+  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  public func remove(using key: Swift.String)
+}
 extension Swift.Float {
   public func isClose(to other: Swift.Float, tolerance: Swift.Float = 1e-7) -> Swift.Bool
+}
+public func dispatchOnGlobal(_ qos: Dispatch.DispatchQoS.QoSClass = .default, action: @escaping Common.Action)
+public func dispatchOnGlobalAfter(_ qos: Dispatch.DispatchQoS.QoSClass = .default, deadline: Dispatch.DispatchTime, action: @escaping Common.Action)
+public func dispatchOnMain(_ action: @escaping Common.Action)
+public func dispatchOnMainAfter(_ deadline: Dispatch.DispatchTime, action: @escaping Common.Action)
+public enum EmptyResult<Failure> where Failure : Swift.Error {
+  case success
+  case failure(Failure)
+}
+public protocol GoBackRequestable : AnyObject {
+  func onGoBackRequested()
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class GradientView : UIKit.UIView {
+  @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+extension Common.GradientView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func colors(startColor: UIKit.UIColor, endColor: UIKit.UIColor) -> Self
+}
+extension Common.GradientView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func horizontalMode(_ horizontalMode: Swift.Bool = true) -> Self
+}
+extension Common.GradientView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func endLocation(_ endLocation: Swift.Double) -> Self
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class HList : Common.List {
+  @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, layoutHandler: Common.Handler<UIKit.UICollectionViewFlowLayout>? = nil)
+  @objc deinit
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class HStack : Common.Stack {
+  @_Concurrency.MainActor @preconcurrency public init(alignment: UIKit.UIStackView.Alignment = .fill, distribution: UIKit.UIStackView.Distribution = .fill, margins: UIKit.UIEdgeInsets = .zero, spacing: CoreFoundation.CGFloat = .zero, @Common.UIViewsBuilder views: () -> [UIKit.UIView] = {[]})
+  @objc deinit
+}
+public struct HTTPHeaders {
+  public init()
+  public init(_ headers: [Common.HTTPHeader])
+  public init(_ dictionary: [Swift.String : Swift.String])
+  public mutating func add(name: Swift.String, value: Swift.String)
+  public mutating func add(_ header: Common.HTTPHeader)
+  public mutating func update(name: Swift.String, value: Swift.String)
+  public mutating func update(_ header: Common.HTTPHeader)
+  public mutating func remove(name: Swift.String)
+  public mutating func sort()
+  public func sorted() -> Common.HTTPHeaders
+  public func value(for name: Swift.String) -> Swift.String?
+  public subscript(name: Swift.String) -> Swift.String? {
+    get
+    set
+  }
+  public var dictionary: [Swift.String : Swift.String] {
+    get
+  }
+}
+extension Common.HTTPHeaders : Swift.ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (Swift.String, Swift.String)...)
+  public typealias Key = Swift.String
+  public typealias Value = Swift.String
+}
+extension Common.HTTPHeaders : Swift.ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: Common.HTTPHeader...)
+  public typealias ArrayLiteralElement = Common.HTTPHeader
+}
+extension Common.HTTPHeaders : Swift.Sequence {
+  public func makeIterator() -> Swift.IndexingIterator<[Common.HTTPHeader]>
+  public typealias Element = Swift.IndexingIterator<[Common.HTTPHeader]>.Element
+  public typealias Iterator = Swift.IndexingIterator<[Common.HTTPHeader]>
+}
+extension Common.HTTPHeaders : Swift.Collection {
+  public var startIndex: Swift.Int {
+    get
+  }
+  public var endIndex: Swift.Int {
+    get
+  }
+  public subscript(position: Swift.Int) -> Common.HTTPHeader {
+    get
+  }
+  public func index(after i: Swift.Int) -> Swift.Int
+  public typealias Index = Swift.Int
+  public typealias Indices = Swift.DefaultIndices<Common.HTTPHeaders>
+  public typealias SubSequence = Swift.Slice<Common.HTTPHeaders>
+}
+extension Common.HTTPHeaders : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Common.HTTPHeaders : Common.ValueWithable {
+  public typealias T = Common.HTTPHeaders
+}
+public struct HTTPHeader : Swift.Hashable {
+  public let name: Swift.String
+  public let value: Swift.String
+  public init(name: Swift.String, value: Swift.String)
+  public static func == (a: Common.HTTPHeader, b: Common.HTTPHeader) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Common.HTTPHeader : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Common.HTTPHeader {
+  public static func accept(_ value: Swift.String) -> Common.HTTPHeader
+  public static func acceptCharset(_ value: Swift.String) -> Common.HTTPHeader
+  public static func acceptLanguage(_ value: Swift.String) -> Common.HTTPHeader
+  public static func acceptEncoding(_ value: Swift.String) -> Common.HTTPHeader
+  public static func authorization(username: Swift.String, password: Swift.String) -> Common.HTTPHeader
+  public static func authorization(bearerToken: Swift.String) -> Common.HTTPHeader
+  public static func authorization(_ value: Swift.String) -> Common.HTTPHeader
+  public static func contentDisposition(_ value: Swift.String) -> Common.HTTPHeader
+  public static func contentEncoding(_ value: Swift.String) -> Common.HTTPHeader
+  public static func contentType(_ value: Swift.String) -> Common.HTTPHeader
+  public static func userAgent(_ value: Swift.String) -> Common.HTTPHeader
+}
+extension Common.HTTPHeaders {
+  public static let `default`: Common.HTTPHeaders
+}
+extension Common.HTTPHeader {
+  public static let defaultAcceptEncoding: Common.HTTPHeader
+  public static let defaultAcceptLanguage: Common.HTTPHeader
+  public static let defaultUserAgent: Common.HTTPHeader
+}
+extension Foundation.URLRequest {
+  public var headers: Common.HTTPHeaders {
+    get
+    set
+  }
+}
+extension Foundation.HTTPURLResponse {
+  public var headers: Common.HTTPHeaders {
+    get
+  }
+}
+extension Foundation.URLSessionConfiguration {
+  public var headers: Common.HTTPHeaders {
+    get
+    set
+  }
+}
+public struct HTTPMethod : Swift.RawRepresentable, Swift.Equatable, Swift.Hashable {
+  public static let connect: Common.HTTPMethod
+  public static let delete: Common.HTTPMethod
+  public static let get: Common.HTTPMethod
+  public static let head: Common.HTTPMethod
+  public static let options: Common.HTTPMethod
+  public static let patch: Common.HTTPMethod
+  public static let post: Common.HTTPMethod
+  public static let put: Common.HTTPMethod
+  public static let query: Common.HTTPMethod
+  public static let trace: Common.HTTPMethod
+  public let rawValue: Swift.String
+  public init(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+}
+extension Common.HTTPService {
+  public static func request<T>(_ resource: any Common.URLRequestConvertible, urlSession: Foundation.URLSession = .shared, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift.Decodable
+  public static func upload<T>(multipart: Common.MultipartRequest, to resource: any Common.URLRequestConvertible, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift.Decodable
+}
+public enum HTTPService {
+  @discardableResult
+  public static func request<T>(_ resource: any Common.URLRequestConvertible, urlSession: Foundation.URLSession = .shared, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common.NetworkResultHandler<T>) -> Foundation.URLSessionTask? where T : Swift.Decodable
+  @discardableResult
+  public static func upload<T>(multipart: Common.MultipartRequest, to resource: any Common.URLRequestConvertible, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common.NetworkResultHandler<T>) -> Foundation.URLSessionTask? where T : Swift.Decodable
+}
+extension Common.HTTPService : Common.Loggable {
 }
 extension Foundation.IndexPath {
   public static var zero: Foundation.IndexPath {
@@ -549,11 +1448,250 @@ extension Foundation.JSONEncoder : Common.ValueWithable {
   @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.10, *)
   public typealias T = Foundation.JSONEncoder
 }
+final public class JSONParameterEncoder {
+  public init(encoder: Foundation.JSONEncoder = .init())
+  final public func encode<T>(_ parameters: T?, into request: Foundation.URLRequest) throws -> Foundation.URLRequest where T : Swift.Encodable
+  @objc deinit
+}
+public typealias Tuple<Key, Value> = (key: Key, value: Value)
+public typealias KeyValue<Value> = Common.Tuple<Swift.String, Value>
+public protocol KeyValueStorage {
+  func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
+  func add(item: any Common.Keyable & Common.Storable)
+  func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  func remove(using key: Swift.String)
+}
+extension Common.KeyValueStorage {
+  public func add(item: any Common.Keyable & Common.Storable)
+}
+extension Common.KeyValueStorage where Self : Common.RawValueKeyableStorage, Self.Keys.RawValue == Swift.String {
+  public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
+  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  public func remove(using key: Swift.String)
+}
+public struct KeyValueStore {
+  public enum StoreType {
+    public enum NotSecureType {
+      case userDefaults
+      case files
+      public static func == (a: Common.KeyValueStore.StoreType.NotSecureType, b: Common.KeyValueStore.StoreType.NotSecureType) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
+      public var hashValue: Swift.Int {
+        get
+      }
+    }
+    case notSecure(Common.KeyValueStore.StoreType.NotSecureType)
+    case secure
+    public var storage: any Common.KeyValueStorage {
+      get
+    }
+  }
+  public init(keyValueStorage: any Common.KeyValueStorage)
+  public init(type: Common.KeyValueStore.StoreType = .notSecure(.userDefaults))
+}
+extension Common.KeyValueStore : Common.KeyValueStorage {
+  public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
+  public func add(item: any Common.Keyable & Common.Storable)
+  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  public func remove(using key: Swift.String)
+}
+public protocol Keyable {
+  var key: Swift.String { get }
+  static var staticKey: Swift.String { get }
+}
+extension Common.Keyable {
+  public var key: Swift.String {
+    get
+  }
+  public static var staticKey: Swift.String {
+    get
+  }
+}
+extension Common.Keyable where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
+  public var key: Swift.String {
+    get
+  }
+}
+extension Common.Keyable where Self : Common.Stringable {
+  public var key: Swift.String {
+    get
+  }
+}
+public protocol KeyboardDismissable : AnyObject {
+  func dismissKeyboard()
+}
+public enum KeychainItemAccessibility {
+  case afterFirstUnlock
+  case afterFirstUnlockThisDeviceOnly
+  case always
+  @available(iOS 8, *)
+  case whenPasscodeSetThisDeviceOnly
+  case alwaysThisDeviceOnly
+  case whenUnlocked
+  case whenUnlockedThisDeviceOnly
+  public static func == (a: Common.KeychainItemAccessibility, b: Common.KeychainItemAccessibility) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
 extension Common.KeychainWrapper : Common.KeyValueStorage {
   final public func add(item: (key: Swift.String, value: any Swift.Decodable & Swift.Encodable))
   final public func add(item: any Common.Keyable & Common.Storable)
   final public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
   final public func remove(using key: Swift.String)
+}
+@_hasMissingDesignatedInitializers final public class KeychainWrapper {
+  public static let standard: Common.KeychainWrapper
+  final public func hasValue(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  final public func accessibilityOfKey(_ key: Swift.String) -> Common.KeychainItemAccessibility?
+  final public func allKeys() -> Swift.Set<Swift.String>
+  final public func integer(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Int?
+  final public func float(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Float?
+  final public func double(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Double?
+  final public func bool(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool?
+  final public func string(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.String?
+  final public func object<DecodedObjectType>(forKey key: Swift.String, ofClass cls: DecodedObjectType.Type, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> DecodedObjectType? where DecodedObjectType : ObjectiveC.NSObject, DecodedObjectType : Foundation.NSCoding
+  final public func data(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Foundation.Data?
+  final public func dataRef(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Foundation.Data?
+  @discardableResult
+  final public func set(_ value: Swift.Int, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func set(_ value: Swift.Float, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func set(_ value: Swift.Double, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func set(_ value: Swift.Bool, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func set(_ value: Swift.String, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func set(_ value: any Foundation.NSCoding, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func set(_ value: Foundation.Data, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func removeObject(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
+  @discardableResult
+  final public func removeAllKeys() -> Swift.Bool
+  final public class func wipeKeychain()
+  @objc deinit
+}
+public protocol LargeTitleSettable : AnyObject {
+  func disableLargeTitles()
+  func enableLargeTitles()
+}
+extension Common.LargeTitleSettable where Self : UIKit.UINavigationController {
+  public func disableLargeTitles()
+  public func enableLargeTitles()
+}
+extension Common.LargeTitleSettable where Self : UIKit.UIViewController {
+  public func disableLargeTitles()
+  public func enableLargeTitles()
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency public class List : UIKit.UICollectionView {
+  @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, collectionViewLayout: UIKit.UICollectionViewLayout)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @objc deinit
+}
+public enum LocalAuthenticationType : Common.Stringable {
+  case biometry(Common.LocalAuthenticationType.BiometryType)
+  case none
+  case passcode
+  public enum BiometryType : Common.Stringable {
+    case faceId
+    case opticId
+    case touchId
+    public var asString: Swift.String {
+      get
+    }
+    public static func == (a: Common.LocalAuthenticationType.BiometryType, b: Common.LocalAuthenticationType.BiometryType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var asString: Swift.String {
+    get
+  }
+}
+public protocol LocalAuthenticationManagerProtocol : AnyObject {
+  var biometryType: Common.LocalAuthenticationType.BiometryType? { get }
+  var canAuthenticate: Swift.Bool { get }
+  var isBiometricAuthenticationSupported: Swift.Bool { get }
+  var localAuthenticationType: Common.LocalAuthenticationType { get }
+  func authenticate(result: @escaping Common.Handler<Swift.Bool>)
+}
+final public class LocalAuthenticationManager {
+  public init()
+  @objc deinit
+}
+extension Common.LocalAuthenticationManager : Common.LocalAuthenticationManagerProtocol {
+  final public var biometryType: Common.LocalAuthenticationType.BiometryType? {
+    get
+  }
+  final public var canAuthenticate: Swift.Bool {
+    get
+  }
+  final public var isBiometricAuthenticationSupported: Swift.Bool {
+    get
+  }
+  final public var localAuthenticationType: Common.LocalAuthenticationType {
+    get
+  }
+  final public func authenticate(result: @escaping Common.Handler<Swift.Bool>)
+}
+@objc @_inheritsConvenienceInitializers final public class LocationAuthorizationManager : ObjectiveC.NSObject {
+  public enum AuthorizationType {
+    case always
+    case whenInUse
+    public static func == (a: Common.LocationAuthorizationManager.AuthorizationType, b: Common.LocationAuthorizationManager.AuthorizationType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  final public func request(_ authorizationType: Common.LocationAuthorizationManager.AuthorizationType, handler: Common.Handler<Common.AuthorizationStatus>? = nil)
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension Common.LocationAuthorizationManager : CoreLocation.CLLocationManagerDelegate {
+  @objc final public func locationManagerDidChangeAuthorization(_ manager: CoreLocation.CLLocationManager)
+}
+public protocol Loggable : Common.Keyable {
+  static var shouldLog: Swift.Bool { get }
+}
+extension Common.Loggable {
+  public static var shouldLog: Swift.Bool {
+    get
+    set
+  }
+}
+public enum Logger {
+  public static func log(caller: Swift.String = #function, _ item: Any)
+  public static func log(caller: Swift.String = #function, _ request: Foundation.URLRequest, data: Foundation.Data? = nil, response: Foundation.URLResponse?)
+  public static func log(caller: Swift.String = #function, _ items: [Swift.String : Any])
+}
+extension Common.Logger : Common.Loggable {
+}
+public struct MultipartRequest {
+  public init(boundary: Swift.String = UUID().uuidString)
+  public var contentTypeHeaderValue: Swift.String {
+    get
+  }
+  public var httpBody: Foundation.Data {
+    get
+  }
+  public mutating func add(key: Swift.String, value: Swift.String)
+  public mutating func add(key: Swift.String, fileName: Swift.String, fileMimeType: Swift.String, fileData: Foundation.Data)
+}
+extension Common.MultipartRequest : Common.ValueWithable {
+  public typealias T = Common.MultipartRequest
+}
+public enum NFCReadingAvailability {
+  public static var isReadingAvailable: Swift.Bool {
+    get
+  }
 }
 extension UIKit.NSDirectionalEdgeInsets {
   public static var zero: UIKit.NSDirectionalEdgeInsets {
@@ -617,6 +1755,56 @@ extension ObjectiveC.NSObject : Common.Withable {
 extension Foundation._NSRange {
   public init(range: Swift.Range<Swift.String.Index>, originalText: Swift.String)
 }
+public protocol NavigationBarSetupable : AnyObject {
+  func setupNavigationBar()
+}
+public protocol NavigationBarVisibilityTogglable : AnyObject {
+  func showNavigationBar(animated: Swift.Bool)
+  func hideNavigationBar(animated: Swift.Bool)
+}
+extension Common.NavigationBarVisibilityTogglable where Self : UIKit.UIViewController {
+  public func showNavigationBar(animated: Swift.Bool = true)
+  public func hideNavigationBar(animated: Swift.Bool = true)
+}
+public enum PopType {
+  case back
+  case to(viewController: UIKit.UIViewController)
+  case toRoot
+}
+public protocol Navigationable {
+  var navigationController: UIKit.UINavigationController { get }
+  func pop(_ type: Common.PopType, animated: Swift.Bool)
+  func push(_ viewController: UIKit.UIViewController, animated: Swift.Bool)
+  func set(_ viewController: UIKit.UIViewController, animated: Swift.Bool)
+  func set(_ viewControllers: [UIKit.UIViewController], animated: Swift.Bool)
+}
+extension Common.Navigationable {
+  public func pop(_ type: Common.PopType = .back, animated: Swift.Bool = true)
+  public func push(_ viewController: UIKit.UIViewController, animated: Swift.Bool = true)
+  public func set(_ viewController: UIKit.UIViewController, animated: Swift.Bool = false)
+  public func set(_ viewControllers: [UIKit.UIViewController], animated: Swift.Bool = false)
+}
+public enum NetworkError : Swift.Error, Common.Stringable {
+  case custom(message: Swift.String)
+  case decodingError(statusCode: Swift.Int, error: Swift.DecodingError)
+  case requestError(any Swift.Error)
+  case responseError(statusCode: Swift.Int, jsonObject: [Swift.String : Any], responseAsData: Foundation.Data)
+  case invalidRequest(any Common.URLRequestConvertible)
+  case invalidURL(any Common.URLConvertible)
+  case noDataReceived
+  case parameterEncodingFailed
+  public var asString: Swift.String {
+    get
+  }
+}
+public enum NotificationAuthorizationManager {
+  public static func getCurrentStatus(handler: @escaping Common.Handler<Common.AuthorizationStatus>)
+  public static func requestAuthorization(handler: @escaping Common.Handler<Swift.Bool>)
+}
+public enum NotificationRegisterManager {
+  public static func registerForRemoteNotifications()
+  public static func unregisterForRemoteNotifications()
+}
 extension Swift.Optional {
   public var isNil: Swift.Bool {
     get
@@ -647,10 +1835,166 @@ extension PDFKit.PDFView {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func document(_ document: PDFKit.PDFDocument?) -> Self
 }
+public enum PresentType {
+  case dismissingCurrent
+  case overCurrent
+  public static func == (a: Common.PresentType, b: Common.PresentType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol Presentable {
+  func present(_ type: Common.PresentType, viewController: UIKit.UIViewController, animated: Swift.Bool, completion: Common.CompletionHandler)
+}
+extension Common.Presentable {
+  public var viewController: UIKit.UIViewController? {
+    get
+  }
+  public func present(_ type: Common.PresentType = .dismissingCurrent, viewController: UIKit.UIViewController, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
+}
+extension Common.Presentable where Self : Common.Navigationable {
+  public var viewController: UIKit.UIViewController? {
+    get
+  }
+  public func present(_ type: Common.PresentType = .dismissingCurrent, viewController: UIKit.UIViewController, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class PreviewView : UIKit.UIView {
+  @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+extension Common.PreviewView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func session(_ session: AVFoundation.AVCaptureSession?) -> Self
+}
+extension Common.PreviewView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func videoGravity(_ videoGravity: AVFoundation.AVLayerVideoGravity) -> Self
+}
+extension Common.PreviewView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency final public func videoOrientation(_ videoOrientation: AVFoundation.AVCaptureVideoOrientation) -> Self
+}
+extension Common.PreviewView {
+  @_Concurrency.MainActor @preconcurrency final public func draw(_ observation: Vision.VNDetectedObjectObservation)
+}
 extension Foundation.ProcessInfo {
   public var osVersion: Swift.String {
     get
   }
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class ProgressAnimationView : UIKit.UIView {
+  @_Concurrency.MainActor @preconcurrency final public func animate(progressColor: CoreGraphics.CGColor, backgroundColor: CoreGraphics.CGColor, duration: CoreFoundation.CFTimeInterval, completion: Common.CompletionHandler)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+extension Common.ProgressAnimationView : QuartzCore.CAAnimationDelegate {
+  @_Concurrency.MainActor @preconcurrency @objc final public func animationDidStop(_ anim: QuartzCore.CAAnimation, finished flag: Swift.Bool)
+}
+public protocol RawValueKeyValueStore : Common.RawValueKeyableStorage {
+}
+extension Common.RawValueKeyValueStore where Self.Keys.RawValue == Swift.String {
+  public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
+  public func add(item: any Common.Keyable & Common.Storable)
+  public func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  public func remove(using key: Self.Keys)
+}
+public protocol RawValueKeyable {
+  associatedtype Keys : Swift.RawRepresentable
+}
+public protocol RawValueKeyableStorage : Common.RawValueKeyable {
+  func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
+  func add(item: any Common.Keyable & Common.Storable)
+  func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  func remove(using key: Self.Keys)
+}
+extension Common.RawValueKeyableStorage where Self.Keys.RawValue == Swift.String {
+  public func add(item: any Common.Keyable & Common.Storable)
+}
+extension Common.RawValueKeyableStorage where Self : Common.KeyValueStorage, Self.Keys.RawValue == Swift.String {
+  public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
+  public func add(item: any Common.Keyable & Common.Storable)
+  public func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  public func remove(using key: Self.Keys)
+}
+public protocol ReloadContentRequestable : AnyObject {
+  func onReloadContentRequested()
+}
+public protocol SafariWebViewRequestable : AnyObject {
+  func onSafariWebViewRequested(url: Foundation.URL)
+}
+extension Common.SafariWebViewRequestable {
+  public func onSafariWebViewRequested(url: Foundation.URL)
+}
+public protocol ScreenSizeMeasurable : AnyObject {
+  var screenHeight: Swift.Double { get }
+  var screenWidth: Swift.Double { get }
+}
+extension Common.ScreenSizeMeasurable {
+  public var screenHeight: Swift.Double {
+    get
+  }
+  public var screenWidth: Swift.Double {
+    get
+  }
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class Separator : Common.BaseView {
+  @_Concurrency.MainActor @preconcurrency public init(color: UIKit.UIColor = .black, height: Swift.Double = 1)
+  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @objc deinit
+}
+extension UIKit.UIView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func addSeparator(color: UIKit.UIColor = .black, height: Swift.Double = 1) -> UIKit.UIView
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func addSeparator(_ separator: Common.Separator = .init(color: .black, height: 1)) -> UIKit.UIView
+}
+public protocol SingleObjectStorage {
+  associatedtype Item : Swift.Decodable, Swift.Encodable
+  func add(item: Self.Item)
+  func delete()
+  func get() -> Self.Item?
+}
+public enum Snackbar {
+  public enum Duration {
+    case custom(Foundation.TimeInterval)
+    case short
+    case medium
+    case long
+  }
+  public struct ViewModel {
+    public init(message: Swift.String, messageFont: UIKit.UIFont = .systemFont(ofSize: 14), duration: Common.Snackbar.Duration = .medium, actionTitle: Swift.String? = nil, actionFont: UIKit.UIFont = .systemFont(ofSize: 12, weight: .medium), onAction: Common.CompletionHandler = nil, onDismiss: Common.CompletionHandler = nil)
+  }
+  public static func show(_ viewModel: Common.Snackbar.ViewModel)
+}
+@objc @_Concurrency.MainActor @preconcurrency public class Stack : UIKit.UIStackView {
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
+  @_Concurrency.MainActor @preconcurrency convenience public init(alignment: UIKit.UIStackView.Alignment = .fill, distribution: UIKit.UIStackView.Distribution = .fill, margins: UIKit.UIEdgeInsets = .zero, spacing: CoreFoundation.CGFloat = .zero, @Common.UIViewsBuilder views: () -> [UIKit.UIView] = {[]})
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
+    @objc get
+  }
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class StatusBarStylableNavigationController : UIKit.UINavigationController {
+  @_Concurrency.MainActor @preconcurrency @objc override final public var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
+    @objc get
+  }
+  @available(iOS 5.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(navigationBarClass: Swift.AnyClass?, toolbarClass: Swift.AnyClass?)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(rootViewController: UIKit.UIViewController)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @objc deinit
 }
 extension Swift.String {
   public var asData: Foundation.Data {
@@ -789,12 +2133,6 @@ extension Swift.String {
   }
 }
 extension Swift.String {
-  public static func random(length: Swift.Int, chars: Swift.String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") -> Swift.String
-}
-extension Swift.String {
-  public func removeStressedVowels() -> Swift.String
-}
-extension Swift.String {
   public var isRUT: Swift.Bool {
     get
   }
@@ -808,12 +2146,26 @@ extension Swift.String {
   public func removeRUTFormat() -> Swift.String
 }
 extension Swift.String {
+  public static func random(length: Swift.Int, chars: Swift.String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") -> Swift.String
+}
+extension Swift.String {
+  public func removeStressedVowels() -> Swift.String
+}
+extension Swift.String {
   public var uppercasingFirstLetter: Swift.String {
     get
   }
 }
 extension Swift.String : Common.ValueWithable {
   public typealias T = Swift.String
+}
+public protocol Stringable {
+  var asString: Swift.String { get }
+}
+extension Common.Stringable where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
+  public var asString: Swift.String {
+    get
+  }
 }
 extension Swift.Double {
   public enum DefaultValues {
@@ -822,6 +2174,46 @@ extension Swift.Double {
     }
   }
 }
+public protocol TitleSettable : AnyObject {
+  func set(title: Swift.String)
+}
+extension Common.TitleSettable where Self : UIKit.UIViewController {
+  public func set(title: Swift.String)
+}
+public enum Toast {
+  public enum Duration : Swift.Int {
+    case short
+    case medium
+    case long
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  public static func present(with message: Swift.String, duration: Common.Toast.Duration = .medium, completion: Common.CompletionHandler = nil)
+}
+public typealias BaseModuleDelegate = Common.ActivityControllerRequestable & Common.AlertRequestable & Common.DismissRequestable & Common.GoBackRequestable
+public typealias Action = () -> Swift.Void
+public typealias CompletionHandler = Common.Action?
+public typealias Handler<T> = (T) -> Swift.Void
+public typealias InOutHandler<T> = (T) -> T
+public typealias ResultHandler<T> = Common.Handler<Swift.Result<T, any Swift.Error>>
+public typealias CustomErrorResultHandler<T, E> = Common.Handler<Swift.Result<T, E>> where E : Swift.Error
+public typealias NetworkResultHandler<T> = Common.CustomErrorResultHandler<T, Common.NetworkError>
+public typealias EmptyResultHandler = Common.Handler<Common.EmptyResult<any Swift.Error>>
+public typealias CustomErrorEmptyResultHandler<E> = Common.Handler<Common.EmptyResult<E>> where E : Swift.Error
+public typealias NetworkEmptyResultHandler = Common.CustomErrorEmptyResultHandler<Common.NetworkError>
+public typealias CollectionViewable = Common.CollectionViewDataSourceable & Common.CollectionViewDelegateable & Common.CollectionViewSizeable
+public typealias ViewModelableCell = Common.BaseCell & Common.OptionalViewModelHolder & Common.ViewModelSettable
+public typealias ViewModelableReusableView = Common.BaseReusableView & Common.OptionalViewModelHolder & Common.ViewModelSettable
+public typealias ViewModelableView = Common.BaseView & Common.ViewModelHolder & Common.ViewModelInitializable & Common.ViewModelSettable
+public typealias ViewModelableViewController = Common.BaseViewController & Common.ViewModelHolder & Common.ViewModelInitializable & Common.ViewModelSettable
+public typealias UICollectionViewable = UIKit.UICollectionViewDataSource & UIKit.UICollectionViewDelegateFlowLayout
+public typealias UIViewsBuilder = Common.ArrayBuilder<UIKit.UIView>
+public typealias Storable = Swift.Codable
+public typealias KeyStorable = Common.Keyable & Common.Storable
+public typealias SingleRawValueKeyValueObjectStorage = Common.RawValueKeyValueStore & Common.SingleObjectStorage
 extension UIKit.UIActivityIndicatorView {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func animate() -> Self
@@ -879,27 +2271,6 @@ extension UIKit.UIBarButtonItem {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func tintColor(_ tintColor: UIKit.UIColor?) -> Self
 }
-extension UIKit.UIButton.Configuration {
-  @discardableResult
-  public func attributedTitle(_ attributedTitle: Foundation.AttributedString) -> UIKit.UIButton.Configuration
-  @discardableResult
-  public func baseBackgroundColor(_ baseBackgroundColor: UIKit.UIColor) -> UIKit.UIButton.Configuration
-  @discardableResult
-  public func baseForegroundColor(_ baseForegroundColor: UIKit.UIColor) -> UIKit.UIButton.Configuration
-  @discardableResult
-  public func cornerStyle(_ cornerStyle: UIKit.UIButton.Configuration.CornerStyle) -> UIKit.UIButton.Configuration
-  @discardableResult
-  public func image(_ image: UIKit.UIImage?) -> UIKit.UIButton.Configuration
-  @discardableResult
-  public func imagePadding(_ imagePadding: CoreFoundation.CGFloat) -> UIKit.UIButton.Configuration
-  @discardableResult
-  public func imagePlacement(_ imagePlacement: UIKit.NSDirectionalRectEdge) -> UIKit.UIButton.Configuration
-}
-extension UIKit.UIButton.Configuration : Common.ValueWithable {
-  @available(iOS 15.0, tvOS 15.0, *)
-  @available(watchOS, unavailable)
-  public typealias T = UIKit.UIButton.Configuration
-}
 extension UIKit.UIButton {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func adjustsFontSizeToFitWidth(_ adjustsFontSizeToFitWidth: Swift.Bool = true) -> Self
@@ -943,6 +2314,27 @@ extension UIKit.UIButton {
 extension UIKit.UIButton {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func titleColor(_ titleColor: UIKit.UIColor?, for state: UIKit.UIControl.State = .normal) -> Self
+}
+extension UIKit.UIButton.Configuration {
+  @discardableResult
+  public func attributedTitle(_ attributedTitle: Foundation.AttributedString) -> UIKit.UIButton.Configuration
+  @discardableResult
+  public func baseBackgroundColor(_ baseBackgroundColor: UIKit.UIColor) -> UIKit.UIButton.Configuration
+  @discardableResult
+  public func baseForegroundColor(_ baseForegroundColor: UIKit.UIColor) -> UIKit.UIButton.Configuration
+  @discardableResult
+  public func cornerStyle(_ cornerStyle: UIKit.UIButton.Configuration.CornerStyle) -> UIKit.UIButton.Configuration
+  @discardableResult
+  public func image(_ image: UIKit.UIImage?) -> UIKit.UIButton.Configuration
+  @discardableResult
+  public func imagePadding(_ imagePadding: CoreFoundation.CGFloat) -> UIKit.UIButton.Configuration
+  @discardableResult
+  public func imagePlacement(_ imagePlacement: UIKit.NSDirectionalRectEdge) -> UIKit.UIButton.Configuration
+}
+extension UIKit.UIButton.Configuration : Common.ValueWithable {
+  @available(iOS 15.0, tvOS 15.0, *)
+  @available(watchOS, unavailable)
+  public typealias T = UIKit.UIButton.Configuration
 }
 extension UIKit.UICollectionReusableView {
   @_Concurrency.MainActor @preconcurrency public static var reuseIdentifier: Swift.String {
@@ -1040,12 +2432,12 @@ extension UIKit.UIColor {
   public static func named(_ named: Swift.String) -> UIKit.UIColor?
 }
 extension UIKit.UIColor {
-  public static var randomColor: UIKit.UIColor {
+  public var rgbaComponents: (red: CoreFoundation.CGFloat, green: CoreFoundation.CGFloat, blue: CoreFoundation.CGFloat, alpha: CoreFoundation.CGFloat)? {
     get
   }
 }
 extension UIKit.UIColor {
-  public var rgbaComponents: (red: CoreFoundation.CGFloat, green: CoreFoundation.CGFloat, blue: CoreFoundation.CGFloat, alpha: CoreFoundation.CGFloat)? {
+  public static var randomColor: UIKit.UIColor {
     get
   }
 }
@@ -1821,10 +3213,6 @@ extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public func insetsLayoutMarginsFromSafeArea(_ insetsLayoutMarginsFromSafeArea: Swift.Bool) -> Self
 }
 extension UIKit.UIView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func isHidden(_ isHidden: Swift.Bool) -> Self
-}
-extension UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency public var isNotHidden: Swift.Bool {
     get
   }
@@ -1938,6 +3326,19 @@ extension UIKit.UIView {
 extension UIKit.UIView {
   public typealias ViewHandler = Common.Handler<UIKit.UIView>
 }
+extension UIKit.UIView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func isHidden(_ isHidden: Swift.Bool) -> Self
+}
+public protocol UIViewBuildable {
+  @Common.UIViewBuilder var mainView: UIKit.UIView { get }
+}
+@_functionBuilder public struct UIViewBuilder {
+  public static func buildBlock(_ component: UIKit.UIView) -> UIKit.UIView
+  public static func buildEither(first component: UIKit.UIView) -> UIKit.UIView
+  public static func buildEither(second component: UIKit.UIView) -> UIKit.UIView
+  public static func buildOptional(_ component: UIKit.UIView?) -> UIKit.UIView
+}
 extension UIKit.UIViewController : Common.ActivityIndicatorable {
 }
 extension UIKit.UIViewController : Common.AlertPresentable {
@@ -1975,16 +3376,6 @@ extension UIKit.UIViewController {
   @_Concurrency.MainActor @preconcurrency public func isModalInPresentation(_ isModalInPresentation: Swift.Bool = true) -> Self
 }
 extension UIKit.UIViewController {
-  @_Concurrency.MainActor @preconcurrency public var isNotPresenting: Swift.Bool {
-    get
-  }
-}
-extension UIKit.UIViewController {
-  @_Concurrency.MainActor @preconcurrency public var isNotVisible: Swift.Bool {
-    get
-  }
-}
-extension UIKit.UIViewController {
   @_Concurrency.MainActor @preconcurrency public var isPresented: Swift.Bool {
     get
   }
@@ -1997,11 +3388,6 @@ extension UIKit.UIViewController {
 extension UIKit.UIViewController {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func isUserInteractionEnabled(_ isUserInteractionEnabled: Swift.Bool) -> Self
-}
-extension UIKit.UIViewController {
-  @_Concurrency.MainActor @preconcurrency public var isVisible: Swift.Bool {
-    get
-  }
 }
 extension UIKit.UIViewController : Common.KeyboardDismissable {
   @objc @_Concurrency.MainActor @preconcurrency dynamic public func dismissKeyboard()
@@ -2127,6 +3513,21 @@ extension Common.Vibrator {
 }
 extension UIKit.UIViewController : Common.Vibrator {
 }
+extension UIKit.UIViewController {
+  @_Concurrency.MainActor @preconcurrency public var isNotPresenting: Swift.Bool {
+    get
+  }
+}
+extension UIKit.UIViewController {
+  @_Concurrency.MainActor @preconcurrency public var isNotVisible: Swift.Bool {
+    get
+  }
+}
+extension UIKit.UIViewController {
+  @_Concurrency.MainActor @preconcurrency public var isVisible: Swift.Bool {
+    get
+  }
+}
 extension UIKit.UIWindow {
   @_Concurrency.MainActor @preconcurrency public static func initWithScreenFrame() -> Self
 }
@@ -2167,93 +3568,17 @@ extension Foundation.URL {
 extension Foundation.URL {
   public func remove(queryItem: Foundation.URLQueryItem) -> Foundation.URL
 }
-extension Foundation.UserDefaults : Common.KeyValueStorage {
-  public func add(item: (key: Swift.String, value: any Swift.Decodable & Swift.Encodable))
-  public func add(item: any Common.Keyable & Common.Storable)
-  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  public func remove(using key: Swift.String)
+public protocol URLConvertible {
+  func asURL() throws -> Foundation.URL
 }
-extension Vision.VNDetectBarcodesRequest {
-  @discardableResult
-  public func symbologies(_ symbologies: [Vision.VNBarcodeSymbology]) -> Self
+extension Swift.String : Common.URLConvertible {
+  public func asURL() throws -> Foundation.URL
 }
-extension Vision.VNRecognizedTextObservation {
-  public var topRecognizedText: Vision.VNRecognizedText? {
-    get
-  }
+extension Foundation.URL : Common.URLConvertible {
+  public func asURL() throws -> Foundation.URL
 }
-extension Vision.VNRecognizeTextRequest {
-  @discardableResult
-  public func customWords(_ customWords: [Swift.String]) -> Self
-}
-extension Vision.VNRecognizeTextRequest {
-  @discardableResult
-  public func minimumTextHeight(_ minimumTextHeight: Swift.Float) -> Self
-}
-extension Vision.VNRecognizeTextRequest {
-  @discardableResult
-  public func recognitionLanguages(_ recognitionLanguages: [Swift.String]) -> Self
-}
-extension Vision.VNRecognizeTextRequest {
-  @discardableResult
-  public func recognitionLevel(_ recognitionLevel: Vision.VNRequestTextRecognitionLevel) -> Self
-}
-extension Vision.VNRecognizeTextRequest {
-  @discardableResult
-  public func usesLanguageCorrection(_ usesLanguageCorrection: Swift.Bool) -> Self
-}
-extension WebKit.WKWebView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func allowsContentJavaScript(_ allowsContentJavaScript: Swift.Bool) -> Self
-}
-extension WebKit.WKWebView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func navigationDelegate(_ navigationDelegate: any WebKit.WKNavigationDelegate) -> Self
-}
-extension WebKit.WKWebView {
-  @_Concurrency.MainActor @preconcurrency public func set(cookie: Foundation.HTTPCookie, completion: Common.CompletionHandler)
-}
-extension WebKit.WKWebView {
-  @_Concurrency.MainActor @preconcurrency public func set(cookies: [Foundation.HTTPCookie], completion: Common.CompletionHandler)
-}
-open class BaseClient {
-  public var requests: [Swift.String : Foundation.URLSessionTask] {
-    get
-    set
-  }
-  public init()
-  @objc deinit
-}
-extension Common.BaseClient : Common.ClientProtocol {
-}
-public protocol ClientProtocol : AnyObject {
-  var requests: [Swift.String : Foundation.URLSessionTask] { get set }
-  func request<T>(from function: Swift.String, _ request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
-  func upload<T>(from function: Swift.String, multipart: Common.MultipartRequest, to request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
-}
-extension Common.ClientProtocol {
-  public func request<T>(from function: Swift.String = #function, _ request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
-  public func upload<T>(from function: Swift.String = #function, multipart: Common.MultipartRequest, to request: any Common.URLRequestConvertible, result: @escaping Common.NetworkResultHandler<T>) where T : Swift.Decodable
-}
-final public class JSONParameterEncoder {
-  public init(encoder: Foundation.JSONEncoder = .init())
-  final public func encode<T>(_ parameters: T?, into request: Foundation.URLRequest) throws -> Foundation.URLRequest where T : Swift.Encodable
-  @objc deinit
-}
-final public class URLEncodedFormParameterEncoder {
-  public enum Destination {
-    case methodDependent
-    case queryString
-    case httpBody
-    public static func == (a: Common.URLEncodedFormParameterEncoder.Destination, b: Common.URLEncodedFormParameterEncoder.Destination) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
-      get
-    }
-  }
-  public init(encoder: Common.URLEncodedFormEncoder = .init(), destination: Common.URLEncodedFormParameterEncoder.Destination = .methodDependent)
-  final public func encode<Parameters>(_ parameters: Parameters?, into request: Foundation.URLRequest) throws -> Foundation.URLRequest where Parameters : Swift.Encodable
-  @objc deinit
+extension Foundation.URLComponents : Common.URLConvertible {
+  public func asURL() throws -> Foundation.URL
 }
 final public class URLEncodedFormEncoder {
   public enum ArrayEncoding {
@@ -2311,59 +3636,20 @@ final public class URLEncodedFormEncoder {
   public init(alphabetizeKeyValuePairs: Swift.Bool = true, arrayEncoding: Common.URLEncodedFormEncoder.ArrayEncoding = .brackets, boolEncoding: Common.URLEncodedFormEncoder.BoolEncoding = .numeric, dataEncoding: Common.URLEncodedFormEncoder.DataEncoding = .base64, dateEncoding: Common.URLEncodedFormEncoder.DateEncoding = .deferredToDate, keyEncoding: Common.URLEncodedFormEncoder.KeyEncoding = .useDefaultKeys, keyPathEncoding: Common.URLEncodedFormEncoder.KeyPathEncoding = .brackets, nilEncoding: Common.URLEncodedFormEncoder.NilEncoding = .dropKey, spaceEncoding: Common.URLEncodedFormEncoder.SpaceEncoding = .percentEscaped, allowedCharacters: Foundation.CharacterSet = .urlQueryAllowed)
   @objc deinit
 }
-public protocol Endpoint : Common.URLRequestConvertible {
-  var baseURL: Foundation.URL? { get }
-  var version: Swift.String { get }
-  var basePath: Swift.String { get }
-  var path: Swift.String { get }
-  var url: Foundation.URL? { get }
-  var headers: Common.HTTPHeaders { get }
-  var method: Common.HTTPMethod { get }
-  var parameters: (any Swift.Encodable)? { get }
-  var jsonEncoder: Foundation.JSONEncoder { get }
-  var urlEncodedFormEncoder: Common.URLEncodedFormEncoder { get }
-}
-extension Common.Endpoint {
-  public var version: Swift.String {
-    get
+final public class URLEncodedFormParameterEncoder {
+  public enum Destination {
+    case methodDependent
+    case queryString
+    case httpBody
+    public static func == (a: Common.URLEncodedFormParameterEncoder.Destination, b: Common.URLEncodedFormParameterEncoder.Destination) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
   }
-  public var basePath: Swift.String {
-    get
-  }
-  public var url: Foundation.URL? {
-    get
-  }
-  public var jsonEncoder: Foundation.JSONEncoder {
-    get
-  }
-  public var urlEncodedFormEncoder: Common.URLEncodedFormEncoder {
-    get
-  }
-}
-extension Common.Endpoint {
-  public func asURLRequest() throws -> Foundation.URLRequest
-}
-public protocol Environment {
-  static var current: Self { get }
-  static var baseURLAsString: Swift.String { get }
-  static var baseURL: Foundation.URL? { get }
-}
-extension Common.Environment {
-  public static var baseURL: Foundation.URL? {
-    get
-  }
-}
-public protocol URLConvertible {
-  func asURL() throws -> Foundation.URL
-}
-extension Swift.String : Common.URLConvertible {
-  public func asURL() throws -> Foundation.URL
-}
-extension Foundation.URL : Common.URLConvertible {
-  public func asURL() throws -> Foundation.URL
-}
-extension Foundation.URLComponents : Common.URLConvertible {
-  public func asURL() throws -> Foundation.URL
+  public init(encoder: Common.URLEncodedFormEncoder = .init(), destination: Common.URLEncodedFormParameterEncoder.Destination = .methodDependent)
+  final public func encode<Parameters>(_ parameters: Parameters?, into request: Foundation.URLRequest) throws -> Foundation.URLRequest where Parameters : Swift.Encodable
+  @objc deinit
 }
 public protocol URLRequestConvertible {
   func asURLRequest() throws -> Foundation.URLRequest
@@ -2378,476 +3664,6 @@ extension Foundation.URLRequest : Common.URLRequestConvertible {
 }
 extension Foundation.URLRequest {
   public init(url: any Common.URLConvertible, method: Common.HTTPMethod, headers: Common.HTTPHeaders? = nil) throws
-}
-public struct HTTPHeaders {
-  public init()
-  public init(_ headers: [Common.HTTPHeader])
-  public init(_ dictionary: [Swift.String : Swift.String])
-  public mutating func add(name: Swift.String, value: Swift.String)
-  public mutating func add(_ header: Common.HTTPHeader)
-  public mutating func update(name: Swift.String, value: Swift.String)
-  public mutating func update(_ header: Common.HTTPHeader)
-  public mutating func remove(name: Swift.String)
-  public mutating func sort()
-  public func sorted() -> Common.HTTPHeaders
-  public func value(for name: Swift.String) -> Swift.String?
-  public subscript(name: Swift.String) -> Swift.String? {
-    get
-    set
-  }
-  public var dictionary: [Swift.String : Swift.String] {
-    get
-  }
-}
-extension Common.HTTPHeaders : Swift.ExpressibleByDictionaryLiteral {
-  public init(dictionaryLiteral elements: (Swift.String, Swift.String)...)
-  public typealias Key = Swift.String
-  public typealias Value = Swift.String
-}
-extension Common.HTTPHeaders : Swift.ExpressibleByArrayLiteral {
-  public init(arrayLiteral elements: Common.HTTPHeader...)
-  public typealias ArrayLiteralElement = Common.HTTPHeader
-}
-extension Common.HTTPHeaders : Swift.Sequence {
-  public func makeIterator() -> Swift.IndexingIterator<[Common.HTTPHeader]>
-  public typealias Element = Swift.IndexingIterator<[Common.HTTPHeader]>.Element
-  public typealias Iterator = Swift.IndexingIterator<[Common.HTTPHeader]>
-}
-extension Common.HTTPHeaders : Swift.Collection {
-  public var startIndex: Swift.Int {
-    get
-  }
-  public var endIndex: Swift.Int {
-    get
-  }
-  public subscript(position: Swift.Int) -> Common.HTTPHeader {
-    get
-  }
-  public func index(after i: Swift.Int) -> Swift.Int
-  public typealias Index = Swift.Int
-  public typealias Indices = Swift.DefaultIndices<Common.HTTPHeaders>
-  public typealias SubSequence = Swift.Slice<Common.HTTPHeaders>
-}
-extension Common.HTTPHeaders : Swift.CustomStringConvertible {
-  public var description: Swift.String {
-    get
-  }
-}
-extension Common.HTTPHeaders : Common.ValueWithable {
-  public typealias T = Common.HTTPHeaders
-}
-public struct HTTPHeader : Swift.Hashable {
-  public let name: Swift.String
-  public let value: Swift.String
-  public init(name: Swift.String, value: Swift.String)
-  public static func == (a: Common.HTTPHeader, b: Common.HTTPHeader) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-extension Common.HTTPHeader : Swift.CustomStringConvertible {
-  public var description: Swift.String {
-    get
-  }
-}
-extension Common.HTTPHeader {
-  public static func accept(_ value: Swift.String) -> Common.HTTPHeader
-  public static func acceptCharset(_ value: Swift.String) -> Common.HTTPHeader
-  public static func acceptLanguage(_ value: Swift.String) -> Common.HTTPHeader
-  public static func acceptEncoding(_ value: Swift.String) -> Common.HTTPHeader
-  public static func authorization(username: Swift.String, password: Swift.String) -> Common.HTTPHeader
-  public static func authorization(bearerToken: Swift.String) -> Common.HTTPHeader
-  public static func authorization(_ value: Swift.String) -> Common.HTTPHeader
-  public static func contentDisposition(_ value: Swift.String) -> Common.HTTPHeader
-  public static func contentEncoding(_ value: Swift.String) -> Common.HTTPHeader
-  public static func contentType(_ value: Swift.String) -> Common.HTTPHeader
-  public static func userAgent(_ value: Swift.String) -> Common.HTTPHeader
-}
-extension Common.HTTPHeaders {
-  public static let `default`: Common.HTTPHeaders
-}
-extension Common.HTTPHeader {
-  public static let defaultAcceptEncoding: Common.HTTPHeader
-  public static let defaultAcceptLanguage: Common.HTTPHeader
-  public static let defaultUserAgent: Common.HTTPHeader
-}
-extension Foundation.URLRequest {
-  public var headers: Common.HTTPHeaders {
-    get
-    set
-  }
-}
-extension Foundation.HTTPURLResponse {
-  public var headers: Common.HTTPHeaders {
-    get
-  }
-}
-extension Foundation.URLSessionConfiguration {
-  public var headers: Common.HTTPHeaders {
-    get
-    set
-  }
-}
-public struct HTTPMethod : Swift.RawRepresentable, Swift.Equatable, Swift.Hashable {
-  public static let connect: Common.HTTPMethod
-  public static let delete: Common.HTTPMethod
-  public static let get: Common.HTTPMethod
-  public static let head: Common.HTTPMethod
-  public static let options: Common.HTTPMethod
-  public static let patch: Common.HTTPMethod
-  public static let post: Common.HTTPMethod
-  public static let put: Common.HTTPMethod
-  public static let query: Common.HTTPMethod
-  public static let trace: Common.HTTPMethod
-  public let rawValue: Swift.String
-  public init(rawValue: Swift.String)
-  public typealias RawValue = Swift.String
-}
-public enum HTTPService {
-  @discardableResult
-  public static func request<T>(_ resource: any Common.URLRequestConvertible, urlSession: Foundation.URLSession = .shared, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common.NetworkResultHandler<T>) -> Foundation.URLSessionTask? where T : Swift.Decodable
-  @discardableResult
-  public static func upload<T>(multipart: Common.MultipartRequest, to resource: any Common.URLRequestConvertible, decoder: Foundation.JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common.NetworkResultHandler<T>) -> Foundation.URLSessionTask? where T : Swift.Decodable
-}
-extension Common.HTTPService : Common.Loggable {
-}
-public struct MultipartRequest {
-  public init(boundary: Swift.String = UUID().uuidString)
-  public var contentTypeHeaderValue: Swift.String {
-    get
-  }
-  public var httpBody: Foundation.Data {
-    get
-  }
-  public mutating func add(key: Swift.String, value: Swift.String)
-  public mutating func add(key: Swift.String, fileName: Swift.String, fileMimeType: Swift.String, fileData: Foundation.Data)
-}
-extension Common.MultipartRequest : Common.ValueWithable {
-  public typealias T = Common.MultipartRequest
-}
-public enum NetworkError : Swift.Error, Common.Stringable {
-  case custom(message: Swift.String)
-  case decodingError(statusCode: Swift.Int, error: Swift.DecodingError)
-  case requestError(any Swift.Error)
-  case responseError(statusCode: Swift.Int, jsonObject: [Swift.String : Any], responseAsData: Foundation.Data)
-  case invalidRequest(any Common.URLRequestConvertible)
-  case invalidURL(any Common.URLConvertible)
-  case noDataReceived
-  case parameterEncodingFailed
-  public var asString: Swift.String {
-    get
-  }
-}
-public protocol Actionable {
-  var onAction: Common.Action { get }
-}
-public protocol ActivityControllerRequestable : AnyObject {
-  func onPresentActivityControllerRequested(with item: Any)
-}
-extension Common.ActivityControllerRequestable {
-  public func onPresentActivityControllerRequested(with item: Any)
-}
-public protocol ActivityIndicatorable : AnyObject {
-  func startActivityIndicator()
-  func startActivityIndicator(with color: UIKit.UIColor)
-  func stopActivityIndicator()
-}
-extension Common.ActivityIndicatorable where Self : Common.BaseCoordinator {
-  public func startActivityIndicator()
-  public func startActivityIndicator(with color: UIKit.UIColor)
-  public func stopActivityIndicator()
-}
-extension Common.ActivityIndicatorable where Self : UIKit.UITextField {
-  public func startActivityIndicator()
-  public func startActivityIndicator(with color: UIKit.UIColor)
-  public func stopActivityIndicator()
-}
-extension Common.ActivityIndicatorable where Self : UIKit.UIView {
-  public func startActivityIndicator()
-  public func startActivityIndicator(with color: UIKit.UIColor)
-  public func stopActivityIndicator()
-}
-extension Common.ActivityIndicatorable where Self : UIKit.UIViewController {
-  public func startActivityIndicator()
-  public func startActivityIndicator(with color: UIKit.UIColor)
-  public func stopActivityIndicator()
-}
-public enum AlertViewType {
-  case emptyAlert
-  case genericError
-  case customAlert(title: Swift.String = .DefaultValues.Alerts.title, message: Swift.String = .empty)
-}
-public protocol AlertPresentable : AnyObject {
-  func presentAlertView(type: Common.AlertViewType, acceptAction: Common.Handler<UIKit.UIAlertAction>?, cancelAction: Common.Handler<UIKit.UIAlertAction>?)
-  func presentAlertView(viewModel: any Common.AlertViewModel, onDismissRequested handler: Common.CompletionHandler)
-}
-extension Common.AlertPresentable {
-  public var viewController: UIKit.UIViewController? {
-    get
-  }
-  public func presentAlertView(type: Common.AlertViewType, acceptAction: ((UIKit.UIAlertAction) -> Swift.Void)? = nil, cancelAction: ((UIKit.UIAlertAction) -> Swift.Void)? = nil)
-  public func presentAlertView(viewModel: any Common.AlertViewModel, onDismissRequested handler: Common.CompletionHandler)
-}
-public protocol AlertRequestable : AnyObject {
-  func onPresentAlertRequested(title: Swift.String, message: Swift.String, handler: Common.CompletionHandler, cancelHandler: Common.CompletionHandler)
-  func onPresentAlertRequested(viewModel: any Common.AlertViewModel)
-}
-extension Common.AlertRequestable where Self : Common.AlertPresentable {
-  public func onPresentAlertRequested(title: Swift.String = .DefaultValues.Alerts.title, message: Swift.String, handler: Common.CompletionHandler = nil, cancelHandler: Common.CompletionHandler = nil)
-}
-extension Common.AlertRequestable where Self : Common.BaseCoordinator {
-  public func onPresentAlertRequested(viewModel: any Common.AlertViewModel)
-}
-public protocol AppSettingsRequestable : AnyObject {
-  func onAppSettingsRequested()
-}
-extension Common.AppSettingsRequestable {
-  public func onAppSettingsRequested()
-}
-public enum AuthorizationStatus {
-  case authorized
-  case denied
-  case notDetermined
-  public static func == (a: Common.AuthorizationStatus, b: Common.AuthorizationStatus) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public protocol AuthorizationStatusConvertible {
-  var asAuthorizationStatus: Common.AuthorizationStatus { get }
-}
-extension Common.AuthorizationStatusConvertible where Self == AVFoundation.AVAuthorizationStatus {
-  public var asAuthorizationStatus: Common.AuthorizationStatus {
-    get
-  }
-}
-extension Common.AuthorizationStatusConvertible where Self == CoreLocation.CLAuthorizationStatus {
-  public var asAuthorizationStatus: Common.AuthorizationStatus {
-    get
-  }
-}
-extension Common.AuthorizationStatusConvertible where Self == UserNotifications.UNAuthorizationStatus {
-  public var asAuthorizationStatus: Common.AuthorizationStatus {
-    get
-  }
-}
-public protocol BackButtonAddable : UIKit.UIViewController {
-  func addBackButton(_ icon: UIKit.UIImage?, handler: Common.CompletionHandler)
-}
-extension Common.BackButtonAddable {
-  public func addBackButton(_ icon: UIKit.UIImage? = BackButtonAddableDefaultValues.icon, handler: Common.CompletionHandler)
-}
-extension UIKit.UIViewController {
-  public enum BackButtonAddableDefaultValues {
-    public static var icon: UIKit.UIImage? {
-      get
-    }
-  }
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func addBackButton(_ icon: UIKit.UIImage? = BackButtonAddableDefaultValues.icon, action: @escaping Common.Action) -> Self
-}
-extension UIKit.UIView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func backgroundColor(_ backgroundColor: UIKit.UIColor? = .white) -> Self
-}
-extension UIKit.UIViewController {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func backgroundColor(_ backgroundColor: UIKit.UIColor? = .white) -> Self
-}
-public protocol Capitalizable {
-  var capitalized: Swift.String { get }
-  var capitalizingFirstLetter: Swift.String { get }
-}
-extension Common.Capitalizable where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
-  public var capitalized: Swift.String {
-    get
-  }
-  public var capitalizingFirstLetter: Swift.String {
-    get
-  }
-}
-extension Common.Capitalizable where Self : Common.Stringable, Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
-  public var capitalized: Swift.String {
-    get
-  }
-  public var capitalizingFirstLetter: Swift.String {
-    get
-  }
-}
-public protocol CollectionViewDataSourceable : AnyObject {
-  func getNumberOfSections() -> Swift.Int
-  func getNumberOfItems(in section: Swift.Int) -> Swift.Int
-  func onCellForItem(in section: Swift.Int, at index: Swift.Int) -> (any Common.ViewModel)?
-  func onHeaderItemDataSourceRequested(in section: Swift.Int) -> (any Common.ViewModel)?
-  func onHeaderItemReuseIdentifierRequested(in section: Swift.Int) -> Swift.String
-  func onReuseIdentifierRequested(in section: Swift.Int, at index: Swift.Int) -> Swift.String
-}
-extension Common.CollectionViewDataSourceable {
-  public func getNumberOfSections() -> Swift.Int
-  public func onHeaderItemDataSourceRequested(in section: Swift.Int) -> (any Common.ViewModel)?
-  public func onHeaderItemReuseIdentifierRequested(in section: Swift.Int) -> Swift.String
-}
-public protocol CollectionViewDelegateable : AnyObject {
-  func onItemSelected(in section: Swift.Int, at index: Swift.Int)
-}
-extension Common.CollectionViewDelegateable {
-  public func onItemSelected(in section: Swift.Int, at index: Swift.Int)
-}
-public typealias Inset = (top: Swift.Double, left: Swift.Double, bottom: Swift.Double, right: Swift.Double)
-public typealias Size = (width: Swift.Double, height: Swift.Double)
-public protocol CollectionViewSizeable : AnyObject {
-  func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
-  func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
-  func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
-  func onSizeForItem(in section: Swift.Int, at index: Swift.Int) -> Common.Size
-  func onInsetFor(section: Swift.Int) -> Common.Inset
-}
-extension Common.CollectionViewSizeable {
-  public func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
-  public func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
-  public func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
-  public func onInsetFor(section: Swift.Int) -> Common.Inset
-}
-public protocol ContentReloadable {
-  func reloadContent()
-}
-public enum DismissType {
-  case fromRoot
-  case topMost
-  public static func == (a: Common.DismissType, b: Common.DismissType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public protocol Dismissable {
-  func dismiss(_ type: Common.DismissType, animated: Swift.Bool, completion: Common.CompletionHandler)
-}
-extension Common.Dismissable {
-  public var viewController: UIKit.UIViewController? {
-    get
-  }
-  public func dismiss(_ type: Common.DismissType = .topMost, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-}
-extension Common.Dismissable where Self : Common.Navigationable {
-  public var viewController: UIKit.UIViewController? {
-    get
-  }
-  public func dismiss(_ type: Common.DismissType = .topMost, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-}
-public protocol DismissRequestable : AnyObject {
-  func onDismissRequested()
-}
-public protocol GoBackRequestable : AnyObject {
-  func onGoBackRequested()
-}
-public protocol KeyboardDismissable : AnyObject {
-  func dismissKeyboard()
-}
-public protocol LargeTitleSettable : AnyObject {
-  func disableLargeTitles()
-  func enableLargeTitles()
-}
-extension Common.LargeTitleSettable where Self : UIKit.UINavigationController {
-  public func disableLargeTitles()
-  public func enableLargeTitles()
-}
-extension Common.LargeTitleSettable where Self : UIKit.UIViewController {
-  public func disableLargeTitles()
-  public func enableLargeTitles()
-}
-public enum PopType {
-  case back
-  case to(viewController: UIKit.UIViewController)
-  case toRoot
-}
-public protocol Navigationable {
-  var navigationController: UIKit.UINavigationController { get }
-  func pop(_ type: Common.PopType, animated: Swift.Bool)
-  func push(_ viewController: UIKit.UIViewController, animated: Swift.Bool)
-  func set(_ viewController: UIKit.UIViewController, animated: Swift.Bool)
-  func set(_ viewControllers: [UIKit.UIViewController], animated: Swift.Bool)
-}
-extension Common.Navigationable {
-  public func pop(_ type: Common.PopType = .back, animated: Swift.Bool = true)
-  public func push(_ viewController: UIKit.UIViewController, animated: Swift.Bool = true)
-  public func set(_ viewController: UIKit.UIViewController, animated: Swift.Bool = false)
-  public func set(_ viewControllers: [UIKit.UIViewController], animated: Swift.Bool = false)
-}
-public protocol NavigationBarSetupable : AnyObject {
-  func setupNavigationBar()
-}
-public protocol NavigationBarVisibilityTogglable : AnyObject {
-  func showNavigationBar(animated: Swift.Bool)
-  func hideNavigationBar(animated: Swift.Bool)
-}
-extension Common.NavigationBarVisibilityTogglable where Self : UIKit.UIViewController {
-  public func showNavigationBar(animated: Swift.Bool = true)
-  public func hideNavigationBar(animated: Swift.Bool = true)
-}
-public enum PresentType {
-  case dismissingCurrent
-  case overCurrent
-  public static func == (a: Common.PresentType, b: Common.PresentType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public protocol Presentable {
-  func present(_ type: Common.PresentType, viewController: UIKit.UIViewController, animated: Swift.Bool, completion: Common.CompletionHandler)
-}
-extension Common.Presentable {
-  public var viewController: UIKit.UIViewController? {
-    get
-  }
-  public func present(_ type: Common.PresentType = .dismissingCurrent, viewController: UIKit.UIViewController, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-}
-extension Common.Presentable where Self : Common.Navigationable {
-  public var viewController: UIKit.UIViewController? {
-    get
-  }
-  public func present(_ type: Common.PresentType = .dismissingCurrent, viewController: UIKit.UIViewController, animated: Swift.Bool = true, completion: Common.CompletionHandler = nil)
-}
-public protocol ReloadContentRequestable : AnyObject {
-  func onReloadContentRequested()
-}
-public protocol SafariWebViewRequestable : AnyObject {
-  func onSafariWebViewRequested(url: Foundation.URL)
-}
-extension Common.SafariWebViewRequestable {
-  public func onSafariWebViewRequested(url: Foundation.URL)
-}
-public protocol ScreenSizeMeasurable : AnyObject {
-  var screenHeight: Swift.Double { get }
-  var screenWidth: Swift.Double { get }
-}
-extension Common.ScreenSizeMeasurable {
-  public var screenHeight: Swift.Double {
-    get
-  }
-  public var screenWidth: Swift.Double {
-    get
-  }
-}
-public protocol Stringable {
-  var asString: Swift.String { get }
-}
-extension Common.Stringable where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
-  public var asString: Swift.String {
-    get
-  }
-}
-public protocol TitleSettable : AnyObject {
-  func set(title: Swift.String)
-}
-extension Common.TitleSettable where Self : UIKit.UIViewController {
-  public func set(title: Swift.String)
-}
-public protocol UIViewBuildable {
-  @Common.UIViewBuilder var mainView: UIKit.UIView { get }
 }
 public protocol Uppercaseable {
   var uppercased: Swift.String { get }
@@ -2868,6 +3684,49 @@ extension Common.Uppercaseable where Self : Common.Stringable {
   public var uppercasingFirstLetter: Swift.String {
     get
   }
+}
+extension Foundation.UserDefaults : Common.KeyValueStorage {
+  public func add(item: (key: Swift.String, value: any Swift.Decodable & Swift.Encodable))
+  public func add(item: any Common.Keyable & Common.Storable)
+  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
+  public func remove(using key: Swift.String)
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class VList : Common.List {
+  @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, layoutHandler: Common.Handler<UIKit.UICollectionViewFlowLayout>? = nil)
+  @objc deinit
+}
+extension Vision.VNDetectBarcodesRequest {
+  @discardableResult
+  public func symbologies(_ symbologies: [Vision.VNBarcodeSymbology]) -> Self
+}
+extension Vision.VNRecognizeTextRequest {
+  @discardableResult
+  public func customWords(_ customWords: [Swift.String]) -> Self
+}
+extension Vision.VNRecognizeTextRequest {
+  @discardableResult
+  public func minimumTextHeight(_ minimumTextHeight: Swift.Float) -> Self
+}
+extension Vision.VNRecognizeTextRequest {
+  @discardableResult
+  public func recognitionLanguages(_ recognitionLanguages: [Swift.String]) -> Self
+}
+extension Vision.VNRecognizeTextRequest {
+  @discardableResult
+  public func recognitionLevel(_ recognitionLevel: Vision.VNRequestTextRecognitionLevel) -> Self
+}
+extension Vision.VNRecognizeTextRequest {
+  @discardableResult
+  public func usesLanguageCorrection(_ usesLanguageCorrection: Swift.Bool) -> Self
+}
+extension Vision.VNRecognizedTextObservation {
+  public var topRecognizedText: Vision.VNRecognizedText? {
+    get
+  }
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class VStack : Common.Stack {
+  @_Concurrency.MainActor @preconcurrency public init(alignment: UIKit.UIStackView.Alignment = .fill, distribution: UIKit.UIStackView.Distribution = .fill, margins: UIKit.UIEdgeInsets = .zero, spacing: CoreFoundation.CGFloat = .zero, @Common.UIViewsBuilder views: () -> [UIKit.UIView] = {[]})
+  @objc deinit
 }
 public protocol ValueWithable {
   associatedtype T
@@ -2919,6 +3778,20 @@ extension Common.ViewModelSettable where Self : Common.OptionalViewModelHolder {
 extension Common.ViewModelSettable where Self : Common.ViewModelHolder {
   public func set(viewModel: any Common.ViewModel)
 }
+extension WebKit.WKWebView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func allowsContentJavaScript(_ allowsContentJavaScript: Swift.Bool) -> Self
+}
+extension WebKit.WKWebView {
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func navigationDelegate(_ navigationDelegate: any WebKit.WKNavigationDelegate) -> Self
+}
+extension WebKit.WKWebView {
+  @_Concurrency.MainActor @preconcurrency public func set(cookie: Foundation.HTTPCookie, completion: Common.CompletionHandler)
+}
+extension WebKit.WKWebView {
+  @_Concurrency.MainActor @preconcurrency public func set(cookies: [Foundation.HTTPCookie], completion: Common.CompletionHandler)
+}
 public protocol Withable : AnyObject {
   associatedtype T
   @discardableResult
@@ -2928,857 +3801,30 @@ extension Common.Withable {
   @discardableResult
   public func with(_ closure: (_ instance: Self) -> Swift.Void) -> Self
 }
-@_functionBuilder public struct ArrayBuilder<T> {
-  public static func buildBlock(_ items: T...) -> [T]
-  public static func buildBlock(_ items: [T]...) -> [T]
-  public static func buildEither(first item: [T]) -> [T]
-  public static func buildEither(second item: [T]) -> [T]
-  public static func buildExpression(_ item: T) -> [T]
-  public static func buildExpression(_ item: [T]) -> [T]
-  public static func buildOptional(_ items: [T]?) -> [T]
-}
-@_functionBuilder public struct UIViewBuilder {
-  public static func buildBlock(_ components: UIKit.UIView...) -> UIKit.UIView
-}
-public struct FileStorage : Common.KeyValueStorage {
-  public static var shared: Common.FileStorage
-}
-extension Common.FileStorage {
-  public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
-  public func add(item: any Common.Keyable & Common.Storable)
-  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  public func remove(using key: Swift.String)
-}
-public enum KeychainItemAccessibility {
-  case afterFirstUnlock
-  case afterFirstUnlockThisDeviceOnly
-  case always
-  @available(iOS 8, *)
-  case whenPasscodeSetThisDeviceOnly
-  case alwaysThisDeviceOnly
-  case whenUnlocked
-  case whenUnlockedThisDeviceOnly
-  public static func == (a: Common.KeychainItemAccessibility, b: Common.KeychainItemAccessibility) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-@_hasMissingDesignatedInitializers final public class KeychainWrapper {
-  public static let standard: Common.KeychainWrapper
-  final public func hasValue(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  final public func accessibilityOfKey(_ key: Swift.String) -> Common.KeychainItemAccessibility?
-  final public func allKeys() -> Swift.Set<Swift.String>
-  final public func integer(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Int?
-  final public func float(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Float?
-  final public func double(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Double?
-  final public func bool(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool?
-  final public func string(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.String?
-  final public func object<DecodedObjectType>(forKey key: Swift.String, ofClass cls: DecodedObjectType.Type, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> DecodedObjectType? where DecodedObjectType : ObjectiveC.NSObject, DecodedObjectType : Foundation.NSCoding
-  final public func data(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Foundation.Data?
-  final public func dataRef(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Foundation.Data?
-  @discardableResult
-  final public func set(_ value: Swift.Int, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func set(_ value: Swift.Float, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func set(_ value: Swift.Double, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func set(_ value: Swift.Bool, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func set(_ value: Swift.String, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func set(_ value: any Foundation.NSCoding, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func set(_ value: Foundation.Data, forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func removeObject(forKey key: Swift.String, withAccessibility accessibility: Common.KeychainItemAccessibility? = nil, isSynchronizable: Swift.Bool = false) -> Swift.Bool
-  @discardableResult
-  final public func removeAllKeys() -> Swift.Bool
-  final public class func wipeKeychain()
-  @objc deinit
-}
-public struct KeyValueStore {
-  public enum StoreType {
-    public enum NotSecureType {
-      case userDefaults
-      case files
-      public static func == (a: Common.KeyValueStore.StoreType.NotSecureType, b: Common.KeyValueStore.StoreType.NotSecureType) -> Swift.Bool
-      public func hash(into hasher: inout Swift.Hasher)
-      public var hashValue: Swift.Int {
-        get
-      }
-    }
-    case notSecure(Common.KeyValueStore.StoreType.NotSecureType)
-    case secure
-    public var storage: any Common.KeyValueStorage {
-      get
-    }
-  }
-  public init(keyValueStorage: any Common.KeyValueStorage)
-  public init(type: Common.KeyValueStore.StoreType = .notSecure(.userDefaults))
-}
-extension Common.KeyValueStore : Common.KeyValueStorage {
-  public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
-  public func add(item: any Common.Keyable & Common.Storable)
-  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  public func remove(using key: Swift.String)
-}
-public protocol Keyable {
-  var key: Swift.String { get }
-  static var staticKey: Swift.String { get }
-}
-extension Common.Keyable {
-  public var key: Swift.String {
-    get
-  }
-  public static var staticKey: Swift.String {
-    get
-  }
-}
-extension Common.Keyable where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
-  public var key: Swift.String {
-    get
-  }
-}
-extension Common.Keyable where Self : Common.Stringable {
-  public var key: Swift.String {
-    get
-  }
-}
-public typealias Tuple<Key, Value> = (key: Key, value: Value)
-public typealias KeyValue<Value> = Common.Tuple<Swift.String, Value>
-public protocol KeyValueStorage {
-  func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
-  func add(item: any Common.Keyable & Common.Storable)
-  func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  func remove(using key: Swift.String)
-}
-extension Common.KeyValueStorage {
-  public func add(item: any Common.Keyable & Common.Storable)
-}
-extension Common.KeyValueStorage where Self : Common.RawValueKeyableStorage, Self.Keys.RawValue == Swift.String {
-  public func add(item: Common.KeyValue<any Swift.Decodable & Swift.Encodable>)
-  public func get<T>(using key: Swift.String) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  public func remove(using key: Swift.String)
-}
-public protocol RawValueKeyable {
-  associatedtype Keys : Swift.RawRepresentable
-}
-public protocol RawValueKeyableStorage : Common.RawValueKeyable {
-  func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
-  func add(item: any Common.Keyable & Common.Storable)
-  func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  func remove(using key: Self.Keys)
-}
-extension Common.RawValueKeyableStorage where Self.Keys.RawValue == Swift.String {
-  public func add(item: any Common.Keyable & Common.Storable)
-}
-extension Common.RawValueKeyableStorage where Self : Common.KeyValueStorage, Self.Keys.RawValue == Swift.String {
-  public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
-  public func add(item: any Common.Keyable & Common.Storable)
-  public func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  public func remove(using key: Self.Keys)
-}
-public protocol RawValueKeyValueStore : Common.RawValueKeyableStorage {
-}
-extension Common.RawValueKeyValueStore where Self.Keys.RawValue == Swift.String {
-  public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
-  public func add(item: any Common.Keyable & Common.Storable)
-  public func get<T>(using key: Self.Keys) -> T? where T : Swift.Decodable, T : Swift.Encodable
-  public func remove(using key: Self.Keys)
-}
-public protocol SingleObjectStorage {
-  associatedtype Item : Swift.Decodable, Swift.Encodable
-  func add(item: Self.Item)
-  func delete()
-  func get() -> Self.Item?
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class StatusBarStylableNavigationController : UIKit.UINavigationController {
-  @_Concurrency.MainActor @preconcurrency @objc override final public var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
-    @objc get
-  }
-  @available(iOS 5.0, *)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(navigationBarClass: Swift.AnyClass?, toolbarClass: Swift.AnyClass?)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(rootViewController: UIKit.UIViewController)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
-  @objc deinit
-}
-public protocol Loggable : Common.Keyable {
-  static var shouldLog: Swift.Bool { get }
-}
-extension Common.Loggable {
-  public static var shouldLog: Swift.Bool {
-    get
-    set
-  }
-}
-public enum Logger {
-  public static func log(caller: Swift.String = #function, _ item: Any)
-  public static func log(caller: Swift.String = #function, _ request: Foundation.URLRequest, data: Foundation.Data? = nil, response: Foundation.URLResponse?)
-  public static func log(caller: Swift.String = #function, _ items: [Swift.String : Any])
-}
-extension Common.Logger : Common.Loggable {
-}
-public enum CameraAuthorizationManager {
-  public static var currentStatus: Common.AuthorizationStatus {
-    get
-  }
-  public static func requestAuthorization(handler: @escaping Common.Handler<Swift.Bool>)
-}
-@objc @_inheritsConvenienceInitializers final public class LocationAuthorizationManager : ObjectiveC.NSObject {
-  public enum AuthorizationType {
-    case always
-    case whenInUse
-    public static func == (a: Common.LocationAuthorizationManager.AuthorizationType, b: Common.LocationAuthorizationManager.AuthorizationType) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
-      get
-    }
-  }
-  final public func request(_ authorizationType: Common.LocationAuthorizationManager.AuthorizationType, handler: Common.Handler<Common.AuthorizationStatus>? = nil)
-  @objc override dynamic public init()
-  @objc deinit
-}
-extension Common.LocationAuthorizationManager : CoreLocation.CLLocationManagerDelegate {
-  @objc final public func locationManagerDidChangeAuthorization(_ manager: CoreLocation.CLLocationManager)
-}
-public enum NotificationAuthorizationManager {
-  public static func getCurrentStatus(handler: @escaping Common.Handler<Common.AuthorizationStatus>)
-  public static func requestAuthorization(handler: @escaping Common.Handler<Swift.Bool>)
-}
-public protocol AppleLoginManagerProtocol : AnyObject {
-  func performLogin(from context: Swift.AnyObject, result: @escaping Common.ResultHandler<(appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])>)
-}
-@objc @_inheritsConvenienceInitializers final public class AppleLoginManager : ObjectiveC.NSObject {
-  @objc override dynamic public init()
-  @objc deinit
-}
-extension Common.AppleLoginManager : Common.AppleLoginManagerProtocol {
-  final public func performLogin(from context: Swift.AnyObject, result: @escaping Common.ResultHandler<(appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])>)
-}
-extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationControllerDelegate {
-  @_Concurrency.MainActor @preconcurrency @objc final public func authorizationController(controller: AuthenticationServices.ASAuthorizationController, didCompleteWithAuthorization authorization: AuthenticationServices.ASAuthorization)
-  @_Concurrency.MainActor @preconcurrency @objc final public func authorizationController(controller: AuthenticationServices.ASAuthorizationController, didCompleteWithError error: any Swift.Error)
-}
-extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationControllerPresentationContextProviding {
-  @_Concurrency.MainActor @preconcurrency @objc final public func presentationAnchor(for controller: AuthenticationServices.ASAuthorizationController) -> AuthenticationServices.ASPresentationAnchor
-}
-public struct AppleUser {
-  public let id: Swift.String
-  public let name: Swift.String?
-  public let lastName: Swift.String?
-  public let email: Swift.String?
-  public init(appleUserModel: any Common.AppleUserModel)
-}
-extension Common.AppleUser : Common.Storable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
-}
-public protocol AppleUserConvertible {
-  var asAppleUser: Common.AppleUser { get }
-}
-extension Common.AppleUserConvertible where Self : Common.AppleUserModel {
-  public var asAppleUser: Common.AppleUser {
-    get
-  }
-}
-public protocol AppleUserModel {
-  var id: Swift.String { get }
-  var name: Swift.String? { get }
-  var lastName: Swift.String? { get }
-  var email: Swift.String? { get }
-}
-extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.AppleUserConvertible {
-}
-extension AuthenticationServices.ASAuthorizationAppleIDCredential : Common.AppleUserModel {
-  public var id: Swift.String {
-    get
-  }
-  public var name: Swift.String? {
-    get
-  }
-  public var lastName: Swift.String? {
-    get
-  }
-}
-@objc final public class CameraManager : ObjectiveC.NSObject {
-  public enum DefaultValues {
-    public static var position: AVFoundation.AVCaptureDevice.Position {
-      get
-    }
-    public static var type: Common.CameraManager.CameraType {
-      get
-    }
-    public static var orientation: AVFoundation.AVCaptureVideoOrientation {
-      get
-    }
-    public static var zoomFactor: Swift.Double {
-      get
-    }
-    public static var delayBetweenFrames: Swift.Int64 {
-      get
-    }
-  }
-  public enum CameraType {
-    case tripleCamera
-    case dualCamera
-    case wideAngleCamera
-    case auto
-    public static func == (a: Common.CameraManager.CameraType, b: Common.CameraManager.CameraType) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
-      get
-    }
-  }
-  public init(position: AVFoundation.AVCaptureDevice.Position = DefaultValues.position, type: Common.CameraManager.CameraType = DefaultValues.type, orientation: AVFoundation.AVCaptureVideoOrientation = DefaultValues.orientation, zoomFactor: Swift.Double = DefaultValues.zoomFactor, delayBetweenFrames: Swift.Int64 = DefaultValues.delayBetweenFrames, captureDeviceHandler: Common.Handler<AVFoundation.AVCaptureDevice>? = nil, onSampleBufferHandler: @escaping Common.Handler<CoreMedia.CMSampleBuffer>)
-  @objc deinit
-}
-extension Common.CameraManager {
-  final public func begin(_ previewView: Common.PreviewView, handler: Common.Handler<Common.AuthorizationStatus>? = nil)
-  final public func finish()
-  final public func set(zoomFactor: Swift.Double)
-  final public func toggleTorch()
-}
-extension Common.CameraManager : AVFoundation.AVCaptureVideoDataOutputSampleBufferDelegate {
-  @objc final public func captureOutput(_ output: AVFoundation.AVCaptureOutput, didOutput sampleBuffer: CoreMedia.CMSampleBuffer, from connection: AVFoundation.AVCaptureConnection)
-}
-public protocol CameraSessionHandler : AnyObject {
-  func beginSession()
-  func finishSession()
-}
-public enum LocalAuthenticationType : Common.Stringable {
-  case biometry(Common.LocalAuthenticationType.BiometryType)
-  case none
-  case passcode
-  public enum BiometryType : Common.Stringable {
-    case faceId
-    case opticId
-    case touchId
-    public var asString: Swift.String {
-      get
-    }
-    public static func == (a: Common.LocalAuthenticationType.BiometryType, b: Common.LocalAuthenticationType.BiometryType) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
-      get
-    }
-  }
-  public var asString: Swift.String {
-    get
-  }
-}
-public protocol LocalAuthenticationManagerProtocol : AnyObject {
-  var biometryType: Common.LocalAuthenticationType.BiometryType? { get }
-  var canAuthenticate: Swift.Bool { get }
-  var isBiometricAuthenticationSupported: Swift.Bool { get }
-  var localAuthenticationType: Common.LocalAuthenticationType { get }
-  func authenticate(result: @escaping Common.Handler<Swift.Bool>)
-}
-final public class LocalAuthenticationManager {
-  public init()
-  @objc deinit
-}
-extension Common.LocalAuthenticationManager : Common.LocalAuthenticationManagerProtocol {
-  final public var biometryType: Common.LocalAuthenticationType.BiometryType? {
-    get
-  }
-  final public var canAuthenticate: Swift.Bool {
-    get
-  }
-  final public var isBiometricAuthenticationSupported: Swift.Bool {
-    get
-  }
-  final public var localAuthenticationType: Common.LocalAuthenticationType {
-    get
-  }
-  final public func authenticate(result: @escaping Common.Handler<Swift.Bool>)
-}
-public enum NFCReadingAvailability {
-  public static var isReadingAvailable: Swift.Bool {
-    get
-  }
-}
-public enum NotificationRegisterManager {
-  public static func registerForRemoteNotifications()
-  public static func unregisterForRemoteNotifications()
-}
-public struct Debouncer {
-  public static func debounce(from: Swift.String = #function, id: Swift.String = .empty, seconds: Foundation.TimeInterval, function: @escaping () -> Swift.Void)
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewController : UIKit.UIViewController, Common.UIViewBuildable {
-  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func loadView()
-  @_Concurrency.MainActor @preconcurrency open func setupView()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  @objc deinit
-}
-extension Common.BaseViewController {
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
-    @objc get
-  }
-}
-extension Common.BaseViewController {
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open var prefersHomeIndicatorAutoHidden: Swift.Bool {
-    @objc get
-  }
-}
-extension Common.BaseViewController {
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLayoutSubviews()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewIsAppearing(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift.Bool)
-}
-extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIKit.UIGestureRecognizer) -> Swift.Bool
-}
-@_Concurrency.MainActor @preconcurrency open class BaseViewModelableViewController<ViewModelType> : Common.ViewModelableViewController, Common.ContentReloadable, Common.UICollectionViewable {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType
-  @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewIsAppearing(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency open func reloadContent()
-  @_Concurrency.MainActor @preconcurrency @objc open func numberOfSections(in collectionView: UIKit.UICollectionView) -> Swift.Int
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, numberOfItemsInSection section: Swift.Int) -> Swift.Int
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, viewForSupplementaryElementOfKind kind: Swift.String, at indexPath: Foundation.IndexPath) -> UIKit.UICollectionReusableView
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, cellForItemAt indexPath: Foundation.IndexPath) -> UIKit.UICollectionViewCell
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, didSelectItemAt indexPath: Foundation.IndexPath)
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Swift.Int) -> CoreFoundation.CGFloat
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, minimumLineSpacingForSectionAt section: Swift.Int) -> CoreFoundation.CGFloat
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, insetForSectionAt section: Swift.Int) -> UIKit.UIEdgeInsets
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, referenceSizeForHeaderInSection section: Swift.Int) -> CoreFoundation.CGSize
-  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, sizeForItemAt indexPath: Foundation.IndexPath) -> CoreFoundation.CGSize
-  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDecelerating(_ scrollView: UIKit.UIScrollView)
-  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndScrollingAnimation(_ scrollView: UIKit.UIScrollView)
-  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidScroll(_ scrollView: UIKit.UIScrollView)
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class CustomAlertViewController : Common.BaseViewController {
-  @_Concurrency.MainActor @preconcurrency public init(backgroundColor: UIKit.UIColor = .black.withAlphaComponent(0.5), contentView: UIKit.UIView, onDismissRequested handler: Common.CompletionHandler = nil)
-  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency override final public func setupView()
-  @objc deinit
-}
-public enum CustomAlertWireframe {
-  public static func createModule(_ contentView: UIKit.UIView, onDismissRequested handler: Common.CompletionHandler = nil) -> UIKit.UIViewController
-}
-@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class AlertView : Common.BaseViewModelableView<any Common.AlertViewModel> {
-  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency override final public func setupView()
-  @_Concurrency.MainActor @preconcurrency required public init(viewModel: any Common.AlertViewModel)
-  @objc deinit
-}
-public protocol AlertViewModel : Common.ViewModel {
-  var backgroundColor: UIKit.UIColor { get }
-  var icon: UIKit.UIImage? { get }
-  var iconTintColor: UIKit.UIColor { get }
-  var title: Swift.String { get }
-  var titleColor: UIKit.UIColor { get }
-  var attributedMessage: Foundation.NSAttributedString { get }
-  var messageAlignment: UIKit.NSTextAlignment { get }
-  var messageColor: UIKit.UIColor { get }
-  var actionButtonTitle: Swift.String { get }
-  var cancelButtonTitle: Swift.String { get }
-  var onAction: Common.CompletionHandler { get }
-  var onCancel: Common.CompletionHandler { get }
-  var shouldHandleBackgroundClick: Swift.Bool { get }
-}
-extension Common.AlertViewModel {
-  public var backgroundColor: UIKit.UIColor {
-    get
-  }
-  public var iconTintColor: UIKit.UIColor {
-    get
-  }
-  public var titleColor: UIKit.UIColor {
-    get
-  }
-  public var messageAlignment: UIKit.NSTextAlignment {
-    get
-  }
-  public var messageColor: UIKit.UIColor {
-    get
-  }
-}
-public struct AlertViewModelPayload {
-  public let icon: UIKit.UIImage?
-  public let title: Swift.String
-  public let attributedMessage: Foundation.NSAttributedString
-  public let actionButtonTitle: Swift.String
-  public let cancelButtonTitle: Swift.String
-  public let onAction: Common.CompletionHandler
-  public let onCancel: Common.CompletionHandler
-  public let shouldHandleBackgroundClick: Swift.Bool
-  public init(icon: UIKit.UIImage? = nil, title: Swift.String, attributedMessage: Foundation.NSAttributedString, actionButtonTitle: Swift.String = .DefaultValues.Alerts.acceptActionTitle, cancelButtonTitle: Swift.String = .DefaultValues.Alerts.cancelActionTitle, onActionButtonPressedHandler: Common.CompletionHandler, onCancelButtonPressedHandler: Common.CompletionHandler = nil, shouldHandleBackgroundClick: Swift.Bool = true)
-}
-extension Common.AlertViewModelPayload : Common.AlertViewModel {
-}
-extension Common.AlertViewModelPayload : Common.ValueWithable {
-  public typealias T = Common.AlertViewModelPayload
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseButton : UIKit.UIButton {
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency open func setupView()
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseCell : UIKit.UICollectionViewCell, Common.UIViewBuildable {
-  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency open func setupCell()
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseDNITextField : Common.BaseTextField {
-  @_Concurrency.MainActor @preconcurrency override open func setupView()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseLabel : UIKit.UILabel {
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency open func setupView()
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseReusableView : UIKit.UICollectionReusableView, Common.UIViewBuildable {
-  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency open func setupView()
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseTextField : UIKit.UITextField {
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency open func setupView()
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseView : UIKit.UIView, Common.UIViewBuildable {
-  @_Concurrency.MainActor @preconcurrency open var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder aDecoder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency open func setupView()
-  @objc deinit
-}
-@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewModelableCell<ViewModelType> : Common.ViewModelableCell {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType?
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @objc deinit
-}
-@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewModelableReusableView<ViewModelType> : Common.ViewModelableReusableView {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType?
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @objc deinit
-}
-@_Concurrency.MainActor @preconcurrency open class BaseViewModelableView<ViewModelType> : Common.ViewModelableView, Common.ViewLifecycleable {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType
-  @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
-  @objc deinit
-}
-public protocol ButtonTheme {
-  var backgroundColor: UIKit.UIColor { get }
-  var borderColor: UIKit.UIColor { get }
-  var borderWidth: Swift.Double { get }
-  var titleColor: UIKit.UIColor { get }
-  var titleFont: UIKit.UIFont { get }
-}
-public enum DefaultButtonTheme {
-  case filled
-  case border
-  public static func == (a: Common.DefaultButtonTheme, b: Common.DefaultButtonTheme) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-extension Common.DefaultButtonTheme : Common.ButtonTheme {
-  public var backgroundColor: UIKit.UIColor {
-    get
-  }
-  public var borderColor: UIKit.UIColor {
-    get
-  }
-  public var borderWidth: Swift.Double {
-    get
-  }
-  public var titleColor: UIKit.UIColor {
-    get
-  }
-  public var titleFont: UIKit.UIFont {
-    get
-  }
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class ActionButton : Common.BaseButton {
-  @_Concurrency.MainActor @preconcurrency public init(_ title: Swift.String? = nil, isEnabled: Swift.Bool = true, shouldApplyDefaultRatio: Swift.Bool = true, theme: any Common.ButtonTheme = DefaultButtonTheme.filled)
-  @_Concurrency.MainActor @preconcurrency override final public func setupView()
-  @objc deinit
-}
-extension Common.ActionButton {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func set(isEnabled: Swift.Bool) -> Self
-}
-@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class CircularActivityIndicatorView : UIKit.UIView {
-  @_Concurrency.MainActor @preconcurrency @objc override final public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency public init(frame: CoreFoundation.CGRect, colors: [UIKit.UIColor], lineCap: QuartzCore.CAShapeLayerLineCap, lineWidth: CoreFoundation.CGFloat)
-  @_Concurrency.MainActor @preconcurrency convenience public init(colors: [UIKit.UIColor], lineCap: QuartzCore.CAShapeLayerLineCap = .butt, lineWidth: CoreFoundation.CGFloat = 4)
-  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
-  @_Concurrency.MainActor @preconcurrency final public var isAnimating: Swift.Bool {
-    get
-    set
-  }
-  @objc deinit
-}
-extension Common.CircularActivityIndicatorView {
-  @_Concurrency.MainActor @preconcurrency final public func startAnimating()
-  @_Concurrency.MainActor @preconcurrency final public func stopAnimating()
-}
-extension Common.CircularActivityIndicatorView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func animate() -> Self
-}
-public enum Snackbar {
-  public enum Duration {
-    case custom(Foundation.TimeInterval)
-    case short
-    case medium
-    case long
-  }
-  public struct ViewModel {
-    public init(message: Swift.String, messageFont: UIKit.UIFont = .systemFont(ofSize: 14), duration: Common.Snackbar.Duration = .medium, actionTitle: Swift.String? = nil, actionFont: UIKit.UIFont = .systemFont(ofSize: 12, weight: .medium), onAction: Common.CompletionHandler = nil, onDismiss: Common.CompletionHandler = nil)
-  }
-  public static func show(_ viewModel: Common.Snackbar.ViewModel)
-}
-public protocol CardViewModel : Common.ViewModel {
-  var leftImageBackgroundColor: UIKit.UIColor? { get }
-  var leftImage: UIKit.UIImage? { get }
-  var title: Swift.String { get }
-  var attributedTitle: Foundation.NSAttributedString? { get }
-  var content: Swift.String { get }
-  var attributedContent: Foundation.NSAttributedString? { get }
-  var rightImage: UIKit.UIImage? { get }
-}
-public struct CardViewModelPayload : Common.CardViewModel {
-  public var leftImageBackgroundColor: UIKit.UIColor?
-  public var leftImage: UIKit.UIImage?
-  public var title: Swift.String
-  public var attributedTitle: Foundation.NSAttributedString?
-  public var content: Swift.String
-  public var attributedContent: Foundation.NSAttributedString?
-  public var rightImage: UIKit.UIImage?
-  public init(leftImageBackgroundColor: UIKit.UIColor? = nil, leftImage: UIKit.UIImage? = nil, title: Swift.String = .empty, attributedTitle: Foundation.NSAttributedString? = nil, content: Swift.String = .empty, attributedContent: Foundation.NSAttributedString? = nil, rightImage: UIKit.UIImage? = nil)
-}
-@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class CardView : Common.BaseViewModelableView<any Common.CardViewModel> {
-  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency override final public func setupView()
-  @_Concurrency.MainActor @preconcurrency required public init(viewModel: any Common.CardViewModel)
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class GradientView : UIKit.UIView {
-  @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  @objc deinit
-}
-extension Common.GradientView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func colors(startColor: UIKit.UIColor, endColor: UIKit.UIColor) -> Self
-}
-extension Common.GradientView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func horizontalMode(_ horizontalMode: Swift.Bool = true) -> Self
-}
-extension Common.GradientView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func endLocation(_ endLocation: Swift.Double) -> Self
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class PreviewView : UIKit.UIView {
-  @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  @objc deinit
-}
-extension Common.PreviewView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func session(_ session: AVFoundation.AVCaptureSession?) -> Self
-}
-extension Common.PreviewView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func videoGravity(_ videoGravity: AVFoundation.AVLayerVideoGravity) -> Self
-}
-extension Common.PreviewView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency final public func videoOrientation(_ videoOrientation: AVFoundation.AVCaptureVideoOrientation) -> Self
-}
-extension Common.PreviewView {
-  @_Concurrency.MainActor @preconcurrency final public func draw(_ observation: Vision.VNDetectedObjectObservation)
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class ProgressAnimationView : UIKit.UIView {
-  @_Concurrency.MainActor @preconcurrency final public func animate(progressColor: CoreGraphics.CGColor, backgroundColor: CoreGraphics.CGColor, duration: CoreFoundation.CFTimeInterval, completion: Common.CompletionHandler)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  @objc deinit
-}
-extension Common.ProgressAnimationView : QuartzCore.CAAnimationDelegate {
-  @_Concurrency.MainActor @preconcurrency @objc final public func animationDidStop(_ anim: QuartzCore.CAAnimation, finished flag: Swift.Bool)
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class Separator : Common.BaseView {
-  @_Concurrency.MainActor @preconcurrency public init(color: UIKit.UIColor = .black, height: Swift.Double = 1)
-  @_Concurrency.MainActor @preconcurrency override final public var mainView: UIKit.UIView {
-    get
-  }
-  @_Concurrency.MainActor @preconcurrency override final public func setupView()
-  @objc deinit
-}
-extension UIKit.UIView {
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func addSeparator(color: UIKit.UIColor = .black, height: Swift.Double = 1) -> UIKit.UIView
-  @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func addSeparator(_ separator: Common.Separator = .init(color: .black, height: 1)) -> UIKit.UIView
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class DNITextField : Common.BaseDNITextField {
-  @_Concurrency.MainActor @preconcurrency public init(shouldApplyDefaultRatio: Swift.Bool = true)
-  @_Concurrency.MainActor @preconcurrency override final public func setupView()
-  @objc deinit
-}
-public enum Toast {
-  public enum Duration : Swift.Int {
-    case short
-    case medium
-    case long
-    public init?(rawValue: Swift.Int)
-    public typealias RawValue = Swift.Int
-    public var rawValue: Swift.Int {
-      get
-    }
-  }
-  public static func present(with message: Swift.String, duration: Common.Toast.Duration = .medium, completion: Common.CompletionHandler = nil)
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class HList : Common.List {
-  @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, layoutHandler: Common.Handler<UIKit.UICollectionViewFlowLayout>? = nil)
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency public class List : UIKit.UICollectionView {
-  @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, collectionViewLayout: UIKit.UICollectionViewLayout)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @objc deinit
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class VList : Common.List {
-  @_Concurrency.MainActor @preconcurrency public init(dataSource: any UIKit.UICollectionViewDataSource, delegate: (any UIKit.UICollectionViewDelegate)? = nil, prefetchDataSource: (any UIKit.UICollectionViewDataSourcePrefetching)? = nil, layoutHandler: Common.Handler<UIKit.UICollectionViewFlowLayout>? = nil)
-  @objc deinit
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class HStack : Common.Stack {
-  @_Concurrency.MainActor @preconcurrency public init(alignment: UIKit.UIStackView.Alignment = .fill, distribution: UIKit.UIStackView.Distribution = .fill, margins: UIKit.UIEdgeInsets = .zero, spacing: CoreFoundation.CGFloat = .zero, @Common.UIViewsBuilder views: () -> [UIKit.UIView] = {[]})
-  @objc deinit
-}
-@objc @_Concurrency.MainActor @preconcurrency public class Stack : UIKit.UIStackView {
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
-  @_Concurrency.MainActor @preconcurrency convenience public init(alignment: UIKit.UIStackView.Alignment = .fill, distribution: UIKit.UIStackView.Distribution = .fill, margins: UIKit.UIEdgeInsets = .zero, spacing: CoreFoundation.CGFloat = .zero, @Common.UIViewsBuilder views: () -> [UIKit.UIView] = {[]})
-  @available(*, unavailable)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init(coder: Foundation.NSCoder)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public class var requiresConstraintBasedLayout: Swift.Bool {
-    @objc get
-  }
-  @objc deinit
-}
-@objc @_Concurrency.MainActor @preconcurrency final public class VStack : Common.Stack {
-  @_Concurrency.MainActor @preconcurrency public init(alignment: UIKit.UIStackView.Alignment = .fill, distribution: UIKit.UIStackView.Distribution = .fill, margins: UIKit.UIEdgeInsets = .zero, spacing: CoreFoundation.CGFloat = .zero, @Common.UIViewsBuilder views: () -> [UIKit.UIView] = {[]})
-  @objc deinit
-}
-public func dispatchOnGlobal(_ qos: Dispatch.DispatchQoS.QoSClass = .default, action: @escaping Common.Action)
-public func dispatchOnGlobalAfter(_ qos: Dispatch.DispatchQoS.QoSClass = .default, deadline: Dispatch.DispatchTime, action: @escaping Common.Action)
-public func dispatchOnMain(_ action: @escaping Common.Action)
-public func dispatchOnMainAfter(_ deadline: Dispatch.DispatchTime, action: @escaping Common.Action)
-public enum EmptyResult<Failure> where Failure : Swift.Error {
-  case success
-  case failure(Failure)
-}
-public typealias BaseModuleDelegate = Common.ActivityControllerRequestable & Common.AlertRequestable & Common.DismissRequestable & Common.GoBackRequestable
-public typealias Action = () -> Swift.Void
-public typealias CompletionHandler = Common.Action?
-public typealias Handler<T> = (T) -> Swift.Void
-public typealias InOutHandler<T> = (T) -> T
-public typealias ResultHandler<T> = Common.Handler<Swift.Result<T, any Swift.Error>>
-public typealias CustomErrorResultHandler<T, E> = Common.Handler<Swift.Result<T, E>> where E : Swift.Error
-public typealias NetworkResultHandler<T> = Common.CustomErrorResultHandler<T, Common.NetworkError>
-public typealias EmptyResultHandler = Common.Handler<Common.EmptyResult<any Swift.Error>>
-public typealias CustomErrorEmptyResultHandler<E> = Common.Handler<Common.EmptyResult<E>> where E : Swift.Error
-public typealias NetworkEmptyResultHandler = Common.CustomErrorEmptyResultHandler<Common.NetworkError>
-public typealias CollectionViewable = Common.CollectionViewDataSourceable & Common.CollectionViewDelegateable & Common.CollectionViewSizeable
-public typealias ViewModelableCell = Common.BaseCell & Common.OptionalViewModelHolder & Common.ViewModelSettable
-public typealias ViewModelableReusableView = Common.BaseReusableView & Common.OptionalViewModelHolder & Common.ViewModelSettable
-public typealias ViewModelableView = Common.BaseView & Common.ViewModelHolder & Common.ViewModelInitializable & Common.ViewModelSettable
-public typealias ViewModelableViewController = Common.BaseViewController & Common.ViewModelHolder & Common.ViewModelInitializable & Common.ViewModelSettable
-public typealias UICollectionViewable = UIKit.UICollectionViewDataSource & UIKit.UICollectionViewDelegateFlowLayout
-public typealias UIViewsBuilder = Common.ArrayBuilder<UIKit.UIView>
-public typealias Storable = Swift.Codable
-public typealias KeyStorable = Common.Keyable & Common.Storable
-public typealias SingleRawValueKeyValueObjectStorage = Common.RawValueKeyValueStore & Common.SingleObjectStorage
+extension Common.DefaultButtonTheme : Swift.Equatable {}
+extension Common.DefaultButtonTheme : Swift.Hashable {}
+extension Common.AuthorizationStatus : Swift.Equatable {}
+extension Common.AuthorizationStatus : Swift.Hashable {}
+extension Common.CameraManager.CameraType : Swift.Equatable {}
+extension Common.CameraManager.CameraType : Swift.Hashable {}
+extension Common.DismissType : Swift.Equatable {}
+extension Common.DismissType : Swift.Hashable {}
+extension Common.KeyValueStore.StoreType.NotSecureType : Swift.Equatable {}
+extension Common.KeyValueStore.StoreType.NotSecureType : Swift.Hashable {}
+extension Common.KeychainItemAccessibility : Swift.Equatable {}
+extension Common.KeychainItemAccessibility : Swift.Hashable {}
+extension Common.LocalAuthenticationType.BiometryType : Swift.Equatable {}
+extension Common.LocalAuthenticationType.BiometryType : Swift.Hashable {}
+extension Common.LocationAuthorizationManager.AuthorizationType : Swift.Equatable {}
+extension Common.LocationAuthorizationManager.AuthorizationType : Swift.Hashable {}
 extension ObjectiveC.NSObject.AppLifecycleEvent : Swift.Equatable {}
 extension ObjectiveC.NSObject.AppLifecycleEvent : Swift.Hashable {}
+extension Common.PresentType : Swift.Equatable {}
+extension Common.PresentType : Swift.Hashable {}
+extension Common.Snackbar.ViewModel : Common.ViewModel {}
+extension Common.Toast.Duration : Swift.Equatable {}
+extension Common.Toast.Duration : Swift.Hashable {}
+extension Common.Toast.Duration : Swift.RawRepresentable {}
 extension Common.SupplementaryViewKind : Swift.Equatable {}
 extension Common.SupplementaryViewKind : Swift.Hashable {}
 extension UIKit.UIFont.RegisterFontError : Swift.Equatable {}
@@ -3788,31 +3834,9 @@ extension UIKit.UIFont.FontStyle : Swift.Hashable {}
 extension UIKit.UIFont.FontStyle : Swift.RawRepresentable {}
 extension UIKit.UIImage.AverageColorAlgorithm : Swift.Equatable {}
 extension UIKit.UIImage.AverageColorAlgorithm : Swift.Hashable {}
-extension Common.URLEncodedFormParameterEncoder.Destination : Swift.Equatable {}
-extension Common.URLEncodedFormParameterEncoder.Destination : Swift.Hashable {}
 extension Common.URLEncodedFormEncoder.BoolEncoding : Swift.Equatable {}
 extension Common.URLEncodedFormEncoder.BoolEncoding : Swift.Hashable {}
 extension Common.URLEncodedFormEncoder.SpaceEncoding : Swift.Equatable {}
 extension Common.URLEncodedFormEncoder.SpaceEncoding : Swift.Hashable {}
-extension Common.AuthorizationStatus : Swift.Equatable {}
-extension Common.AuthorizationStatus : Swift.Hashable {}
-extension Common.DismissType : Swift.Equatable {}
-extension Common.DismissType : Swift.Hashable {}
-extension Common.PresentType : Swift.Equatable {}
-extension Common.PresentType : Swift.Hashable {}
-extension Common.KeychainItemAccessibility : Swift.Equatable {}
-extension Common.KeychainItemAccessibility : Swift.Hashable {}
-extension Common.KeyValueStore.StoreType.NotSecureType : Swift.Equatable {}
-extension Common.KeyValueStore.StoreType.NotSecureType : Swift.Hashable {}
-extension Common.LocationAuthorizationManager.AuthorizationType : Swift.Equatable {}
-extension Common.LocationAuthorizationManager.AuthorizationType : Swift.Hashable {}
-extension Common.CameraManager.CameraType : Swift.Equatable {}
-extension Common.CameraManager.CameraType : Swift.Hashable {}
-extension Common.LocalAuthenticationType.BiometryType : Swift.Equatable {}
-extension Common.LocalAuthenticationType.BiometryType : Swift.Hashable {}
-extension Common.DefaultButtonTheme : Swift.Equatable {}
-extension Common.DefaultButtonTheme : Swift.Hashable {}
-extension Common.Snackbar.ViewModel : Common.ViewModel {}
-extension Common.Toast.Duration : Swift.Equatable {}
-extension Common.Toast.Duration : Swift.Hashable {}
-extension Common.Toast.Duration : Swift.RawRepresentable {}
+extension Common.URLEncodedFormParameterEncoder.Destination : Swift.Equatable {}
+extension Common.URLEncodedFormParameterEncoder.Destination : Swift.Hashable {}

@@ -19,7 +19,9 @@ open class BaseView: UIView, UIViewBuildable {
     /// Initializes a new view.
     public init() {
         super.init(frame: .zero)
-        subviews { mainView.setConstraints { $0.snap(to: $1) } }
+        let content = mainView
+        addSubview(content)
+        if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: self) }
         setupView()
     }
 
@@ -27,7 +29,9 @@ open class BaseView: UIView, UIViewBuildable {
     /// - Parameter frame: The frame rectangle for the view.
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        subviews { mainView.setConstraints { $0.snap(to: $1) } }
+        let content = mainView
+        addSubview(content)
+        if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: self) }
         setupView()
     }
 

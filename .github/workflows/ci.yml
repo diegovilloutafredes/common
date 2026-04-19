@@ -1,0 +1,82 @@
+name: XCFramework Build Pipeline
+
+on:
+  push:
+    branches: ["main"]
+    tags:
+      - "v*.*.*" # Triggers when pushing version tags like v1.0.0
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-prep:
+    name: Build Framework & Demo App
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Run XCFramework Build Script
+        run: |
+          chmod +x ./build_xcframework.sh
+          ./build_xcframework.sh
+          
+      - name: Upload XCFramework Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Compiled-XCFramework
+          path: ./XCFramework/Common.xcframework
+          
+      - name: Zip XCFramework for Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cd XCFramework
+          zip -r Common.xcframework.zip Common.xcframework
+          
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./XCFramework/Common.xcframework.zip
+          generate_release_notes: true
+          
+      - name: Run Tests (Demo App)
+        run: |
+          xcodebuild test \
+            -project "Common.xcodeproj" \
+            -scheme "DemoApp" \
+            -destination "generic/platform=iOS Simulator,name=iPhone 15" \
+            -derivedDataPath derivedData/ \
+            CODE_SIGNING_ALLOWED=NO
+
+  documentation:
+    name: Update Docs
+    runs-on: macos-latest
+    needs: build-and-prep
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Install Jazzy
+        run: gem install jazzy
+
+      - name: Generate Documentation
+        run: jazzy
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

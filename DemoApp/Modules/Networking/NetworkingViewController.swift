@@ -46,26 +46,23 @@ final class PostCell: BaseViewModelableCell<PostCellViewModel> {
     }
 
     @UIViewBuilder override var mainView: UIView {
-        VStack(
-            margins: .init(top: 12, left: 16, bottom: 12, right: 16),
-            spacing: 4
-        ) {
-            titleLabel
-            bodyLabel
+        VStack(margins: .init(top: 4, left: 16, bottom: 4, right: 16)) {
+            VStack(
+                margins: .init(top: 12, left: 14, bottom: 12, right: 14),
+                spacing: 4
+            ) {
+                titleLabel
+                bodyLabel
+            }
+            .backgroundColor(.secondarySystemBackground)
+            .round(radius: 10)
         }
         .setConstraints { $0.snap(to: $1) }
     }
 
     override func setupCell() {
         super.setupCell()
-        backgroundColor(.systemBackground)
-        let separator = UIView()
-            .backgroundColor(.separator)
-            .setConstraints {
-                $0.snapLeadBottomTrail(to: $1)
-                $0.set(height: 1.0 / UIScreen.main.scale)
-            }
-        subviews { separator }
+        backgroundColor(.clear)
     }
 }
 
@@ -74,55 +71,61 @@ final class NetworkingViewController: BaseViewModelableViewController<Networking
     private lazy var list = VList(dataSource: self, delegate: self)
         .register(PostCell.self)
 
+    private lazy var statusLabel = UILabel()
+        .font(.systemFont(ofSize: 13))
+        .textColor(.secondaryLabel)
+        .numberOfLines(0)
+        .textAlignment(.center)
+
     private lazy var fetchButton = UIButton(
         configuration: .filled()
             .with {
                 $0.title = "Fetch Posts"
                 $0.baseBackgroundColor = .systemBlue
                 $0.cornerStyle = .capsule
+                $0.image = .init(systemName: "arrow.clockwise")
+                $0.imagePadding = 6
             }
-    ).onTap { [weak self] in
-        self?.viewModel.loadPosts()
-    }
+    )
+    .onTap { [weak self] in guard let self else { return }; viewModel.loadPosts() }
+    .setConstraints { $0.set(height: 44) }
 
     @UIViewBuilder
     override var mainView: UIView {
-        UIView()
-            .setConstraints { $0.snap(to: $1) }
-            .with { container in
-                let buttonArea = VStack(margins: .init(top: 12, left: 16, bottom: 12, right: 16)) {
-                    fetchButton.setConstraints { $0.set(height: 48) }
-                }
-                container.subviews {
-                    buttonArea
-                    list
-                }
-                buttonArea.setConstraints { $0.snapLeadTopTrail(to: $1) }
-                list.setConstraints { v, sv in
-                    NSLayoutConstraint.activate([
-                        v.topAnchor.constraint(equalTo: buttonArea.bottomAnchor),
-                        v.leadingAnchor.constraint(equalTo: sv.leadingAnchor),
-                        v.trailingAnchor.constraint(equalTo: sv.trailingAnchor),
-                        v.bottomAnchor.constraint(equalTo: sv.bottomAnchor)
-                    ])
-                }
+        VStack {
+            VStack(
+                margins: .init(top: 12, left: 16, bottom: 12, right: 16),
+                spacing: 8
+            ) {
+                UILabel()
+                    .text("GET /posts — JSONPlaceholder API")
+                    .font(.monospacedSystemFont(ofSize: 12, weight: .medium))
+                    .textColor(.tertiaryLabel)
+                    .textAlignment(.center)
+                fetchButton
+                statusLabel
             }
+            list
+        }.setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
     }
 
     override func setupView() {
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
-        (viewModel as? NetworkingViewModel)?.delegate = self
-        (viewModel as? NetworkingViewModel)?.view = self
+        statusLabel.text(viewModel.statusText)
     }
 }
 
 // MARK: - NetworkingViewModelDelegate
 extension NetworkingViewController: NetworkingViewModelDelegate {
     func didUpdatePosts() {
-        dispatchOnMain { [weak self] in
-            self?.list.reloadData()
+        dispatchOnMain { [weak self] in guard let self else { return }; list.reloadData() }
+    }
+
+    func didUpdateStatus() {
+        dispatchOnMain { [weak self] in guard let self else { return }
+            statusLabel.text(viewModel.statusText)
         }
     }
 

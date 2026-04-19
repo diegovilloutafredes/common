@@ -9,37 +9,49 @@ import Common
 // MARK: - AppCoordinator
 final class AppCoordinator: BaseCoordinator {
     override func start() {
-        let vc = HomeWireframe.createModule(coordinator: self)
-        navigationController.setViewControllers([vc], animated: false)
+        set(HomeWireframe.createModule(coordinator: self))
+        if ProcessInfo.processInfo.arguments.contains("-SmokeTestSnackbar") {
+            dispatchOnMainAfter(.now() + 1) {
+                Snackbar.show(.init(message: "Testing snackbar margins", duration: .long))
+            }
+        }
     }
 
     func showDeclarativeUI() {
-        let vc = DeclarativeUIWireframe.createModule()
-        navigationController.pushViewController(vc, animated: true)
+        push(DeclarativeUIWireframe.createModule())
     }
 
     func showNetworking() {
-        let vc = NetworkingWireframe.createModule()
-        navigationController.pushViewController(vc, animated: true)
+        push(NetworkingWireframe.createModule())
     }
 
     func showStorage() {
-        let vc = StorageWireframe.createModule()
-        navigationController.pushViewController(vc, animated: true)
+        push(StorageWireframe.createModule())
     }
 
     func showAlerts() {
-        let vc = AlertsWireframe.createModule()
-        navigationController.pushViewController(vc, animated: true)
+        push(AlertsWireframe.createModule())
     }
 
     func showLocalAuth() {
-        let vc = LocalAuthWireframe.createModule()
-        navigationController.pushViewController(vc, animated: true)
+        push(LocalAuthWireframe.createModule())
     }
 
     func showExtensions() {
-        let vc = ExtensionsWireframe.createModule()
-        navigationController.pushViewController(vc, animated: true)
+        push(ExtensionsWireframe.createModule())
+    }
+
+    func showOnboarding() {
+        let vc = OnboardingWireframe.createModule { [weak self] action in
+            switch action {
+            case .skip, .begin:
+                self?.pop()
+            }
+        }
+        push(vc)
+    }
+
+    func showForms() {
+        push(FormsWireframe.createModule())
     }
 }

@@ -134,6 +134,10 @@ extension OnboardingViewController {
 }
 
 // MARK: - Preview
+#if canImport(SwiftUI) && compiler(>=5.9)
+import SwiftUI
+@available(iOS 17.0, *)
 #Preview {
     OnboardingWireframe.createModule { _ in }
 }
+#endif

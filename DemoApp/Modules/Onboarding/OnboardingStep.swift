@@ -28,9 +28,9 @@ enum OnboardingStep: Int, OnboardingCellViewModel {
 
     var image: UIImage? {
         switch self {
-        case .first: .checkmark
-        case .second: .add
-        case .third: .remove
+        case .first: .init(systemName: "cart.fill")
+        case .second: .init(systemName: "clock.badge.checkmark.fill")
+        case .third: .init(systemName: "qrcode.viewfinder")
         }
     }
 }

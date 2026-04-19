@@ -20,7 +20,9 @@ open class BaseViewController: UIViewController, UIViewBuildable {
     open var mainView: UIView { UIView() }
 
     open override func loadView() {
-        self.view = mainView
+        let container = UIView()
+        container.addSubview(mainView)
+        self.view = container
     }
 
     /// Configures the view.

@@ -78,7 +78,7 @@ extension Endpoint {
         guard let parameters else { return urlRequest }
 
         return switch method {
-        case .post: try JSONParameterEncoder(encoder: jsonEncoder).encode(parameters, into: urlRequest)
+        case .post, .put, .patch: try JSONParameterEncoder(encoder: jsonEncoder).encode(parameters, into: urlRequest)
         default: try URLEncodedFormParameterEncoder(encoder: urlEncodedFormEncoder).encode(parameters, into: urlRequest)
         }
     }

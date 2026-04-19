@@ -21,11 +21,9 @@ public enum HTTPService {
     @discardableResult public static func request<T: Decodable>(_ resource: URLRequestConvertible, urlSession: URLSession = .shared, decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping NetworkResultHandler<T>) -> URLSessionTask? {
         guard let urlRequest = resource.urlRequest else { result(.failure(.invalidRequest(resource))); return nil }
 
+        let beforeRequestTime = Date.asMilliseconds
         let dataTask = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-            if
-                shouldLog,
-                let beforeRequestTime: Int64 = store.get(using: "beforeRequestTime")
-            {
+            if shouldLog {
                 let afterRequestTime = Date.asMilliseconds
                 let delta = afterRequestTime - beforeRequestTime
                 Logger.log(["Request delta of \(resource.urlRequest!)": "\(delta)ms"])
@@ -65,9 +63,6 @@ public enum HTTPService {
             }
         }
 
-        store.remove(using: "beforeRequestTime")
-        let beforeRequestTime = Date.asMilliseconds
-        store.add(item: ("beforeRequestTime", beforeRequestTime))
         dataTask.resume()
 
         return dataTask
@@ -107,10 +102,6 @@ extension HTTPService {
     }
 }
 
-// MARK: - KeyValueStore
-extension HTTPService {
-    private static var store: KeyValueStore { .init() }
-}
 
 // MARK: - Loggable
 extension HTTPService: Loggable {}

@@ -10,8 +10,7 @@ import UIKit
 enum HomeWireframe {
     static func createModule(coordinator: AppCoordinator) -> UIViewController {
         let viewModel = HomeViewModel(coordinator: coordinator)
-        let vc = HomeViewController(viewModel: viewModel)
-        viewModel.view = vc
-        return vc
+        return HomeViewController(viewModel: viewModel)
+            .with { viewModel.view = $0 }
     }
 }

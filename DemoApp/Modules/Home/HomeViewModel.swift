@@ -53,6 +53,16 @@ final class HomeViewModel {
             subtitle: "UIView, UILabel, UIColor extensions",
             action: { [weak self] in self?.coordinator?.showExtensions() }
         ),
+        .init(
+            title: "Onboarding",
+            subtitle: "Paged HList, page control, dynamic button",
+            action: { [weak self] in self?.coordinator?.showOnboarding() }
+        ),
+        .init(
+            title: "Forms & TextFields",
+            subtitle: "Validation, keyboard layout, secure entry",
+            action: { [weak self] in self?.coordinator?.showForms() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?
@@ -68,7 +78,7 @@ extension HomeViewModel: CollectionViewable {
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { dataSource[index] }
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { DemoFeatureCell.reuseIdentifier }
     func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) {
-        (view?.screenWidth ?? 375, 72)
+        (view?.screenWidth ?? 375, 84)
     }
     func onItemSelected(in section: Int, at index: Int) { dataSource[index].action() }
 }
