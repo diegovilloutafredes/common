@@ -10,8 +10,10 @@ import UIKit
 enum NetworkingWireframe {
     static func createModule() -> UIViewController {
         let viewModel = NetworkingViewModel()
-        let vc = NetworkingViewController(viewModel: viewModel)
-        viewModel.view = vc
-        return vc
+        return NetworkingViewController(viewModel: viewModel)
+            .with {
+                viewModel.delegate = $0
+                viewModel.view = $0
+            }
     }
 }

@@ -1,5 +1,9 @@
 build/
 DerivedData/
+
+# XcodeGen — project file is generated from project.yml, not committed
+*.xcodeproj/
+*.xcworkspace/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -20,3 +24,16 @@ xcuserdata/
 timeline.xctimeline
 playground.xcworkspace
 .build/
+
+# XCFramework Build Script
+# We ignore local outputs. CI will build and upload these to GitHub Releases/Artifacts automatically, keeping the repo size small.
+Archives/
+XCFramework/
+
+# Swift Package Manager
+# Ignore local Xcode SPM workspace state, but preserve source code for SPM client distributions.
+.swiftpm/xcode/
+
+# Documentation
+# Jazzy docs are automatically generated and deployed to the gh-pages branch by CI.
+docs/

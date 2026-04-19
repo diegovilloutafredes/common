@@ -12,53 +12,91 @@ struct StorageItem: Storable {
     let timestamp: Date
 }
 
+// MARK: - StorageType
+enum StorageType: String, CaseIterable {
+    case userDefaults
+    case file
+    case keychain
+
+    var title: String {
+        switch self {
+        case .userDefaults: "UserDefaults"
+        case .file: "FileStorage"
+        case .keychain: "Keychain"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .userDefaults: "Best for app preferences and settings. Not encrypted."
+        case .file: "Best for documents, cached data, and large payloads."
+        case .keychain: "Best for passwords, tokens, and sensitive credentials. Encrypted."
+        }
+    }
+
+    var exampleValue: String {
+        switch self {
+        case .userDefaults: "dark_mode: true"
+        case .file: "profile_cache.json"
+        case .keychain: "eyJhbGciOiJIUzI1NiJ9..."
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .userDefaults: "gearshape.fill"
+        case .file: "doc.fill"
+        case .keychain: "lock.shield.fill"
+        }
+    }
+
+    var color: UIColor {
+        switch self {
+        case .userDefaults: .systemBlue
+        case .file: .systemGreen
+        case .keychain: .systemPurple
+        }
+    }
+}
+
 // MARK: - StorageViewModelProtocol
 protocol StorageViewModelProtocol: ViewModel {
     var title: String { get }
-    func saveToUserDefaults(value: String)
-    func saveToFile(value: String)
-    func saveToKeychain(value: String)
-    func readAll() -> (userDefaults: StorageItem?, file: StorageItem?, keychain: StorageItem?)
-    func clearAll()
+    func save(type: StorageType) -> StorageItem
+    func read(type: StorageType) -> StorageItem?
+    func delete(type: StorageType)
 }
 
 // MARK: - StorageViewModel
 final class StorageViewModelImpl: StorageViewModelProtocol {
     let title = "Storage"
 
-    private let userDefaultsKey = "demo_userdefaults"
-    private let fileKey = "demo_file"
-    private let keychainKey = "demo_keychain"
+    private let keys: [StorageType: String] = [
+        .userDefaults: "demo_userdefaults",
+        .file: "demo_file",
+        .keychain: "demo_keychain"
+    ]
 
-    private var userDefaultsStore: KeyValueStore { .init(type: .notSecure(.userDefaults)) }
-    private var fileStore: KeyValueStore { .init(type: .notSecure(.files)) }
-    private var keychainStore: KeyValueStore { .init(type: .secure) }
-
-    func saveToUserDefaults(value: String) {
-        let item = StorageItem(value: value, timestamp: .now)
-        userDefaultsStore.add(item: (userDefaultsKey, item))
+    private func store(for type: StorageType) -> KeyValueStore {
+        switch type {
+        case .userDefaults: .init(type: .notSecure(.userDefaults))
+        case .file: .init(type: .notSecure(.files))
+        case .keychain: .init(type: .secure)
+        }
     }
 
-    func saveToFile(value: String) {
-        let item = StorageItem(value: value, timestamp: .now)
-        fileStore.add(item: (fileKey, item))
+    @discardableResult
+    func save(type: StorageType) -> StorageItem {
+        let item = StorageItem(value: type.exampleValue, timestamp: .now)
+        store(for: type).add(item: (keys[type]!, item))
+        return item
     }
 
-    func saveToKeychain(value: String) {
-        let item = StorageItem(value: value, timestamp: .now)
-        keychainStore.add(item: (keychainKey, item))
+    func read(type: StorageType) -> StorageItem? {
+        store(for: type).get(using: keys[type]!)
     }
 
-    func readAll() -> (userDefaults: StorageItem?, file: StorageItem?, keychain: StorageItem?) {
-        let ud: StorageItem? = userDefaultsStore.get(using: userDefaultsKey)
-        let fl: StorageItem? = fileStore.get(using: fileKey)
-        let kc: StorageItem? = keychainStore.get(using: keychainKey)
-        return (ud, fl, kc)
-    }
-
-    func clearAll() {
-        userDefaultsStore.remove(using: userDefaultsKey)
-        fileStore.remove(using: fileKey)
-        keychainStore.remove(using: keychainKey)
+    func delete(type: StorageType) {
+        store(for: type).remove(using: keys[type]!)
     }
 }

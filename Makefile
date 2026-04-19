@@ -1,2 +1,5 @@
-create_xcframework:
-	./create_xcframework.sh
+generate:
+	xcodegen generate
+
+build_xcframework: generate
+	./build_xcframework.sh

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Common  Reference</title>
+    <title>Index  Reference</title>
     <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="css/highlight.css" />
     <meta charset='utf-8'>
@@ -13,10 +13,10 @@
     <script src="js/jazzy.search.js" defer></script>
   </head>
   <body>
-    <a title="Common  Reference"></a>
+    <a title="Index  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Common Docs</a> (82% documented)</p>
+        <p><a href="index.html"> Docs</a> (100% documented)</p>
         <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -26,7 +26,7 @@
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
-        <a href="index.html">Common</a>
+        <a href="index.html">Index</a>
       </p>
     </div>
     <div class="content-wrapper">
@@ -585,6 +585,18 @@
               <li class="nav-group-task">
                 <a href="Extensions/WKWebView.html">WKWebView</a>
               </li>
+              <li class="nav-group-task">
+                <a href="Extensions/_URLEncodedFormEncoder.html">_URLEncodedFormEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/_URLEncodedFormEncoder.html#/s:6Common22_URLEncodedFormEncoderC14KeyedContainerC">– KeyedContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/_URLEncodedFormEncoder.html#/s:6Common22_URLEncodedFormEncoderC20SingleValueContainerC">– SingleValueContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/_URLEncodedFormEncoder.html#/s:6Common22_URLEncodedFormEncoderC16UnkeyedContainerC">– UnkeyedContainer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -925,17 +937,138 @@
         <section>
           <section class="section">
             
-            <h2 id='trust-technologies' class='heading'>Trust Technologies</h2>
+            <h1 id='common-package' class='heading'>Common Package</h1>
 
-<p><img src="https://avatars2.githubusercontent.com/u/42399326?s=200&v=4" alt="image"></p>
-<h2 id='trust-bioidentity' class='heading'>Trust BioIdentity</h2>
+<p>A foundational library for iOS development, providing core architectural patterns, networking abstractions, UI components, and extensive framework utilities.</p>
+<h2 id='overview' class='heading'>Overview</h2>
 
-<p>TrustBioidentity App</p>
+<p>The <code>Common</code> package serves as a robust foundation for building iOS applications and libraries. It encapsulates shared logic and design patterns to ensure consistency, scalability, and ease of development.</p>
+
+<p>The project implements MVVM-C well. <code><a href="Classes/BaseCoordinator.html">BaseCoordinator</a></code> cleanly separates navigation logic from view controllers. The <code><a href="Protocols/ViewModelable.html">ViewModelable</a></code> protocol hierarchy drives UI updates, and protocol composition via type aliases (e.g. <code><a href="Typealiases.html#/s:6Common013ViewModelableB10Controllera">ViewModelableViewController</a></code>) is a standout strength — highly composable without deep inheritance chains. <code><a href="Structs/UIViewBuilder.html">UIViewBuilder</a></code> provides a SwiftUI-like DSL over UIKit, well-executed.</p>
+<h2 id='key-features' class='heading'>Key Features</h2>
+
+<ul>
+<li><strong>MVVM-C Architecture</strong>: Built-in support for Model-View-ViewModel-Coordinator patterns.</li>
+<li><strong>Declarative UI</strong>: Custom DSLs and Result Builders (<code><a href="Structs/UIViewBuilder.html">@UIViewBuilder</a></code>) for concise, SwiftUI-like view construction using UIKit.</li>
+<li><strong>Robust Networking</strong>: A protocol-oriented networking layer with automatic parameter encoding and response decoding.</li>
+<li><strong>Secure &amp; Flexible Storage</strong>: Typed storage solutions including Keychain, Key-Value stores, and File storage.</li>
+<li><strong>Comprehensive UI Toolkit</strong>: A rich set of base classes (<code><a href="Classes/BaseView.html">BaseView</a></code>, <code><a href="Classes/BaseCell.html">BaseCell</a></code>) and custom components (<code><a href="Classes/ActionButton.html">ActionButton</a></code>, <code><a href="Classes/AlertView.html">AlertView</a></code>, etc.).</li>
+<li><strong>Extensive Framework Extensions</strong>: 400+ extensions for UIKit, Foundation, AVFoundation, and more, providing a fluent API for layouts, animations, and styling.</li>
+<li><strong>System Managers</strong>: Ready-to-use managers for Apple Login, Local Authentication (FaceID/TouchID), Camera sessions, and Notifications.</li>
+</ul>
+<h2 id='architecture' class='heading'>Architecture</h2>
+
+<p>The package promotes a clean separation of concerns across four main layers:</p>
+
+<ul>
+<li><strong>Coordinators</strong>: <code><a href="Classes/BaseCoordinator.html">BaseCoordinator</a></code> manages navigation flow and child coordinator hierarchies. <code>PopType</code>/<code>DismissType</code> enums with associated values replace boolean navigation flags with explicit, type-safe choices.</li>
+<li><strong>ViewControllers</strong>: <code><a href="Classes/BaseViewModelableViewController.html">BaseViewModelableViewController</a></code> provides a standard lifecycle and automatic ViewModel binding.</li>
+<li><strong>Views</strong>: <code><a href="Classes/BaseView.html">BaseView</a></code> and <code><a href="Classes/BaseCell.html">BaseCell</a></code> integrate with <code><a href="Structs/UIViewBuilder.html">UIViewBuilder</a></code> for declarative layouts. <code><a href="Structs/ArrayBuilder.html">ArrayBuilder</a></code> handles optionals and conditionals for flexible view composition.</li>
+<li><strong>Protocols</strong>: 35+ protocols (e.g. <code><a href="Protocols/Navigationable.html">Navigationable</a></code>, <code><a href="Protocols/AlertPresentable.html">AlertPresentable</a></code>, <code><a href="Protocols/ViewModelable.html">ViewModelable</a></code>) with default implementations define the library&rsquo;s flexible and testable contract. <code><a href="Typealiases.html#/s:6Common18BaseModuleDelegatea">BaseModuleDelegate</a></code> type alias composing multiple protocols cleanly expresses module boundaries.</li>
+</ul>
+<h2 id='usage-highlights' class='heading'>Usage Highlights</h2>
+<h3 id='declarative-layouts' class='heading'>Declarative Layouts</h3>
+<pre class="highlight swift"><code><span class="kd">@UIViewBuilder</span> <span class="k">override</span> <span class="k">var</span> <span class="nv">mainView</span><span class="p">:</span> <span class="kt">UIView</span> <span class="p">{</span>
+    <span class="kt">VStack</span><span class="p">(</span><span class="nv">spacing</span><span class="p">:</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">UILabel</span><span class="p">()</span>
+            <span class="o">.</span><span class="nf">text</span><span class="p">(</span><span class="s">"Welcome"</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">font</span><span class="p">(</span><span class="o">.</span><span class="nf">boldSystemFont</span><span class="p">(</span><span class="nv">ofSize</span><span class="p">:</span> <span class="mi">24</span><span class="p">))</span>
+
+        <span class="kt">ActionButton</span><span class="p">()</span>
+            <span class="o">.</span><span class="nf">title</span><span class="p">(</span><span class="s">"Get Started"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">onTap</span> <span class="p">{</span> <span class="k">self</span><span class="o">.</span><span class="n">viewModel</span><span class="o">.</span><span class="nf">start</span><span class="p">()</span> <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="o">.</span><span class="nf">snap</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">view</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='networking' class='heading'>Networking</h3>
+<pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">MyClient</span><span class="p">:</span> <span class="kt">BaseClient</span> <span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">fetchData</span><span class="p">(</span><span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">NetworkResultHandler</span><span class="o">&lt;</span><span class="kt">MyData</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">request</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="k">#function</span><span class="p">,</span> <span class="kt">MyEndpoint</span><span class="o">.</span><span class="n">getData</span><span class="p">,</span> <span class="nv">result</span><span class="p">:</span> <span class="n">completion</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<h2 id='documentation' class='heading'>Documentation</h2>
+
+<p>The codebase is 100% documented with DocC comments. You can generate and view the HTML version using Jazzy:</p>
+
+<ul>
+<li><strong>Location</strong>: <code>docs/index.html</code></li>
+</ul>
+
+<hr>
+<h2 id='technical-analysis' class='heading'>Technical Analysis</h2>
+<h3 id='strengths' class='heading'>Strengths</h3>
+
+<ul>
+<li><strong>Protocol-driven design</strong> — 35+ protocols with default implementations create a flexible, composable system</li>
+<li><strong>HTTPHeaders</strong> — case-insensitive, collection-conforming, well-encapsulated</li>
+<li><strong>NetworkError enum</strong> — comprehensive, distinguishes decoding/network/response failures, includes response data for debugging</li>
+<li><strong>Storage abstraction</strong> — clean single interface over UserDefaults, Keychain, and file system</li>
+<li><strong>Documentation</strong> — thorough DocC coverage throughout</li>
+<li><strong>Dispatch helpers</strong> (<code>dispatchOnMain</code>, <code>dispatchOnGlobal</code>) reduce boilerplate consistently</li>
+</ul>
+<h3 id='weaknesses-concerns' class='heading'>Weaknesses / Concerns</h3>
+
+<p><strong>High Risk</strong></p>
+
+<ul>
+<li><strong>Force cast in <code><a href="Protocols/ViewModelSettable.html">ViewModelSettable</a></code></strong> — <code>viewModel as! ViewModelType</code> will crash if the wrong type is passed. Should use safe casting with a clear error path.</li>
+<li><strong>Thread safety</strong> — <code><a href="Classes/BaseClient.html#/s:6Common10BaseClientC8requestsSDySSSo16NSURLSessionTaskCGvp">BaseClient.requests</a></code> dictionary (<code>[String: URLSessionTask]</code>) has no synchronization. Concurrent network callbacks can corrupt state.</li>
+</ul>
+
+<p><strong>Medium Risk</strong></p>
+
+<ul>
+<li><strong><code><a href="Enums/HTTPService.html">HTTPService</a></code> request timing</strong> — stores timing in a global <code><a href="Structs/KeyValueStore.html">KeyValueStore</a></code> with string keys (<code>&quot;beforeRequestTime&quot;</code>). Concurrent requests will overwrite each other&rsquo;s timing data.</li>
+<li><strong>No async/await</strong> — all networking uses completion handlers. Modern Swift concurrency would significantly improve readability and safety.</li>
+<li><strong><code><a href="Enums/HTTPService.html">HTTPService</a></code> is a static enum</strong> — can&rsquo;t inject a custom <code>URLSession</code>, making unit testing and SSL pinning impossible without workarounds.</li>
+<li><strong>No retry or timeout logic</strong> — transient failures silently return errors with no recovery path.</li>
+</ul>
+
+<p><strong>Low Risk / Code Quality</strong></p>
+
+<ul>
+<li><strong>418 extension files</strong> — extremely fragmented. One file per extension method makes discovery hard. Grouping by domain would help.</li>
+<li>Logging fires on every <code>requests</code> dictionary update — very noisy in production, not gated by environment.</li>
+<li>Duplicate <code>// MARK: -</code> comments in several files.</li>
+</ul>
+<h3 id='priority-recommendations' class='heading'>Priority Recommendations</h3>
+
+<table><thead>
+<tr>
+<th>Priority</th>
+<th>Action</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>Replace force cast in <code><a href="Protocols/ViewModelSettable.html">ViewModelSettable</a></code> with safe casting</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Add thread safety to <code><a href="Classes/BaseClient.html#/s:6Common10BaseClientC8requestsSDySSSo16NSURLSessionTaskCGvp">BaseClient.requests</a></code> (<code>@MainActor</code> or a serial queue)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Fix concurrent request timing — use per-request context, not global storage</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Refactor <code><a href="Enums/HTTPService.html">HTTPService</a></code> to a protocol + default implementation for testability</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Add async/await networking layer (can coexist with callbacks during migration)</td>
+</tr>
+</tbody></table>
+
+<p><strong>Overall: B+</strong> — solid architecture and good patterns, but the force cast, thread safety gaps, and untestable network layer are the main issues to address before heavy production use.</p>
 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-02-06)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-04-05)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

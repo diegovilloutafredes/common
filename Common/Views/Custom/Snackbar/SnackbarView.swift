@@ -26,33 +26,35 @@ extension SnackbarViewModel {
 /// A view that displays the snackbar content.
 final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
     @UIViewBuilder override var mainView: UIView {
-        HStack(
-            alignment: .center,
-            distribution: .equalSpacing,
-            margins: .init(top: 16, left: 16, bottom: 16, right: 16),
-            spacing: 8
-        ) {
-            UILabel(viewModel.message)
-                .adjustsFontSizeToFitWidth()
-                .textColor(.white)
-                .font(viewModel.messageFont)
-                .numberOfLines(3)
-
-            if viewModel.actionTitle.isNotNil {
-                UIButton(type: .system)
+        UIView {
+            HStack( // DEBUG: outer wrapper should have red tint if 16pt gap exists
+                alignment: .center,
+                distribution: .equalSpacing,
+                margins: .init(top: 16, left: 16, bottom: 16, right: 16),
+                spacing: 8
+            ) {
+                UILabel(viewModel.message)
                     .adjustsFontSizeToFitWidth()
-                    .font(viewModel.actionFont)
-                    .title(viewModel.actionTitle)
-                    .titleColor(.white)
-                    .onTap { [weak self] in guard let self else { return }
-                        viewModel.onAction?()
-                        dismiss()
-                    }
+                    .textColor(.white)
+                    .font(viewModel.messageFont)
+                    .numberOfLines(3)
+
+                if viewModel.actionTitle.isNotNil {
+                    UIButton(type: .system)
+                        .adjustsFontSizeToFitWidth()
+                        .font(viewModel.actionFont)
+                        .title(viewModel.actionTitle)
+                        .titleColor(.white)
+                        .onTap { [weak self] in guard let self else { return }
+                            viewModel.onAction?()
+                            dismiss()
+                        }
+                }
             }
+            .backgroundColor(viewModel.background)
+            .setAsRoundedView(radius: 4)
+            .setConstraints { $0.snap(to: $1, insets: .init(top: .zero, left: 16, bottom: .zero, right: 16)) }
         }
-        .backgroundColor(viewModel.background)
-        .setAsRoundedView(radius: 4)
-        .setConstraints { $0.snap(to: $1, insets: .init(top: .zero, left: 16, bottom: .zero, right: 16)) }
     }
 
     // MARK: - Setup

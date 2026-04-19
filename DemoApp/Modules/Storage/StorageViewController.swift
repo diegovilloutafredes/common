@@ -8,30 +8,9 @@ import UIKit
 
 // MARK: - StorageViewController
 final class StorageViewController: BaseViewModelableViewController<StorageViewModelProtocol> {
-    private lazy var udValueLabel = statusLabel(text: "Not saved")
-    private lazy var fileValueLabel = statusLabel(text: "Not saved")
-    private lazy var keychainValueLabel = statusLabel(text: "Not saved")
-
-    private func statusLabel(text: String) -> UILabel {
-        UILabel()
-            .text(text)
-            .font(.systemFont(ofSize: 13))
-            .textColor(.secondaryLabel)
-            .numberOfLines(2)
-    }
-
-    private func makeButton(title: String, color: UIColor, action: @escaping () -> Void) -> UIButton {
-        UIButton(
-            configuration: .filled()
-                .with {
-                    $0.title = title
-                    $0.baseBackgroundColor = color
-                    $0.cornerStyle = .capsule
-                }
-        )
-        .onTap(action)
-        .setConstraints { $0.set(height: 44) }
-    }
+    private lazy var statusLabels: [StorageType: UILabel] = Dictionary(
+        uniqueKeysWithValues: StorageType.allCases.map { ($0, makeStatusLabel()) }
+    )
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -42,50 +21,9 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
                     margins: .init(top: 24, left: 16, bottom: 32, right: 16),
                     spacing: 16
                 ) {
-                    // UserDefaults section
-                    sectionCard(
-                        headerText: "UserDefaults",
-                        button: makeButton(title: "Save to UserDefaults", color: .systemBlue) { [weak self] in
-                            self?.viewModel.saveToUserDefaults(value: "Hello UserDefaults")
-                            self?.refreshLabels()
-                            Snackbar.show(.init(message: "Saved to UserDefaults"))
-                        },
-                        statusLabel: udValueLabel
-                    )
-
-                    // File section
-                    sectionCard(
-                        headerText: "FileStorage",
-                        button: makeButton(title: "Save to File", color: .systemGreen) { [weak self] in
-                            self?.viewModel.saveToFile(value: "Hello FileStorage")
-                            self?.refreshLabels()
-                            Snackbar.show(.init(message: "Saved to FileStorage"))
-                        },
-                        statusLabel: fileValueLabel
-                    )
-
-                    // Keychain section
-                    sectionCard(
-                        headerText: "Keychain",
-                        button: makeButton(title: "Save to Keychain", color: .systemPurple) { [weak self] in
-                            self?.viewModel.saveToKeychain(value: "Hello Keychain")
-                            self?.refreshLabels()
-                            Snackbar.show(.init(message: "Saved to Keychain"))
-                        },
-                        statusLabel: keychainValueLabel
-                    )
-
-                    // Actions
-                    HStack(spacing: 12) {
-                        makeButton(title: "Read All", color: .systemOrange) { [weak self] in
-                            self?.refreshLabels()
-                        }
-                        makeButton(title: "Clear All", color: .systemRed) { [weak self] in
-                            self?.viewModel.clearAll()
-                            self?.refreshLabels()
-                            Snackbar.show(.init(message: "All cleared"))
-                        }
-                    }
+                    sectionCard(for: .userDefaults)
+                    sectionCard(for: .file)
+                    sectionCard(for: .keychain)
                 }
                 contentStack.translatesAutoresizingMaskIntoConstraints = false
                 scroll.addSubview(contentStack)
@@ -103,29 +41,93 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
-        refreshLabels()
+        StorageType.allCases.forEach { refreshLabel(for: $0) }
     }
 
-    private func sectionCard(headerText: String, button: UIButton, statusLabel: UILabel) -> UIView {
+    private func sectionCard(for type: StorageType) -> UIView {
         VStack(
-            margins: .init(top: 12, left: 12, bottom: 12, right: 12),
-            spacing: 8
+            margins: .init(top: 16, left: 16, bottom: 16, right: 16),
+            spacing: 12
         ) {
+            HStack(alignment: .center, spacing: 10) {
+                UIImageView(image: .init(systemName: type.iconName))
+                    .tintColor(type.color)
+                    .contentMode(.scaleAspectFit)
+                    .setConstraints { $0.set(width: 24); $0.set(height: 24) }
+                UILabel()
+                    .text(type.title)
+                    .font(.boldSystemFont(ofSize: 18))
+                    .textColor(.label)
+            }
+
             UILabel()
-                .text(headerText)
-                .font(.boldSystemFont(ofSize: 16))
-                .textColor(.label)
-            button
-            statusLabel
+                .text(type.description)
+                .font(.systemFont(ofSize: 13))
+                .textColor(.secondaryLabel)
+                .numberOfLines(0)
+
+            UILabel()
+                .text("Value: \"\(type.exampleValue)\"")
+                .font(.monospacedSystemFont(ofSize: 12, weight: .regular))
+                .textColor(.tertiaryLabel)
+                .numberOfLines(0)
+
+            HStack(distribution: .fillEqually, spacing: 8) {
+                makeButton(title: "Save", color: type.color) { [weak self] in
+                    _ = self?.viewModel.save(type: type)
+                    self?.refreshLabel(for: type)
+                    Snackbar.show(.init(message: "Saved to \(type.title)"))
+                }
+                makeButton(title: "Read", color: .systemOrange) { [weak self] in
+                    self?.refreshLabel(for: type)
+                    let value = self?.viewModel.read(type: type)
+                    Snackbar.show(.init(message: value != nil
+                        ? "Read: \"\(value!.value)\""
+                        : "Nothing stored in \(type.title)"))
+                }
+                makeButton(title: "Delete", color: .systemRed) { [weak self] in
+                    self?.viewModel.delete(type: type)
+                    self?.refreshLabel(for: type)
+                    Snackbar.show(.init(message: "Deleted from \(type.title)"))
+                }
+            }
+
+            statusLabels[type]!
         }
         .backgroundColor(.secondarySystemBackground)
         .round(radius: 12)
     }
 
-    private func refreshLabels() {
-        let results = viewModel.readAll()
-        udValueLabel.text(results.userDefaults.map { "Saved: \($0.value)" } ?? "Not saved")
-        fileValueLabel.text(results.file.map { "Saved: \($0.value)" } ?? "Not saved")
-        keychainValueLabel.text(results.keychain.map { "Saved: \($0.value)" } ?? "Not saved")
+    private func refreshLabel(for type: StorageType) {
+        if let item = viewModel.read(type: type) {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss"
+            statusLabels[type]?.text("Stored: \"\(item.value)\" at \(formatter.string(from: item.timestamp))")
+                .textColor(.systemGreen)
+        } else {
+            statusLabels[type]?.text("Empty — nothing stored")
+                .textColor(.secondaryLabel)
+        }
+    }
+
+    private func makeStatusLabel() -> UILabel {
+        UILabel()
+            .text("Empty — nothing stored")
+            .font(.systemFont(ofSize: 13))
+            .textColor(.secondaryLabel)
+            .numberOfLines(2)
+    }
+
+    private func makeButton(title: String, color: UIColor, action: @escaping () -> Void) -> UIButton {
+        UIButton(
+            configuration: .filled()
+                .with {
+                    $0.title = title
+                    $0.baseBackgroundColor = color
+                    $0.cornerStyle = .capsule
+                }
+        )
+        .onTap(action)
+        .setConstraints { $0.set(height: 38) }
     }
 }
