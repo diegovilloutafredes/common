@@ -9,7 +9,7 @@ XCFRAMEWORK_DIR="XCFramework"
 rm -rf $ARCHIVES_DIR
 
 # Archive for iOS Device
-echo "🛠 Archiving for iOS..."
+echo "Archiving for iOS..."
 xcodebuild archive -quiet \
 -scheme $SCHEME \
 -archivePath $ARCHIVES_DIR/$SCHEME-iphoneos.xcarchive \
@@ -18,7 +18,7 @@ BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
 SKIP_INSTALL=NO
 
 # Archive for iOS Simulator
-echo "🛠 Archiving for iOS Simulator..."
+echo "Archiving for iOS Simulator..."
 xcodebuild archive -quiet \
 -scheme $SCHEME \
 -archivePath $ARCHIVES_DIR/$SCHEME-iphonesimulator.xcarchive \
@@ -28,11 +28,11 @@ SKIP_INSTALL=NO
 
 rm -rf $XCFRAMEWORK_DIR/$SCHEME.xcframework
 
-echo "📦 Creating XCFramework..."
+echo "Creating XCFramework..."
 xcodebuild -create-xcframework \
 -framework $ARCHIVES_DIR/$SCHEME-iphoneos.xcarchive/Products/Library/Frameworks/$SCHEME.framework \
 -framework $ARCHIVES_DIR/$SCHEME-iphonesimulator.xcarchive/Products/Library/Frameworks/$SCHEME.framework \
 -output $XCFRAMEWORK_DIR/$XCFRAMEWORK_NAME.xcframework
 
 rm -rf $ARCHIVES_DIR
-echo "✅ Finished!"
+echo "Finished!"

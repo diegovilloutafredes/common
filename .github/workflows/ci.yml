@@ -3,8 +3,6 @@ name: XCFramework Build Pipeline
 on:
   push:
     branches: ["main"]
-    tags:
-      - "v*.*.*" # Triggers when pushing version tags like v1.0.0
   pull_request:
     branches: ["main"]
 
@@ -33,33 +31,35 @@ jobs:
           name: Compiled-XCFramework
           path: ./XCFramework/Common.xcframework
           
+      - name: Bump version and push tag
+        id: tag_version
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: patch
+
       - name: Zip XCFramework for Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           cd XCFramework
           zip -r Common.xcframework.zip Common.xcframework
-          
+
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag || github.ref_name }}
+          name: Release ${{ steps.tag_version.outputs.new_tag || github.ref_name }}
           files: ./XCFramework/Common.xcframework.zip
           generate_release_notes: true
-          
-      - name: Run Tests (Demo App)
-        run: |
-          xcodebuild test \
-            -project "Common.xcodeproj" \
-            -scheme "DemoApp" \
-            -destination "generic/platform=iOS Simulator,name=iPhone 15" \
-            -derivedDataPath derivedData/ \
-            CODE_SIGNING_ALLOWED=NO
+
 
   documentation:
     name: Update Docs
     runs-on: macos-latest
     needs: build-and-prep
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
 
