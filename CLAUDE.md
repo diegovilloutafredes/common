@@ -24,7 +24,7 @@ make build_xcframework
 ./build_xcframework.sh
 ```
 
-The framework targets **iOS 16.0+**, Swift 5.9+. The DemoApp targets iOS 26.0+. There are no unit tests or linting tools configured.
+The framework targets **iOS 17.0+**, Swift 5.9+. The DemoApp targets iOS 26.0+. There are no unit tests or linting tools configured.
 
 ## Distribution
 
