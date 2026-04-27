@@ -77,6 +77,8 @@ final class NetworkingViewController: BaseViewModelableViewController<Networking
         .numberOfLines(0)
         .textAlignment(.center)
 
+    private lazy var modeSegment = UISegmentedControl(items: ["Callback", "Async"])
+
     private lazy var fetchButton = UIButton(
         configuration: .filled()
             .with {
@@ -102,6 +104,7 @@ final class NetworkingViewController: BaseViewModelableViewController<Networking
                     .font(.monospacedSystemFont(ofSize: 12, weight: .medium))
                     .textColor(.tertiaryLabel)
                     .textAlignment(.center)
+                modeSegment
                 fetchButton
                 statusLabel
             }
@@ -114,6 +117,12 @@ final class NetworkingViewController: BaseViewModelableViewController<Networking
         title = viewModel.title
         view.backgroundColor(.systemBackground)
         statusLabel.text(viewModel.statusText)
+        modeSegment.selectedSegmentIndex = 0
+        modeSegment.addTarget(self, action: #selector(modeChanged), for: .valueChanged)
+    }
+
+    @objc private func modeChanged(_ sender: UISegmentedControl) {
+        viewModel.setMode(sender.selectedSegmentIndex == 0 ? .callback : .async)
     }
 }
 
