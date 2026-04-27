@@ -11,3 +11,10 @@ final class PostClient: BaseClient {
         request(from: #function, PostEndpoint.posts, result: result)
     }
 }
+
+// MARK: - AsyncPostClient
+final class AsyncPostClient: AsyncBaseClient {
+    func fetchPosts() async throws -> [Post] {
+        try await request(PostEndpoint.posts)
+    }
+}

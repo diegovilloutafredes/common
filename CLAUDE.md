@@ -37,6 +37,24 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes/PRs to `main
 - Builds the DemoApp for simulator
 - Generates Jazzy documentation on `main` pushes
 
+## Build Performance
+
+`COMPILATION_CACHE_ENABLE_CACHING = YES` is set in `project.yml`. The compilation cache lives at `~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex` — outside DerivedData, so it **survives `xcodebuild clean`**.
+
+**Baseline (iPhone 17 simulator, Debug, Xcode 26.4):**
+- Clean build (after `xcodebuild clean`): ~4.8s median (was ~10.5s before cache)
+- Zero-change build: ~1.2s
+
+**CI:** To benefit from the cache on CI, persist `~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex` in your cache key. A fresh machine with no cached store will build at the ~10.5s baseline — no regression.
+
+Build benchmarks live in `.build-benchmark/` (gitignored). Re-run with:
+```bash
+python3 /path/to/xcode-build-benchmark/scripts/benchmark_builds.py \
+  --project Common.xcodeproj --scheme Common --configuration Debug \
+  --destination "platform=iOS Simulator,name=iPhone 17" \
+  --output-dir .build-benchmark
+```
+
 ## Documentation
 
 The codebase is documented with DocC comments. HTML docs (Jazzy-generated) live in `docs/` and are committed to the repo. View at `docs/index.html`.
@@ -421,6 +439,8 @@ These exist in Common but see little to no production use:
 
 ## Known Gotchas
 
+- **Compilation cache key includes DerivedData path**: Builds using a different `-derivedDataPath` (e.g. a temp directory) will miss the cache and build from scratch. Normal `xcodebuild clean` reuses the cache correctly.
+- **Xcode 26 explicit-module-build rejects `-debug-time-compilation`**: Injecting `-Xfrontend -debug-time-compilation` via `OTHER_SWIFT_FLAGS` fails with "unknown argument" in Xcode 26. Use `-warn-long-function-bodies=<ms>` and `-warn-long-expression-type-checking=<ms>` instead for type-check diagnostics.
 - **`onMoveToSuperview` lifecycle**: The `setConstraints` extension relies on swizzled `didMoveToSuperview`. If a view already has a superview when `setConstraints` is called, the handler executes immediately. Be aware of this when debugging layout issues.
 - **`UIViewBuilder` and `loadView`**: `BaseViewController.loadView()` sets `self.view = mainView`. Since `mainView` is a computed property, avoid expensive or stateful setup in it — use `lazy` container views instead.
 

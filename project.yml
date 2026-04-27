@@ -106,6 +106,7 @@ targets:
       base:
         SWIFT_VERSION: "5.9"
         BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+        COMPILATION_CACHE_ENABLE_CACHING: YES
         DEFINES_MODULE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.trust.common
         CODE_SIGN_IDENTITY: ""
