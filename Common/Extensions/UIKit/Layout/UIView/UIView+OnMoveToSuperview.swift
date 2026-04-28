@@ -12,15 +12,17 @@ extension UIView {
     }
 
     /// Sets a handler to execute when the view moves to a superview and returns self (chainable).
-    /// - Parameter onMoveToSuperview: The handler to execute with the view.
+    /// If the view already has a superview the handler fires immediately.
     @discardableResult public func onMoveToSuperview(_ onMoveToSuperview: @escaping ViewHandler) -> Self {
-        with { $0.onMoveToSuperview = onMoveToSuperview }
+        if superview != nil { onMoveToSuperview(self); return self }
+        return with { $0.onMoveToSuperview = onMoveToSuperview }
     }
 
     /// Sets a handler to execute when the view moves to a superview and returns self (chainable).
-    /// - Parameter onMoveToSuperview: The handler to execute with view and superview.
+    /// If the view already has a superview the handler fires immediately.
     @discardableResult public func onMoveToSuperview(_ onMoveToSuperview: @escaping ViewAndSuperviewHandler) -> Self {
-        with {
+        if let sv = superview { onMoveToSuperview((self, sv)); return self }
+        return with {
             $0.onMoveToSuperview = {
                 guard let superview = $0.superview else { return }
                 onMoveToSuperview(($0, superview))

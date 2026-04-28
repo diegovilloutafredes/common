@@ -16,99 +16,86 @@ final class ExtensionsViewController: BaseViewModelableViewController<Extensions
 
     @UIViewBuilder
     override var mainView: UIView {
-        UIScrollView()
-            .setConstraints { $0.snap(to: $1) }
-            .with { scroll in
-                let contentStack = VStack(
-                    margins: .init(top: 24, left: 16, bottom: 32, right: 16),
-                    spacing: 16
+        UIScrollView {
+            VStack(
+                margins: .init(top: 24, left: 16, bottom: 32, right: 16),
+                spacing: 16
+            ) {
+                demoSection(
+                    title: ".round() + .shadow()",
+                    description: "Combine corner radius with drop shadow for card-like appearance."
                 ) {
-                    demoSection(
-                        title: ".round() + .shadow()",
-                        description: "Combine corner radius with drop shadow for card-like appearance."
-                    ) {
-                        UIView()
-                            .backgroundColor(.systemBlue)
-                            .round(radius: 16)
-                            .shadow(
-                                color: .systemBlue,
-                                offset: .init(width: 0, height: 4),
-                                opacity: 0.4,
-                                radius: 8
-                            )
-                            .setConstraints { $0.set(height: 60) }
-                    }
-
-                    demoSection(
-                        title: ".text() + .font() + .textColor()",
-                        description: "Fluent chaining for UILabel configuration."
-                    ) {
-                        UILabel()
-                            .text("Hello extensions!")
-                            .font(.boldSystemFont(ofSize: 20))
-                            .textColor(.systemPurple)
-                            .textAlignment(.center)
-                    }
-
-                    demoSection(
-                        title: ".onTap { } + UIButton.Configuration",
-                        description: "Tap handler and modern button configuration API."
-                    ) {
-                        UIButton(
-                            configuration: .filled()
-                                .with {
-                                    $0.title = "Tap me"
-                                    $0.baseBackgroundColor = .systemGreen
-                                    $0.cornerStyle = .capsule
-                                }
+                    UIView()
+                        .backgroundColor(.systemBlue)
+                        .round(radius: 16)
+                        .shadow(
+                            color: .systemBlue,
+                            offset: .init(width: 0, height: 4),
+                            opacity: 0.4,
+                            radius: 8
                         )
-                        .onTap { Snackbar.show(.init(message: "Button tapped!")) }
-                        .setConstraints { $0.set(height: 44) }
-                    }
-
-                    demoSection(
-                        title: ".setRatio()",
-                        description: "Constrains aspect ratio. Square (1:1) and wide (2:1)."
-                    ) {
-                        HStack(alignment: .center, spacing: 12) {
-                            UIView().backgroundColor(.systemIndigo).round(radius: 8)
-                                .setRatio()
-                                .setConstraints { $0.set(width: 60) }
-                            UIView().backgroundColor(.systemMint).round(radius: 8)
-                                .setRatio(2)
-                                .setConstraints { $0.set(width: 120) }
-                        }
-                    }
-
-                    demoSection(
-                        title: ".randomBackgroundColor()",
-                        description: "Tap the view below to randomize its color."
-                    ) {
-                        randomColorView
-                    }
-
-                    demoSection(
-                        title: ".withAlphaComponent()",
-                        description: "Same color at different opacity levels."
-                    ) {
-                        HStack(distribution: .fillEqually, spacing: 8) {
-                            colorSwatch(color: .systemBlue, label: "100%")
-                            colorSwatch(color: .systemBlue.withAlphaComponent(0.6), label: "60%")
-                            colorSwatch(color: .systemBlue.withAlphaComponent(0.3), label: "30%")
-                            colorSwatch(color: .systemBlue.withAlphaComponent(0.1), label: "10%")
-                        }
+                        .setConstraints { $0.set(height: 60) }
+                }
+                demoSection(
+                    title: ".text() + .font() + .textColor()",
+                    description: "Fluent chaining for UILabel configuration."
+                ) {
+                    UILabel()
+                        .text("Hello extensions!")
+                        .font(.boldSystemFont(ofSize: 20))
+                        .textColor(.systemPurple)
+                        .textAlignment(.center)
+                }
+                demoSection(
+                    title: ".onTap { } + UIButton.Configuration",
+                    description: "Tap handler and modern button configuration API."
+                ) {
+                    UIButton(
+                        configuration: .filled()
+                            .with {
+                                $0.title = "Tap me"
+                                $0.baseBackgroundColor = .systemGreen
+                                $0.cornerStyle = .capsule
+                            }
+                    )
+                    .onTap { Snackbar.show(.init(message: "Button tapped!")) }
+                    .setConstraints { $0.set(height: 44) }
+                }
+                demoSection(
+                    title: ".setRatio()",
+                    description: "Constrains aspect ratio. Square (1:1) and wide (2:1)."
+                ) {
+                    HStack(alignment: .center, spacing: 12) {
+                        UIView().backgroundColor(.systemIndigo).round(radius: 8)
+                            .setRatio()
+                            .setConstraints { $0.set(width: 60) }
+                        UIView().backgroundColor(.systemMint).round(radius: 8)
+                            .setRatio(2)
+                            .setConstraints { $0.set(width: 120) }
                     }
                 }
-                contentStack.translatesAutoresizingMaskIntoConstraints = false
-                scroll.addSubview(contentStack)
-                NSLayoutConstraint.activate([
-                    contentStack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor),
-                    contentStack.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
-                    contentStack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
-                    contentStack.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
-                    contentStack.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor)
-                ])
+                demoSection(
+                    title: ".randomBackgroundColor()",
+                    description: "Tap the view below to randomize its color."
+                ) {
+                    randomColorView
+                }
+                demoSection(
+                    title: ".withAlphaComponent()",
+                    description: "Same color at different opacity levels."
+                ) {
+                    HStack(distribution: .fillEqually, spacing: 8) {
+                        colorSwatch(color: .systemBlue, label: "100%")
+                        colorSwatch(color: .systemBlue.withAlphaComponent(0.6), label: "60%")
+                        colorSwatch(color: .systemBlue.withAlphaComponent(0.3), label: "30%")
+                        colorSwatch(color: .systemBlue.withAlphaComponent(0.1), label: "10%")
+                    }
+                }
+            }.setConstraints {
+                $0.snap(to: $1)
+                $0.setWidth(to: $1.widthAnchor)
             }
+        }.setConstraints { $0.snap(to: $1) }
     }
 
     override func setupView() {
