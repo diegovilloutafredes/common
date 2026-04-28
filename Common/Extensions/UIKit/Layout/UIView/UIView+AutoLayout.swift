@@ -4,24 +4,30 @@
 
 import UIKit
 
+// MARK: - LayoutAnchorProvider
+
+/// An internal protocol that UIView and UILayoutGuide both satisfy, enabling generic snap implementations.
+protocol LayoutAnchorProvider {
+    var topAnchor: NSLayoutYAxisAnchor { get }
+    var bottomAnchor: NSLayoutYAxisAnchor { get }
+    var leadingAnchor: NSLayoutXAxisAnchor { get }
+    var trailingAnchor: NSLayoutXAxisAnchor { get }
+}
+
+extension UIView: LayoutAnchorProvider {}
+extension UILayoutGuide: LayoutAnchorProvider {}
+
 // MARK: - Align Center X/Y
 
-/// Auto Layout extension methods for constraining views.
 extension UIView {
-    
+
     /// Aligns center X with another view.
-    /// - Parameters:
-    ///   - view: The view to align with.
-    ///   - inset: The constant offset.
     @discardableResult public func alignCenterX(with view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: inset).with { $0.isActive = true }
     }
 
     /// Aligns center Y with another view.
-    /// - Parameters:
-    ///   - view: The view to align with.
-    ///   - inset: The constant offset.
     @discardableResult public func alignCenterY(with view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: inset).with { $0.isActive = true }
@@ -29,13 +35,9 @@ extension UIView {
 }
 
 // MARK: - Pin X/Y Anchors with an Inset
+
 extension UIView {
-    
-    /// Pins an X axis anchor to another anchor.
-    /// - Parameters:
-    ///   - origin: The origin anchor.
-    ///   - anchor: The target anchor.
-    ///   - inset: The constant offset.
+
     @discardableResult public func pinXAnchor(origin: NSLayoutXAxisAnchor, to anchor: NSLayoutXAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return origin.constraint(equalTo: anchor, constant: inset).with { $0.isActive = true }
@@ -48,7 +50,9 @@ extension UIView {
 }
 
 // MARK: - Pin X/Y Anchors with a Multiplier
+
 extension UIView {
+
     @discardableResult public func pinXAnchor(origin: NSLayoutXAxisAnchor, to anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return origin.constraint(equalToSystemSpacingAfter: anchor, multiplier: multiplier).with { $0.isActive = true }
@@ -61,7 +65,9 @@ extension UIView {
 }
 
 // MARK: - Pin Top/Bottom/Lead/Trail/Center Anchors with an Inset
+
 extension UIView {
+
     @discardableResult public func pinTop(to anchor: NSLayoutYAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
         pinYAnchor(origin: topAnchor, to: anchor, inset: inset)
     }
@@ -88,7 +94,9 @@ extension UIView {
 }
 
 // MARK: - Pin Top/Bottom/Lead/Trail/Center Anchors with a Multiplier
+
 extension UIView {
+
     @discardableResult public func pinTopTo(anchor: NSLayoutYAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
         pinYAnchor(origin: topAnchor, to: anchor, multiplier: multiplier)
     }
@@ -115,25 +123,21 @@ extension UIView {
 }
 
 // MARK: - Set Height/Width
+
 extension UIView {
-    
+
     /// Sets a fixed height constraint.
-    /// - Parameter height: The height in points.
     @discardableResult public func set(height: CGFloat) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return heightAnchor.constraint(equalToConstant: height).with { $0.isActive = true }
     }
 
     /// Sets a fixed width constraint.
-    /// - Parameter width: The width in points.
     @discardableResult public func set(width: CGFloat) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return widthAnchor.constraint(equalToConstant: width).with { $0.isActive = true }
     }
-}
 
-// MARK: - Set Height/Width to LayoutDimension with a Multiplier
-extension UIView {
     @discardableResult public func setHeight(to dimension: NSLayoutDimension, multiplier: CGFloat = 1) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return heightAnchor.constraint(equalTo: dimension, multiplier: multiplier).with { $0.isActive = true }
@@ -145,50 +149,10 @@ extension UIView {
     }
 }
 
-// MARK: - Snap Top/Bottom/Lead/Trail/Center Anchors to LayoutGuide with an Inset
-extension UIView {
-    @discardableResult public func snapTop(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinTop(to: layoutGuide.topAnchor, inset: inset)
-    }
-
-    @discardableResult public func snapBottom(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinBottom(to: layoutGuide.bottomAnchor, inset: inset)
-    }
-
-    @discardableResult public func snapLeading(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinLeading(to: layoutGuide.leadingAnchor, inset: inset)
-    }
-
-    @discardableResult public func snapTrailing(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinTrailing(to: layoutGuide.trailingAnchor, inset: inset)
-    }
-}
-
-// MARK: - Snap Top/Bottom/Lead/Trail/Center Anchors to View with an Inset
-extension UIView {
-    @discardableResult public func snapTop(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinTop(to: view.topAnchor, inset: inset)
-    }
-
-    @discardableResult public func snapBottom(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinBottom(to: view.bottomAnchor, inset: inset)
-    }
-
-    @discardableResult public func snapLeading(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinLeading(to: view.leadingAnchor, inset: inset)
-    }
-
-    @discardableResult public func snapTrailing(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint {
-        pinTrailing(to: view.trailingAnchor, inset: inset)
-    }
-}
-
-// MARK: - Conveniences
-
-
-
 // MARK: - Align Center
+
 extension UIView {
+
     @discardableResult public func alignCenter(with view: UIView) -> Self {
         with {
             $0.alignCenterX(with: view)
@@ -198,12 +162,9 @@ extension UIView {
 }
 
 // MARK: - Content Compression Resistance & Content Hugging Priorities
+
 extension UIView {
-    
-    /// Sets content compression resistance priority.
-    /// - Parameters:
-    ///   - priority: The layout priority.
-    ///   - axis: The constraint axis.
+
     @discardableResult public func contentCompressionResistance(priority: UILayoutPriority, axis: NSLayoutConstraint.Axis) -> Self {
         with {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -211,10 +172,6 @@ extension UIView {
         }
     }
 
-    /// Sets content hugging priority.
-    /// - Parameters:
-    ///   - priority: The layout priority.
-    ///   - axis: The constraint axis.
     @discardableResult public func contentHugging(priority: UILayoutPriority, axis: NSLayoutConstraint.Axis) -> Self {
         with {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -224,204 +181,112 @@ extension UIView {
 }
 
 // MARK: - Set Ratio
+
 extension UIView {
-    /// Ratio defined as a Width to Height proportion.
-    /// It defaults to 1, width and height are the same.
+
+    /// Constrains width to height by the given ratio. Defaults to 1:1 (square).
     @discardableResult public func setRatio(_ ratio: CGFloat = 1) -> Self {
         with { $0.setWidth(to: $0.heightAnchor, multiplier: ratio) }
     }
 }
 
-// MARK: - Snap to LayoutGuide
+// MARK: - Snap (single edge)
+
 extension UIView {
-    
+
+    @discardableResult public func snapTop(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint { pinTop(to: layoutGuide.topAnchor, inset: inset) }
+    @discardableResult public func snapBottom(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint { pinBottom(to: layoutGuide.bottomAnchor, inset: inset) }
+    @discardableResult public func snapLeading(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint { pinLeading(to: layoutGuide.leadingAnchor, inset: inset) }
+    @discardableResult public func snapTrailing(to layoutGuide: UILayoutGuide, inset: CGFloat = .zero) -> NSLayoutConstraint { pinTrailing(to: layoutGuide.trailingAnchor, inset: inset) }
+
+    @discardableResult public func snapTop(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint { pinTop(to: view.topAnchor, inset: inset) }
+    @discardableResult public func snapBottom(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint { pinBottom(to: view.bottomAnchor, inset: inset) }
+    @discardableResult public func snapLeading(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint { pinLeading(to: view.leadingAnchor, inset: inset) }
+    @discardableResult public func snapTrailing(to view: UIView, inset: CGFloat = .zero) -> NSLayoutConstraint { pinTrailing(to: view.trailingAnchor, inset: inset) }
+}
+
+// MARK: - Snap (multi-edge)
+
+extension UIView {
+
+    // MARK: Private generic implementations
+
+    @discardableResult private func _snap(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with {
+            $0.pinTop(to: a.topAnchor, inset: insets.top)
+            $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom)
+            $0.pinLeading(to: a.leadingAnchor, inset: insets.left)
+            $0.pinTrailing(to: a.trailingAnchor, inset: insets.right)
+        }
+    }
+
+    @discardableResult private func _snapLeadTop(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinLeading(to: a.leadingAnchor, inset: insets.left); $0.pinTop(to: a.topAnchor, inset: insets.top) }
+    }
+
+    @discardableResult private func _snapTopTrail(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinTop(to: a.topAnchor, inset: insets.top); $0.pinTrailing(to: a.trailingAnchor, inset: insets.right) }
+    }
+
+    @discardableResult private func _snapLeadBottom(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinLeading(to: a.leadingAnchor, inset: insets.left); $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom) }
+    }
+
+    @discardableResult private func _snapBottomTrail(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom); $0.pinTrailing(to: a.trailingAnchor, inset: insets.right) }
+    }
+
+    @discardableResult private func _snapLeadTrail(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinLeading(to: a.leadingAnchor, inset: insets.left); $0.pinTrailing(to: a.trailingAnchor, inset: insets.right) }
+    }
+
+    @discardableResult private func _snapTopBottom(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinTop(to: a.topAnchor, inset: insets.top); $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom) }
+    }
+
+    @discardableResult private func _snapTopLeadBottom(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinTop(to: a.topAnchor, inset: insets.top); $0.pinLeading(to: a.leadingAnchor, inset: insets.left); $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom) }
+    }
+
+    @discardableResult private func _snapLeadTopTrail(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinLeading(to: a.leadingAnchor, inset: insets.left); $0.pinTop(to: a.topAnchor, inset: insets.top); $0.pinTrailing(to: a.trailingAnchor, inset: insets.right) }
+    }
+
+    @discardableResult private func _snapTopTrailBottom(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinTop(to: a.topAnchor, inset: insets.top); $0.pinTrailing(to: a.trailingAnchor, inset: insets.right); $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom) }
+    }
+
+    @discardableResult private func _snapLeadBottomTrail(to a: some LayoutAnchorProvider, insets: UIEdgeInsets) -> Self {
+        with { $0.pinBottom(to: a.bottomAnchor, inset: insets.bottom); $0.pinLeading(to: a.leadingAnchor, inset: insets.left); $0.pinTrailing(to: a.trailingAnchor, inset: insets.right) }
+    }
+
+    // MARK: Public — UILayoutGuide
+
     /// Snaps all edges to a layout guide.
-    /// - Parameters:
-    ///   - layoutGuide: The target layout guide.
-    ///   - insets: The edge insets.
-    @discardableResult public func snap(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-        }
-    }
-}
+    @discardableResult public func snap(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snap(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapLeadTop(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapLeadTop(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapTopTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapTopTrail(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapLeadBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapLeadBottom(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapBottomTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapBottomTrail(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapLeadTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapLeadTrail(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapTopBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapTopBottom(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapTopLeadBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapTopLeadBottom(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapLeadTopTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapLeadTopTrail(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapTopTrailBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapTopTrailBottom(to: layoutGuide, insets: insets) }
+    @discardableResult public func snapLeadBottomTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self { _snapLeadBottomTrail(to: layoutGuide, insets: insets) }
 
-extension UIView {
-    @discardableResult public func snapLeadTop(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-        }
-    }
-    
-    @discardableResult public func snapTopTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-        }
-    }
-    
-    @discardableResult public func snapLeadBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-        }
-    }
-    
-    @discardableResult public func snapBottomTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-        }
-    }
-}
+    // MARK: Public — UIView
 
-extension UIView {
-    @discardableResult public func snapLeadTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-        }
-    }
-
-    @discardableResult public func snapTopBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-        }
-    }
-}
-
-extension UIView {
-    @discardableResult public func snapTopLeadBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-        }
-    }
-
-    @discardableResult public func snapLeadTopTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-        }
-    }
-
-    @discardableResult public func snapTopTrailBottom(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: layoutGuide.topAnchor, inset: insets.top)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-        }
-    }
-
-    @discardableResult public func snapLeadBottomTrail(to layoutGuide: UILayoutGuide, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinBottom(to: layoutGuide.bottomAnchor, inset: insets.bottom)
-            $0.pinLeading(to: layoutGuide.leadingAnchor, inset: insets.left)
-            $0.pinTrailing(to: layoutGuide.trailingAnchor, inset: insets.right)
-        }
-    }
-}
-
-// MARK: - Snap to View
-extension UIView {
-    
     /// Snaps all edges to another view.
-    /// - Parameters:
-    ///   - view: The target view.
-    ///   - insets: The edge insets.
-    @discardableResult public func snap(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-        }
-    }
-}
-
-extension UIView {
-    @discardableResult public func snapLeadTop(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-        }
-    }
-    
-    @discardableResult public func snapTopTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-        }
-    }
-    
-    @discardableResult public func snapLeadBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-        }
-    }
-    
-    @discardableResult public func snapBottomTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-        }
-    }
-}
-
-extension UIView {
-    @discardableResult public func snapLeadTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-        }
-    }
-
-    @discardableResult public func snapTopBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-        }
-    }
-}
-
-extension UIView {
-    @discardableResult public func snapTopLeadBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-        }
-    }
-
-    @discardableResult public func snapLeadTopTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-        }
-    }
-
-    @discardableResult public func snapTopTrailBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinTop(to: view.topAnchor, inset: insets.top)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-        }
-    }
-
-    @discardableResult public func snapLeadBottomTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
-        with {
-            $0.pinBottom(to: view.bottomAnchor, inset: insets.bottom)
-            $0.pinLeading(to: view.leadingAnchor, inset: insets.left)
-            $0.pinTrailing(to: view.trailingAnchor, inset: insets.right)
-        }
-    }
+    @discardableResult public func snap(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snap(to: view, insets: insets) }
+    @discardableResult public func snapLeadTop(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapLeadTop(to: view, insets: insets) }
+    @discardableResult public func snapTopTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapTopTrail(to: view, insets: insets) }
+    @discardableResult public func snapLeadBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapLeadBottom(to: view, insets: insets) }
+    @discardableResult public func snapBottomTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapBottomTrail(to: view, insets: insets) }
+    @discardableResult public func snapLeadTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapLeadTrail(to: view, insets: insets) }
+    @discardableResult public func snapTopBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapTopBottom(to: view, insets: insets) }
+    @discardableResult public func snapTopLeadBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapTopLeadBottom(to: view, insets: insets) }
+    @discardableResult public func snapLeadTopTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapLeadTopTrail(to: view, insets: insets) }
+    @discardableResult public func snapTopTrailBottom(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapTopTrailBottom(to: view, insets: insets) }
+    @discardableResult public func snapLeadBottomTrail(to view: UIView, insets: UIEdgeInsets = .zero) -> Self { _snapLeadBottomTrail(to: view, insets: insets) }
 }

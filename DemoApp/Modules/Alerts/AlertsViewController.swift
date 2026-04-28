@@ -48,48 +48,37 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
 
     @UIViewBuilder
     override var mainView: UIView {
-        UIScrollView()
-            .setConstraints { $0.snap(to: $1) }
-            .with { scroll in
-                let contentStack = VStack(
-                    margins: .init(top: 24, left: 16, bottom: 32, right: 16),
-                    spacing: 20
+        UIScrollView {
+            VStack(
+                margins: .init(top: 24, left: 16, bottom: 32, right: 16),
+                spacing: 20
+            ) {
+                sectionCard(
+                    title: "Inline Feedback",
+                    icon: "bubble.left.fill",
+                    description: "Non-blocking notifications that appear briefly and dismiss automatically. Use for confirmations and status updates."
                 ) {
-                    // Inline section
-                    sectionCard(
-                        title: "Inline Feedback",
-                        icon: "bubble.left.fill",
-                        description: "Non-blocking notifications that appear briefly and dismiss automatically. Use for confirmations and status updates."
-                    ) {
-                        VStack(spacing: 10) {
-                            snackbarButton
-                            toastButton
-                        }
-                    }
-
-                    // Modal section
-                    sectionCard(
-                        title: "Modal Feedback",
-                        icon: "exclamationmark.triangle.fill",
-                        description: "Blocking dialogs that require user attention or action before continuing."
-                    ) {
-                        VStack(spacing: 10) {
-                            alertButton
-                            alertWithActionsButton
-                            activityButton
-                        }
+                    VStack(spacing: 10) {
+                        snackbarButton
+                        toastButton
                     }
                 }
-                contentStack.translatesAutoresizingMaskIntoConstraints = false
-                scroll.addSubview(contentStack)
-                NSLayoutConstraint.activate([
-                    contentStack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor),
-                    contentStack.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
-                    contentStack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
-                    contentStack.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
-                    contentStack.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor)
-                ])
+                sectionCard(
+                    title: "Modal Feedback",
+                    icon: "exclamationmark.triangle.fill",
+                    description: "Blocking dialogs that require user attention or action before continuing."
+                ) {
+                    VStack(spacing: 10) {
+                        alertButton
+                        alertWithActionsButton
+                        activityButton
+                    }
+                }
+            }.setConstraints {
+                $0.snap(to: $1)
+                $0.setWidth(to: $1.widthAnchor)
             }
+        }.setConstraints { $0.snap(to: $1) }
     }
 
     override func setupView() {
