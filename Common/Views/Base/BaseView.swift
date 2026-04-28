@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseView
-// MARK: - BaseView
 
 /// A base view class that conforms to `UIViewBuildable`.
 /// It provides a consistent setup for hosting a main view within the view.
@@ -21,6 +20,8 @@ open class BaseView: UIView, UIViewBuildable {
         super.init(frame: .zero)
         let content = mainView
         addSubview(content)
+        // setConstraints handlers fire synchronously during addSubview (via didMoveToSuperview).
+        // If the subclass already set up constraints, TAMIC is false — skip to avoid duplicates.
         if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: self) }
         setupView()
     }
@@ -31,6 +32,8 @@ open class BaseView: UIView, UIViewBuildable {
         super.init(frame: frame)
         let content = mainView
         addSubview(content)
+        // setConstraints handlers fire synchronously during addSubview (via didMoveToSuperview).
+        // If the subclass already set up constraints, TAMIC is false — skip to avoid duplicates.
         if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: self) }
         setupView()
     }

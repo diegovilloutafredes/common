@@ -12,6 +12,8 @@ protocol LayoutAnchorProvider {
     var bottomAnchor: NSLayoutYAxisAnchor { get }
     var leadingAnchor: NSLayoutXAxisAnchor { get }
     var trailingAnchor: NSLayoutXAxisAnchor { get }
+    var centerXAnchor: NSLayoutXAxisAnchor { get }
+    var centerYAnchor: NSLayoutYAxisAnchor { get }
 }
 
 extension UIView: LayoutAnchorProvider {}
@@ -49,21 +51,6 @@ extension UIView {
     }
 }
 
-// MARK: - Pin X/Y Anchors with a Multiplier
-
-extension UIView {
-
-    @discardableResult public func pinXAnchor(origin: NSLayoutXAxisAnchor, to anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        translatesAutoresizingMaskIntoConstraints = false
-        return origin.constraint(equalToSystemSpacingAfter: anchor, multiplier: multiplier).with { $0.isActive = true }
-    }
-
-    @discardableResult public func pinYAnchor(origin: NSLayoutYAxisAnchor, to anchor: NSLayoutYAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        translatesAutoresizingMaskIntoConstraints = false
-        return origin.constraint(equalToSystemSpacingBelow: anchor, multiplier: multiplier).with { $0.isActive = true }
-    }
-}
-
 // MARK: - Pin Top/Bottom/Lead/Trail/Center Anchors with an Inset
 
 extension UIView {
@@ -91,34 +78,13 @@ extension UIView {
     @discardableResult public func pinCenterY(to anchor: NSLayoutYAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
         pinYAnchor(origin: centerYAnchor, to: anchor, inset: inset)
     }
-}
 
-// MARK: - Pin Top/Bottom/Lead/Trail/Center Anchors with a Multiplier
-
-extension UIView {
-
-    @discardableResult public func pinTopTo(anchor: NSLayoutYAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        pinYAnchor(origin: topAnchor, to: anchor, multiplier: multiplier)
+    @discardableResult public func pinFirstBaseline(to anchor: NSLayoutYAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
+        pinYAnchor(origin: firstBaselineAnchor, to: anchor, inset: inset)
     }
 
-    @discardableResult public func pinBottomTo(anchor: NSLayoutYAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        pinYAnchor(origin: bottomAnchor, to: anchor, multiplier: multiplier)
-    }
-
-    @discardableResult public func pinLeadingTo(anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        pinXAnchor(origin: leadingAnchor, to: anchor, multiplier: multiplier)
-    }
-
-    @discardableResult public func pinTrailingTo(anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        pinXAnchor(origin: trailingAnchor, to: anchor, multiplier: multiplier)
-    }
-
-    @discardableResult public func pinCenterXTo(anchor: NSLayoutXAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        pinXAnchor(origin: centerXAnchor, to: anchor, multiplier: multiplier)
-    }
-
-    @discardableResult public func pinCenterYTo(anchor: NSLayoutYAxisAnchor, multiplier: CGFloat = 1) -> NSLayoutConstraint {
-        pinYAnchor(origin: centerYAnchor, to: anchor, multiplier: multiplier)
+    @discardableResult public func pinLastBaseline(to anchor: NSLayoutYAxisAnchor, inset: CGFloat = .zero) -> NSLayoutConstraint {
+        pinYAnchor(origin: lastBaselineAnchor, to: anchor, inset: inset)
     }
 }
 
@@ -136,6 +102,26 @@ extension UIView {
     @discardableResult public func set(width: CGFloat) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
         return widthAnchor.constraint(equalToConstant: width).with { $0.isActive = true }
+    }
+
+    @discardableResult public func set(minHeight: CGFloat) -> NSLayoutConstraint {
+        translatesAutoresizingMaskIntoConstraints = false
+        return heightAnchor.constraint(greaterThanOrEqualToConstant: minHeight).with { $0.isActive = true }
+    }
+
+    @discardableResult public func set(maxHeight: CGFloat) -> NSLayoutConstraint {
+        translatesAutoresizingMaskIntoConstraints = false
+        return heightAnchor.constraint(lessThanOrEqualToConstant: maxHeight).with { $0.isActive = true }
+    }
+
+    @discardableResult public func set(minWidth: CGFloat) -> NSLayoutConstraint {
+        translatesAutoresizingMaskIntoConstraints = false
+        return widthAnchor.constraint(greaterThanOrEqualToConstant: minWidth).with { $0.isActive = true }
+    }
+
+    @discardableResult public func set(maxWidth: CGFloat) -> NSLayoutConstraint {
+        translatesAutoresizingMaskIntoConstraints = false
+        return widthAnchor.constraint(lessThanOrEqualToConstant: maxWidth).with { $0.isActive = true }
     }
 
     @discardableResult public func setHeight(to dimension: NSLayoutDimension, multiplier: CGFloat = 1) -> NSLayoutConstraint {
@@ -159,6 +145,16 @@ extension UIView {
             $0.alignCenterY(with: view)
         }
     }
+
+    @discardableResult public func snapCenter(to layoutGuide: UILayoutGuide) -> Self { _snapCenter(to: layoutGuide) }
+    @discardableResult public func snapCenter(to view: UIView) -> Self { _snapCenter(to: view) }
+
+    @discardableResult private func _snapCenter(to a: some LayoutAnchorProvider) -> Self {
+        with {
+            $0.pinCenterX(to: a.centerXAnchor)
+            $0.pinCenterY(to: a.centerYAnchor)
+        }
+    }
 }
 
 // MARK: - Content Compression Resistance & Content Hugging Priorities
@@ -166,17 +162,11 @@ extension UIView {
 extension UIView {
 
     @discardableResult public func contentCompressionResistance(priority: UILayoutPriority, axis: NSLayoutConstraint.Axis) -> Self {
-        with {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.setContentCompressionResistancePriority(priority, for: axis)
-        }
+        with { $0.setContentCompressionResistancePriority(priority, for: axis) }
     }
 
     @discardableResult public func contentHugging(priority: UILayoutPriority, axis: NSLayoutConstraint.Axis) -> Self {
-        with {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.setContentHuggingPriority(priority, for: axis)
-        }
+        with { $0.setContentHuggingPriority(priority, for: axis) }
     }
 }
 
