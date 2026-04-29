@@ -4,8 +4,7 @@
 
 import UIKit
 
-// MARK: - BasePresentableViewController
-// MARK: - BasePresentableViewController
+// MARK: - BaseViewModelableViewController
 
 /// A base view controller that is driven by a View Model.
 /// It conforms to `ViewModelableViewController`, `ContentReloadable`, and `UICollectionViewable`.
@@ -41,6 +40,11 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
         asViewLifecycleable?.onViewWillLayoutSubviews()
     }
 
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        asViewLifecycleable?.onViewDidLayoutSubviews()
+    }
+
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         asViewLifecycleable?.onViewWillAppear()
@@ -59,6 +63,11 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         asViewLifecycleable?.onViewWillDisappear()
+    }
+
+    open override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        asViewLifecycleable?.onViewDidDisappear()
     }
 
     // MARK: - ContentReloadable

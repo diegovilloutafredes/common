@@ -11,12 +11,9 @@ extension UIView {
     /// - Parameter subviews: The subviews to add.
     @discardableResult public func subviews(_ subviews: [UIView]) -> Self {
         with { view in
-            switch self {
-            case let stack as UIStackView:
-                stack.views(subviews)
-            case let effectView as UIVisualEffectView:
-                subviews.forEach { effectView.contentView.addSubview($0) }
-            default:
+            if let containable = view as? SubviewsContainable {
+                containable.addContainedSubviews(subviews)
+            } else {
                 subviews.forEach { view.addSubview($0) }
             }
         }

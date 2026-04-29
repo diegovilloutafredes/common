@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseCell
-// MARK: - BaseCell
 
 /// A base collection view cell that conforms to `UIViewBuildable`.
 /// It provides a consistent setup for hosting a main view within the cell.
@@ -18,7 +17,7 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        subviews { mainView.setConstraints { $0.snap(to: $1) } }
+        contentView.subviews { mainView.setConstraints { $0.snap(to: $1) } }
         setupCell()
     }
 
@@ -29,7 +28,11 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
 
     public override class var requiresConstraintBasedLayout: Bool { true }
 
-    /// Sets up the cell.
-    /// Override this method to perform additional configuration during initialization.
+    /// Sets up the cell after `mainView` is installed.
+    /// Override to perform additional configuration (gesture recognizers, data binding, etc.).
+    ///
+    /// **Retain cycles:** closures stored inside subviews (e.g. `.onTap {}`) must capture `self`
+    /// weakly — the subview is owned by the cell's view hierarchy, creating a reference cycle
+    /// if `self` is captured strongly.
     open func setupCell() {}
 }
