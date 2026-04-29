@@ -4,18 +4,22 @@
 
 import UIKit
 
+private var uiSliderOnValueChangedKey: UInt8 = 0
+
 extension UISlider {
     private var onValueChangedHandler: Handler<Float>? {
-        get { associatedObject(for: "onValueChangedHandler") as? Handler<Float> }
-        set { set(associatedObject: newValue, for: "onValueChangedHandler") }
+        get { objc_getAssociatedObject(self, &uiSliderOnValueChangedKey) as? Handler<Float> }
+        set { objc_setAssociatedObject(self, &uiSliderOnValueChangedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     /// Sets a handler for value changed events and returns self (chainable).
+    /// Replaces any previously registered handler.
     /// - Parameter handler: The closure to execute with the new value.
     @discardableResult public func onValueChanged(_ handler: @escaping Handler<Float>) -> Self {
         with {
             $0.onValueChangedHandler = handler
-            addTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
+            $0.removeTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
+            $0.addTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
         }
     }
 

@@ -4,21 +4,25 @@
 
 import UIKit
 
+private var uiDatePickerOnValueChangedKey: UInt8 = 0
+
 extension UIDatePicker {
     private var onValueChangedHandler: Handler<Date>? {
-        get { associatedObject(for: "onValueChangedHandler") as? Handler<Date> }
-        set { set(associatedObject: newValue, for: "onValueChangedHandler") }
+        get { objc_getAssociatedObject(self, &uiDatePickerOnValueChangedKey) as? Handler<Date> }
+        set { objc_setAssociatedObject(self, &uiDatePickerOnValueChangedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 }
 
 extension UIDatePicker {
-    
+
     /// Sets a handler for value changed events.
+    /// Replaces any previously registered handler.
     /// - Parameter handler: The closure to execute when the date changes.
     @discardableResult public func onValueChanged(_ handler: @escaping Handler<Date>) -> Self {
         with {
             $0.onValueChangedHandler = handler
-            addTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
+            $0.removeTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
+            $0.addTarget($0, action: #selector(valueChanged(sender:)), for: .valueChanged)
         }
     }
 
