@@ -24,7 +24,7 @@ make build_xcframework
 ./build_xcframework.sh
 ```
 
-The framework targets **iOS 17.0+**, Swift 5.9+. The DemoApp targets iOS 26.0+. There are no unit tests or linting tools configured.
+The framework targets **iOS 16.0+**, Swift 5.9+. The DemoApp targets iOS 26.0+. There are no unit tests or linting tools configured.
 
 ## Distribution
 
@@ -237,10 +237,13 @@ private lazy var list = VList()
 - `.snapLeadTopTrail(to:)` / `.snapLeadBottomTrail(to:)` — three edges
 - `.snapLeadTrail(to:)` — horizontal edges only
 - `.alignCenter(with:)` — center in parent
+- `.snapCenter(to:)` — center in parent without affecting size (UIView or UILayoutGuide)
 - `.setWidth(to:, multiplier:)` / `.setHeight(to:, multiplier:)` — relative sizing
 - `.set(width:)` / `.set(height:)` — absolute sizing
+- `.set(minWidth:)` / `.set(maxWidth:)` / `.set(minHeight:)` / `.set(maxHeight:)` — inequality constraints
 - `.setRatio()` / `.setRatio(widthToHeight)` — aspect ratio (default 1:1)
 - `.pinTop(to:)` / `.pinBottom(to:)` — pin to specific anchor
+- `.pinFirstBaseline(to:)` / `.pinLastBaseline(to:)` — text baseline alignment
 
 **Fluent styling:**
 - `.backgroundColor(_:)`, `.textColor(_:)`, `.font(_:)`, `.textAlignment(_:)`
@@ -442,7 +445,11 @@ These exist in Common but see little to no production use:
 - **Compilation cache key includes DerivedData path**: Builds using a different `-derivedDataPath` (e.g. a temp directory) will miss the cache and build from scratch. Normal `xcodebuild clean` reuses the cache correctly.
 - **Xcode 26 explicit-module-build rejects `-debug-time-compilation`**: Injecting `-Xfrontend -debug-time-compilation` via `OTHER_SWIFT_FLAGS` fails with "unknown argument" in Xcode 26. Use `-warn-long-function-bodies=<ms>` and `-warn-long-expression-type-checking=<ms>` instead for type-check diagnostics.
 - **`onMoveToSuperview` lifecycle**: The `setConstraints` extension relies on swizzled `didMoveToSuperview`. If a view already has a superview when `setConstraints` is called, the handler executes immediately. Be aware of this when debugging layout issues.
+- **`setConstraints` stores only one handler per view**: Calling `setConstraints` twice on the same view overwrites the first handler via associated object. Always combine all constraints in a single `setConstraints { }` call — e.g., `view.setConstraints { $0.set(height: 28); if let w = width { $0.set(width: w) } }`.
+- **`UIEdgeInsets` convenience initializers**: Use `.init(all: n)` for uniform insets and `.init(horizontal: h, vertical: v)` for symmetric insets — both are defined in `UIEdgeInsets+DefaultValues.swift`. The standard memberwise initializer is still available.
 - **`UIViewBuilder` and `loadView`**: `BaseViewController.loadView()` sets `self.view = mainView`. Since `mainView` is a computed property, avoid expensive or stateful setup in it — use `lazy` container views instead.
+- **`VStack(alignment: .center)` collapses views with no intrinsic width**: With `.center` alignment, UIStackView centers each arranged subview at its own width. `UIView` and `UIStackView` have no intrinsic width, so they collapse to zero width and become invisible. Use `.fill` (default) to stretch subviews across the full stack width, and rely on `textAlignment(.center)` on labels for visual centering.
+- **Optional `UIView?` in stacks**: `ArrayBuilder` supports `buildExpression(_ item: T?) -> [T]`, so a `UIView?` or any `UIView` subclass optional can be used directly inside `VStack`/`HStack` without `if let`. Non-nil values are included; nil values are dropped from layout with no reserved space.
 
 ## Versioning
 
