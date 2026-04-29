@@ -4,12 +4,14 @@
 
 import UIKit
 
+private var uiTextFieldOnButtonPressedKey: UInt8 = 0
+
 extension UITextField {
     private var onButtonPressed: Handler<(UITextField, UIButton)>? {
-        get { associatedObject(for: "onButtonPressed") as? Handler<(UITextField, UIButton)> }
+        get { objc_getAssociatedObject(self, &uiTextFieldOnButtonPressedKey) as? Handler<(UITextField, UIButton)> }
         set {
             delegate = self
-            set(associatedObject: newValue, for: "onButtonPressed")
+            objc_setAssociatedObject(self, &uiTextFieldOnButtonPressedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
