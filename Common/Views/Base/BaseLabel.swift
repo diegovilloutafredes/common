@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseLabel
-// MARK: - BaseLabel
 
 /// A base label class that provides a standardized setup point.
 open class BaseLabel: UILabel {

@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseTextField
-// MARK: - BaseTextField
 
 /// A base text field class that provides a standardized setup point.
 open class BaseTextField: UITextField {

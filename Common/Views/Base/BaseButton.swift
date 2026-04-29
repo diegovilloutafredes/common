@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseButton
-// MARK: - BaseButton
 
 /// A base button class that provides a standardized setup point.
 open class BaseButton: UIButton {

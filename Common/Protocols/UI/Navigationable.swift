@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - PopType
-// MARK: - PopType
 /// Defines the strategy for popping view controllers from a navigation stack.
 public enum PopType {
     /// Pops the top-most view controller.
