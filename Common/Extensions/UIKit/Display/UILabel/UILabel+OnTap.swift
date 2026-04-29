@@ -4,20 +4,31 @@
 
 import UIKit
 
+private var uiLabelOnTapHandlerKey: UInt8 = 0
+private var uiLabelOnTapGestureRecognizerKey: UInt8 = 0
+
 extension UILabel {
     private var onTapHandler: Handler<(UILabel, UITapGestureRecognizer)>? {
-        get { associatedObject(for: "onTapHandler") as? Handler<(UILabel, UITapGestureRecognizer)> }
-        set { set(associatedObject: newValue, for: "onTapHandler") }
+        get { objc_getAssociatedObject(self, &uiLabelOnTapHandlerKey) as? Handler<(UILabel, UITapGestureRecognizer)> }
+        set { objc_setAssociatedObject(self, &uiLabelOnTapHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    private var onTapGestureRecognizer: UITapGestureRecognizer? {
+        get { objc_getAssociatedObject(self, &uiLabelOnTapGestureRecognizerKey) as? UITapGestureRecognizer }
+        set { objc_setAssociatedObject(self, &uiLabelOnTapGestureRecognizerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     /// Adds a tap gesture handler for the label text.
+    /// Replaces any previously registered handler and its gesture recognizer.
     /// - Parameter handler: The closure to execute when tapped, receiving the label and gesture.
     @discardableResult public func onTextTap(_ handler: @escaping Handler<(UILabel, UITapGestureRecognizer)>) -> Self {
         with {
+            if let old = $0.onTapGestureRecognizer { $0.removeGestureRecognizer(old) }
             $0.onTapHandler = handler
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(onTextTapped(sender:)))
+            let gesture = UITapGestureRecognizer(target: $0, action: #selector(onTextTapped(sender:)))
                 .numberOfTapsRequired(1)
-            addGestureRecognizer(gesture)
+            $0.addGestureRecognizer(gesture)
+            $0.onTapGestureRecognizer = gesture
         }
     }
 
