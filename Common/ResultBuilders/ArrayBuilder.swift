@@ -8,9 +8,6 @@
 public struct ArrayBuilder<T> {
 
     /// Builds a block of partial results into a single array.
-    public static func buildBlock(_ items: T...) -> [T] { items }
-
-    /// Builds a block of partial results into a single array.
     public static func buildBlock(_ items: [T]...) -> [T] { items.flatMap { $0 } }
 
     /// Builds an array for a conditional statement that evaluates to the first branch.
@@ -24,6 +21,9 @@ public struct ArrayBuilder<T> {
 
     /// Builds an array from an array expression.
     public static func buildExpression(_ item: [T]) -> [T] { item }
+
+    /// Builds an array from an optional expression; nil values are silently dropped.
+    public static func buildExpression(_ item: T?) -> [T] { item.map { [$0] } ?? [] }
 
     /// Builds an array from an optional result.
     public static func buildOptional(_ items: [T]?) -> [T] { items ?? [] }

@@ -12,10 +12,10 @@ extension UIView {
     @discardableResult public func subviews(_ subviews: [UIView]) -> Self {
         with { view in
             switch self {
-            case is UIStackView:
-                (view as! UIStackView).views(subviews)
-            case is UIVisualEffectView:
-                subviews.forEach { (view as! UIVisualEffectView).contentView.addSubview($0) }
+            case let stack as UIStackView:
+                stack.views(subviews)
+            case let effectView as UIVisualEffectView:
+                subviews.forEach { effectView.contentView.addSubview($0) }
             default:
                 subviews.forEach { view.addSubview($0) }
             }

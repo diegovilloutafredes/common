@@ -45,10 +45,13 @@ Converts a list of `UIView` instances into a **single parent `UIView`**. Used on
 Converts a list of `UIView` instances into an **array `[UIView]`**. Used inside stack view closures. Supports conditionals and optionals:
 
 ```swift
-// - Multiple views:    buildBlock(_ items: T...) -> [T]
-// - if/else:          buildEither(first:) / buildEither(second:)
-// - if let/optional:  buildOptional(_ items: [T]?) -> [T]
-// - Array expression: buildExpression(_ item: [T]) -> [T]
+// - Multiple views:      buildBlock(_ items: [T]...) -> [T]
+// - if/else:             buildEither(first:) / buildEither(second:)
+// - if let/optional:     buildOptional(_ items: [T]?) -> [T]
+// - for loop:            buildArray(_ components: [[T]]) -> [T]
+// - Array expression:    buildExpression(_ item: [T]) -> [T]
+// - Optional expression: buildExpression(_ item: T?) -> [T]  — nil values are silently dropped
+// - #available:          buildLimitedAvailability(_ component: [T]) -> [T]
 ```
 
 ### `UIView` convenience initializer
@@ -99,6 +102,11 @@ VStack {
     UILabel("Always visible")
     if showDetails { UILabel("Detail text") }
     if let subtitle = optionalSubtitle { UILabel(subtitle) }
+    if #available(iOS 16, *) { UILabel("iOS 16+ only") }
+
+    // Optional UIView? drops in directly — nil values are removed from layout with no gap
+    let badge: UIView? = hasUnread ? badgeView : nil
+    badge   // rendered when non-nil; skipped entirely when nil
 }
 ```
 
@@ -510,6 +518,7 @@ backgroundImageView.setConstraints { [weak self] in guard let self else { return
 | `.alignCenterX(with:)` | Horizontal center |
 | `.alignCenterY(with:)` | Vertical center |
 | `.alignCenter(with:)` | Both axes |
+| `.snapCenter(to:)` | Center in a UIView or UILayoutGuide without affecting size |
 
 ### Sizing
 
@@ -517,6 +526,10 @@ backgroundImageView.setConstraints { [weak self] in guard let self else { return
 |--------|-------------|
 | `.set(width:)` | Fixed width constant |
 | `.set(height:)` | Fixed height constant |
+| `.set(minWidth:)` | Minimum width (≥ constant) |
+| `.set(maxWidth:)` | Maximum width (≤ constant) |
+| `.set(minHeight:)` | Minimum height (≥ constant) |
+| `.set(maxHeight:)` | Maximum height (≤ constant) |
 | `.setWidth(to:multiplier:)` | Width relative to an anchor |
 | `.setHeight(to:multiplier:)` | Height relative to an anchor |
 | `.setRatio(_ ratio:)` | Aspect ratio (width/height); default `1.0` (square) |
@@ -574,12 +587,28 @@ label.contentCompressionResistance(priority: .required, axis: .vertical)
 label.contentHugging(priority: .defaultLow, axis: .horizontal)
 ```
 
+### `NSLayoutConstraint` fluent modifiers
+
+```swift
+// Adjust the constant after creation
+constraint.constant(8)
+
+// Lower priority so the constraint can be broken gracefully
+constraint.priority(.defaultHigh)
+
+// Chain both
+someView.widthAnchor.constraint(equalToConstant: 120)
+    .constant(120).priority(.defaultHigh)
+```
+
 ### Do's and Don'ts
 
 - **Do** use `setConstraints` — it handles `translatesAutoresizingMaskIntoConstraints` and deferred activation.
 - **Do** use `snap(to: $1.safeAreaLayoutGuide)` for root-level content.
+- **Do** combine all constraints for a view into a **single** `setConstraints { }` call — calling it twice overwrites the first handler (only one handler is stored per view via associated object).
 - **Don't** activate constraints manually via `NSLayoutConstraint.activate` — except inside `UIScrollView.with { }` closures for content layout guide binding (see UIScrollView wrapping in section 2).
 - **Don't** confuse `.setRatio()` (1:1 square) with `.setRatio(w/h)` — always be explicit.
+- **Don't** use the default `.fill` distribution in HStack/VStack when arranged subviews have explicit size constraints — it will silently stretch one view to fill remaining space. Use `.equalSpacing` when each child keeps its own size.
 
 ---
 
@@ -1652,6 +1681,18 @@ CGFloat.DefaultValues.Cell.cornerRadius        // 4
 ```swift
 UIEdgeInsets.DefaultValues.StackView.margins
 // UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+```
+
+### `UIEdgeInsets` convenience initializers
+
+```swift
+// Uniform inset on all sides
+UIEdgeInsets(all: 12)                      // top: 12, left: 12, bottom: 12, right: 12
+
+// Symmetric horizontal / vertical insets
+UIEdgeInsets(horizontal: 16, vertical: 8)  // top: 8, left: 16, bottom: 8, right: 16
+UIEdgeInsets(horizontal: 16)               // top: 0, left: 16, bottom: 0, right: 16
+UIEdgeInsets(vertical: 8)                  // top: 8, left: 0, bottom: 8, right: 0
 ```
 
 ### `String.DefaultValues`

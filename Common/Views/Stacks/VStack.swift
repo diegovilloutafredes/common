@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - VStack
-// MARK: - VStack
 
 /// A convenience class for creating vertical stack views.
 public final class VStack: Stack {
