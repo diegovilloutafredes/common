@@ -18,18 +18,17 @@ open class BaseView: UIView, UIViewBuildable {
     /// Initializes a new view.
     public init() {
         super.init(frame: .zero)
-        let content = mainView
-        addSubview(content)
-        // setConstraints handlers fire synchronously during addSubview (via didMoveToSuperview).
-        // If the subclass already set up constraints, TAMIC is false — skip to avoid duplicates.
-        if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: self) }
-        setupView()
+        setup()
     }
 
     /// Initializes a new view with the specified frame.
     /// - Parameter frame: The frame rectangle for the view.
     override public init(frame: CGRect) {
         super.init(frame: frame)
+        setup()
+    }
+
+    private func setup() {
         let content = mainView
         addSubview(content)
         // setConstraints handlers fire synchronously during addSubview (via didMoveToSuperview).
@@ -45,7 +44,7 @@ open class BaseView: UIView, UIViewBuildable {
 
     public override class var requiresConstraintBasedLayout: Bool { true }
 
-    /// Sejts up the view.
+    /// Sets up the view.
     /// Default implementation sets the background color to clear.
     open func setupView() { backgroundColor(.clear) }
 }

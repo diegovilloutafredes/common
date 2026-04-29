@@ -3,7 +3,6 @@
 //
 
 // MARK: - ViewLifecycleable
-// MARK: - ViewLifecycleable
 /// A protocol for objects that can respond to view lifecycle events.
 public protocol ViewLifecycleable: AnyObject {
     
@@ -27,6 +26,9 @@ public protocol ViewLifecycleable: AnyObject {
     
     /// Notifies the object that its view is about to disappear.
     func onViewWillDisappear()
+
+    /// Notifies the object that its view has disappeared.
+    func onViewDidDisappear()
 }
 
 // MARK: - Default Impl
@@ -38,4 +40,5 @@ extension ViewLifecycleable {
     public func onViewDidLayoutSubviews() {}
     public func onViewDidAppear() {}
     public func onViewWillDisappear() {}
+    public func onViewDidDisappear() {}
 }
