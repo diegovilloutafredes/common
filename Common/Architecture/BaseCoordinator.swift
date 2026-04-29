@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseCoordinator
-// MARK: - BaseCoordinator
 
 /// A base implementation of the `Coordinator` protocol that also conforms to `BaseModuleDelegate`.
 /// It manages a `UINavigationController` and an optional completion handler.
@@ -98,5 +97,5 @@ extension BaseCoordinator: Dismissable {}
 extension BaseCoordinator: Navigationable {}
 
 
-// MARK: - Dismissable
+// MARK: - Presentable
 extension BaseCoordinator: Presentable {}

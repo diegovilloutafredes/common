@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseReusableView
-// MARK: - BaseReusableView
 
 /// A base collection reusable view (e.g., for headers or footers) that conforms to `UIViewBuildable`.
 /// It provides a consistent setup for hosting a main view.

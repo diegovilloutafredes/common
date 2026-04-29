@@ -3,7 +3,6 @@
 //
 
 // MARK: - ViewModelable
-// MARK: - ViewModelable
 /// A base protocol for objects that are associated with a view model.
 public protocol ViewModelable: AnyObject {
     /// The type of view model associated with the object.

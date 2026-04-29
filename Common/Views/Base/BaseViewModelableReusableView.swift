@@ -3,7 +3,6 @@
 //
 
 // MARK: - BaseViewModelableReusableView
-// MARK: - BaseViewModelableReusableView
 
 /// A base reusable view that is driven by a View Model.
 open class BaseViewModelableReusableView<ViewModelType>: ViewModelableReusableView {

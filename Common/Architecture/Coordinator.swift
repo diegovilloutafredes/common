@@ -3,7 +3,6 @@
 //
 
 // MARK: - Coordinator
-// MARK: - Coordinator
 
 /// A protocol defining the responsibilities of a Coordinator.
 /// Coordinators are responsible for managing navigation flow and view controller hierarchy.
