@@ -4,12 +4,14 @@
 
 import UIKit
 
+private var onViewDidLoadActionKey: UInt8 = 0
+
 extension UIViewController {
     private var onViewDidLoadAction: Handler<UIViewController>? {
-        get { associatedObject(for: "onViewDidLoadAction") as? Handler<UIViewController> }
-        set { swizzleViewDidLoadIfNeeded(); set(associatedObject: newValue, for: "onViewDidLoadAction") }
+        get { objc_getAssociatedObject(self, &onViewDidLoadActionKey) as? Handler<UIViewController> }
+        set { _ = Self._installViewDidLoad; objc_setAssociatedObject(self, &onViewDidLoadActionKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
-    
+
 // MARK: - onViewDidLoad
     /// Sets a closure to be executed when `viewDidLoad` is called and returns self (chainable).
     /// - Parameter onViewDidLoad: The closure to execute.
@@ -20,39 +22,25 @@ extension UIViewController {
 
 // MARK: - onViewDidLoad Swizzle
 extension UIViewController {
-    private static var notSwizzledViewDidLoad = true
+    private static let _installViewDidLoad: Void = {
+        let cls = UIViewController.self
+        guard let method = class_getInstanceMethod(cls, #selector(viewDidLoad)) else {
+            return print("Could not get `viewDidLoad()` selector.")
+        }
+        guard let originalMethod = class_getInstanceMethod(cls, #selector(originalViewDidLoad)) else {
+            return print("Could not get original `originalViewDidLoad()` selector.")
+        }
+        guard let swizzledMethod = class_getInstanceMethod(cls, #selector(swizzledViewDidLoad)) else {
+            return print("Could not get swizzled `swizzledViewDidLoad()` selector.")
+        }
+        method_exchangeImplementations(method, originalMethod)
+        method_exchangeImplementations(method, swizzledMethod)
+    }()
+
     @objc private func originalViewDidLoad() {}
 
     @objc private func swizzledViewDidLoad() {
         originalViewDidLoad()
         if isViewLoaded { onViewDidLoadAction?(self) }
-    }
-
-    private func swizzleViewDidLoadIfNeeded() {
-        guard Self.notSwizzledViewDidLoad else { return }
-        
-        guard let viewControllerClass: AnyClass = object_getClass(self) else {
-            return print("Could not get `UIViewController` class.")
-        }
-        
-        let selector = #selector(viewDidLoad)
-        guard let method = class_getInstanceMethod(viewControllerClass, selector) else {
-            return print("Could not get `viewDidLoad()` selector.")
-        }
-        
-        let originalSelector = #selector(originalViewDidLoad)
-        guard let originalMethod = class_getInstanceMethod(viewControllerClass, originalSelector) else {
-            return print("Could not get original `originalViewDidLoad()` selector.")
-        }
-        
-        let swizzledSelector = #selector(swizzledViewDidLoad)
-        guard let swizzledMethod = class_getInstanceMethod(viewControllerClass, swizzledSelector) else {
-            return print("Could not get swizzled `swizzledViewDidLoad()` selector.")
-        }
-        
-        method_exchangeImplementations(method, originalMethod)
-        method_exchangeImplementations(method, swizzledMethod)
-        
-        Self.notSwizzledViewDidLoad = false
     }
 }
