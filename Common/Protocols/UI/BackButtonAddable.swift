@@ -21,14 +21,16 @@ extension BackButtonAddable {
     public func addBackButton(_ icon: UIImage? = BackButtonAddableDefaultValues.icon, handler: CompletionHandler) { addBackButton(icon) { handler?() } }
 }
 
+private var backButtonPressedHandlerKey: UInt8 = 0
+
 extension UIViewController {
     public enum BackButtonAddableDefaultValues {
         public static var icon: UIImage? { .symbol("arrow.left") }
     }
 
     private var onBackButtonPressedHandler: Action? {
-        get { associatedObject(for: "onBackButtonPressedHandler") as? Action }
-        set { set(associatedObject: newValue, for: "onBackButtonPressedHandler") }
+        get { objc_getAssociatedObject(self, &backButtonPressedHandlerKey) as? Action }
+        set { objc_setAssociatedObject(self, &backButtonPressedHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     @discardableResult public func addBackButton(_ icon: UIImage? = BackButtonAddableDefaultValues.icon, action: @escaping Action) -> Self {

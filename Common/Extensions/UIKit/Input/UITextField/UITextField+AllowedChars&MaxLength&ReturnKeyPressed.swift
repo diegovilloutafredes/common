@@ -51,33 +51,37 @@ extension UITextField: @retroactive UITextFieldDelegate {
 }
 
 // MARK: - Convenience
+private var uiTextFieldAllowedCharsKey: UInt8 = 0
+private var uiTextFieldMaxLengthKey: UInt8 = 0
+private var uiTextFieldOnReturnKeyPressedKey: UInt8 = 0
+
 extension UITextField {
     private var allowedChars: String? {
-        get { associatedObject(for: "allowedChars") as? String }
+        get { objc_getAssociatedObject(self, &uiTextFieldAllowedCharsKey) as? String }
         set {
             delegate = self
             autocorrectionType = .no
-            set(associatedObject: newValue, for: "allowedChars")
+            objc_setAssociatedObject(self, &uiTextFieldAllowedCharsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
 
 extension UITextField {
     private var maxLength: Int {
-        get { associatedObject(for: "maxLength") as? Int ?? Int.max }
+        get { objc_getAssociatedObject(self, &uiTextFieldMaxLengthKey) as? Int ?? Int.max }
         set {
             delegate = self
-            set(associatedObject: newValue, for: "maxLength")
+            objc_setAssociatedObject(self, &uiTextFieldMaxLengthKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
 
 extension UITextField {
     private var onReturnKeyPressed: Handler<UITextField>? {
-        get { associatedObject(for: "onReturnKeyPressed") as? Handler<UITextField> }
+        get { objc_getAssociatedObject(self, &uiTextFieldOnReturnKeyPressedKey) as? Handler<UITextField> }
         set {
             delegate = self
-            set(associatedObject: newValue, for: "onReturnKeyPressed")
+            objc_setAssociatedObject(self, &uiTextFieldOnReturnKeyPressedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
