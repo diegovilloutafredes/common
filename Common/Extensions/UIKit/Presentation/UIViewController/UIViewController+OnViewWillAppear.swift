@@ -4,12 +4,14 @@
 
 import UIKit
 
+private var onViewWillAppearActionKey: UInt8 = 0
+
 extension UIViewController {
     private var onViewWillAppearAction: Handler<UIViewController>? {
-        get { associatedObject(for: "onViewWillAppearAction") as? Handler<UIViewController> }
-        set { swizzleViewWillAppearIfNeeded(); set(associatedObject: newValue, for: "onViewWillAppearAction") }
+        get { objc_getAssociatedObject(self, &onViewWillAppearActionKey) as? Handler<UIViewController> }
+        set { _ = Self._installViewWillAppear; objc_setAssociatedObject(self, &onViewWillAppearActionKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
-    
+
 // MARK: - onViewWillAppear
     /// Sets a closure to be executed when `viewWillAppear` is called and returns self (chainable).
     /// - Parameter onViewWillAppear: The closure to execute.
@@ -20,39 +22,25 @@ extension UIViewController {
 
 // MARK: - onViewWillAppear Swizzle
 extension UIViewController {
-    private static var notSwizzledViewWillAppear = true
-    @objc private func originalViewWillAppear() {}
-
-    @objc private func swizzledViewWillAppear() {
-        originalViewWillAppear()
-        if isViewLoaded { onViewWillAppearAction?(self) }
-    }
-
-    private func swizzleViewWillAppearIfNeeded() {
-        guard Self.notSwizzledViewWillAppear else { return }
-
-        guard let viewControllerClass: AnyClass = object_getClass(self) else {
-            return print("Could not get `UIViewController` class.")
-        }
-
-        let selector = #selector(viewWillAppear(_:))
-        guard let method = class_getInstanceMethod(viewControllerClass, selector) else {
+    private static let _installViewWillAppear: Void = {
+        let cls = UIViewController.self
+        guard let method = class_getInstanceMethod(cls, #selector(viewWillAppear(_:))) else {
             return print("Could not get `viewWillAppear()` selector.")
         }
-
-        let originalSelector = #selector(originalViewWillAppear)
-        guard let originalMethod = class_getInstanceMethod(viewControllerClass, originalSelector) else {
+        guard let originalMethod = class_getInstanceMethod(cls, #selector(originalViewWillAppear(_:))) else {
             return print("Could not get original `originalViewWillAppear()` selector.")
         }
-
-        let swizzledSelector = #selector(swizzledViewWillAppear)
-        guard let swizzledMethod = class_getInstanceMethod(viewControllerClass, swizzledSelector) else {
+        guard let swizzledMethod = class_getInstanceMethod(cls, #selector(swizzledViewWillAppear(_:))) else {
             return print("Could not get swizzled `swizzledViewWillAppear()` selector.")
         }
-
         method_exchangeImplementations(method, originalMethod)
         method_exchangeImplementations(method, swizzledMethod)
+    }()
 
-        Self.notSwizzledViewWillAppear = false
+    @objc private func originalViewWillAppear(_ animated: Bool) {}
+
+    @objc private func swizzledViewWillAppear(_ animated: Bool) {
+        originalViewWillAppear(animated)
+        if isViewLoaded { onViewWillAppearAction?(self) }
     }
 }

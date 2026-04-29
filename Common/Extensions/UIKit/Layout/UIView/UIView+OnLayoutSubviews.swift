@@ -4,11 +4,13 @@
 
 import UIKit
 
-// MARK: - onMoveToSuperview
+private var onLayoutSubviewsKey: UInt8 = 0
+
+// MARK: - onLayoutSubviews
 extension UIView {
     private var onLayoutSubviews: ViewHandler? {
-        get { associatedObject(for: "onLayoutSubviews") as? ViewHandler }
-        set { swizzleIfNeeded(); set(associatedObject: newValue, for: "onLayoutSubviews") }
+        get { objc_getAssociatedObject(self, &onLayoutSubviewsKey) as? ViewHandler }
+        set { _ = Self._installLayoutSubviews; objc_setAssociatedObject(self, &onLayoutSubviewsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     /// Sets a handler to execute when layoutSubviews is called and returns self (chainable).
@@ -20,44 +22,27 @@ extension UIView {
 
 // MARK: - onLayoutSubviews Swizzle
 extension UIView {
-    private static var notSwizzled = true
+    private static let _installLayoutSubviews: Void = {
+        let cls = UIView.self
+        guard let method = class_getInstanceMethod(cls, #selector(layoutSubviews)) else {
+            return print("Could not get `layoutSubviews()` selector.")
+        }
+        guard let originalMethod = class_getInstanceMethod(cls, #selector(originalLayoutSubviews)) else {
+            return print("Could not get original `originalLayoutSubviews()` selector.")
+        }
+        guard let swizzledMethod = class_getInstanceMethod(cls, #selector(swizzledLayoutSubviews)) else {
+            return print("Could not get swizzled `swizzledLayoutSubviews()` selector.")
+        }
+        method_exchangeImplementations(method, originalMethod)
+        method_exchangeImplementations(method, swizzledMethod)
+    }()
 
     @objc private func originalLayoutSubviews() {}
 
     @objc private func swizzledLayoutSubviews() {
         originalLayoutSubviews()
-        onLayoutSubviews?(self)
+        guard let handler = onLayoutSubviews else { return }
+        handler(self)
         onLayoutSubviews = nil
-    }
-
-    private func swizzleIfNeeded() {
-        guard Self.notSwizzled else { return }
-
-        guard let viewClass: AnyClass = object_getClass(self) else {
-            return print("Could not get `UIView` class.")
-        }
-
-        let selector = #selector(layoutSubviews)
-
-        guard let method = class_getInstanceMethod(viewClass, selector) else {
-            return print("Could not get `layoutSubviews()` selector.")
-        }
-
-        let originalSelector = #selector(originalLayoutSubviews)
-
-        guard let originalMethod = class_getInstanceMethod(viewClass, originalSelector) else {
-            return print("Could not get original `originalLayoutSubviews()` selector.")
-        }
-
-        let swizzledSelector = #selector(swizzledLayoutSubviews)
-
-        guard let swizzledMethod = class_getInstanceMethod(viewClass, swizzledSelector) else {
-            return print("Could not get swizzled `swizzledLayoutSubviews()` selector.")
-        }
-
-        method_exchangeImplementations(method, originalMethod)
-        method_exchangeImplementations(method, swizzledMethod)
-
-        Self.notSwizzled = false
     }
 }
