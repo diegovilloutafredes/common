@@ -37,3 +37,6 @@ XCFramework/
 # Documentation
 # Jazzy docs are automatically generated and deployed to the gh-pages branch by CI.
 docs/
+
+# Claude Code local project settings
+.claude/
