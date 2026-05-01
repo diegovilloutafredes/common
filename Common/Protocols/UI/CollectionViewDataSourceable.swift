@@ -3,8 +3,8 @@
 //
 
 // MARK: - CollectionViewDataSourceable
-// MARK: - CollectionViewDataSourceable
 /// A protocol that defines the data source requirements for a collection view.
+@MainActor
 public protocol CollectionViewDataSourceable: AnyObject {
     
     /// Returns the number of sections in the collection view.
@@ -33,6 +33,14 @@ public protocol CollectionViewDataSourceable: AnyObject {
     ///   - section: The section index.
     ///   - index: The item index.
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String
+
+    /// Returns the view model for the footer item in the specified section.
+    /// - Parameter section: The section index.
+    func onFooterItemDataSourceRequested(in section: Int) -> ViewModel?
+
+    /// Returns the reuse identifier for the footer in the specified section.
+    /// - Parameter section: The section index.
+    func onFooterItemReuseIdentifierRequested(in section: Int) -> String
 }
 
 // MARK: - Default implementation
@@ -40,4 +48,6 @@ extension CollectionViewDataSourceable {
     public func getNumberOfSections() -> Int { 1 }
     public func onHeaderItemDataSourceRequested(in section: Int) -> ViewModel? { nil }
     public func onHeaderItemReuseIdentifierRequested(in section: Int) -> String { .empty }
+    public func onFooterItemDataSourceRequested(in section: Int) -> ViewModel? { nil }
+    public func onFooterItemReuseIdentifierRequested(in section: Int) -> String { .empty }
 }

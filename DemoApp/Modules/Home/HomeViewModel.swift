@@ -18,6 +18,7 @@ protocol HomeViewModelProtocol: ViewModel, CollectionViewable {
 }
 
 // MARK: - HomeViewModel
+@MainActor
 final class HomeViewModel {
     let title = "Common Demo"
     weak var coordinator: AppCoordinator?
