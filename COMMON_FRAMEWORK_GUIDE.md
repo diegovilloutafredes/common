@@ -1849,6 +1849,10 @@ string.asCurrency
 string.asDecimalNumber
 string.masked()
 string.maskedEmail
+string.trimmed   // trimmingCharacters(in: .whitespacesAndNewlines)
+
+// Collections
+array[safe: index]   // -> Element?; nil instead of out-of-bounds crash
 ```
 
 ---
