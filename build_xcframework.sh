@@ -12,19 +12,25 @@ rm -rf $ARCHIVES_DIR
 echo "Archiving for iOS..."
 xcodebuild archive -quiet \
 -scheme $SCHEME \
+-project Common.xcodeproj \
 -archivePath $ARCHIVES_DIR/$SCHEME-iphoneos.xcarchive \
 -sdk iphoneos \
 BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
-SKIP_INSTALL=NO
+SKIP_INSTALL=NO \
+CODE_SIGNING_ALLOWED=NO \
+CODE_SIGN_IDENTITY="-"
 
 # Archive for iOS Simulator
 echo "Archiving for iOS Simulator..."
 xcodebuild archive -quiet \
 -scheme $SCHEME \
+-project Common.xcodeproj \
 -archivePath $ARCHIVES_DIR/$SCHEME-iphonesimulator.xcarchive \
 -sdk iphonesimulator \
 BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
-SKIP_INSTALL=NO
+SKIP_INSTALL=NO \
+CODE_SIGNING_ALLOWED=NO \
+CODE_SIGN_IDENTITY="-"
 
 rm -rf $XCFRAMEWORK_DIR/$SCHEME.xcframework
 

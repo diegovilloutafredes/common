@@ -14,37 +14,34 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
     exit 1
 fi
 
-echo "Preparing a $BUMP_TYPE release..."
-
-# Check if there are changes to commit
-if [[ -z $(git status -s) ]]; then
-    echo "No changes to commit. Make sure you have modified some files."
+if [[ -n $(git status --porcelain) ]]; then
+    echo "Error: Working directory is not clean. Commit or stash changes first."
+    git status -s
     exit 1
 fi
 
-echo "Files that will be staged:"
-git status -s
+LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+VERSION=${LATEST_TAG#v}
 
-# Prompt for a commit message
-read -p "Enter a brief commit message for this $BUMP_TYPE release: " COMMIT_MSG
+IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
 
-if [[ -z "$COMMIT_MSG" ]]; then
-    echo "Commit message cannot be empty. Aborting."
-    exit 1
-fi
+case "$BUMP_TYPE" in
+    major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+    minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+    patch) PATCH=$((PATCH + 1)) ;;
+esac
 
-FINAL_MSG="$COMMIT_MSG #$BUMP_TYPE"
+NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 
-git add .
-
-echo "Committing with message: '$FINAL_MSG'"
-git commit -m "$FINAL_MSG"
-
-read -p "Push to origin/main and trigger release? [y/N] " CONFIRM
+echo "Current version: $LATEST_TAG"
+echo "Next version:    $NEW_VERSION ($BUMP_TYPE bump)"
+echo ""
+read -p "Tag and push $NEW_VERSION? [y/N] " CONFIRM
 if [[ "$CONFIRM" != "y" && "$CONFIRM" != "Y" ]]; then
-    echo "Aborted. Commit was made locally but not pushed."
+    echo "Aborted."
     exit 0
 fi
 
-git push origin main
-echo "Done! GitHub Actions will now build the XCFramework, tag the new $BUMP_TYPE version, and create the release."
+git tag -a "$NEW_VERSION" -m "$NEW_VERSION"
+git push origin "$NEW_VERSION"
+echo "Done! GitHub Actions will now build the XCFramework and create the release for $NEW_VERSION."
