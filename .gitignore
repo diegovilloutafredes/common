@@ -40,3 +40,4 @@ docs/
 
 # Claude Code local project settings
 .claude/
+openspec/
