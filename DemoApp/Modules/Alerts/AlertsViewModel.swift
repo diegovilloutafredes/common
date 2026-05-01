@@ -5,12 +5,35 @@
 
 import Common
 
-// MARK: - AlertsViewModelProtocol
-protocol AlertsViewModelProtocol: ViewModel {
-    var title: String { get }
+// MARK: - CustomAlertStyle
+enum CustomAlertStyle {
+    case basic
+    case withCancel
+    case noDismissOnBackground
+    case customContent
 }
 
-// MARK: - AlertsViewModelImpl
-final class AlertsViewModelImpl: AlertsViewModelProtocol {
+// MARK: - AlertsViewModelProtocol
+@MainActor
+protocol AlertsViewModelProtocol: ViewModel {
+    var title: String { get }
+    func onShowCustomAlertRequested(style: CustomAlertStyle)
+}
+
+// MARK: - AlertsViewModel
+@MainActor
+final class AlertsViewModel {
     let title = "Alerts & Feedback"
+    private weak var coordinator: AppCoordinator?
+
+    init(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
+}
+
+// MARK: - AlertsViewModelProtocol
+extension AlertsViewModel: AlertsViewModelProtocol {
+    func onShowCustomAlertRequested(style: CustomAlertStyle) {
+        coordinator?.showCustomAlert(style: style)
+    }
 }

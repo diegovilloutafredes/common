@@ -18,7 +18,14 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
         Toast.present(with: "This is a Toast message", duration: .medium)
     }
 
-    // MARK: - Modal Feedback
+    private lazy var activityButton = makeButton(title: "Activity Indicator (2s)", color: .systemPurple) { [weak self] in
+        self?.startActivityIndicator()
+        dispatchOnMainAfter(.now() + 2) { [weak self] in
+            self?.stopActivityIndicator()
+        }
+    }
+
+    // MARK: - System Dialogs
     private lazy var alertButton = makeButton(title: "Show System Alert", color: .systemOrange) { [weak self] in
         self?.presentAlertView(
             type: .customAlert(title: "Alert", message: "This is a system alert dialog."),
@@ -39,11 +46,21 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
         )
     }
 
-    private lazy var activityButton = makeButton(title: "Activity Indicator (2s)", color: .systemPurple) { [weak self] in
-        self?.startActivityIndicator()
-        dispatchOnMainAfter(.now() + 2) { [weak self] in
-            self?.stopActivityIndicator()
-        }
+    // MARK: - Custom Modal Alerts
+    private lazy var basicCustomAlertButton = makeButton(title: "Basic Alert (icon + confirm)", color: .systemIndigo) { [weak self] in
+        self?.viewModel.onShowCustomAlertRequested(style: .basic)
+    }
+
+    private lazy var cancelCustomAlertButton = makeButton(title: "Alert with Cancel Button", color: .systemPink) { [weak self] in
+        self?.viewModel.onShowCustomAlertRequested(style: .withCancel)
+    }
+
+    private lazy var mandatoryCustomAlertButton = makeButton(title: "Mandatory (no background tap)", color: .brown) { [weak self] in
+        self?.viewModel.onShowCustomAlertRequested(style: .noDismissOnBackground)
+    }
+
+    private lazy var customContentAlertButton = makeButton(title: "Custom Content View", color: .systemTeal) { [weak self] in
+        self?.viewModel.onShowCustomAlertRequested(style: .customContent)
     }
 
     @UIViewBuilder
@@ -61,17 +78,29 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
                     VStack(spacing: 10) {
                         snackbarButton
                         toastButton
+                        activityButton
                     }
                 }
                 sectionCard(
-                    title: "Modal Feedback",
+                    title: "System Dialogs",
                     icon: "exclamationmark.triangle.fill",
-                    description: "Blocking dialogs that require user attention or action before continuing."
+                    description: "Native UIAlertController dialogs. Blocking, modal, with optional accept and cancel actions."
                 ) {
                     VStack(spacing: 10) {
                         alertButton
                         alertWithActionsButton
-                        activityButton
+                    }
+                }
+                sectionCard(
+                    title: "Custom Modal Alerts",
+                    icon: "rectangle.center.inset.filled",
+                    description: "CustomAlertViewController accepts any UIView as content — from the standard AlertView to fully bespoke layouts. Routed through the coordinator."
+                ) {
+                    VStack(spacing: 10) {
+                        basicCustomAlertButton
+                        cancelCustomAlertButton
+                        mandatoryCustomAlertButton
+                        customContentAlertButton
                     }
                 }
             }.setConstraints {
@@ -111,7 +140,7 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
         .round(radius: 12)
     }
 
-    private func makeButton(title: String, color: UIColor, action: @escaping () -> Void) -> UIButton {
+    private func makeButton(title: String, color: UIColor, action: @escaping Action) -> UIButton {
         UIButton(
             configuration: .filled()
                 .with {
