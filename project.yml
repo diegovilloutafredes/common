@@ -78,16 +78,32 @@ schemes:
     build:
       targets:
         Common: all
+        CommonTests: [test]
+    test:
+      config: Debug
+      targets:
+        - CommonTests
     archive:
       config: Release
   DemoApp:
     build:
       targets:
         DemoApp: all
+        DemoAppUITests: [test]
     run:
       config: Debug
     test:
       config: Debug
+      targets:
+        - DemoAppUITests
+    archive:
+      config: Release
+  DemoApp-Release:
+    build:
+      targets:
+        DemoApp: all
+    run:
+      config: Release
     archive:
       config: Release
 
@@ -169,3 +185,32 @@ targets:
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1"
         IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+
+  CommonTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - Tests/CommonTests
+    dependencies:
+      - target: Common
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        PRODUCT_BUNDLE_IDENTIFIER: com.trust.CommonTests
+        GENERATE_INFOPLIST_FILE: YES
+
+  DemoAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - Tests/DemoAppUITests
+    dependencies:
+      - target: DemoApp
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        PRODUCT_BUNDLE_IDENTIFIER: com.trust.DemoAppUITests
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1"

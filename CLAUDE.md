@@ -18,13 +18,16 @@ xcodebuild build -scheme Common -project Common.xcodeproj -destination 'generic/
 # Build DemoApp
 xcodebuild build -scheme DemoApp -project Common.xcodeproj -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO
 
+# Run unit tests
+xcodebuild test -scheme Common -project Common.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 17' CODE_SIGNING_ALLOWED=NO
+
 # Build XCFramework (device + simulator, output to XCFramework/)
 make build_xcframework
 # or directly:
 ./build_xcframework.sh
 ```
 
-The framework targets **iOS 16.0+**, Swift 5.9+. The DemoApp targets iOS 26.0+. There are no unit tests or linting tools configured.
+The framework targets **iOS 16.0+**, Swift 5.9+. The DemoApp targets iOS 26.0+. Unit tests live in `Tests/CommonTests/` and run via the `Common` scheme's test action.
 
 ## Distribution
 
@@ -32,7 +35,7 @@ The project is distributable via **Swift Package Manager**. The `Package.swift` 
 
 ## CI
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes/PRs to `main` and `develop`:
+GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes/PRs to `main`:
 - Builds the library for generic iOS
 - Builds the DemoApp for simulator
 - Generates Jazzy documentation on `main` pushes
@@ -81,6 +84,20 @@ Views are built using `@UIViewBuilder` (a result builder) with `VStack`, `HStack
 ### Networking (`Network/`)
 
 `BaseClient` provides the HTTP networking base. `HTTPService` handles actual requests. Implement endpoints conforming to the networking protocols and call `request(from:_:result:)`. Supports multipart uploads.
+
+### Async Networking (`Network/`)
+
+`AsyncBaseClient` provides the async/await networking base — subclass it for structured concurrency:
+
+```swift
+final class PostClient: AsyncBaseClient {
+    func fetchPosts() async throws -> [Post] {
+        try await request(PostEndpoint.posts)
+    }
+}
+```
+
+`HTTPService+Async.swift` adds `async throws` overloads to the shared `HTTPService`.
 
 ### Storage (`Storage/`)
 
@@ -243,6 +260,9 @@ private lazy var list = VList()
 - `.set(minWidth:)` / `.set(maxWidth:)` / `.set(minHeight:)` / `.set(maxHeight:)` — inequality constraints
 - `.setRatio()` / `.setRatio(widthToHeight)` — aspect ratio (default 1:1)
 - `.pinTop(to:)` / `.pinBottom(to:)` — pin to specific anchor
+- `.pinLeading(to:, inset:)` / `.pinTrailing(to:, inset:)` — pin individual horizontal edges
+- `.snapBottom(to:, inset:)` — pin bottom edge to view or layout guide
+- `.snapBottomTrail(to:, insets:)` — two edges: bottom + trailing
 - `.pinFirstBaseline(to:)` / `.pinLastBaseline(to:)` — text baseline alignment
 
 **Fluent styling:**
@@ -447,7 +467,8 @@ These exist in Common but see little to no production use:
 - **`onMoveToSuperview` lifecycle**: The `setConstraints` extension relies on swizzled `didMoveToSuperview`. If a view already has a superview when `setConstraints` is called, the handler executes immediately. Be aware of this when debugging layout issues.
 - **`setConstraints` stores only one handler per view**: Calling `setConstraints` twice on the same view overwrites the first handler via associated object. Always combine all constraints in a single `setConstraints { }` call — e.g., `view.setConstraints { $0.set(height: 28); if let w = width { $0.set(width: w) } }`.
 - **`UIEdgeInsets` convenience initializers**: Use `.init(all: n)` for uniform insets and `.init(horizontal: h, vertical: v)` for symmetric insets — both are defined in `UIEdgeInsets+DefaultValues.swift`. The standard memberwise initializer is still available.
-- **`UIViewBuilder` and `loadView`**: `BaseViewController.loadView()` sets `self.view = mainView`. Since `mainView` is a computed property, avoid expensive or stateful setup in it — use `lazy` container views instead.
+- **`UIViewBuilder` and `loadView`**: `BaseViewController.loadView()` wraps `mainView` in a transparent container and sets that as `self.view`. This means `self.view !== mainView`. The container is necessary: `setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }` fires via `didMoveToSuperview`, and it needs `$1` to be `self.view` (which receives UIKit's safe-area updates). If `mainView` were `self.view` directly, the constraint would fire against UIKit's internal parent view, whose `safeAreaLayoutGuide` is not updated with nav-bar insets — cells land under the navigation bar and become non-hittable.
+- **`BaseCollectionViewableViewController<ViewModelType>` — zero-boilerplate collection-view base class**: `BaseViewModelableViewController` no longer unconditionally conforms to `UICollectionViewable`. VCs that own a `VList`/`HList` subclass `BaseCollectionViewableViewController` instead of `BaseViewModelableViewController`. All `UICollectionViewDataSource`, `UICollectionViewDelegate`, and `UICollectionViewDelegateFlowLayout` methods are implemented in the base class — no boilerplate in subclasses. The base class accesses the ViewModel via `viewModel as? CollectionViewable` internally. Override `bottomInsetForLastCollectionSection()` for VCs above a tab bar (default is `.zero`). UIScrollViewDelegate stubs (`scrollViewDidScroll` etc.) are provided as `open` methods. Note: the generic constraint on `ViewModelType` is intentionally absent — Swift's existential type system prevents protocol types (like `HomeViewModelProtocol`) from satisfying generic protocol constraints, so the conformance is checked at runtime via `as? CollectionViewable`.
 - **`VStack(alignment: .center)` collapses views with no intrinsic width**: With `.center` alignment, UIStackView centers each arranged subview at its own width. `UIView` and `UIStackView` have no intrinsic width, so they collapse to zero width and become invisible. Use `.fill` (default) to stretch subviews across the full stack width, and rely on `textAlignment(.center)` on labels for visual centering.
 - **Optional `UIView?` in stacks**: `ArrayBuilder` supports `buildExpression(_ item: T?) -> [T]`, so a `UIView?` or any `UIView` subclass optional can be used directly inside `VStack`/`HStack` without `if let`. Non-nil values are included; nil values are dropped from layout with no reserved space.
 
