@@ -7,7 +7,7 @@ import AVFoundation
 extension AVCaptureDevice {
     
     /// Sets the torch level and returns self (chainable).
-    /// - Parameter level: The level between 0.0 and 1.0. Defaults to 0.7 if successful.
+    /// - Parameter level: The brightness level between 0.0 and 1.0.
     @discardableResult public func setTorch(level: Double) -> Self {
         with {
             do {
@@ -15,10 +15,12 @@ extension AVCaptureDevice {
                 if
                     $0.hasTorch,
                     $0.isTorchAvailable {
-                    try? $0.setTorchModeOn(level: 0.7)
+                    try? $0.setTorchModeOn(level: Float(level))
                 }
                 unlockForConfiguration()
-            } catch {}
+            } catch {
+                Logger.log(caller: #function, ["lockForConfiguration error": error])
+            }
         }
     }
 }
