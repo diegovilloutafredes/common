@@ -10,7 +10,7 @@ import UIKit
 typealias HomeViewProtocol = ScreenSizeMeasurable
 
 // MARK: - HomeViewController
-final class HomeViewController: BaseViewModelableViewController<HomeViewModelProtocol> {
+final class HomeViewController: BaseCollectionViewableViewController<HomeViewModelProtocol> {
     private lazy var list = VList(dataSource: self, delegate: self)
         .register(DemoFeatureCell.self)
 

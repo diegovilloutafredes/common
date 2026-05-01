@@ -67,7 +67,7 @@ final class PostCell: BaseViewModelableCell<PostCellViewModel> {
 }
 
 // MARK: - NetworkingViewController
-final class NetworkingViewController: BaseViewModelableViewController<NetworkingViewModelProtocol> {
+final class NetworkingViewController: BaseCollectionViewableViewController<NetworkingViewModelProtocol> {
     private lazy var list = VList(dataSource: self, delegate: self)
         .register(PostCell.self)
 

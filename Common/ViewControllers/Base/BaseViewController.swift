@@ -68,6 +68,11 @@ extension BaseViewController {
         super.viewWillDisappear(animated)
         Logger.log(["From": Self.self])
     }
+
+    open override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        Logger.log(["From": Self.self])
+    }
 }
 
 /// Restores the swipe to go back gesture when using a custom back button.
