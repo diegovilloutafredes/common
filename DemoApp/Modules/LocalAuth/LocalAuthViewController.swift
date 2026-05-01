@@ -72,7 +72,7 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
 
             resultLabel
         }
-        .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
+        .setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide) }
     }
 
     override func setupView() {
