@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiSliderOnValueChangedKey: UInt8 = 0
+nonisolated(unsafe) private var uiSliderOnValueChangedKey: UInt8 = 0
 
 extension UISlider {
     private var onValueChangedHandler: Handler<Float>? {

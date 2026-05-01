@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var observeNotificationHandlersKey: UInt8 = 0
+nonisolated(unsafe) private var observeNotificationHandlersKey: UInt8 = 0
 
 // MARK: - Observe Notification
 extension NSObject {
@@ -28,6 +28,7 @@ extension NSObject {
             handlers[name] = action
             $0.handlers = handlers
 
+            NotificationCenter.default.removeObserver($0, name: name, object: nil)
             NotificationCenter
                 .default
                 .addObserver(

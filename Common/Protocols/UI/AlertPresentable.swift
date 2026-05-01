@@ -5,15 +5,15 @@
 import UIKit
 
 // MARK: - AlertViewType
-public enum AlertViewType {
+public enum AlertViewType: Sendable {
     case emptyAlert
     case genericError
     case customAlert(title: String = .DefaultValues.Alerts.title, message: String = .empty)
 }
 
 // MARK: - AlertPresentable
-// MARK: - AlertPresentable
 /// A protocol for objects that can present various types of alert views.
+@MainActor
 public protocol AlertPresentable: AnyObject {
     
     /// Presents a standard alert view based on the specified type.

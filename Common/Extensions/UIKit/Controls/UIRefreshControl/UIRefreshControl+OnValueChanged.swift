@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiRefreshControlOnValueChangedKey: UInt8 = 0
+nonisolated(unsafe) private var uiRefreshControlOnValueChangedKey: UInt8 = 0
 
 extension UIRefreshControl {
     private var onValueChangedHandler: Action? {

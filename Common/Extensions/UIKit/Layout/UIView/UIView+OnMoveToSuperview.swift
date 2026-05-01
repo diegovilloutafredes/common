@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var onMoveToSuperviewKey: UInt8 = 0
+nonisolated(unsafe) private var onMoveToSuperviewKey: UInt8 = 0
 
 // MARK: - onMoveToSuperview
 extension UIView {

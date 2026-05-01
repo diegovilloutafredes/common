@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiTextFieldOnEditingDidEndKey: UInt8 = 0
+nonisolated(unsafe) private var uiTextFieldOnEditingDidEndKey: UInt8 = 0
 
 extension UITextField {
     private var onEditingDidEndHandler: Handler<UITextField>? {

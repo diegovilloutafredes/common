@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiControlOnTapKey: UInt8 = 0
+nonisolated(unsafe) private var uiControlOnTapKey: UInt8 = 0
 
 extension UIControl {
     private var onTap: Action? {

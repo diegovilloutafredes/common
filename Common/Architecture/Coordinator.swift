@@ -6,6 +6,7 @@
 
 /// A protocol defining the responsibilities of a Coordinator.
 /// Coordinators are responsible for managing navigation flow and view controller hierarchy.
+@MainActor
 public protocol Coordinator: AnyObject {
     
     /// Starts the coordinator's flow.

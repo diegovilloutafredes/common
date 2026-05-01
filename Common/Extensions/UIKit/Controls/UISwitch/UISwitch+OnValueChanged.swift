@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiSwitchOnValueChangedKey: UInt8 = 0
+nonisolated(unsafe) private var uiSwitchOnValueChangedKey: UInt8 = 0
 
 extension UISwitch {
     private var onValueChangedHandler: Handler<UISwitch>? {

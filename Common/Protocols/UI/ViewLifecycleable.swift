@@ -4,6 +4,7 @@
 
 // MARK: - ViewLifecycleable
 /// A protocol for objects that can respond to view lifecycle events.
+@MainActor
 public protocol ViewLifecycleable: AnyObject {
     
     /// Notifies the object that its view has been loaded.

@@ -4,8 +4,8 @@
 
 import UIKit
 
-private var onTapHandlerKey: UInt8 = 0
-private var onTapGestureRecognizerKey: UInt8 = 0
+nonisolated(unsafe) private var onTapHandlerKey: UInt8 = 0
+nonisolated(unsafe) private var onTapGestureRecognizerKey: UInt8 = 0
 
 extension UIView {
     private var onTapHandler: Handler<(UIView, UITapGestureRecognizer)>? {

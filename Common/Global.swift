@@ -27,7 +27,10 @@ public func dispatchOnGlobalAfter(_ qos: DispatchQoS.QoSClass = .default, deadli
 
 /// Dispatches a block of code asynchronously on the main queue.
 /// - Parameter action: The block of code to execute.
-public func dispatchOnMain(_ action: @escaping Action) { DispatchQueue.main.async(execute: action) }
+public func dispatchOnMain(_ action: @escaping Action) {
+    if Thread.isMainThread { action(); return }
+    DispatchQueue.main.async(execute: action)
+}
 
 
 // MARK: - dispatchOnMainAfter

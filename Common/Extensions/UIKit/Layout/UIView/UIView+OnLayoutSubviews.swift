@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var onLayoutSubviewsKey: UInt8 = 0
+nonisolated(unsafe) private var onLayoutSubviewsKey: UInt8 = 0
 
 // MARK: - onLayoutSubviews
 extension UIView {

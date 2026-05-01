@@ -3,8 +3,8 @@
 //
 
 // MARK: - CollectionViewDelegateable
-// MARK: - CollectionViewDelegateable
 /// A protocol that defines the delegate requirements for a collection view.
+@MainActor
 public protocol CollectionViewDelegateable: AnyObject {
     
     /// Notifies the delegate that an item has been selected.
