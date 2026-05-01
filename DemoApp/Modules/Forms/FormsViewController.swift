@@ -70,40 +70,46 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
 
     @UIViewBuilder
     override var mainView: UIView {
-        VStack(
-            margins: .init(top: 32, left: 24, bottom: 32, right: 24),
-            spacing: 24
-        ) {
-            VStack(spacing: 16) {
-                VStack(spacing: 4) { nameField; nameErrorLabel }
-                VStack(spacing: 4) { emailField; emailErrorLabel }
-                VStack(spacing: 4) { passwordField; passwordErrorLabel }
-            }
-
-            submitButton
-
+        UIScrollView {
             VStack(
-                margins: .init(top: 12, left: 12, bottom: 12, right: 12),
-                spacing: 8
+                margins: .init(top: 32, left: 24, bottom: 32, right: 24),
+                spacing: 24
             ) {
-                HStack(alignment: .center, spacing: 6) {
-                    UIImageView(image: .init(systemName: "info.circle.fill"))
-                        .tintColor(.systemBlue)
-                        .contentMode(.scaleAspectFit)
-                        .setConstraints { $0.set(width: 18); $0.set(height: 18) }
-                    UILabel()
-                        .text("This module demonstrates:")
-                        .font(.boldSystemFont(ofSize: 14))
-                        .textColor(.label)
+                VStack(spacing: 16) {
+                    VStack(spacing: 4) { nameField; nameErrorLabel }
+                    VStack(spacing: 4) { emailField; emailErrorLabel }
+                    VStack(spacing: 4) { passwordField; passwordErrorLabel }
                 }
-                UILabel()
-                    .text("• TextField chaining (.borderColor, .placeholder, .onEditingChanged)\n• Field validation with error labels\n• Keyboard-aware layout (pinBottom to keyboardLayoutGuide)\n• Secure text entry with visibility toggle\n• Return key navigation between fields")
-                    .font(.systemFont(ofSize: 13))
-                    .textColor(.secondaryLabel)
-                    .numberOfLines(0)
+
+                submitButton
+
+                VStack(
+                    margins: .init(top: 12, left: 12, bottom: 12, right: 12),
+                    spacing: 8
+                ) {
+                    HStack(alignment: .center, spacing: 6) {
+                        UIImageView(image: .init(systemName: "info.circle.fill"))
+                            .tintColor(.systemBlue)
+                            .contentMode(.scaleAspectFit)
+                            .setConstraints { $0.set(width: 18); $0.set(height: 18) }
+                        UILabel()
+                            .text("This module demonstrates:")
+                            .font(.boldSystemFont(ofSize: 14))
+                            .textColor(.label)
+                    }
+                    UILabel()
+                        .text("• TextField chaining (.borderColor, .placeholder, .onEditingChanged)\n• Field validation with error labels\n• Keyboard-aware layout (pinBottom to keyboardLayoutGuide)\n• Secure text entry with visibility toggle\n• Return key navigation between fields")
+                        .font(.systemFont(ofSize: 13))
+                        .textColor(.secondaryLabel)
+                        .numberOfLines(0)
+                }
+                .backgroundColor(.secondarySystemBackground)
+                .round(radius: 12)
             }
-            .backgroundColor(.secondarySystemBackground)
-            .round(radius: 12)
+            .setConstraints {
+                $0.snap(to: $1)
+                $0.setWidth(to: $1.widthAnchor)
+            }
         }
         .setConstraints {
             $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide)

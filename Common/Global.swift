@@ -3,7 +3,6 @@
 //
 
 /// Global functions
-/// Global functions
 // MARK: - dispatchOnGlobal
 
 /// Dispatches a block of code asynchronously on a global concurrent queue with the specified quality of service.
