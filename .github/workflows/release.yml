@@ -1,14 +1,17 @@
-name: CI
+name: Release
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test & Build
+  validate:
+    name: Test
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
@@ -30,16 +33,12 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Build XCFramework
-        run: |
-          chmod +x ./build_xcframework.sh
-          ./build_xcframework.sh
-
-  documentation:
-    name: Update Docs
+  release:
+    name: Build & Release
     runs-on: macos-15
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -52,14 +51,21 @@ jobs:
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Install Jazzy
-        run: gem install jazzy
+      - name: Build XCFramework
+        run: |
+          chmod +x ./build_xcframework.sh
+          ./build_xcframework.sh
 
-      - name: Generate Documentation
-        run: jazzy
+      - name: Zip XCFramework
+        run: |
+          cd XCFramework
+          zip -r Common-${{ github.ref_name }}.xcframework.zip Common.xcframework
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+      - name: Create GitHub Release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "Common ${{ github.ref_name }}" \
+            --generate-notes \
+            XCFramework/Common-${{ github.ref_name }}.xcframework.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
