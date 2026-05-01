@@ -7,30 +7,54 @@ public typealias Tuple<Key, Value> = (key: Key, value: Value)
 public typealias KeyValue<Value> = Tuple<String, Value>
 
 // MARK: - KeyValueStorage
-// MARK: - KeyValueStorage
 /// A protocol defining a storage mechanism that relies on key-value pairs.
 public protocol KeyValueStorage {
-    
+
     /// Adds a key-value pair to the storage.
     /// - Parameter item: A tuple containing the key and the storable value.
     func add(item: KeyValue<Storable>)
-    
+
     /// Adds a `KeyStorable` item to the storage.
     /// - Parameter item: The item to add. The item's key is used for storage.
     func add(item: KeyStorable)
-    
+
     /// Retrieves an item from storage using its key.
     /// - Parameter key: The key of the item to retrieve.
     /// - Returns: The retrieved item, or `nil` if not found.
     func get<T: Storable>(using key: String) -> T?
-    
+
     /// Removes an item from storage using its key.
     /// - Parameter key: The key of the item to remove.
     func remove(using key: String)
+
+    // MARK: Result-based API
+
+    /// Adds a key-value pair and returns a `Result` indicating success or a typed `StorageError`.
+    func tryAdd(item: KeyValue<Storable>) -> Result<Void, StorageError>
+
+    /// Retrieves an item and returns a `Result` indicating success (with an optional value) or a typed `StorageError`.
+    func tryGet<T: Storable>(using key: String) -> Result<T?, StorageError>
+
+    /// Removes an item and returns a `Result` indicating success or a typed `StorageError`.
+    func tryRemove(using key: String) -> Result<Void, StorageError>
 }
 
 extension KeyValueStorage {
     public func add(item: KeyStorable) { add(item: (item.key, item)) }
+
+    public func tryAdd(item: KeyValue<Storable>) -> Result<Void, StorageError> {
+        add(item: item)
+        return .success(())
+    }
+
+    public func tryGet<T: Storable>(using key: String) -> Result<T?, StorageError> {
+        .success(get(using: key))
+    }
+
+    public func tryRemove(using key: String) -> Result<Void, StorageError> {
+        remove(using: key)
+        return .success(())
+    }
 }
 
 // MARK: - extension where Self: RawValueKeyValueStorage, Keys.RawValue == String

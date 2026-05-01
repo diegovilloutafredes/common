@@ -325,6 +325,34 @@ final public class KeychainWrapper {
         deleteKeychainSecClass(kSecClassIdentity) // Identity items
     }
 
+    // MARK: - Internal helpers for StorageError-surfacing overrides
+
+    func addOrUpdateStatus(_ value: Data, forKey key: String) -> OSStatus {
+        var dict = setupKeychainQueryDictionary(forKey: key)
+        dict[secValueData] = value
+        dict[secAttrAccessible] = KeychainItemAccessibility.whenUnlocked.keychainAttrValue
+        let status = SecItemAdd(dict as CFDictionary, nil)
+        if status == errSecDuplicateItem {
+            let updateDictionary = [secValueData: value]
+            return SecItemUpdate(dict as CFDictionary, updateDictionary as CFDictionary)
+        }
+        return status
+    }
+
+    func getDataStatus(forKey key: String) -> (data: Data?, status: OSStatus) {
+        var dict = setupKeychainQueryDictionary(forKey: key)
+        dict[secMatchLimit] = kSecMatchLimitOne
+        dict[secReturnData] = kCFBooleanTrue
+        var result: AnyObject?
+        let status = SecItemCopyMatching(dict as CFDictionary, &result)
+        return (result as? Data, status)
+    }
+
+    func removeStatus(forKey key: String) -> OSStatus {
+        let dict = setupKeychainQueryDictionary(forKey: key)
+        return SecItemDelete(dict as CFDictionary)
+    }
+
     // MARK: - Private Methods
     
     /// Remove all items for a given Keychain Item Class

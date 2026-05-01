@@ -49,6 +49,52 @@ extension FileStorage {
         guard let fileURL = fileURL(using: key) else { return }
         try? FileManager.default.removeItem(at: fileURL)
     }
+
+    // MARK: - Result-based API
+
+    public func tryAdd(item: KeyValue<Storable>) -> Result<Void, StorageError> {
+        guard let data = item.value.asData() else {
+            return .failure(.encodingFailed(CocoaError(.coderInvalidValue)))
+        }
+        guard let url = fileURL(using: item.key) else {
+            return .failure(.fileIOError(CocoaError(.fileWriteUnknown)))
+        }
+        do {
+            try data.write(to: url)
+            return .success(())
+        } catch {
+            return .failure(.fileIOError(error))
+        }
+    }
+
+    public func tryGet<T: Storable>(using key: String) -> Result<T?, StorageError> {
+        guard let url = fileURL(using: key),
+              FileManager.default.fileExists(atPath: url.path) else {
+            return .success(nil)
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            guard let value: T = data.decoded() else {
+                return .failure(.decodingFailed(CocoaError(.coderReadCorrupt)))
+            }
+            return .success(value)
+        } catch {
+            return .failure(.fileIOError(error))
+        }
+    }
+
+    public func tryRemove(using key: String) -> Result<Void, StorageError> {
+        guard let url = fileURL(using: key),
+              FileManager.default.fileExists(atPath: url.path) else {
+            return .success(())
+        }
+        do {
+            try FileManager.default.removeItem(at: url)
+            return .success(())
+        } catch {
+            return .failure(.fileIOError(error))
+        }
+    }
 }
 
 extension FileStorage {
