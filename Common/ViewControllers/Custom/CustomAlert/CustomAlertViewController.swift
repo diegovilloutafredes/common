@@ -33,7 +33,7 @@ public final class CustomAlertViewController: BaseViewController {
         UIView {
             UIButton()
                 .backgroundColor(backgroundColor)
-                .onTap { _ in self.onDismissRequestedHandler?() }
+                .onTap { self.onDismissRequestedHandler?() }
                 .setConstraints { $0.snap(to: $1) }
             contentView
                 .cornerRadius(.DefaultValues.AlertView.cornerRadius)
@@ -42,6 +42,7 @@ public final class CustomAlertViewController: BaseViewController {
                     $0.snapLeadTrail(to: $1, insets: .init(top: .zero, left: 32, bottom: .zero, right: 32))
                 }
         }
+        .setConstraints { $0.snap(to: $1) }
     }
 
     public override func setupView() {

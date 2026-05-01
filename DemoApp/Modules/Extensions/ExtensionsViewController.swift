@@ -8,29 +8,47 @@ import UIKit
 
 // MARK: - ExtensionsViewController
 final class ExtensionsViewController: BaseViewModelableViewController<ExtensionsViewModelProtocol> {
+
+    private static let demoNotification = Notification.Name("com.common.demo.notification")
+
+    // MARK: - UISwitch demo
+    private lazy var switchStateLabel: UILabel = UILabel()
+        .font(.monospacedSystemFont(ofSize: 14, weight: .regular))
+        .textColor(.label)
+        .text("OFF")
+
+    private lazy var toggle: UISwitch = UISwitch()
+        .onValueChanged { [weak self] sw in
+            self?.switchStateLabel.text(sw.isOn ? "ON" : "OFF")
+        }
+
+    // MARK: - UISlider demo
+    private lazy var sliderValueLabel: UILabel = UILabel()
+        .font(.monospacedSystemFont(ofSize: 14, weight: .regular))
+        .textColor(.label)
+        .text("Value: 50")
+
+    private lazy var slider: UISlider = UISlider()
+        .minimumValue(0)
+        .maximumValue(100)
+        .value(50, animated: false)
+        .minimumTrackTintColor(.systemBlue)
+        .onValueChanged { [weak self] val in
+            self?.sliderValueLabel.text("Value: \(Int(val))")
+        }
+
+    // MARK: - Notification demo
+    private lazy var notificationLabel: UILabel = UILabel()
+        .font(.monospacedSystemFont(ofSize: 13, weight: .regular))
+        .textColor(.label)
+        .text("Waiting for notification…")
+
+    // MARK: - Random color demo
     private lazy var randomColorView: UIView = UIView()
         .randomBackgroundColor()
         .round(radius: 12)
         .setConstraints { $0.set(height: 60) }
         .onTap { [weak self] _, _ in self?.randomColorView.randomBackgroundColor() }
-
-    private lazy var lifecycleLogLabel = UILabel()
-        .font(.systemFont(ofSize: 12, weight: .medium))
-        .textColor(.label)
-        .numberOfLines(0)
-        .text("Navigate away and back to see all events fire.")
-
-    private var tapCount = 0 {
-        didSet { tapCountLabel.text("Taps: \(tapCount) (should be +1 per tap)") }
-    }
-    private lazy var tapCountLabel = UILabel()
-        .font(.monospacedSystemFont(ofSize: 13, weight: .regular))
-        .textColor(.label)
-        .text("Taps: 0 (should be +1 per tap)")
-    private lazy var tapTargetView = UIView()
-        .backgroundColor(.systemOrange)
-        .round(radius: 10)
-        .setConstraints { $0.set(height: 60) }
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -40,33 +58,90 @@ final class ExtensionsViewController: BaseViewModelableViewController<Extensions
                 spacing: 16
             ) {
                 demoSection(
-                    title: "Swizzle lifecycle hooks",
-                    description: "onViewWillAppear / onViewIsAppearing / onViewDidAppear fire on arrival. Navigate away to trigger the disappear hooks (check Xcode console)."
+                    title: "UISwitch.onValueChanged",
+                    description: "Chainable handler replaces UIControl target/action boilerplate. Toggle the switch."
                 ) {
-                    lifecycleLogLabel
+                    HStack(alignment: .center, spacing: 12) {
+                        toggle
+                        switchStateLabel
+                    }
                 }
                 demoSection(
-                    title: "Gesture accumulation fix",
-                    description: "onTap is re-registered 3× on the same view (simulates cell reuse). Each tap must count +1, not +3. Tap the orange view to verify."
+                    title: "UISlider.onValueChanged",
+                    description: ".minimumValue() / .maximumValue() / .minimumTrackTintColor() — all chainable. Drag the slider."
                 ) {
                     VStack(spacing: 8) {
-                        tapCountLabel
-                        tapTargetView
+                        sliderValueLabel
+                        slider
+                    }
+                }
+                demoSection(
+                    title: "Int.asCurrency + .asDecimalNumber",
+                    description: "Locale-aware formatting using es_CL. Both use a shared cached NumberFormatter."
+                ) {
+                    VStack(spacing: 4) {
+                        formattingRow(label: "1234567.asCurrency", value: 1234567.asCurrency)
+                        formattingRow(label: "1234567.asDecimalNumber", value: 1234567.asDecimalNumber)
+                        formattingRow(label: "99.asCurrency", value: 99.asCurrency)
+                    }
+                }
+                demoSection(
+                    title: "String.isValidEmail",
+                    description: "NSDataDetector-based email validation — no regex, anchored full-string match."
+                ) {
+                    VStack(spacing: 6) {
+                        emailRow("user@example.com")
+                        emailRow("good+tag@domain.io")
+                        emailRow("not-an-email")
+                        emailRow("missing@tld")
+                        emailRow("mailto:user@example.com")
+                    }
+                }
+                demoSection(
+                    title: "Bundle.appVersion / .displayName / .buildNumber",
+                    description: "Typed accessors for common Info.plist values — no magic strings."
+                ) {
+                    VStack(spacing: 4) {
+                        formattingRow(label: "displayName", value: Bundle.main.displayName)
+                        formattingRow(label: "versionNumber", value: Bundle.main.versionNumber)
+                        formattingRow(label: "buildNumber", value: Bundle.main.buildNumber)
+                        formattingRow(label: "appVersion", value: Bundle.main.appVersion)
+                    }
+                }
+                demoSection(
+                    title: "Date.toString(with:) + .epochTime",
+                    description: "Cached DateFormatter per format string, es_CL locale. epochTime is a static Int64."
+                ) {
+                    VStack(spacing: 4) {
+                        formattingRow(label: "yyyy-MM-dd", value: Date().toString(with: "yyyy-MM-dd"))
+                        formattingRow(label: "dd/MM/yyyy HH:mm", value: Date().toString(with: "dd/MM/yyyy HH:mm"))
+                        formattingRow(label: "epochTime", value: "\(Date.epochTime)")
+                    }
+                }
+                demoSection(
+                    title: "UIColor.inverted",
+                    description: "Returns a new color with each RGB channel inverted (1 − component), alpha preserved."
+                ) {
+                    HStack(distribution: .fillEqually, spacing: 12) {
+                        colorSwatch(color: .systemBlue, label: "original")
+                        colorSwatch(color: .systemBlue.inverted, label: ".inverted")
+                    }
+                }
+                demoSection(
+                    title: "NSObject.observe(_:action:) + .post(_:)",
+                    description: "Typed notification observation without Selector boilerplate. Tap the button to post."
+                ) {
+                    VStack(spacing: 8) {
+                        notificationLabel
                         UIButton(
                             configuration: .filled().with {
-                                $0.title = "Re-register ×3 and reset"
-                                $0.baseBackgroundColor = .systemOrange
+                                $0.title = "Post notification"
+                                $0.baseBackgroundColor = .systemTeal
                                 $0.cornerStyle = .capsule
                             }
                         )
                         .onTap { [weak self] in
-                            guard let self else { return }
-                            self.tapCount = 0
-                            for _ in 0..<3 {
-                                self.tapTargetView.onTap { [weak self] _, _ in
-                                    self?.tapCount += 1
-                                }
-                            }
+                            self?.post(ExtensionsViewController.demoNotification)
                         }
                         .setConstraints { $0.set(height: 44) }
                     }
@@ -153,51 +228,12 @@ final class ExtensionsViewController: BaseViewModelableViewController<Extensions
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
-        setupLifecycleHooks()
-        setupGestureAccumulationTest()
-    }
-
-    private func setupGestureAccumulationTest() {
-        for _ in 0..<3 {
-            tapTargetView.onTap { [weak self] _, _ in
-                self?.tapCount += 1
-            }
+        notificationLabel.observe(ExtensionsViewController.demoNotification) { [weak self] in
+            self?.notificationLabel.text("Received at \(Date().toString(with: "HH:mm:ss"))")
         }
     }
 
-    private func setupLifecycleHooks() {
-        onViewWillAppear { [weak self] _ in
-            self?.logLifecycleEvent("viewWillAppear")
-        }
-        onViewIsAppearing { [weak self] _ in
-            self?.logLifecycleEvent("viewIsAppearing")
-        }
-        onViewDidAppear { [weak self] _ in
-            self?.logLifecycleEvent("viewDidAppear")
-        }
-        onViewWillDisappear { [weak self] _ in
-            self?.logLifecycleEvent("viewWillDisappear")
-        }
-        onViewDidDisappear { [weak self] _ in
-            self?.logLifecycleEvent("viewDidDisappear")
-        }
-    }
-
-    private var lifecycleEvents: [String] = [] {
-        didSet { lifecycleLogLabel.text(lifecycleEvents.joined(separator: "\n")) }
-    }
-
-    private func logLifecycleEvent(_ name: String) {
-        let entry = "[\(timestamp())] \(name) fired"
-        print("[SwizzleTest] \(entry)")
-        lifecycleEvents.append(entry)
-    }
-
-    private func timestamp() -> String {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm:ss.SSS"
-        return f.string(from: Date())
-    }
+    // MARK: - Factory
 
     private func demoSection(title: String, description: String, @UIViewBuilder content: () -> UIView) -> UIView {
         VStack(
@@ -223,6 +259,34 @@ final class ExtensionsViewController: BaseViewModelableViewController<Extensions
                 .font(.boldSystemFont(ofSize: 12))
                 .textColor(.secondaryLabel)
                 .textAlignment(.center)
+        }
+    }
+
+    private func formattingRow(label: String, value: String) -> UIView {
+        HStack(alignment: .center, spacing: 8) {
+            UILabel()
+                .text(label)
+                .font(.monospacedSystemFont(ofSize: 12, weight: .regular))
+                .textColor(.secondaryLabel)
+            UIView()
+            UILabel()
+                .text(value)
+                .font(.monospacedSystemFont(ofSize: 12, weight: .bold))
+                .textColor(.label)
+                .textAlignment(.right)
+        }
+    }
+
+    private func emailRow(_ email: String) -> UIView {
+        HStack(alignment: .center, spacing: 8) {
+            UIImageView(image: .init(systemName: email.isValidEmail ? "checkmark.circle.fill" : "xmark.circle.fill"))
+                .tintColor(email.isValidEmail ? .systemGreen : .systemRed)
+                .contentMode(.scaleAspectFit)
+                .setConstraints { $0.set(width: 16); $0.set(height: 16) }
+            UILabel()
+                .text(email)
+                .font(.monospacedSystemFont(ofSize: 12, weight: .regular))
+                .textColor(.label)
         }
     }
 }
