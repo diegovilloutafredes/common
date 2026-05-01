@@ -3,14 +3,16 @@
 //
 
 extension Int {
-    
+
+    private static let _decimalFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.locale = .init(identifier: .DefaultValues.Locale.esCL)
+        f.numberStyle = .decimal
+        return f
+    }()
+
     /// Formats the integer as a decimal number string using the Chilean locale (es_CL).
     public var asDecimalNumber: String {
-        NumberFormatter()
-            .with {
-                $0.locale = .init(identifier: .DefaultValues.Locale.esCL)
-                $0.numberStyle = .decimal
-            }
-            .string(from: .init(value: self)) ?? asString
+        Self._decimalFormatter.string(from: .init(value: self)) ?? asString
     }
 }

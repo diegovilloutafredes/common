@@ -10,6 +10,6 @@ extension TimeInterval {
     /// Default TimeInterval values.
     public enum DefaultValues {
         /// Default animation duration (0.3 seconds).
-        public static var animationDuration: TimeInterval { 0.3 }
+        public static let animationDuration: TimeInterval = 0.3
     }
 }
