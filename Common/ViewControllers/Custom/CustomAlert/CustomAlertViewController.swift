@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - CustomAlertViewController
-// MARK: - CustomAlertViewController
 
 /// A custom alert view controller that presents a content view with a dimming background.
 public final class CustomAlertViewController: BaseViewController {

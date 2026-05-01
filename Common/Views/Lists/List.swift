@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - List
-// MARK: - List
 
 /// A base list component inheriting from `UICollectionView`.
 /// It provides common configuration like preventing content inset adjustments and handling prefetching.

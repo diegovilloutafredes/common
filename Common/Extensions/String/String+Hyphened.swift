@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - Hyphened
-// MARK: - Hyphened
 extension String {
     
     /// Inserts a hyphen before the last character of the string.

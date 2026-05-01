@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - ScreenSizeMeasurable
-// MARK: - ScreenSizeMeasurable
 /// A protocol for objects that can provide screen size measurements.
 public protocol ScreenSizeMeasurable: AnyObject {
     

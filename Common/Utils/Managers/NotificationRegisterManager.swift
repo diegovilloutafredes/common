@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - NotificationRegisterManager
-// MARK: - NotificationRegisterManager
 /// A manager that handles registration and unregistration for remote notifications.
 public enum NotificationRegisterManager {
     

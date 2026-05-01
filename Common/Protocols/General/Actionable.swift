@@ -3,7 +3,6 @@
 //
 
 // MARK: - Actionable
-// MARK: - Actionable
 /// A protocol for objects that can perform an action.
 public protocol Actionable {
     

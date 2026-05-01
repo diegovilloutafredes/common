@@ -5,7 +5,6 @@
 import SafariServices
 
 // MARK: - SafariWebViewRequestable
-// MARK: - SafariWebViewRequestable
 /// A protocol for objects that can request to present a `SFSafariViewController`.
 public protocol SafariWebViewRequestable: AnyObject {
     

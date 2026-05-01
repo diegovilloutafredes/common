@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - setRootViewController
-// MARK: - setRootViewController
 extension UIApplication {
     
     /// Sets the root view controller of the key window.

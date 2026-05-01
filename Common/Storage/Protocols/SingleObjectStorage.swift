@@ -3,7 +3,6 @@
 //
 
 // MARK: - SingleObjectStorage
-// MARK: - SingleObjectStorage
 /// A protocol for storage that manages a single object of a specific type.
 public protocol SingleObjectStorage {
     

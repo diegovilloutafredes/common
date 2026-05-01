@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - ParameterEncoder
-// MARK: - ParameterEncoder
 /// A type that encodes parameters into a `URLRequest`.
 protocol ParameterEncoder {
     

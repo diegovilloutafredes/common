@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - ClientProtocol
-// MARK: - ClientProtocol
 /// A protocol defining the contract for a network client capable of making requests.
 public protocol ClientProtocol: AnyObject {
     

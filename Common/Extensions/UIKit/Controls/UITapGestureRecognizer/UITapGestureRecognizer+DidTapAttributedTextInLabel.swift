@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - UITapGestureRecognizer+didTapAttributedTextInLabel
-// MARK: - UITapGestureRecognizer+didTapAttributedTextInLabel
 extension UITapGestureRecognizer {
     
     /// Checks if a tap occurred within a specific range of attributed text in a label.

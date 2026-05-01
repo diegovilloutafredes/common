@@ -3,7 +3,6 @@
 //
 
 // MARK: - Keyable
-// MARK: - Keyable
 /// A protocol for types that can provide a unique key for storage.
 public protocol Keyable {
     

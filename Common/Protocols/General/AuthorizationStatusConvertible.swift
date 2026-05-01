@@ -7,7 +7,6 @@ import CoreLocation
 import UIKit
 
 // MARK: - AuthorizationStatus
-// MARK: - AuthorizationStatus
 /// Represents the authorization status for various system services.
 public enum AuthorizationStatus {
     /// The service is authorized.

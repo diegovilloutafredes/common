@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - AlertView
-// MARK: - AlertView
 
 /// A view responsible for displaying the content of an alert, driven by an `AlertViewModel`.
 public final class AlertView: BaseViewModelableView<AlertViewModel> {

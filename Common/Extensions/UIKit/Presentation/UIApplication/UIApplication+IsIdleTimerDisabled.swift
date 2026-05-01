@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - isIdleTimerDisabled
-// MARK: - isIdleTimerDisabled
 extension UIApplication {
     
     /// Sets whether the idle timer is disabled and returns self.
