@@ -116,6 +116,13 @@ final class DemoAppUITests: XCTestCase {
         exerciseStorageBackend(index: 2, name: "Keychain", readPrefixes: ["Read:", "Nothing stored in"])
     }
 
+    func test_localAuth_layoutNotStretched() {
+        app.staticTexts["Local Authentication"].tap()
+        XCTAssertTrue(app.navigationBars["Local Authentication"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["Authenticate"].exists)
+        add(XCTAttachment(screenshot: app.screenshot()))
+    }
+
     func test_navigation_pushAndPopExtensions() {
         app.staticTexts["Extensions"].tap()
         let backButton = app.navigationBars.buttons.firstMatch
@@ -124,12 +131,91 @@ final class DemoAppUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Extensions"].waitForExistence(timeout: 3))
     }
 
+    // MARK: - Extensions screen demos
+
+    func test_extensions_sectionTitlesVisible() {
+        navigateToExtensions()
+
+        let expectedSections = [
+            "UISwitch.onValueChanged",
+            "UISlider.onValueChanged",
+            "Int.asCurrency + .asDecimalNumber",
+            "String.isValidEmail",
+            "Bundle.appVersion / .displayName / .buildNumber",
+            "Date.toString(with:) + .epochTime",
+            "UIColor.inverted",
+            "NSObject.observe(_:action:) + .post(_:)",
+            ".round() + .shadow()",
+            ".text() + .font() + .textColor()",
+            ".onTap { } + UIButton.Configuration",
+            ".setRatio()",
+            ".randomBackgroundColor()",
+            ".withAlphaComponent()",
+        ]
+
+        for title in expectedSections {
+            scrollUntilVisible(app.staticTexts[title])
+            XCTAssertTrue(app.staticTexts[title].exists, "Missing section: \(title)")
+        }
+
+        add(XCTAttachment(screenshot: app.screenshot()))
+    }
+
+    func test_extensions_switch_togglesLabel() {
+        navigateToExtensions()
+        let toggle = app.switches.firstMatch
+        XCTAssertTrue(toggle.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["OFF"].exists)
+        toggle.tap()
+        XCTAssertTrue(app.staticTexts["ON"].waitForExistence(timeout: 2))
+        toggle.tap()
+        XCTAssertTrue(app.staticTexts["OFF"].waitForExistence(timeout: 2))
+    }
+
+    func test_extensions_notificationButton_updatesLabel() {
+        navigateToExtensions()
+        let button = app.buttons["Post notification"]
+        scrollUntilVisible(button)
+        XCTAssertTrue(button.exists)
+        XCTAssertTrue(app.staticTexts["Waiting for notification…"].exists)
+        button.tap()
+        let received = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Received at'")).firstMatch
+        XCTAssertTrue(received.waitForExistence(timeout: 2))
+    }
+
+    func test_extensions_tapMeButton_showsSnackbar() {
+        navigateToExtensions()
+        let button = app.buttons["Tap me"]
+        scrollUntilVisible(button)
+        button.tap()
+        let snackbar = app.staticTexts["Button tapped!"]
+        XCTAssertTrue(snackbar.waitForExistence(timeout: 3))
+    }
+
     func test_navigation_pushAndPopOnboarding() {
         app.staticTexts["Onboarding"].tap()
         let backButton = app.navigationBars.buttons.firstMatch
         XCTAssertTrue(backButton.waitForExistence(timeout: 3))
         backButton.tap()
         XCTAssertTrue(app.staticTexts["Onboarding"].waitForExistence(timeout: 3))
+    }
+}
+
+// MARK: - Extensions helpers
+
+private extension DemoAppUITests {
+
+    func navigateToExtensions() {
+        app.staticTexts["Extensions"].tap()
+        XCTAssertTrue(app.navigationBars["Extensions"].waitForExistence(timeout: 3))
+    }
+
+    func scrollUntilVisible(_ element: XCUIElement, maxSwipes: Int = 10) {
+        var swipes = 0
+        while !element.isHittable && swipes < maxSwipes {
+            app.swipeUp()
+            swipes += 1
+        }
     }
 }
 
