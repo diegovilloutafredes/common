@@ -3,7 +3,6 @@
 //
 
 // MARK: - Capitalizable
-// MARK: - Capitalizable
 /// A protocol for types that can provide capitalized versions of their string representation.
 public protocol Capitalizable {
     

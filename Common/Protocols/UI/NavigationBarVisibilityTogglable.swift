@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - NavigationBarVisibilityTogglable
-// MARK: - NavigationBarVisibilityTogglable
 /// A protocol for objects that can toggle the visibility of the navigation bar.
 public protocol NavigationBarVisibilityTogglable: AnyObject {
     

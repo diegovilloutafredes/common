@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - UIViewController Extension
-// MARK: - UIViewController Extension
 extension UIViewController {
     
     /// Configures the navigation bar with specific styles and attributes.

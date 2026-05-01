@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - JSONParameterEncoder
-// MARK: - JSONParameterEncoder
 /// Encodes parameters into a `URLRequest` as JSON in the HTTP body.
 public final class JSONParameterEncoder: ParameterEncoder {
 	private let encoder: JSONEncoder

@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - CustomAlertWireframe
-// MARK: - CustomAlertWireframe
 
 /// A factory for creating `CustomAlertViewController` instances.
 public enum CustomAlertWireframe {

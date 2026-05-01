@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - KeyWindow
-// MARK: - KeyWindow
 extension UIApplication {
     
     /// Returns the current key window of the application.

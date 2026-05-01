@@ -3,7 +3,6 @@
 //
 
 // MARK: - asDouble
-// MARK: - asDouble
 extension Int {
     
     /// Converts the Int value to a Double.

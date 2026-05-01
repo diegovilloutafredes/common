@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - VList
-// MARK: - VList
 
 /// A vertically scrolling list built on top of `List` (UICollectionView).
 public final class VList: List {

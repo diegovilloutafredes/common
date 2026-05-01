@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - NetworkError
-// MARK: - NetworkError
 
 /// Represents errors that can occur during network operations.
 public enum NetworkError: Error, Stringable {

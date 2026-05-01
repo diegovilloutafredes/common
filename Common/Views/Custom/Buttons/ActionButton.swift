@@ -53,7 +53,6 @@ extension DefaultButtonTheme: ButtonTheme {
 }
 
 // MARK: - ActionButton
-// MARK: - ActionButton
 
 /// A customizable button that supports theming and predefined styles.
 public final class ActionButton: BaseButton {

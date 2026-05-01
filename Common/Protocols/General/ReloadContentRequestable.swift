@@ -3,7 +3,6 @@
 //
 
 // MARK: - ReloadContentRequestable
-// MARK: - ReloadContentRequestable
 /// A protocol for objects that can request to reload their content.
 public protocol ReloadContentRequestable: AnyObject {
     

@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BackgroundColorable
-// MARK: - BackgroundColorable
 /// A protocol for objects that can have a background color.
 protocol BackgroundColorable: AnyObject {
     

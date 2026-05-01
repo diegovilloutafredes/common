@@ -3,7 +3,6 @@
 //
 
 // MARK: - AppleUserModel
-// MARK: - AppleUserModel
 /// Defines the properties of an Apple ID user.
 public protocol AppleUserModel {
     

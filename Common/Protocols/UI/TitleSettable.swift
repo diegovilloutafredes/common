@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - TitleSettable
-// MARK: - TitleSettable
 /// A protocol for objects that can have a title string set.
 public protocol TitleSettable: AnyObject {
     

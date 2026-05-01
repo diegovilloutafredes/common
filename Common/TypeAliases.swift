@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BaseModuleDelegate
-// MARK: - BaseModuleDelegate
 
 /// A composition of protocols defining the base delegate requirements for a module.
 /// Includes capabilities for requesting activity controllers, alerts, dismissals, and navigation back.

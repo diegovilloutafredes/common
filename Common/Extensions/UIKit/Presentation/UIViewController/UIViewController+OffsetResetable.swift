@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - OffsetResetable
-// MARK: - OffsetResetable
 
 /// Protocol defining methods to reset the content offset of scroll views and collection views.
 public protocol OffsetResetable {

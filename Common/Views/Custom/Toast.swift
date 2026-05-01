@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - Toast
-// MARK: - Toast
 
 /// A utility for presenting toast messages.
 public enum Toast {

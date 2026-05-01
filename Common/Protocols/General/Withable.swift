@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - Withable for Objects
-// MARK: - Withable for Objects
 /// A protocol that provides a fluent interface for configuring reference types.
 public protocol Withable: AnyObject {
     associatedtype T // swiftlint:disable:this type_name
