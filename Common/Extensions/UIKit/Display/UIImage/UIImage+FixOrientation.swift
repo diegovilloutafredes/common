@@ -55,15 +55,6 @@ extension UIImage {
             ctx.draw(cgImage, in: .init(x: .zero, y: .zero, width: size.width, height: size.height))
         }
 
-        var rect: CGRect {
-            switch imageOrientation {
-            case .left, .leftMirrored, .right, .rightMirrored: .init(x: .zero, y: .zero, width: size.height, height: size.width)
-            default: .init(x: .zero, y: .zero, width: size.width, height: size.height)
-            }
-        }
-
-        ctx.draw(cgImage, in: rect)
-
         guard let newCGImage = ctx.makeImage() else { return nil }
         return .init(cgImage: newCGImage, scale: 1, orientation: .up)
     }

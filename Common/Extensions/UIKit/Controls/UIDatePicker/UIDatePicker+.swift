@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiDatePickerOnValueChangedKey: UInt8 = 0
+nonisolated(unsafe) private var uiDatePickerOnValueChangedKey: UInt8 = 0
 
 extension UIDatePicker {
     private var onValueChangedHandler: Handler<Date>? {
@@ -51,7 +51,7 @@ extension UIDatePicker {
     /// Sets the locale by identifier and returns self (chainable).
     /// - Parameter locale: The locale identifier string. Defaults to Chilean locale.
     @discardableResult public func locale(_ locale: String = .DefaultValues.Locale.esCL) -> Self {
-        with { $0.locale (.init(identifier: locale)) }
+        with { $0.locale = .init(identifier: locale) }
     }
 }
 

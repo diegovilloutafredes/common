@@ -5,8 +5,8 @@
 import UIKit
 
 // MARK: - ActivityIndicatorable
-// MARK: - ActivityIndicatorable
 /// A protocol for objects that can manage the visibility and state of an activity indicator.
+@MainActor
 public protocol ActivityIndicatorable: AnyObject {
     
     /// Starts the activity indicator with the default color.

@@ -5,8 +5,8 @@
 import UIKit
 
 // MARK: - ActivityControllerRequestable
-// MARK: - ActivityControllerRequestable
 /// A protocol for objects that can request to present a `UIActivityViewController`.
+@MainActor
 public protocol ActivityControllerRequestable: AnyObject {
     
     /// Requests the presentation of an activity controller with a specific item.

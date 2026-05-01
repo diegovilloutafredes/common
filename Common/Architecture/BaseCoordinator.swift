@@ -8,6 +8,7 @@ import UIKit
 
 /// A base implementation of the `Coordinator` protocol that also conforms to `BaseModuleDelegate`.
 /// It manages a `UINavigationController` and an optional completion handler.
+@MainActor
 open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     
     /// The navigation controller used for navigation.

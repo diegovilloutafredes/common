@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - PresentType
-// MARK: - PresentType
 /// Defines the strategy for presenting a view controller.
 public enum PresentType {
     /// Dismisses the current module before presenting the new one.
@@ -16,6 +15,7 @@ public enum PresentType {
 
 // MARK: - Presentable
 /// A protocol for objects that can present modules (view controllers).
+@MainActor
 public protocol Presentable {
     
     /// Presents a view controller using the specified strategy.

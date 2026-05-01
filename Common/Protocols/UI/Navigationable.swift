@@ -17,6 +17,7 @@ public enum PopType {
 
 // MARK: - Navigationable
 /// A protocol for objects that can manage navigation stack operations.
+@MainActor
 public protocol Navigationable {
     
     /// The navigation controller used for navigation.

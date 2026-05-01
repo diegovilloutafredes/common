@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - BackButtonAddable
-// MARK: - BackButtonAddable
 /// A protocol for view controllers that support adding a custom back button to the navigation bar.
 public protocol BackButtonAddable: UIViewController {
     
@@ -21,7 +20,7 @@ extension BackButtonAddable {
     public func addBackButton(_ icon: UIImage? = BackButtonAddableDefaultValues.icon, handler: CompletionHandler) { addBackButton(icon) { handler?() } }
 }
 
-private var backButtonPressedHandlerKey: UInt8 = 0
+nonisolated(unsafe) private var backButtonPressedHandlerKey: UInt8 = 0
 
 extension UIViewController {
     public enum BackButtonAddableDefaultValues {

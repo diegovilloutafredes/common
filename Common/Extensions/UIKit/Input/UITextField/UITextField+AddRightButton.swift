@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var uiTextFieldOnButtonPressedKey: UInt8 = 0
+nonisolated(unsafe) private var uiTextFieldOnButtonPressedKey: UInt8 = 0
 
 extension UITextField {
     private var onButtonPressed: Handler<(UITextField, UIButton)>? {

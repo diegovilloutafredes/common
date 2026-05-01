@@ -4,8 +4,8 @@
 
 import UIKit
 
-private var uiLabelOnTapHandlerKey: UInt8 = 0
-private var uiLabelOnTapGestureRecognizerKey: UInt8 = 0
+nonisolated(unsafe) private var uiLabelOnTapHandlerKey: UInt8 = 0
+nonisolated(unsafe) private var uiLabelOnTapGestureRecognizerKey: UInt8 = 0
 
 extension UILabel {
     private var onTapHandler: Handler<(UILabel, UITapGestureRecognizer)>? {

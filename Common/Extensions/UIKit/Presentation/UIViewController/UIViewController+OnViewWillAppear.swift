@@ -4,7 +4,7 @@
 
 import UIKit
 
-private var onViewWillAppearActionKey: UInt8 = 0
+nonisolated(unsafe) private var onViewWillAppearActionKey: UInt8 = 0
 
 extension UIViewController {
     private var onViewWillAppearAction: Handler<UIViewController>? {

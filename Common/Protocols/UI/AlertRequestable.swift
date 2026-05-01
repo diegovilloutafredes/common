@@ -3,8 +3,8 @@
 //
 
 // MARK: - AlertRequestable
-// MARK: - AlertRequestable
 /// A protocol for objects that can request the presentation of an alert.
+@MainActor
 public protocol AlertRequestable: AnyObject {
     
     /// Requests the presentation of an alert with title and message.

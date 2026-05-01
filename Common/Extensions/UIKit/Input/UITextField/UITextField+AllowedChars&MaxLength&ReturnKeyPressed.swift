@@ -51,9 +51,9 @@ extension UITextField: @retroactive UITextFieldDelegate {
 }
 
 // MARK: - Convenience
-private var uiTextFieldAllowedCharsKey: UInt8 = 0
-private var uiTextFieldMaxLengthKey: UInt8 = 0
-private var uiTextFieldOnReturnKeyPressedKey: UInt8 = 0
+nonisolated(unsafe) private var uiTextFieldAllowedCharsKey: UInt8 = 0
+nonisolated(unsafe) private var uiTextFieldMaxLengthKey: UInt8 = 0
+nonisolated(unsafe) private var uiTextFieldOnReturnKeyPressedKey: UInt8 = 0
 
 extension UITextField {
     private var allowedChars: String? {

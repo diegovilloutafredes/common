@@ -5,9 +5,8 @@
 import UIKit
 
 // MARK: - DismissType
-// MARK: - DismissType
 /// Defines the strategy for dismissing a view controller.
-public enum DismissType {
+public enum DismissType: Sendable {
     /// Dismiss from the root presenting view controller.
     case fromRoot
     /// Dismiss the top-most presented view controller.
@@ -16,6 +15,7 @@ public enum DismissType {
 
 // MARK: - Dismissable
 /// A protocol for objects that can manage the dismissal of view controllers.
+@MainActor
 public protocol Dismissable {
     
     /// Dismisses a view controller using the specified strategy.

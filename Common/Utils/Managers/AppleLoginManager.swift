@@ -5,34 +5,32 @@
 import AuthenticationServices
 
 // MARK: - AppleLoginManagerProtocol
-// MARK: - AppleLoginManagerProtocol
 /// A protocol defining the interface for performing Apple Login.
 public protocol AppleLoginManagerProtocol: AnyObject {
-    
+
     /// Performs an Apple Login request.
     /// - Parameters:
-    ///   - context: The context (usually a UIViewController) providing the presentation anchor.
+    ///   - context: The view controller providing the presentation anchor.
     ///   - result: The completion handler returning the credentials or an error.
-    func performLogin(from context: AnyObject, result: @escaping ResultHandler<(appleIdCredential: ASAuthorizationAppleIDCredential, decodedIdentityToken: [String: Any])>)
+    func performLogin(from context: UIViewController, result: @escaping ResultHandler<(appleIdCredential: ASAuthorizationAppleIDCredential, decodedIdentityToken: [String: Any])>)
 }
 
 // MARK: - AppleLoginManager
 /// A manager that handles Sign in with Apple authentication.
 final public class AppleLoginManager: NSObject {
     private var authController: ASAuthorizationController!
-    private var context: AnyObject!
+    private var context: UIViewController!
     private var result: ResultHandler<(appleIdCredential: ASAuthorizationAppleIDCredential, decodedIdentityToken: [String: Any])>!
 }
 
 // MARK: - AppleLoginManagerProtocol
 extension AppleLoginManager: AppleLoginManagerProtocol {
-    public func performLogin(from context: AnyObject, result: @escaping ResultHandler<(appleIdCredential: ASAuthorizationAppleIDCredential, decodedIdentityToken: [String: Any])>) {
+    public func performLogin(from context: UIViewController, result: @escaping ResultHandler<(appleIdCredential: ASAuthorizationAppleIDCredential, decodedIdentityToken: [String: Any])>) {
         self.context = context
         self.result = result
 
         let provider = ASAuthorizationAppleIDProvider()
         let request = provider.createRequest()
-
         request.requestedScopes = [.fullName, .email]
 
         authController = ASAuthorizationController(authorizationRequests: [request])
@@ -50,26 +48,29 @@ extension AppleLoginManager: ASAuthorizationControllerDelegate {
             let identityTokenAsData = appleIdCredential.identityToken,
             let identityToken = identityTokenAsData.asString(),
             let decodedIdentityToken = try? decode(jwtToken: identityToken)
-        else { return }
+        else { result(.failure(DecodeErrors.badToken)); return }
         let data = (appleIdCredential, decodedIdentityToken)
+        #if DEBUG
         Logger.log(["data": data])
+        #endif
         result(.success(data))
     }
 
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        #if DEBUG
         Logger.log(["error": error])
+        #endif
         result(.failure(error))
     }
 }
 
 // MARK: - ASAuthorizationControllerPresentationContextProviding
 extension AppleLoginManager: ASAuthorizationControllerPresentationContextProviding {
-    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor { (context as! UIViewController).view.window! }
+    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor { context.view.window! }
 }
 
 // MARK: - Convenience
 extension AppleLoginManager {
-
 
     // MARK: - DecodeErrors
     private enum DecodeErrors: Error {
@@ -95,6 +96,7 @@ extension AppleLoginManager {
 
     private func decode(jwtToken: String) throws -> [String: Any] {
         let segments = jwtToken.components(separatedBy: ".")
+        guard segments.count >= 3 else { throw DecodeErrors.badToken }
         return try decodeJWTPart(segments[1])
     }
 }

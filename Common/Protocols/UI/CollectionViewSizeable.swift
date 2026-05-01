@@ -6,8 +6,8 @@ public typealias Inset = (top: Double, left: Double, bottom: Double, right: Doub
 public typealias Size = (width: Double, height: Double)
 
 // MARK: - CollectionViewSizeable
-// MARK: - CollectionViewSizeable
 /// A protocol that defines the size and spacing requirements for a collection view layout.
+@MainActor
 public protocol CollectionViewSizeable: AnyObject {
     
     /// Returns the minimum inter-item spacing for the specified section.
