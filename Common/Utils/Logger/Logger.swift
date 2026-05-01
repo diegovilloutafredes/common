@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - Logger
-// MARK: - Logger
 /// A utility for logging messages and network requests to the console.
 public enum Logger {
     
@@ -79,11 +78,28 @@ public enum Logger {
 // MARK: - Loggable
 extension Logger: Loggable {}
 
+// MARK: - Compile-time gate
+extension Logger {
+    #if DEBUG
+    public static let isCompileTimeEnabled = true
+    #else
+    public static let isCompileTimeEnabled = false
+    #endif
+}
+
+#if DEBUG
+// MARK: - Debug helpers
+extension Logger {
+    public static func forceEnable() {
+        Logger.shouldLog = true
+    }
+}
+#endif
 
 // MARK: - Convenience
 extension Logger {
     private static var bundleIdentifier: String { Bundle.main.bundleIdentifier?.uppercased() ?? "\(self)" }
     private static var currentTime: String { Date().toString(with: .DateFormats.ddMMyyyyHHmm) }
     private static func item(title: String, value: Any) -> String { "| 🔸 \(title): \(value)" }
-    private static func underscores(_ count: Int) -> String { Array(repeating: "_", count: count).joined() }
+    private static func underscores(_ count: Int) -> String { String(repeating: "_", count: count) }
 }
