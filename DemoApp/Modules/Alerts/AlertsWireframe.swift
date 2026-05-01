@@ -8,8 +8,8 @@ import UIKit
 
 // MARK: - AlertsWireframe
 enum AlertsWireframe {
-    static func createModule() -> UIViewController {
-        let viewModel = AlertsViewModelImpl()
+    @MainActor static func createModule(coordinator: AppCoordinator) -> UIViewController {
+        let viewModel = AlertsViewModel(coordinator: coordinator)
         return AlertsViewController(viewModel: viewModel)
     }
 }
