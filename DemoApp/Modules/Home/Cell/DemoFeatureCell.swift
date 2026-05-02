@@ -30,7 +30,7 @@ final class DemoFeatureCellViewModelImpl: DemoFeatureCellViewModel {
 final class DemoFeatureCell: BaseViewModelableCell<DemoFeatureCellViewModel> {
     private lazy var titleLabel = UILabel()
         .font(.boldSystemFont(ofSize: 18))
-        .numberOfLines(1)
+        .numberOfLines(2)
         .textColor(.label)
 
     private lazy var subtitleLabel = UILabel()

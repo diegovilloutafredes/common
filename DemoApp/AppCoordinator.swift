@@ -54,6 +54,14 @@ final class AppCoordinator: BaseCoordinator {
     func showForms() {
         push(FormsWireframe.createModule())
     }
+
+    func showLists() {
+        push(ListsWireframe.createModule())
+    }
+
+    func showUtilities() {
+        push(UtilitiesWireframe.createModule())
+    }
 }
 
 // MARK: - Custom Alert Presentation

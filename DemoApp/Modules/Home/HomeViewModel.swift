@@ -64,6 +64,16 @@ final class HomeViewModel {
             subtitle: "Validation, keyboard layout, secure entry",
             action: { [weak self] in self?.coordinator?.showForms() }
         ),
+        .init(
+            title: "Lists & Cells",
+            subtitle: "VList, BaseViewModelableCell, pull-to-refresh",
+            action: { [weak self] in self?.coordinator?.showLists() }
+        ),
+        .init(
+            title: "Utilities",
+            subtitle: "Debouncer, UIDatePicker, CircularActivityIndicator",
+            action: { [weak self] in self?.coordinator?.showUtilities() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?
@@ -79,7 +89,7 @@ extension HomeViewModel: CollectionViewable {
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { dataSource[index] }
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { DemoFeatureCell.reuseIdentifier }
     func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) {
-        (view?.screenWidth ?? 375, 84)
+        (view?.screenWidth ?? 375, 96)
     }
     func onItemSelected(in section: Int, at index: Int) { dataSource[index].action() }
 }

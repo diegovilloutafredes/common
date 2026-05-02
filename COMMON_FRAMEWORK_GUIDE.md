@@ -199,34 +199,25 @@ VStack(margins: .init(top: 16, left: 24, bottom: 0, right: 24)) { ... }
 
 ### UIScrollView wrapping
 
-For scrollable content, the inner stack must be pinned to the scroll view's `contentLayoutGuide` (which defines the scrollable area) and have its width tied to `frameLayoutGuide.widthAnchor` (to prevent horizontal scrolling). The `setConstraints` DSL pins to the direct superview's anchors — not to `contentLayoutGuide` — so you must use manual `NSLayoutConstraint` inside a `.with { }` closure:
+Use the `UIScrollView { content }` builder init. Pin the inner stack to the scroll view with `setConstraints`, then set its width to the scroll view's `widthAnchor` to prevent horizontal scrolling:
 
 ```swift
-UIScrollView()
-    .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
-    .with { scroll in
-        let contentStack = VStack(
-            margins: .DefaultValues.StackView.margins,
-            spacing: 16
-        ) {
-            // content
-        }
-        contentStack.translatesAutoresizingMaskIntoConstraints = false
-        scroll.addSubview(contentStack)
-        NSLayoutConstraint.activate([
-            contentStack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor),
-            contentStack.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
-            contentStack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
-            contentStack.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
-            contentStack.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor)
-        ])
+UIScrollView {
+    VStack(
+        margins: .DefaultValues.StackView.margins,
+        spacing: 16
+    ) {
+        // content
     }
+    .setConstraints {
+        $0.snap(to: $1)
+        $0.setWidth(to: $1.widthAnchor)
+    }
+}
+.setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
 ```
 
-> The `.with { }` + `NSLayoutConstraint.activate` approach is the correct exception for scroll view content. All other layout should go through `setConstraints`.
->
-> - **contentLayoutGuide** anchors define the scrollable content area
-> - **frameLayoutGuide.widthAnchor** prevents horizontal scrolling
+> When pinning a subview to a `UIScrollView` via Auto Layout, the scroll view's own anchors (`topAnchor`, `leadingAnchor`, etc.) map to the **content layout guide** — the scrollable area. `setWidth(to: $1.widthAnchor)` uses the scroll view's frame width, which prevents horizontal scrolling. Both effects are achieved through `setConstraints` — no manual `NSLayoutConstraint.activate` needed.
 
 ### Dynamic children from arrays
 
@@ -305,9 +296,10 @@ registerParams.with { $0.password = encryptedPassword }
 | `.tintColor(_ color:)` | Tint color |
 | `.borderColor(_ color:)` | Layer border color |
 | `.borderWidth(_ width:)` | Layer border width |
-| `.setAsRoundedView()` | Corner radius = half of shortest dimension |
-| `.setAsRoundedView(radius:)` | Specific corner radius |
-| `.cornerRadius(_ radius:)` | Alias for corner radius |
+| `.round(corners:radius:)` | Sets `cornerRadius` + `maskedCorners` — **does not set `clipsToBounds`** |
+| `.setAsRoundedView()` | Pill shape (radius = half height), sets `clipsToBounds = true`, re-registers on layout |
+| `.setAsRoundedView(radius:)` | Specific radius, sets `clipsToBounds = true` |
+| `.cornerRadius(_ radius:)` | Raw `cornerRadius` setter only |
 | `.alpha(_ value:)` | View alpha |
 | `.clipsToBounds(_ value:)` | Clips subviews to bounds |
 | `.contentMode(_ mode:)` | Content mode (for images) |
@@ -318,6 +310,11 @@ registerParams.with { $0.password = encryptedPassword }
 | `.shadowOffset(_ offset:)` | Shadow offset only |
 | `.shadowOpacity(_ opacity:)` | Shadow opacity only |
 | `.shadowRadius(_ radius:)` | Shadow radius only |
+
+> **`round()` vs `setAsRoundedView()`** — choose based on whether subviews should be clipped:
+> - `round(corners:radius:)` rounds the view's background but **subviews can overflow** the rounded boundary. Use for decorative rounding where child views may extend to the edge.
+> - `setAsRoundedView()` / `setAsRoundedView(radius:)` calls `clipsToBounds(true)` first, then rounds. Subviews are clipped to the corner boundary. Use for avatars, badges, and image containers where overflow must be hidden.
+> - `round(corners:radius:)` also accepts a `CACornerMask` to round only specific corners: `.layerMinXMinYCorner` (top-left), `.layerMaxXMinYCorner` (top-right), `.layerMinXMaxYCorner` (bottom-left), `.layerMaxXMaxYCorner` (bottom-right).
 
 ### UILabel
 
@@ -662,6 +659,31 @@ final class ProfileViewController: BaseViewModelableViewController<ProfileViewMo
 }
 ```
 
+### `BaseCollectionViewableViewController`
+
+View controllers that own a `VList` or `HList` must subclass `BaseCollectionViewableViewController` — **not** `BaseViewModelableViewController`. The collection-view base class provides all `UICollectionViewDataSource`, `UICollectionViewDelegate`, and `UICollectionViewDelegateFlowLayout` boilerplate automatically; subclasses add none.
+
+```swift
+final class ProductsViewController: BaseCollectionViewableViewController<ProductsViewModelProtocol> {
+    private lazy var list = VList()
+        .register(ProductCell.self)
+        .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
+
+    @UIViewBuilder
+    override var mainView: UIView { list }
+
+    override func setupView() {
+        super.setupView()
+        list.dataSource = self
+        list.delegate = self
+    }
+}
+```
+
+The base class accesses the ViewModel via `viewModel as? CollectionViewable` at runtime — the generic constraint on `ViewModelType` is intentionally absent because Swift's existential type system prevents protocol types from satisfying generic protocol constraints.
+
+Override `bottomInsetForLastCollectionSection()` when the screen sits above a tab bar (default returns `.zero`).
+
 ### `BaseViewModelableView<T: ViewModel>`
 
 For custom views with a view model:
@@ -680,14 +702,42 @@ final class ItemView: BaseViewModelableView<ItemViewModel> {
 
 ### `BaseViewModelableCell<T: ViewModel>`
 
-For collection/table view cells:
+For collection/table view cells, always use `viewModel` `didSet` to update content — `mainView` is built once in `init` and the `viewModel` property is `nil` at that point:
 
 ```swift
-final class OnboardingCell: BaseViewModelableCell<OnboardingCellViewModel> {
-    @UIViewBuilder
-    override var mainView: UIView { /* ... */ }
+// Protocol — defines what the cell reads
+protocol ListItemCellViewModel: ViewModel {
+    var title: String { get }
+    var subtitle: String { get }
+    var accentColor: UIColor { get }
+}
+
+// Cell — layout in mainView, content in viewModel didSet
+final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
+    private lazy var titleLabel = UILabel().font(.boldSystemFont(ofSize: 15)).textColor(.label)
+    private lazy var subtitleLabel = UILabel().font(.systemFont(ofSize: 12)).textColor(.secondaryLabel)
+
+    override var viewModel: ListItemCellViewModel? {
+        didSet {
+            guard let vm = viewModel else { return }
+            titleLabel.text(vm.title)
+            subtitleLabel.text(vm.subtitle)
+        }
+    }
+
+    @UIViewBuilder override var mainView: UIView {
+        VStack(spacing: 2) { titleLabel; subtitleLabel }
+            .setConstraints { $0.snap(to: $1) }
+    }
+
+    override func setupCell() {
+        super.setupCell()
+        backgroundColor(.clear)
+    }
 }
 ```
+
+> **Critical**: Never reference `viewModel` inside `mainView` — it is `nil` when the view builder runs. All model-driven updates go in `viewModel didSet`.
 
 ### Lifecycle hooks
 
@@ -1112,6 +1162,8 @@ final class BadgeView: BaseView {
 
 ### `ActionButton`
 
+> **Production preference:** `UIButton(configuration:)` (documented in section 3) is the preferred pattern in production code — it gives full control over typography, colors, icons, and layout. `ActionButton` is available for quick prototyping and legacy screens.
+
 Themed, rounded button:
 
 ```swift
@@ -1197,6 +1249,21 @@ private lazy var list = HList(
 ```
 
 Cells subclass `BaseViewModelableCell<T>` and use `@UIViewBuilder` for layout. Always call `.register(CellType.self)` before use.
+
+**Pull-to-refresh** with `UIRefreshControl.onValueChanged`:
+
+```swift
+override func setupView() {
+    super.setupView()
+    list.refreshControl = UIRefreshControl()
+        .onValueChanged { [weak self] in
+            self?.viewModel.refresh { [weak self] in
+                self?.list.refreshControl?.endRefreshing()
+                self?.list.reloadData()
+            }
+        }
+}
+```
 
 ### `CustomAlertWireframe`
 
@@ -1423,6 +1490,36 @@ extension ProductClient: ProductClientProtocol {
 ```
 
 `BaseClient.request(from:_:result:)` cancels any in-flight request keyed by the same function identifier before starting a new one. Always pass `#function` as the first argument so duplicate taps don't stack requests.
+
+### Async client (`AsyncBaseClient`)
+
+For structured concurrency, subclass `AsyncBaseClient` instead of `BaseClient`:
+
+```swift
+final class PostClient: AsyncBaseClient {
+    func fetchPosts() async throws -> [Post] {
+        try await request(PostEndpoint.posts)
+    }
+}
+```
+
+Call sites use `async`/`await` directly:
+
+```swift
+func onViewWillAppear() {
+    Task { [weak self] in
+        guard let self else { return }
+        do {
+            let posts = try await PostClient().fetchPosts()
+            view?.reload(with: posts)
+        } catch {
+            view?.showError(error)
+        }
+    }
+}
+```
+
+`AsyncBaseClient` uses the same `Endpoint` router definitions as `BaseClient` — the two are interchangeable at the routing layer. Use `AsyncBaseClient` for new code where structured concurrency is available; use `BaseClient` when integrating with callback-based coordinator flows.
 
 ### BaseResponse wrapper
 
@@ -1829,6 +1926,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 - **Don't forget `.register(CellType.self)`** on HList/VList before use.
 - **Don't hardcode magic numbers** — use `DefaultValues` constants.
 - **Don't use ZStack** — it's not used in this codebase.
+- **Don't use `alignment: .center` on a VStack/HStack that contains `UIView` spacers or plain `UIView` subviews** — `UIView` and `UIStackView` have no intrinsic width, so center-alignment collapses them to zero width and they become invisible. Use `.fill` (the default) and apply `textAlignment(.center)` on labels for visual centering. Center-alignment is safe for subviews with intrinsic content size (UILabel, UIImageView, UIButton).
 
 ### Utilities
 
@@ -1853,6 +1951,12 @@ string.trimmed   // trimmingCharacters(in: .whitespacesAndNewlines)
 
 // Collections
 array[safe: index]   // -> Element?; nil instead of out-of-bounds crash
+
+// Logging — DEBUG only
+Logger.log("some value")                          // generic item
+Logger.log(request, data: data, response: resp)  // network request + response
+// Logger output is compile-time gated: active in DEBUG builds, silenced in release.
+// To opt in during a debug session: Logger.forceEnable()
 ```
 
 ---
