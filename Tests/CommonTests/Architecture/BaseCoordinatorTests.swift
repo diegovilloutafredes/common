@@ -14,16 +14,13 @@ final class BaseCoordinatorTests: XCTestCase {
         override func start() { startCalled = true }
     }
 
-    /// Pushes `vc` onto `nav` by directly setting the viewControllers array (no animation),
-    /// which triggers KVO synchronously — suitable for unit tests without a window.
-    private func simulatePush(_ vc: UIViewController, onto nav: UINavigationController) {
-        nav.viewControllers = nav.viewControllers + [vc]
-    }
-
-    /// Simulates a pop (swipe-back or programmatic) by removing the last VC from the stack.
-    private func simulatePop(from nav: UINavigationController) {
-        guard nav.viewControllers.count > 1 else { return }
-        nav.viewControllers = Array(nav.viewControllers.dropLast())
+    /// Pushes one VC onto the shared nav stack and begins tracking it.
+    private class PushingCoordinator: BaseCoordinator {
+        let pushedVC = UIViewController()
+        override func start() {
+            navigationController.viewControllers =
+                navigationController.viewControllers + [pushedVC]
+        }
     }
 
     private var nav: UINavigationController!
@@ -187,20 +184,10 @@ final class BaseCoordinatorTests: XCTestCase {
     // MARK: - KVO lifecycle tracking (gesture-driven cleanup)
 
     func test_kvo_popRemovesCoordinatorFromParent() {
-        // A pushing coordinator: start() pushes one VC onto the shared nav stack.
-        class PushingCoordinator: BaseCoordinator {
-            let pushedVC = UIViewController()
-            override func start() {
-                navigationController.viewControllers =
-                    navigationController.viewControllers + [pushedVC]
-            }
-        }
-
         let pushing = PushingCoordinator(navigationController: nav)
         parent.addChildAndStart(pushing)
         XCTAssertEqual(parent.childCoordinators.count, 1)
 
-        // Simulate swipe-back / programmatic pop
         nav.viewControllers = Array(nav.viewControllers.dropLast())
 
         XCTAssertTrue(parent.childCoordinators.isEmpty,
@@ -208,14 +195,6 @@ final class BaseCoordinatorTests: XCTestCase {
     }
 
     func test_kvo_popDoesNotFireOnPerformed() {
-        class PushingCoordinator: BaseCoordinator {
-            let pushedVC = UIViewController()
-            override func start() {
-                navigationController.viewControllers =
-                    navigationController.viewControllers + [pushedVC]
-            }
-        }
-
         var called = false
         let pushing = PushingCoordinator(navigationController: nav) { _ in called = true }
         parent.addChildAndStart(pushing)
@@ -226,14 +205,6 @@ final class BaseCoordinatorTests: XCTestCase {
     }
 
     func test_kvo_finishBeforePopSuppressesDoubleCleanup() {
-        class PushingCoordinator: BaseCoordinator {
-            let pushedVC = UIViewController()
-            override func start() {
-                navigationController.viewControllers =
-                    navigationController.viewControllers + [pushedVC]
-            }
-        }
-
         var callCount = 0
         let pushing = PushingCoordinator(navigationController: nav) { _ in callCount += 1 }
         parent.addChildAndStart(pushing)
@@ -246,13 +217,11 @@ final class BaseCoordinatorTests: XCTestCase {
     }
 
     func test_kvo_noTrackingWhenCoordinatorDoesNotPush() {
-        // addChildAndStart on a coordinator that pushes nothing — no tracking wired, no crash.
         parent.addChildAndStart(child)  // StubCoordinator.start() does not push any VC
 
-        // Mutating the stack must NOT trigger cancel on child
-        let vc = UIViewController()
-        simulatePush(vc, onto: nav)
-        simulatePop(from: nav)
+        // Unrelated nav mutations must not affect an untracked coordinator.
+        nav.viewControllers = [UIViewController()]
+        nav.viewControllers = []
 
         XCTAssertEqual(parent.childCoordinators.count, 1,
                        "Non-pushing coordinator must not be removed by unrelated nav changes")
@@ -261,35 +230,16 @@ final class BaseCoordinatorTests: XCTestCase {
     // MARK: - set() — re-anchoring and bootstrap
 
     func test_set_noFalseCancel_whenCoordinatorReplacesStack() {
-        // Coordinator tracked on A, then replaces stack with D — must NOT cancel.
-        class PushingCoordinator: BaseCoordinator {
-            let pushedVC = UIViewController()
-            override func start() {
-                navigationController.viewControllers =
-                    navigationController.viewControllers + [pushedVC]
-            }
-        }
-
         let pushing = PushingCoordinator(navigationController: nav)
         parent.addChildAndStart(pushing)
 
-        let d = UIViewController()
-        pushing.set([d])  // coordinator's own set() — must re-anchor, not cancel
+        pushing.set([UIViewController()])  // coordinator's own set() — must re-anchor, not cancel
 
         XCTAssertEqual(parent.childCoordinators.count, 1,
                        "Coordinator replacing its own stack must not be removed")
     }
 
     func test_set_reanchors_popNewVCTriggersCancelAfterSet() {
-        // After set([D]) the coordinator must track D — popping D should cancel it.
-        class PushingCoordinator: BaseCoordinator {
-            let pushedVC = UIViewController()
-            override func start() {
-                navigationController.viewControllers =
-                    navigationController.viewControllers + [pushedVC]
-            }
-        }
-
         let pushing = PushingCoordinator(navigationController: nav)
         parent.addChildAndStart(pushing)
 
@@ -297,7 +247,6 @@ final class BaseCoordinatorTests: XCTestCase {
         pushing.set([d])
         XCTAssertEqual(parent.childCoordinators.count, 1)
 
-        // Simulate pop of D (e.g. parent coordinator replaces stack)
         nav.viewControllers = nav.viewControllers.filter { $0 !== d }
 
         XCTAssertTrue(parent.childCoordinators.isEmpty,
@@ -306,43 +255,29 @@ final class BaseCoordinatorTests: XCTestCase {
 
     func test_set_bootstrapsTracking_whenNotPreviouslyTracked() {
         // Coordinator added via addChild (not addChildAndStart) — no tracking yet.
-        // Calling set() should bootstrap tracking.
         parent.addChild(child)
-        XCTAssertEqual(parent.childCoordinators.count, 1)
 
         let d = UIViewController()
-        child.set([d])  // bootstraps tracking on d
-
-        // Pop d — should trigger cancel
-        nav.viewControllers = []
+        child.set([d])       // bootstraps tracking on d
+        nav.viewControllers = []  // simulate external removal of d
 
         XCTAssertTrue(parent.childCoordinators.isEmpty,
                       "set() on untracked coordinator should bootstrap tracking")
     }
 
     func test_set_emptyArray_cancels_whenTracked() {
-        class PushingCoordinator: BaseCoordinator {
-            let pushedVC = UIViewController()
-            override func start() {
-                navigationController.viewControllers =
-                    navigationController.viewControllers + [pushedVC]
-            }
-        }
-
         let pushing = PushingCoordinator(navigationController: nav)
         parent.addChildAndStart(pushing)
 
-        pushing.set([])  // empty set — tracked VC (pushedVC) leaves stack → cancel
+        pushing.set([])  // empty set — treated as flow abandonment
 
         XCTAssertTrue(parent.childCoordinators.isEmpty,
                       "set([]) should be treated as flow abandonment")
     }
 
-    // MARK: - terminate() shared by finish() and cancel()
+    // MARK: - finish() and cancel() are independent override points
 
-    func test_terminate_finish_doesNotTriggerCancelOverride() {
-        // Verifies finish() and cancel() are independent override points.
-        // A subclass that overrides cancel() should NOT see that override run during finish().
+    func test_finish_doesNotCallCancelOverride() {
         class TrackingCoordinator: BaseCoordinator {
             var cancelCallCount = 0
             override func cancel() { cancelCallCount += 1; super.cancel() }
