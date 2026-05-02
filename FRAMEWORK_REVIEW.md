@@ -12,7 +12,7 @@
 
 | # | Severity | Finding |
 |---|----------|---------|
-| A1 | 🟠 | **No automatic child cleanup.** `addChildAndStart` adds a child but nothing removes it when that child finishes. `onPerformed` is `Handler<Coordinator>?` — a fire-once closure — but the parent must manually call `removeChild`. Memory leaks accumulate across long sessions. |
+| A1 | ✅ | ~~**No automatic child cleanup.**~~ **Fixed by `coordinator-child-lifecycle`.** Added `weak var parent: BaseCoordinator?` wired by `addChild`; `open func finish()` auto-removes the child from its parent then fires `onPerformed`. Re-entrancy guard prevents double-fire. `removeChild` is now identity-based, not type-based. |
 | A2 | 🟠 | **`addChild` silently deduplicates by removing first.** Calling `addChild` twice with the same coordinator removes-then-adds it, resetting its position in the array. This is implicit and surprising; intent should be explicit. |
 | A3 | 🟢 | `BaseCoordinator` inherits `NSObject` to satisfy `UIGestureRecognizerDelegate` in `BaseViewController`. These are separate conformances — coupling through inheritance is unnecessary. |
 
@@ -20,7 +20,7 @@
 
 | # | Severity | Finding |
 |---|----------|---------|
-| A4 | 🔴 | **SRP violation: every VC conforms to `UICollectionViewable` unconditionally.** All VCs carry UICollectionView data source/delegate/flow-layout boilerplate even when no collection view exists. This pollutes the API surface and is never tree-shaken. |
+| A4 | ✅ | ~~**SRP violation: every VC conforms to `UICollectionViewable` unconditionally.**~~ **Fixed by `base-viewmodelable-viewcontroller-srp`.** `BaseCollectionViewableViewController` is the opt-in base for VCs that own a `VList`/`HList`; `BaseViewModelableViewController` no longer carries collection-view boilerplate. |
 | A5 | 🟠 | **Domain logic in base class: `insetForSectionAt` hardcodes `closestTabBarHeight + 4` for the last section.** Tab bar offset is product-specific, not framework concern. |
 | A6 | 🟡 | `asCollectionViewable`, `asViewLifecycleable`, `asReloadContentRequestable` are computed properties that re-cast on every call. Should be cached at init (e.g., `let asLifecycleable: ViewLifecycleable? = viewModel as? ViewLifecycleable`). |
 | A7 | 🟡 | `viewForSupplementaryElementOfKind` only handles `elementKindSectionHeader`. Footer kind is silently ignored. |
@@ -107,7 +107,7 @@
 
 | # | Severity | Finding |
 |---|----------|---------|
-| Ut1 | 🔴 | **`Debouncer` is a global singleton with mutable `[String: Timer]` behind `nonisolated(unsafe)`.** Concurrent `debounce` calls from different queues (e.g. text field + scroll) write to the same dictionary simultaneously. This is an actual data race. Should be an `actor` or use a dedicated `DispatchQueue` for serialisation. |
+| Ut1 | ✅ | ~~**`Debouncer` is a global singleton with mutable `[String: Timer]` behind `nonisolated(unsafe)`.**~~ **Fixed by `swift-6-concurrency-hardening`.** Same finding as C1 — `Debouncer` is now a `@MainActor final class`; `timers` dictionary is main-actor isolated. |
 | Ut2 | ✅ | ~~**`Logger` logging defaults to ON in production**~~ **Fixed by `logger-production-gating`.** `Logger.isCompileTimeEnabled` gates all logging at compile time; Release builds return `false` immediately from `shouldLog` with no Keychain access. Debug default remains `true`. |
 | Ut3 | 🟡 | **`Logger` sorts dictionary keys alphabetically**, losing the semantic ordering of request → response → error. A `KeyValuePairs` or ordered array should replace `[String: Any]` for structured log items. |
 | Ut4 | 🟡 | **`Global.swift` has duplicate doc comment line** (`/// Global functions` appears twice) and uses free global functions. A `Dispatch` namespace (enum) would prevent accidental name collisions with consumer code. |
@@ -131,8 +131,8 @@
 | # | Severity | Finding |
 |---|----------|---------|
 | T1 | 🔴 | **Zero meaningful test coverage.** A distributable framework with 16k LOC and ~zero tests. Every refactor is a manual regression exercise. At minimum: extensions with logic (RUT validation, email validation, date parsing, image processing), storage layer, and network error path need unit tests. |
-| T2 | 🟠 | **Storage singletons make unit testing impossible without swizzling.** See S1. |
-| T3 | 🟠 | **`URLSession.shared` default in `HTTPService` requires real network in tests.** A `static var session: URLSession` injection point would enable mock sessions. |
+| T2 | ✅ | ~~**Storage singletons make unit testing impossible without swizzling.**~~ **Fixed by `storage-di-and-error-propagation`.** See S1 — `InMemoryKeyValueStorage` provides the test seam. |
+| T3 | ✅ | ~~**`URLSession.shared` default in `HTTPService` requires real network in tests.**~~ **Fixed by `network-layer-consolidation`.** See N4 — `HTTPService.defaultSession` is the injection point; `MockURLProtocol`-based tests override it. |
 | T4 | 🟡 | **`BaseCoordinator` has no protocol.** It's a concrete class. Consumer coordinators that want to be mocked in tests must subclass, not substitute. A `CoordinatorType` protocol (or use the existing `Coordinator` protocol more broadly) would decouple. |
 
 ---
@@ -154,7 +154,7 @@ The following findings are grouped into five focused, shippable proposals ranked
 | Priority | Proposal | Findings Covered |
 |----------|----------|-----------------|
 | **P1** | ✅ ~~**Swift 6 Concurrency Hardening**~~ **Done** (`swift-6-concurrency-hardening`) | C1, C2, C3, C4, C5, C6 |
-| **P2** | **BaseViewModelableViewController SRP Refactor** | A4, A5, A6, A7, A8, A9 |
+| **P2** | ~~**BaseViewModelableViewController SRP Refactor**~~ Partial — A4 done (`base-viewmodelable-viewcontroller-srp`); A5–A9 open | A4 ✅, A5, A6, A7, A8, A9 |
 | **P3** | ✅ ~~**Storage Layer: DI Seams + Error Propagation**~~ **Done** (`storage-di-and-error-propagation`) | S1, S2, S3, T2 |
-| **P4** | **Debouncer & Logger Safety** | Ut1, Ut2, C1, C2 |
+| **P4** | ✅ ~~**Debouncer & Logger Safety**~~ **Done** (`swift-6-concurrency-hardening` + `logger-production-gating`) | Ut1, Ut2, C1, C2 |
 | **P5** | ✅ ~~**Network Layer: Consolidation + Testability**~~ **Done** (`network-layer-consolidation`) | N1, N2, N3, N4, N5, N6 |
