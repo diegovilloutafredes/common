@@ -62,6 +62,10 @@ final class AppCoordinator: BaseCoordinator {
     func showUtilities() {
         push(UtilitiesWireframe.createModule())
     }
+
+    func showCoordinatorDemo() {
+        addChildAndStart(CoordinatorDemoCoordinator(navigationController: navigationController))
+    }
 }
 
 // MARK: - Custom Alert Presentation
