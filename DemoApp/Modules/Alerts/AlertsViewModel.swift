@@ -24,9 +24,9 @@ protocol AlertsViewModelProtocol: ViewModel {
 @MainActor
 final class AlertsViewModel {
     let title = "Alerts & Feedback"
-    private weak var coordinator: AppCoordinator?
+    private weak var coordinator: AlertsCoordinatorProtocol?
 
-    init(coordinator: AppCoordinator) {
+    init(coordinator: AlertsCoordinatorProtocol) {
         self.coordinator = coordinator
     }
 }
