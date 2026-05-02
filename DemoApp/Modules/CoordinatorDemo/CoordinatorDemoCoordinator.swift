@@ -10,6 +10,7 @@ import UIKit
 
 final class CoordinatorDemoCoordinator: BaseCoordinator {
     private weak var viewModel: CoordinatorDemoViewModel?
+    private var activeCount = 0
 
     override func start() {
         let vm = CoordinatorDemoViewModel()
@@ -19,21 +20,31 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
         vm.view = vc
         push(vc)
     }
+
+    private var navStackCount: Int { navigationController.viewControllers.count }
+
+    private func launchFlow(maxDepth: Int) {
+        let child = ChildFlowCoordinator(
+            navigationController: navigationController,
+            depth: 1,
+            maxDepth: maxDepth,
+            onEvent: { [weak self] event in
+                guard let self else { return }
+                activeCount += event.delta
+                viewModel?.logAndRefresh(event, children: activeCount, navStack: navStackCount)
+            },
+            onPerformed: { [weak self] _ in self?.pop() }
+        )
+        addChildAndStart(child)
+    }
 }
 
 // MARK: - CoordinatorDemoViewModelDelegate
 
 extension CoordinatorDemoCoordinator: CoordinatorDemoViewModelDelegate {
-    func coordinatorDemoDidRequestLaunch() {
-        viewModel?.setStatus(.childRunning)
-        let child = ChildFlowCoordinator(
-            navigationController: navigationController,
-            onCancelled: { [weak self] in self?.viewModel?.setStatus(.cancelled) },
-            onPerformed: { [weak self] _ in
-                self?.viewModel?.setStatus(.finished)
-                self?.pop()
-            }
-        )
-        addChildAndStart(child)
+    func didRequestLaunchChild() { launchFlow(maxDepth: 1) }
+    func didRequestLaunchDeepFlow() { launchFlow(maxDepth: 3) }
+    func didRequestStatsRefresh() {
+        viewModel?.refreshStats(children: activeCount, navStack: navStackCount)
     }
 }

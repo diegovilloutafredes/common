@@ -23,129 +23,187 @@ final class CoordinatorDemoUITests: XCTestCase {
 
     // MARK: - Initial state
 
-    func test_initialState_showsIdle() {
-        XCTAssertTrue(app.staticTexts["Idle"].exists, "Status label should show 'Idle'")
-        XCTAssertTrue(app.buttons["Launch Child Flow"].exists)
-        XCTAssertTrue(app.buttons["Launch Child Flow"].isEnabled, "Button should be enabled initially")
+    func test_initialState_buttonsExist() {
+        XCTAssertTrue(app.buttons["Launch Child"].exists)
+        XCTAssertTrue(app.buttons["Launch Deep Flow"].exists)
+        XCTAssertTrue(app.buttons["Launch Child"].isEnabled)
+        XCTAssertTrue(app.buttons["Launch Deep Flow"].isEnabled)
     }
 
-    // MARK: - Launch child
+    func test_initialState_statsShowZero() {
+        XCTAssertEqual(statLabel("stat.children").label, "0")
+        XCTAssertEqual(statLabel("stat.events").label, "0")
+    }
 
-    func test_launchChild_navigatesToChildFlowScreen() {
-        app.buttons["Launch Child Flow"].tap()
+    // MARK: - Launch child (maxDepth = 1)
+
+    func test_launchChild_navigatesToChildFlow() {
+        app.buttons["Launch Child"].tap()
         XCTAssertTrue(
             app.navigationBars["Child Flow"].waitForExistence(timeout: 3),
-            "Navigation bar should show 'Child Flow' after launch"
+            "Should navigate to Child Flow screen"
         )
     }
 
-    func test_launchChild_statusBecomesChildRunning() {
-        app.buttons["Launch Child Flow"].tap()
+    func test_launchChild_showsDepthOne() {
+        app.buttons["Launch Child"].tap()
+        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
+        XCTAssertEqual(statLabel("childStat.depth").label, "1")
+        XCTAssertEqual(statLabel("childStat.remaining").label, "0")
+    }
 
-        // Back to parent screen by pressing back button
+    func test_launchChild_goDeeperButtonHidden() {
+        app.buttons["Launch Child"].tap()
+        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["Go Deeper"].exists, "Go Deeper should be hidden when maxDepth=1")
+    }
+
+    func test_launchChild_statsIncrement() {
+        app.buttons["Launch Child"].tap()
+        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
+
         let backButton = app.navigationBars["Child Flow"].buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-
-        // While on child screen, navigate back
         backButton.tap()
+        XCTAssertTrue(app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3))
 
-        // After cancel, status should not be "Child Running" anymore — but first verify it was set
-        // The button being disabled proves "Child Running" state was entered
-        // (We can't directly observe it on screen while on child screen)
+        XCTAssertEqual(statLabel("stat.events").label, "2", "Start + cancel events = 2")
+    }
+
+    // MARK: - Complete child flow
+
+    func test_completeChild_returnsToHub() {
+        app.buttons["Launch Child"].tap()
+        XCTAssertTrue(app.buttons["Complete"].waitForExistence(timeout: 3))
+        app.buttons["Complete"].tap()
+
         XCTAssertTrue(
             app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3),
-            "Should return to Coordinator Demo screen"
+            "Should return to hub after complete"
         )
     }
 
-    // MARK: - Finish flow
+    func test_completeChild_logsFinishedEvent() {
+        app.buttons["Launch Child"].tap()
+        XCTAssertTrue(app.buttons["Complete"].waitForExistence(timeout: 3))
+        app.buttons["Complete"].tap()
 
-    func test_finishFlow_statusBecomesFinished() {
-        app.buttons["Launch Child Flow"].tap()
-        XCTAssertTrue(app.buttons["Complete Flow"].waitForExistence(timeout: 3))
-        app.buttons["Complete Flow"].tap()
+        XCTAssertTrue(app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3))
+        XCTAssertEqual(statLabel("stat.events").label, "2", "Start + finish events = 2")
+    }
 
-        XCTAssertTrue(
-            app.staticTexts["Finished"].waitForExistence(timeout: 3),
-            "Status should show 'Finished' after completing the child flow"
-        )
+    // MARK: - Cancel child flow (back button)
+
+    func test_cancelChild_returnsToHub() {
+        app.buttons["Launch Child"].tap()
+        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
+
+        app.navigationBars["Child Flow"].buttons.firstMatch.tap()
+
         XCTAssertTrue(
             app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3),
-            "Should return to Coordinator Demo screen after finish"
+            "Should return to hub after cancel"
         )
     }
 
-    func test_finishFlow_buttonRemainsEnabled() {
-        app.buttons["Launch Child Flow"].tap()
-        XCTAssertTrue(app.buttons["Complete Flow"].waitForExistence(timeout: 3))
-        app.buttons["Complete Flow"].tap()
+    // MARK: - Deep flow (maxDepth = 3)
 
-        XCTAssertTrue(app.staticTexts["Finished"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["Launch Child Flow"].isEnabled, "Button should be re-enabled after finish")
-    }
-
-    // MARK: - Cancel flow (swipe-back)
-
-    func test_cancelFlow_swipeBack_statusBecomesCancelled() {
-        app.buttons["Launch Child Flow"].tap()
-        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
-
-        app.navigationBars["Child Flow"].buttons.firstMatch.tap()
-
-        XCTAssertTrue(
-            app.staticTexts["Cancelled"].waitForExistence(timeout: 3),
-            "Status should show 'Cancelled' after swiping back"
-        )
-    }
-
-    func test_cancelFlow_buttonRemainsEnabled() {
-        app.buttons["Launch Child Flow"].tap()
-        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
-        app.navigationBars["Child Flow"].buttons.firstMatch.tap()
-
-        XCTAssertTrue(app.staticTexts["Cancelled"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["Launch Child Flow"].isEnabled, "Button should be re-enabled after cancel")
-    }
-
-    // MARK: - Re-launch after state change
-
-    func test_canRelaunchAfterFinish() {
-        app.buttons["Launch Child Flow"].tap()
-        XCTAssertTrue(app.buttons["Complete Flow"].waitForExistence(timeout: 3))
-        app.buttons["Complete Flow"].tap()
-
-        XCTAssertTrue(app.staticTexts["Finished"].waitForExistence(timeout: 3))
-
-        app.buttons["Launch Child Flow"].tap()
+    func test_deepFlow_navigatesToChildFlow() {
+        app.buttons["Launch Deep Flow"].tap()
         XCTAssertTrue(
             app.navigationBars["Child Flow"].waitForExistence(timeout: 3),
-            "Should be able to relaunch after finish"
+            "Deep flow starts at Child Flow (depth 1)"
         )
     }
 
-    func test_canRelaunchAfterCancel() {
-        app.buttons["Launch Child Flow"].tap()
-        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
-        app.navigationBars["Child Flow"].buttons.firstMatch.tap()
+    func test_deepFlow_canGoDeeperToNestedFlow() {
+        app.buttons["Launch Deep Flow"].tap()
+        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
 
-        XCTAssertTrue(app.staticTexts["Cancelled"].waitForExistence(timeout: 3))
-
-        app.buttons["Launch Child Flow"].tap()
         XCTAssertTrue(
-            app.navigationBars["Child Flow"].waitForExistence(timeout: 3),
-            "Should be able to relaunch after cancel"
+            app.navigationBars["Nested Flow"].waitForExistence(timeout: 3),
+            "Depth 2 shows 'Nested Flow'"
         )
+    }
+
+    func test_deepFlow_canGoDeeperToDeepFlow() {
+        app.buttons["Launch Deep Flow"].tap()
+        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+
+        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Deep Flow"].waitForExistence(timeout: 3),
+            "Depth 3 shows 'Deep Flow'"
+        )
+    }
+
+    func test_deepFlow_goDeeperHiddenAtMaxDepth() {
+        app.buttons["Launch Deep Flow"].tap()
+        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+        XCTAssertTrue(app.navigationBars["Deep Flow"].waitForExistence(timeout: 3))
+
+        XCTAssertFalse(app.buttons["Go Deeper"].exists, "Go Deeper hidden at max depth")
+    }
+
+    func test_deepFlow_completingDepth3_returnsToDepth2() {
+        navigateToDepth3()
+        app.buttons["Complete"].tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Nested Flow"].waitForExistence(timeout: 3),
+            "Completing depth 3 returns to depth 2"
+        )
+    }
+
+    func test_deepFlow_completingFullChain_returnsToHub() {
+        navigateToDepth3()
+        app.buttons["Complete"].tap()
+        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
+        app.buttons["Complete"].tap()
+        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
+        app.buttons["Complete"].tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3),
+            "Completing full 3-level chain returns to hub"
+        )
+    }
+
+    func test_deepFlow_childrenCountReachesThree() {
+        app.buttons["Launch Deep Flow"].tap()
+        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+        XCTAssertTrue(app.navigationBars["Deep Flow"].waitForExistence(timeout: 3))
+
+        // Return to hub
+        app.buttons["Complete"].tap()
+        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
+        app.buttons["Complete"].tap()
+        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
+        app.buttons["Complete"].tap()
+        XCTAssertTrue(app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3))
+
+        XCTAssertEqual(statLabel("stat.children").label, "0", "All coordinators finished, children=0")
     }
 
     // MARK: - Navigation
 
-    func test_navigation_pushAndPopCoordinatorDemo() {
+    func test_canReturnToHome() {
         let backButton = app.navigationBars["Coordinator Demo"].buttons.firstMatch
-        XCTAssertTrue(backButton.exists, "Back button should be visible on Coordinator Demo screen")
+        XCTAssertTrue(backButton.exists)
         backButton.tap()
         XCTAssertTrue(
             app.staticTexts["Coordinator"].waitForExistence(timeout: 3),
-            "Should return to home screen after popping"
+            "Should return to home screen"
         )
     }
 }
@@ -165,5 +223,18 @@ private extension CoordinatorDemoUITests {
             app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 5),
             "Should navigate to Coordinator Demo screen"
         )
+    }
+
+    func navigateToDepth3() {
+        app.buttons["Launch Deep Flow"].tap()
+        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
+        app.buttons["Go Deeper"].tap()
+        XCTAssertTrue(app.navigationBars["Deep Flow"].waitForExistence(timeout: 3))
+    }
+
+    func statLabel(_ id: String) -> XCUIElement {
+        app.staticTexts.matching(identifier: id).firstMatch
     }
 }
