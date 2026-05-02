@@ -42,7 +42,7 @@ extension UIView {
     @objc private func swizzledLayoutSubviews() {
         originalLayoutSubviews()
         guard let handler = onLayoutSubviews else { return }
-        handler(self)
         onLayoutSubviews = nil
+        handler(self)
     }
 }

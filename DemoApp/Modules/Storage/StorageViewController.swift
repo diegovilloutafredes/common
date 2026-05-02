@@ -92,9 +92,7 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
 
     private func refreshLabel(for type: StorageType) {
         if let item = viewModel.read(type: type) {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm:ss"
-            statusLabels[type]?.text("Stored: \"\(item.value)\" at \(formatter.string(from: item.timestamp))")
+            statusLabels[type]?.text("Stored: \"\(item.value)\" at \(item.timestamp.toString(with: "HH:mm:ss"))")
                 .textColor(.systemGreen)
         } else {
             statusLabels[type]?.text("Empty — nothing stored")
