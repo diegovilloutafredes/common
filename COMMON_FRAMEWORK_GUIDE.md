@@ -1042,14 +1042,14 @@ presentAlertView(type: .customAlert(title: "Oops", message: "Something failed"),
 
 ### Child coordinators
 
+`addChildAndStart` stores the child and calls `start()`. When the child's view controller is eventually popped off the navigation stack, `BaseCoordinator` removes the child from `childCoordinators` automatically via KVO — no manual `removeChild` call is needed in `onPerformed`. The `onPerformed` closure is for the parent to react to the result (e.g. pop a screen, show the next one):
+
 ```swift
-class MainCoordinator: BaseCoordinator {
-    func startProfileFlow() {
-        let child = ProfileCoordinator(
+class AppCoordinator: BaseCoordinator {
+    func showSettingsFlow() {
+        let child = SettingsCoordinator(
             navigationController: navigationController,
-            onPerformed: { [weak self] coordinator in
-                self?.removeChild(coordinator)
-            }
+            onPerformed: { [weak self] _ in self?.pop() }
         )
         addChildAndStart(child)
     }
@@ -1061,7 +1061,142 @@ class MainCoordinator: BaseCoordinator {
 | `addChild(_ coordinator:)` | Store reference |
 | `addChildAndStart(_ coordinator:)` | Store + call `start()` |
 | `getChild<T>(_ type:)` | Retrieve child by type |
-| `removeChild(_ coordinator:)` | Remove from array |
+| `removeChild(_ coordinator:)` | Remove from array (rarely needed manually) |
+
+### finish() vs cancel()
+
+`BaseCoordinator` distinguishes between two exit paths:
+
+- **`finish()`** — the flow completed successfully. Triggers `onPerformed`, which the parent uses to navigate forward or pop the child's screen.
+- **`cancel()`** — the user abandoned the flow (e.g. swipe-back). Does NOT trigger `onPerformed`. The parent observes this implicitly; UIKit already popped the VC.
+
+Override both when the child needs to emit events or clean up:
+
+```swift
+final class CheckoutCoordinator: BaseCoordinator {
+    override func finish() {
+        // notify parent of success before handing control back
+        super.finish()  // triggers onPerformed
+    }
+
+    override func cancel() {
+        // user bailed — clean up, do NOT call onPerformed
+        super.cancel()
+    }
+}
+```
+
+### Detecting swipe-back cancels from a ViewController
+
+UIKit fires `viewWillDisappear` when a VC is being popped by a back-gesture. `isMovingFromParent` is `true` only during a real pop (not a push on top). Use this to bridge the UIKit event into `cancel()`:
+
+```swift
+final class CheckoutViewController: UIViewController {
+    var onCancel: (() -> Void)?
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent { onCancel?() }
+    }
+}
+
+// In the coordinator's start():
+vc.onCancel = { [weak self] in self?.cancel() }
+```
+
+> **Important:** Do not use `navigationController(_:didShow:animated:)` or KVO alone for detecting back-gestures — `viewWillDisappear + isMovingFromParent` is the reliable cross-version pattern.
+
+### Coordinator protocol isolation
+
+ViewModels and Wireframes should depend on a coordinator *protocol*, not the concrete coordinator class. This keeps modules independently testable and prevents import cycles:
+
+```swift
+// Define the protocol in the module
+@MainActor
+protocol CheckoutCoordinatorProtocol: AnyObject {
+    func showConfirmation(order: Order)
+    func showError(_ error: Error)
+}
+
+// Wireframe takes the protocol, not AppCoordinator
+enum CheckoutWireframe {
+    static func createModule(coordinator: CheckoutCoordinatorProtocol) -> UIViewController {
+        let vm = CheckoutViewModel(coordinator: coordinator)
+        return CheckoutViewController(viewModel: vm)
+            .with { vm.view = $0 }
+    }
+}
+
+// The concrete coordinator conforms
+final class CheckoutCoordinator: BaseCoordinator, CheckoutCoordinatorProtocol {
+    override func start() {
+        push(CheckoutWireframe.createModule(coordinator: self))
+    }
+    func showConfirmation(order: Order) { push(ConfirmationWireframe.createModule(order: order)) }
+    func showError(_ error: Error) { presentAlertView(type: .customAlert(title: "Error", message: error.localizedDescription), acceptAction: nil, cancelAction: nil) }
+}
+```
+
+### Nested coordinator chains
+
+For multi-level flows where each depth level can go deeper, pass an `onEvent` closure through the chain so a single hub coordinator tracks the entire tree:
+
+Define an event struct and use `Handler<T>` from Common so call sites are named, not positional:
+
+```swift
+struct FlowEvent {
+    let message: String
+    let delta: Int   // +1 coordinator started, -1 finished or cancelled
+}
+
+final class HubCoordinator: BaseCoordinator {
+    private var activeFlowCount = 0
+
+    func startDeepFlow(maxDepth: Int) {
+        let child = FlowCoordinator(
+            navigationController: navigationController,
+            depth: 1,
+            maxDepth: maxDepth,
+            onEvent: { [weak self] event in
+                self?.activeFlowCount += event.delta
+            },
+            onPerformed: { [weak self] _ in self?.pop() }
+        )
+        addChildAndStart(child)
+    }
+}
+
+final class FlowCoordinator: BaseCoordinator {
+    private let depth: Int
+    private let maxDepth: Int
+    private let onEvent: Handler<FlowEvent>
+
+    override func start() {
+        push(FlowViewController(depth: depth, maxDepth: maxDepth))
+        onEvent(FlowEvent(message: "Depth \(depth) started", delta: +1))
+    }
+    override func finish() {
+        onEvent(FlowEvent(message: "Depth \(depth) finished", delta: -1))
+        super.finish()
+    }
+    override func cancel() {
+        onEvent(FlowEvent(message: "Depth \(depth) cancelled", delta: -1))
+        super.cancel()
+    }
+
+    func launchNextLevel() {
+        let child = FlowCoordinator(
+            navigationController: navigationController,
+            depth: depth + 1, maxDepth: maxDepth,
+            onEvent: onEvent,                           // same closure propagates to hub
+            onPerformed: { [weak self] _ in self?.pop() }
+        )
+        addChildAndStart(child)
+    }
+}
+```
+
+Each coordinator emits `delta: +1` on `start()` and `delta: -1` on `finish()`/`cancel()`. The hub accumulates the total across the entire tree regardless of nesting depth. Using `Handler<FlowEvent>` (from Common's type aliases) instead of a raw multi-parameter closure keeps call sites readable and extensible.
 
 ### Typical coordinator flow
 
