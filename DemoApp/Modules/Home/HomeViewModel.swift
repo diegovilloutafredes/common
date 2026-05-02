@@ -74,6 +74,11 @@ final class HomeViewModel {
             subtitle: "Debouncer, UIDatePicker, CircularActivityIndicator",
             action: { [weak self] in self?.coordinator?.showUtilities() }
         ),
+        .init(
+            title: "Coordinator",
+            subtitle: "Child lifecycle, cancel vs finish, KVO tracking",
+            action: { [weak self] in self?.coordinator?.showCoordinatorDemo() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?
