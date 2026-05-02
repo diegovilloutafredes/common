@@ -57,9 +57,7 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// Idempotent — safe to call multiple times; only the first call has effect.
     open func finish() {
         guard !isFinished else { return }
-        isFinished = true
-        stopLifecycleTracking()
-        parent?.removeChild(self)
+        terminate()
         onPerformed?(self)
     }
 
@@ -68,12 +66,16 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// Idempotent — safe to call multiple times; only the first call has effect.
     open func cancel() {
         guard !isFinished else { return }
+        terminate()
+    }
+
+    // MARK: - Lifecycle tracking
+
+    private func terminate() {
         isFinished = true
         stopLifecycleTracking()
         parent?.removeChild(self)
     }
-
-    // MARK: - Lifecycle tracking
 
     private func beginLifecycleTracking(for viewController: UIViewController) {
         trackedViewController = viewController
@@ -153,7 +155,41 @@ extension BaseCoordinator: Dismissable {}
 
 
 // MARK: - Navigationable
-extension BaseCoordinator: Navigationable {}
+extension BaseCoordinator: Navigationable {
+
+    /// Replaces the nav stack with the given array and re-anchors lifecycle tracking.
+    ///
+    /// Two cases handled transparently:
+    /// - Tracking already active (started via `addChildAndStart`): `trackedViewController` is updated
+    ///   to the new first VC **before** calling `setViewControllers`, because KVO fires synchronously
+    ///   inside that call. Updating after would be too late — the old tracked VC would already be
+    ///   gone and `cancel()` would have fired incorrectly.
+    /// - Tracking not yet active (coordinator added via `addChild` alone): tracking is bootstrapped
+    ///   after the nav call, since no observer exists to false-fire during it.
+    ///
+    /// `set([])` intentionally lets existing tracking fire `cancel()` — an empty-stack replacement
+    /// is treated as flow abandonment.
+    public func set(_ viewControllers: [UIViewController], animated: Bool = false) {
+        guard let first = viewControllers.first else {
+            // UIKit silently ignores setViewControllers([]) so KVO never fires.
+            // Treat empty replacement as explicit flow abandonment.
+            navigationController.setViewControllers([], animated: animated)
+            cancel()
+            return
+        }
+        // Re-anchor BEFORE the nav call — KVO fires synchronously inside setViewControllers,
+        // and the guard checks whether trackedViewController is still in the new stack.
+        trackedViewController = first
+        navigationController.setViewControllers(viewControllers, animated: animated)
+        if viewControllersObservation == nil, !isFinished {
+            beginLifecycleTracking(for: first)
+        }
+    }
+
+    public func set(_ viewController: UIViewController, animated: Bool = false) {
+        set([viewController], animated: animated)
+    }
+}
 
 
 // MARK: - Presentable

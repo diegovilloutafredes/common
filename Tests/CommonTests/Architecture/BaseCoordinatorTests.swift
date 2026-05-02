@@ -257,4 +257,103 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertEqual(parent.childCoordinators.count, 1,
                        "Non-pushing coordinator must not be removed by unrelated nav changes")
     }
+
+    // MARK: - set() — re-anchoring and bootstrap
+
+    func test_set_noFalseCancel_whenCoordinatorReplacesStack() {
+        // Coordinator tracked on A, then replaces stack with D — must NOT cancel.
+        class PushingCoordinator: BaseCoordinator {
+            let pushedVC = UIViewController()
+            override func start() {
+                navigationController.viewControllers =
+                    navigationController.viewControllers + [pushedVC]
+            }
+        }
+
+        let pushing = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(pushing)
+
+        let d = UIViewController()
+        pushing.set([d])  // coordinator's own set() — must re-anchor, not cancel
+
+        XCTAssertEqual(parent.childCoordinators.count, 1,
+                       "Coordinator replacing its own stack must not be removed")
+    }
+
+    func test_set_reanchors_popNewVCTriggersCancelAfterSet() {
+        // After set([D]) the coordinator must track D — popping D should cancel it.
+        class PushingCoordinator: BaseCoordinator {
+            let pushedVC = UIViewController()
+            override func start() {
+                navigationController.viewControllers =
+                    navigationController.viewControllers + [pushedVC]
+            }
+        }
+
+        let pushing = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(pushing)
+
+        let d = UIViewController()
+        pushing.set([d])
+        XCTAssertEqual(parent.childCoordinators.count, 1)
+
+        // Simulate pop of D (e.g. parent coordinator replaces stack)
+        nav.viewControllers = nav.viewControllers.filter { $0 !== d }
+
+        XCTAssertTrue(parent.childCoordinators.isEmpty,
+                      "Pop of re-anchored VC must trigger cancel")
+    }
+
+    func test_set_bootstrapsTracking_whenNotPreviouslyTracked() {
+        // Coordinator added via addChild (not addChildAndStart) — no tracking yet.
+        // Calling set() should bootstrap tracking.
+        parent.addChild(child)
+        XCTAssertEqual(parent.childCoordinators.count, 1)
+
+        let d = UIViewController()
+        child.set([d])  // bootstraps tracking on d
+
+        // Pop d — should trigger cancel
+        nav.viewControllers = []
+
+        XCTAssertTrue(parent.childCoordinators.isEmpty,
+                      "set() on untracked coordinator should bootstrap tracking")
+    }
+
+    func test_set_emptyArray_cancels_whenTracked() {
+        class PushingCoordinator: BaseCoordinator {
+            let pushedVC = UIViewController()
+            override func start() {
+                navigationController.viewControllers =
+                    navigationController.viewControllers + [pushedVC]
+            }
+        }
+
+        let pushing = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(pushing)
+
+        pushing.set([])  // empty set — tracked VC (pushedVC) leaves stack → cancel
+
+        XCTAssertTrue(parent.childCoordinators.isEmpty,
+                      "set([]) should be treated as flow abandonment")
+    }
+
+    // MARK: - terminate() shared by finish() and cancel()
+
+    func test_terminate_finish_doesNotTriggerCancelOverride() {
+        // Verifies finish() and cancel() are independent override points.
+        // A subclass that overrides cancel() should NOT see that override run during finish().
+        class TrackingCoordinator: BaseCoordinator {
+            var cancelCallCount = 0
+            override func cancel() { cancelCallCount += 1; super.cancel() }
+        }
+
+        let coord = TrackingCoordinator(navigationController: nav)
+        parent.addChild(coord)
+
+        coord.finish()
+
+        XCTAssertEqual(coord.cancelCallCount, 0,
+                       "finish() must not call the cancel() override")
+    }
 }
