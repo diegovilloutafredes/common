@@ -14,6 +14,18 @@ final class BaseCoordinatorTests: XCTestCase {
         override func start() { startCalled = true }
     }
 
+    /// Pushes `vc` onto `nav` by directly setting the viewControllers array (no animation),
+    /// which triggers KVO synchronously — suitable for unit tests without a window.
+    private func simulatePush(_ vc: UIViewController, onto nav: UINavigationController) {
+        nav.viewControllers = nav.viewControllers + [vc]
+    }
+
+    /// Simulates a pop (swipe-back or programmatic) by removing the last VC from the stack.
+    private func simulatePop(from nav: UINavigationController) {
+        guard nav.viewControllers.count > 1 else { return }
+        nav.viewControllers = Array(nav.viewControllers.dropLast())
+    }
+
     private var nav: UINavigationController!
     private var parent: StubCoordinator!
     private var child: StubCoordinator!
@@ -121,5 +133,128 @@ final class BaseCoordinatorTests: XCTestCase {
         let orphan = StubCoordinator(navigationController: nav) { _ in called = true }
         orphan.finish()
         XCTAssertTrue(called)
+    }
+
+    // MARK: - cancel()
+
+    func test_cancel_removesChildFromParent() {
+        parent.addChild(child)
+        child.cancel()
+        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    }
+
+    func test_cancel_doesNotCallOnPerformed() {
+        var called = false
+        let tracked = StubCoordinator(navigationController: nav) { _ in called = true }
+        parent.addChild(tracked)
+
+        tracked.cancel()
+
+        XCTAssertFalse(called)
+    }
+
+    func test_cancel_isIdempotent() {
+        parent.addChild(child)
+        child.cancel()
+        child.cancel()
+        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    }
+
+    func test_finish_afterCancel_isNoOp() {
+        var callCount = 0
+        let tracked = StubCoordinator(navigationController: nav) { _ in callCount += 1 }
+        parent.addChild(tracked)
+
+        tracked.cancel()
+        tracked.finish()  // must be a no-op — isFinished already true
+
+        XCTAssertEqual(callCount, 0)
+        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    }
+
+    func test_cancel_afterFinish_isNoOp() {
+        var callCount = 0
+        let tracked = StubCoordinator(navigationController: nav) { _ in callCount += 1 }
+        parent.addChild(tracked)
+
+        tracked.finish()
+        tracked.cancel()  // must be a no-op — isFinished already true
+
+        XCTAssertEqual(callCount, 1)
+        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    }
+
+    // MARK: - KVO lifecycle tracking (gesture-driven cleanup)
+
+    func test_kvo_popRemovesCoordinatorFromParent() {
+        // A pushing coordinator: start() pushes one VC onto the shared nav stack.
+        class PushingCoordinator: BaseCoordinator {
+            let pushedVC = UIViewController()
+            override func start() {
+                navigationController.viewControllers =
+                    navigationController.viewControllers + [pushedVC]
+            }
+        }
+
+        let pushing = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(pushing)
+        XCTAssertEqual(parent.childCoordinators.count, 1)
+
+        // Simulate swipe-back / programmatic pop
+        nav.viewControllers = Array(nav.viewControllers.dropLast())
+
+        XCTAssertTrue(parent.childCoordinators.isEmpty,
+                      "KVO should have triggered cancel() and removed coordinator from parent")
+    }
+
+    func test_kvo_popDoesNotFireOnPerformed() {
+        class PushingCoordinator: BaseCoordinator {
+            let pushedVC = UIViewController()
+            override func start() {
+                navigationController.viewControllers =
+                    navigationController.viewControllers + [pushedVC]
+            }
+        }
+
+        var called = false
+        let pushing = PushingCoordinator(navigationController: nav) { _ in called = true }
+        parent.addChildAndStart(pushing)
+
+        nav.viewControllers = Array(nav.viewControllers.dropLast())
+
+        XCTAssertFalse(called, "cancel() must not fire onPerformed")
+    }
+
+    func test_kvo_finishBeforePopSuppressesDoubleCleanup() {
+        class PushingCoordinator: BaseCoordinator {
+            let pushedVC = UIViewController()
+            override func start() {
+                navigationController.viewControllers =
+                    navigationController.viewControllers + [pushedVC]
+            }
+        }
+
+        var callCount = 0
+        let pushing = PushingCoordinator(navigationController: nav) { _ in callCount += 1 }
+        parent.addChildAndStart(pushing)
+
+        pushing.finish()                                              // marks isFinished = true, stops tracking
+        nav.viewControllers = Array(nav.viewControllers.dropLast())  // KVO fires but isFinished guard skips it
+
+        XCTAssertEqual(callCount, 1)
+        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    }
+
+    func test_kvo_noTrackingWhenCoordinatorDoesNotPush() {
+        // addChildAndStart on a coordinator that pushes nothing — no tracking wired, no crash.
+        parent.addChildAndStart(child)  // StubCoordinator.start() does not push any VC
+
+        // Mutating the stack must NOT trigger cancel on child
+        let vc = UIViewController()
+        simulatePush(vc, onto: nav)
+        simulatePop(from: nav)
+
+        XCTAssertEqual(parent.childCoordinators.count, 1,
+                       "Non-pushing coordinator must not be removed by unrelated nav changes")
     }
 }

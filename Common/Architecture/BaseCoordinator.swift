@@ -33,9 +33,11 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     public weak var parent: BaseCoordinator?
 
     private var isFinished = false
+    private weak var trackedViewController: UIViewController?
+    private var viewControllersObservation: NSKeyValueObservation?
 
     // MARK: - Coordinator
-    
+
     /// Starts the coordinator's flow.
     /// Subclasses must override this method to define their specific start logic.
     open func start() {}
@@ -56,8 +58,41 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     open func finish() {
         guard !isFinished else { return }
         isFinished = true
+        stopLifecycleTracking()
         parent?.removeChild(self)
         onPerformed?(self)
+    }
+
+    /// Cancels this coordinator's flow without firing `onPerformed`.
+    /// Called automatically when the coordinator's tracked entry VC leaves the nav stack (e.g. swipe-back).
+    /// Idempotent — safe to call multiple times; only the first call has effect.
+    open func cancel() {
+        guard !isFinished else { return }
+        isFinished = true
+        stopLifecycleTracking()
+        parent?.removeChild(self)
+    }
+
+    // MARK: - Lifecycle tracking
+
+    private func beginLifecycleTracking(for viewController: UIViewController) {
+        trackedViewController = viewController
+        viewControllersObservation = navigationController.observe(
+            \.viewControllers,
+            options: [.new]
+        ) { [weak self] _, change in
+            guard
+                let self,
+                let tracked = self.trackedViewController,
+                !(change.newValue ?? []).contains(tracked)
+            else { return }
+            self.cancel()
+        }
+    }
+
+    private func stopLifecycleTracking() {
+        viewControllersObservation = nil
+        trackedViewController = nil
     }
 }
 
@@ -74,11 +109,19 @@ extension BaseCoordinator {
     }
 
     /// Adds a child coordinator and starts it immediately.
+    /// Automatically tracks the first VC the coordinator pushes so that a swipe-back gesture
+    /// triggers `cancel()` and removes the coordinator from the child list.
     /// - Parameter coordinator: The child coordinator to add and start.
     public func addChildAndStart(_ coordinator: some Coordinator) {
         Logger.log(["\(Self.self)": coordinator])
         addChild(coordinator)
+        let preStack = navigationController.viewControllers
         coordinator.start()
+        let postStack = navigationController.viewControllers
+        if let entry = postStack.first(where: { !preStack.contains($0) }),
+           let base = coordinator as? BaseCoordinator {
+            base.beginLifecycleTracking(for: entry)
+        }
     }
 
     /// Retrieves the first child coordinator of a specific type.
