@@ -29,6 +29,11 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// A list of child coordinators managed by this coordinator.
     public var childCoordinators: [Coordinator] = []
 
+    /// The parent coordinator that owns this coordinator. Set automatically by `addChild`.
+    public weak var parent: BaseCoordinator?
+
+    private var isFinished = false
+
     // MARK: - Coordinator
     
     /// Starts the coordinator's flow.
@@ -45,6 +50,15 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// Handles a go back request.
     /// By default it pops the top view controller from the navigation controller.
     open func onGoBackRequested() { pop() }
+
+    /// Completes this coordinator's flow: removes self from parent's child list, then fires `onPerformed`.
+    /// Idempotent — safe to call multiple times; only the first call has effect.
+    open func finish() {
+        guard !isFinished else { return }
+        isFinished = true
+        parent?.removeChild(self)
+        onPerformed?(self)
+    }
 }
 
 // MARK: - Convenience child coordinators methods
@@ -55,6 +69,7 @@ extension BaseCoordinator {
     public func addChild(_ coordinator: some Coordinator) {
         Logger.log(["\(Self.self)": coordinator])
         removeChild(coordinator)
+        (coordinator as? BaseCoordinator)?.parent = self
         childCoordinators.append(coordinator)
     }
 
@@ -74,11 +89,11 @@ extension BaseCoordinator {
         return childCoordinators.getFirst(type)
     }
 
-    /// Removes a child coordinator from the list of managed child coordinators.
-    /// - Parameter coordinator: The child coordinator to remove.
+    /// Removes a specific child coordinator by identity.
+    /// - Parameter coordinator: The exact coordinator instance to remove.
     public func removeChild<T>(_ coordinator: T) where T: Coordinator {
         Logger.log(["\(Self.self)": coordinator])
-        childCoordinators.removeAll(T.self)
+        childCoordinators.removeAll { $0 === coordinator }
     }
 }
 
