@@ -26,9 +26,10 @@ This guide documents how to use the **Common** framework to build UI, wire modul
 14. [Core Protocols and Typealiases](#14-core-protocols-and-typealiases)
 15. [Common Pitfalls and Best Practices](#15-common-pitfalls-and-best-practices)
 16. [Environment](#16-environment)
-17. [Appendix A — alertView() helper](#appendix-a--alertview-helper)
-18. [Appendix B — New screen checklist](#appendix-b--new-screen-checklist)
-19. [Appendix C — New API domain checklist](#appendix-c--new-api-domain-checklist)
+17. [Image Loading](#17-image-loading)
+18. [Appendix A — alertView() helper](#appendix-a--alertview-helper)
+19. [Appendix B — New screen checklist](#appendix-b--new-screen-checklist)
+20. [Appendix C — New API domain checklist](#appendix-c--new-api-domain-checklist)
 
 ---
 
@@ -2117,6 +2118,95 @@ extension AppEnvironment: Environment {
 ```
 
 Access in routers via `AppEnvironment.baseURL` (a `URL?` computed from `baseURLAsString`).
+
+---
+
+## 17. Image Loading
+
+Common provides a native, zero-dependency image loading subsystem under `Common/ImageLoader/`. It replaces Kingfisher / SDWebImage for the common case of loading remote images into `UIImageView`.
+
+### Quick start
+
+```swift
+imageView.loadImage(from: url)
+```
+
+That's it — cache-first (L1 memory → L2 disk → network), placeholder, fade-in, and cancellation are all optional additions:
+
+```swift
+let options = ImageLoadOptions(
+    placeholder: UIImage(systemName: "photo"),
+    failureImage: UIImage(systemName: "xmark.circle"),
+    transition: .fade(0.25),
+    onCompletion: { result in
+        switch result {
+        case .success(let image): print("loaded:", image.size)
+        case .failure(let error): print("failed:", error)
+        }
+    }
+)
+imageView.loadImage(from: url, options: options)
+```
+
+### Cell reuse cancellation
+
+Call `cancelImageLoad()` in `prepareForReuse()` if you are not using `loadImage` (which auto-cancels). If you call `loadImage` again on the same view (e.g. when `viewModel` is set in `didSet`), the old task is cancelled automatically before the new one starts — no stale image can appear.
+
+```swift
+override var viewModel: MyCellViewModelProtocol? {
+    didSet {
+        guard let vm = viewModel else {
+            thumbView.cancelImageLoad()
+            return
+        }
+        thumbView.loadImage(from: vm.imageURL, options: .default)
+    }
+}
+```
+
+### ImageLoadOptions
+
+| Property | Type | Default | Purpose |
+|---|---|---|---|
+| `placeholder` | `UIImage?` | `nil` | Shown synchronously while the image loads |
+| `failureImage` | `UIImage?` | `nil` | Shown if the fetch throws an error |
+| `transition` | `ImageTransition` | `.none` | How the image appears (`.fade(duration)`) |
+| `onCompletion` | `ResultHandler<UIImage>?` | `nil` | Called on main thread with success or failure |
+
+`ImageLoadOptions.default` sets all properties to their defaults. Pass it explicitly or omit the `options:` argument entirely.
+
+### ImageTransition
+
+```swift
+public enum ImageTransition {
+    case none               // instant assignment (used on cache hits regardless of options)
+    case fade(TimeInterval) // alpha 0 → 1 animation, applied only on network-fetched results
+}
+```
+
+Cache hits (L1 or L2) always use `.none` — the transition is only applied when the image came from the network.
+
+### Cache management
+
+```swift
+// Clear all cached images (memory + disk)
+await ImageLoader.shared.cache.clearAll()
+
+// Remove one URL
+ImageLoader.shared.cache.removeImage(for: url)
+```
+
+### Architecture overview
+
+| Layer | Type | Purpose |
+|---|---|---|
+| `ImageCache` | `final class` | L1 `NSCache` + L2 `FileManager` disk; SHA256 URL keys; TTL + size cap |
+| `ImageLoader` | `actor` | Cache-first lookup; in-flight deduplication; `@MainActor` delivery |
+| `UIImageView+LoadImage` | Extension | Fluent API; per-view task cancellation via associated object |
+
+### Supported image types
+
+`.jpg`, `.png`, `.webp` — file extension is inferred from the `Content-Type` response header. Unknown types use `.dat` and are still decoded as `UIImage` if the data is valid.
 
 ---
 

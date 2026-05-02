@@ -60,4 +60,8 @@ final class AppCoordinator: BaseCoordinator {
     func showCoordinatorDemo() {
         addChildAndStart(CoordinatorDemoCoordinator(navigationController: navigationController))
     }
+
+    func showImageLoading() {
+        push(ImageLoadingWireframe.createModule())
+    }
 }
