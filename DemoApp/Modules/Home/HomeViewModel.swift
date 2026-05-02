@@ -79,6 +79,11 @@ final class HomeViewModel {
             subtitle: "Child lifecycle, cancel vs finish, KVO tracking",
             action: { [weak self] in self?.coordinator?.showCoordinatorDemo() }
         ),
+        .init(
+            title: "Image Loading",
+            subtitle: "loadImage(from:), two-tier cache, cell reuse cancellation",
+            action: { [weak self] in self?.coordinator?.showImageLoading() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?
