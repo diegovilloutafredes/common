@@ -315,7 +315,7 @@ extension Array where Element == HTTPHeader {
 // MARK: - Defaults
 
 extension HTTPHeaders {
-    static let empty: HTTPHeaders = []
+    public static let empty: HTTPHeaders = []
 }
 
 extension HTTPHeaders {
