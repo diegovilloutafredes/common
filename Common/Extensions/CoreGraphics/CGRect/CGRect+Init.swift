@@ -10,7 +10,7 @@ extension CGRect {
     /// - Parameters:
     ///   - width: The width.
     ///   - height: The height.
-    init(width: Double, height: Double) {
+    public init(width: Double, height: Double) {
         self.init(x: .zero, y: .zero, width: width, height: height)
     }
 }
@@ -21,7 +21,7 @@ extension CGRect {
     /// - Parameters:
     ///   - width: The integer width.
     ///   - height: The integer height.
-    init(width: Int, height: Int) {
+    public init(width: Int, height: Int) {
         self.init(x: .zero, y: .zero, width: width, height: height)
     }
 }
