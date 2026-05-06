@@ -216,6 +216,20 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertTrue(parent.childCoordinators.isEmpty)
     }
 
+    /// Codifies that KVO-driven cancel runs on the same runloop tick as the
+    /// nav-stack mutation (no Task hop). The implementation depends on
+    /// `MainActor.assumeIsolated` in `beginLifecycleTracking`; switching that
+    /// to `Task { @MainActor in ... }` would defer cleanup and break this test.
+    func test_kvo_popCancelsSynchronously() {
+        let pushing = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(pushing)
+
+        nav.viewControllers = Array(nav.viewControllers.dropLast())
+
+        // No expectation / no await — cleanup must happen before the next line runs.
+        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    }
+
     func test_kvo_noTrackingWhenCoordinatorDoesNotPush() {
         parent.addChildAndStart(child)  // StubCoordinator.start() does not push any VC
 
