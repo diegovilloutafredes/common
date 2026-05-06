@@ -11,9 +11,10 @@ public enum HTTPService {
 
     /// Performs an HTTP request and decodes the response to a specified type.
     ///
-    /// - Deprecated: Use the `async throws` overload instead. This overload is a thin wrapper
-    ///   over the async variant and no longer returns a cancellable `URLSessionTask`.
-    @available(*, deprecated, message: "Use the async throws overload instead.")
+    /// Wraps the `async throws` overload in an unstructured `Task` for callback-based
+    /// callers. The returned `URLSessionTask?` is always `nil` — cancellation is not
+    /// supported through this API. Callers that need cancellation should use the
+    /// async overload, which integrates with structured-concurrency cancellation.
     @discardableResult public static func request<T: Decodable>(
         _ resource: URLRequestConvertible,
         urlSession: URLSession = HTTPService.defaultSession,
@@ -35,8 +36,10 @@ public enum HTTPService {
 
     /// Uploads a multipart request and decodes the response to a specified type.
     ///
-    /// - Deprecated: Use the `async throws` overload instead.
-    @available(*, deprecated, message: "Use the async throws overload instead.")
+    /// Wraps the `async throws` overload in an unstructured `Task` for callback-based
+    /// callers. The returned `URLSessionTask?` is always `nil` — cancellation is not
+    /// supported through this API. Callers that need cancellation should use the
+    /// async overload.
     @discardableResult public static func upload<T: Decodable>(
         multipart: MultipartRequest,
         to resource: URLRequestConvertible,
