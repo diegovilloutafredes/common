@@ -83,12 +83,17 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
             \.viewControllers,
             options: [.new]
         ) { [weak self] _, change in
-            guard
-                let self,
-                let tracked = self.trackedViewController,
-                !(change.newValue ?? []).contains(tracked)
-            else { return }
-            self.cancel()
+            // UIKit delivers nav-stack KVO on the main thread; assert that to the
+            // type system so the MainActor-isolated property/method access is sound.
+            // Crashes (rather than silently corrupts) if a future caller delivers off-main.
+            MainActor.assumeIsolated {
+                guard
+                    let self,
+                    let tracked = self.trackedViewController,
+                    !(change.newValue ?? []).contains(tracked)
+                else { return }
+                self.cancel()
+            }
         }
     }
 
