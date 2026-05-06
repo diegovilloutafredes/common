@@ -10,13 +10,13 @@ import Foundation
 open class BaseClient {
 
     private let requestsQueue = DispatchQueue(label: "com.common.baseclient.requests", qos: .utility)
-    private var _requests = [String: URLSessionTask]()
+    private var _requests = [String: Task<Void, Never>]()
 
     /// A thread-safe dictionary storing active network tasks. Logs only changed entries.
-    public var requests: [String: URLSessionTask] {
+    public var requests: [String: Task<Void, Never>] {
         get { requestsQueue.sync { _requests } }
         set {
-            var old: [String: URLSessionTask] = [:]
+            var old: [String: Task<Void, Never>] = [:]
             requestsQueue.sync {
                 old = _requests
                 _requests = newValue

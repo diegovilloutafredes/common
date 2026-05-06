@@ -182,6 +182,62 @@ final class HTTPServiceTests: XCTestCase {
         XCTAssertEqual(capturedTimeout, customTimeout)
     }
 
+    // MARK: - Callback overload — cancellation
+
+    func test_callbackRequest_cancelledMidFlight_doesNotFireHandler() async throws {
+        // Mock handler blocks for 0.5s before delivering — gives us a window to cancel.
+        MockURLProtocol.requestHandler = { request in
+            Thread.sleep(forTimeInterval: 0.5)
+            let data = try JSONEncoder().encode(TestItem(id: 1, name: "Widget"))
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, data)
+        }
+
+        let handlerNotCalled = expectation(description: "result handler must not fire after cancel")
+        handlerNotCalled.isInverted = true
+
+        let task: Task<Void, Never> = HTTPService.request(TestEndpoint.get) { (_: Result<TestItem, NetworkError>) in
+            handlerNotCalled.fulfill()
+        }
+
+        // Cancel ~50 ms in, well before the 500 ms response.
+        try await Task.sleep(nanoseconds: 50_000_000)
+        task.cancel()
+
+        // Wait long enough that the handler would have fired if cancellation didn't suppress it.
+        await fulfillment(of: [handlerNotCalled], timeout: 0.8)
+    }
+
+    func test_callbackRequest_completesNormally_firesHandler() async throws {
+        let expected = TestItem(id: 7, name: "Foo")
+        MockURLProtocol.requestHandler = { request in
+            let data = try JSONEncoder().encode(expected)
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, data)
+        }
+
+        let handlerCalled = expectation(description: "result handler should fire")
+        nonisolated(unsafe) var received: TestItem?
+
+        _ = HTTPService.request(TestEndpoint.get) { (result: Result<TestItem, NetworkError>) in
+            if case .success(let value) = result { received = value }
+            handlerCalled.fulfill()
+        }
+
+        await fulfillment(of: [handlerCalled], timeout: 1.0)
+        XCTAssertEqual(received, expected)
+    }
+
     // MARK: - 5xx returns responseError
 
     func test_request_5xx_returnsResponseError() async throws {
