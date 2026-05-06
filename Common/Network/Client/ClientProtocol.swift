@@ -9,7 +9,9 @@ import Foundation
 public protocol ClientProtocol: AnyObject {
     
     /// A dictionary storing active network tasks, keyed by function or identifier.
-    var requests: [String: URLSessionTask] { get set }
+    /// Tasks are `Task<Void, Never>` wrappers around the async network call;
+    /// `cancel()` aborts the in-flight request and prevents the result handler from firing.
+    var requests: [String: Task<Void, Never>] { get set }
     
     /// Performs a network request and decodes the response.
     /// - Parameters:
