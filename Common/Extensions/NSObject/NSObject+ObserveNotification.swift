@@ -4,11 +4,13 @@
 
 import UIKit
 
+nonisolated(unsafe) private var observeNotificationHandlersKey: UInt8 = 0
+
 // MARK: - Observe Notification
 extension NSObject {
     private var handlers: [Notification.Name: Action] {
-        get { associatedObject(for: "handlers") as? [Notification.Name: Action] ?? [:] }
-        set { set(associatedObject: newValue, for: "handlers") }
+        get { objc_getAssociatedObject(self, &observeNotificationHandlersKey) as? [Notification.Name: Action] ?? [:] }
+        set { objc_setAssociatedObject(self, &observeNotificationHandlersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     @objc private func onEvent(_ notification: Notification) {
@@ -26,6 +28,7 @@ extension NSObject {
             handlers[name] = action
             $0.handlers = handlers
 
+            NotificationCenter.default.removeObserver($0, name: name, object: nil)
             NotificationCenter
                 .default
                 .addObserver(

@@ -3,7 +3,6 @@
 //
 
 // MARK: - RawValueKeyValueStore
-// MARK: - RawValueKeyValueStore
 /// A protocol combining `RawValueKeyableStorage` with a key-value storage mechanism.
 public protocol RawValueKeyValueStore: RawValueKeyableStorage {}
 

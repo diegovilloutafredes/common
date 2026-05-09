@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - URLConvertible
-// MARK: - URLConvertible
 /// A type that can be converted into a `URL`.
 public protocol URLConvertible {
     

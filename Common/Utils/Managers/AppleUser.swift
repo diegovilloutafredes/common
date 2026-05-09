@@ -3,7 +3,6 @@
 //
 
 // MARK: - AppleUser
-// MARK: - AppleUser
 /// A structure representing an Apple ID user.
 public struct AppleUser {
     

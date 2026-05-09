@@ -4,25 +4,33 @@
 
 import UIKit
 
-// MARK: - BasePresentableViewController
-// MARK: - BasePresentableViewController
+// MARK: - BaseViewModelableViewController
 
 /// A base view controller that is driven by a View Model.
-/// It conforms to `ViewModelableViewController`, `ContentReloadable`, and `UICollectionViewable`.
-open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewController, ContentReloadable, UICollectionViewable {
-    
-    /// The view model associated with this view controller.
-    open var viewModel: ViewModelType
+/// It conforms to `ViewModelableViewController` and `ContentReloadable`.
+/// View controllers that own a collection view should subclass
+/// `BaseCollectionViewableViewController` instead.
+open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewController, ContentReloadable {
 
-    private var asCollectionViewable: CollectionViewable? { viewModel as? CollectionViewable }
-    private var asReloadContentRequestable: ReloadContentRequestable? { viewModel as? ReloadContentRequestable }
-    private var asViewLifecycleable: ViewLifecycleable? { viewModel as? ViewLifecycleable }
+    /// The view model associated with this view controller.
+    open var viewModel: ViewModelType {
+        didSet { cacheViewModelRoles() }
+    }
+
+    private var _asViewLifecycleable: ViewLifecycleable?
+    private var _asReloadContentRequestable: ReloadContentRequestable?
+
+    private func cacheViewModelRoles() {
+        _asViewLifecycleable = viewModel as? ViewLifecycleable
+        _asReloadContentRequestable = viewModel as? ReloadContentRequestable
+    }
 
     /// Initializes a new view controller with the given view model.
     /// - Parameter viewModel: The view model to inject.
     required public init(viewModel: ViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        cacheViewModelRoles()
     }
 
     @available(*, unavailable)
@@ -33,114 +41,47 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
     // MARK: - View Lifecycle
     open override func viewDidLoad() {
         super.viewDidLoad()
-        asViewLifecycleable?.onViewDidLoad()
+        _asViewLifecycleable?.onViewDidLoad()
     }
 
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        asViewLifecycleable?.onViewWillLayoutSubviews()
+        _asViewLifecycleable?.onViewWillLayoutSubviews()
+    }
+
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        _asViewLifecycleable?.onViewDidLayoutSubviews()
     }
 
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        asViewLifecycleable?.onViewWillAppear()
+        _asViewLifecycleable?.onViewWillAppear()
     }
 
     open override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
-        asViewLifecycleable?.onViewIsAppearing()
+        _asViewLifecycleable?.onViewIsAppearing()
     }
 
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        asViewLifecycleable?.onViewDidAppear()
+        _asViewLifecycleable?.onViewDidAppear()
     }
 
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        asViewLifecycleable?.onViewWillDisappear()
+        _asViewLifecycleable?.onViewWillDisappear()
+    }
+
+    open override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        _asViewLifecycleable?.onViewDidDisappear()
     }
 
     // MARK: - ContentReloadable
     open func reloadContent() {
         Logger.log(self)
-        asReloadContentRequestable?.onReloadContentRequested()
+        _asReloadContentRequestable?.onReloadContentRequested()
     }
-
-    // MARK: - UICollectionViewable
-    open func numberOfSections(in collectionView: UICollectionView) -> Int { asCollectionViewable?.getNumberOfSections() ?? 1 }
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { asCollectionViewable?.getNumberOfItems(in: section) ?? .zero }
-    
-    open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        var reuseIdentifier: String { asCollectionViewable?.onHeaderItemReuseIdentifierRequested(in: indexPath.section) ?? .empty }
-        
-        let headerView = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: reuseIdentifier,
-            for: indexPath
-        )
-        
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            guard
-                let viewModelableReusableView = headerView as? any ViewModelableReusableView,
-                let viewModel = asCollectionViewable?.onHeaderItemDataSourceRequested(in: indexPath.section)
-            else { return headerView }
-            viewModelableReusableView.set(viewModel: viewModel)
-            return viewModelableReusableView
-        default: return headerView
-        }
-    }
-
-    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let categoryIndex = indexPath.section
-        let reuseIdentifier = asCollectionViewable?.onReuseIdentifierRequested(in: categoryIndex, at: indexPath.item) ?? .empty
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        guard
-            let viewModelableCell = cell as? any ViewModelableCell,
-            let viewModel = asCollectionViewable?.onCellForItem(in: categoryIndex, at: indexPath.item)
-        else { return cell }
-        viewModelableCell.set(viewModel: viewModel)
-        return viewModelableCell
-    }
-
-    open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) { asCollectionViewable?.onItemSelected(in: indexPath.section, at: indexPath.item) }
-
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        asCollectionViewable?.onMinimumInteritemSpacingFor(section: section) ?? .zero
-    }
-
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        asCollectionViewable?.onMinimumLineSpacingFor(section: section) ?? .zero
-    }
-
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        switch section {
-        case (asCollectionViewable?.getNumberOfSections() ?? 1) - 1:
-            let bottomInset = closestTabBarHeight + 4
-            return .init(top: .zero, left: .zero, bottom: bottomInset, right: .zero)
-        default:
-            return .zero
-        }
-    }
-
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let size = asCollectionViewable?.onSizeForHeaderItem(in: section) ?? (.zero, .zero)
-        let width = size.width
-        let height = size.height
-        return .init(width: width, height: height)
-    }
-
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = asCollectionViewable?.onSizeForItem(in: indexPath.section, at: indexPath.item) ?? (.zero, .zero)
-        let width = size.width
-        let height = size.height
-        return .init(width: width, height: height)
-    }
-
-    // MARK: - UIScrollViewDelegate
-    open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {}
-    open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {}
-    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {}
-    open func scrollViewDidScroll(_ scrollView: UIScrollView) {}
 }

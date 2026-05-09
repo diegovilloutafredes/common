@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - MultipartRequest
-// MARK: - MultipartRequest
 
 /// A helper struct for creating multipart/form-data requests.
 public struct MultipartRequest {

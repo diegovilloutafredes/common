@@ -1,6 +1,6 @@
 import Foundation
 
-protocol KeychainAttrRepresentable {
+public protocol KeychainAttrRepresentable {
     var keychainAttrValue: CFString { get }
 }
 
@@ -61,5 +61,5 @@ private let keychainItemAccessibilityLookup: [KeychainItemAccessibility: CFStrin
 }()
 
 extension KeychainItemAccessibility: KeychainAttrRepresentable {
-    internal var keychainAttrValue: CFString { keychainItemAccessibilityLookup[self]! }
+    public var keychainAttrValue: CFString { keychainItemAccessibilityLookup[self]! }
 }

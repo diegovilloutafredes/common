@@ -3,7 +3,6 @@
 //
 
 // MARK: - Version Number
-// MARK: - Version Number
 extension Bundle {
     
     /// Returns the short version string (CFBundleShortVersionString) of the bundle.

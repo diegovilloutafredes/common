@@ -8,5 +8,6 @@ import CoreNFC
 public enum NFCReadingAvailability {
     
     /// Returns `true` if NFC reading is available.
+    /// Requires the `com.apple.developer.nfc.readersession.formats` entitlement — returns `false` without it.
     public static var isReadingAvailable: Bool { NFCReaderSession.readingAvailable }
 }

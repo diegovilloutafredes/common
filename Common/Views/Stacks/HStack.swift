@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - HStack
-// MARK: - HStack
 
 /// A convenience class for creating horizontal stack views.
 public final class HStack: Stack {

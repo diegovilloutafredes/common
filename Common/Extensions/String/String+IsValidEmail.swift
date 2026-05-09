@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - Is Valid Email
-// MARK: - Is Valid Email
 extension String {
     
     /// Checks if the string is a valid email address using NSDataDetector.

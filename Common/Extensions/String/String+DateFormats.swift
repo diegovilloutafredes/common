@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - DateFormats
-// MARK: - DateFormats
 extension String {
     
     /// Common date format strings used in the application.

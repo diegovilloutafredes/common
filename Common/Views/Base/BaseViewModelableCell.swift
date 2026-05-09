@@ -3,7 +3,6 @@
 //
 
 // MARK: - BaseViewModelableCell
-// MARK: - BaseViewModelableCell
 
 /// A base collection view cell that is driven by a View Model.
 open class BaseViewModelableCell<ViewModelType>: ViewModelableCell {

@@ -5,7 +5,6 @@
 import AVFoundation
 
 // MARK: - CameraAuthorizationManager
-// MARK: - CameraAuthorizationManager
 /// Manages camera access authorization.
 public enum CameraAuthorizationManager {
     

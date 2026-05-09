@@ -17,7 +17,7 @@
     <a title="String Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Common Docs</a> (82% documented)</p>
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
         <div class="header-right">
           <form role="search" action="../search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -27,7 +27,7 @@
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
-        <a href="../index.html">Common</a>
+        <a href="../index.html">Index</a>
         <img id="carat" src="../img/carat.png" alt=""/>
         <a href="../Extensions.html">Extensions</a>
         <img id="carat" src="../img/carat.png" alt=""/>
@@ -589,6 +589,18 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/WKWebView.html">WKWebView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/_URLEncodedFormEncoder.html">_URLEncodedFormEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/_URLEncodedFormEncoder.html#/s:6Common22_URLEncodedFormEncoderC14KeyedContainerC">– KeyedContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/_URLEncodedFormEncoder.html#/s:6Common22_URLEncodedFormEncoderC20SingleValueContainerC">– SingleValueContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/_URLEncodedFormEncoder.html#/s:6Common22_URLEncodedFormEncoderC16UnkeyedContainerC">– UnkeyedContainer</a>
               </li>
             </ul>
           </li>
@@ -1993,9 +2005,9 @@ Performs format removal, length check, regex validation, and verifying digit cal
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:SS6CommonE6random6lengthSSSi_tFZ"></a>
-                    <a name="//apple_ref/swift/Method/random(length:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SS6CommonE6random6lengthSSSi_tFZ">random(length:<wbr>)</a>
+                    <a name="/s:SS6CommonE6random6length5charsSSSi_SStFZ"></a>
+                    <a name="//apple_ref/swift/Method/random(length:chars:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SS6CommonE6random6length5charsSSSi_SStFZ">random(length:<wbr>chars:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2010,7 +2022,7 @@ Performs format removal, length check, regex validation, and verifying digit cal
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">random</span><span class="p">(</span><span class="nv">length</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">random</span><span class="p">(</span><span class="nv">length</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">chars</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -2030,12 +2042,50 @@ Performs format removal, length check, regex validation, and verifying digit cal
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>chars</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The chars from where the random string is generated..</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
                         <p>A random string.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SS6CommonE20removeStressedVowelsSSyF"></a>
+                    <a name="//apple_ref/swift/Method/removeStressedVowels()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SS6CommonE20removeStressedVowelsSSyF">removeStressedVowels()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeStressedVowels</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -2111,7 +2161,7 @@ Performs format removal, length check, regex validation, and verifying digit cal
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-02-06)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-04-05)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

@@ -167,10 +167,14 @@ final class ViewController: BaseViewModelableViewController<MyViewModel> {
 extension ViewController: UserLocalStorageUseCase {}
 
 // MARK: - Preview
-#Preview {
-    let viewModel = MyViewModelPayload(title: "Preview", buttonTitle: "Present next")
-    ViewController(viewModel: viewModel)
-}
+//#if canImport(SwiftUI) && compiler(>=5.9)
+//import SwiftUI
+//@available(iOS 17.0, *)
+//#Preview {
+//    let viewModel = MyViewModelPayload(title: "Preview", buttonTitle: "Present next")
+//    ViewController(viewModel: viewModel)
+//}
+//#endif
 
 // MARK: - UserStorage
 struct UserStorage: SingleRawValueKeyValueObjectStorage {

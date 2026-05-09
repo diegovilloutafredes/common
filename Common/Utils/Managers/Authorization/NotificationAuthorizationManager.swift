@@ -5,8 +5,7 @@
 import UIKit
 
 // MARK: - NotificationAuthorizationManager
-// MARK: - NotificationAuthorizationManager
-/// Manges the authorization request for push notifications.
+/// Manages the authorization request for push notifications.
 public enum NotificationAuthorizationManager {
     
     /// Retrieves the current notification authorization status.
@@ -19,10 +18,11 @@ public enum NotificationAuthorizationManager {
     }
 
     /// Requests authorization for push notifications.
-    /// - Parameter handler: Completion handler with success status.
-    public static func requestAuthorization(handler: @escaping Handler<Bool>) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { status, _ in
-            status ? NotificationRegisterManager.registerForRemoteNotifications() : NotificationRegisterManager.unregisterForRemoteNotifications()
+    /// - Parameters:
+    ///   - options: The notification types to request. Defaults to `[.alert, .badge, .sound]`.
+    ///   - handler: Completion handler with success status. Call `NotificationRegisterManager.registerForRemoteNotifications()` if remote push is needed.
+    public static func requestAuthorization(options: UNAuthorizationOptions = [.alert, .badge, .sound], handler: @escaping Handler<Bool>) {
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { status, _ in
             dispatchOnMain { handler(status) }
         }
     }

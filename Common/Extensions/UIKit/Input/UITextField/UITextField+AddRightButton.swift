@@ -1,0 +1,63 @@
+//
+//  UITextField+AddRightButton.swift
+//
+
+import UIKit
+
+nonisolated(unsafe) private var uiTextFieldOnButtonPressedKey: UInt8 = 0
+
+extension UITextField {
+    private var onButtonPressed: Handler<(UITextField, UIButton)>? {
+        get { objc_getAssociatedObject(self, &uiTextFieldOnButtonPressedKey) as? Handler<(UITextField, UIButton)> }
+        set {
+            delegate = self
+            objc_setAssociatedObject(self, &uiTextFieldOnButtonPressedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+}
+
+extension UITextField {
+    
+    /// Adds a configurable right button to the text field and returns self (chainable).
+    /// - Parameters:
+    ///   - icon: The default icon image.
+    ///   - selectedIcon: The icon when selected.
+    ///   - tintColor: The tint color for the button.
+    ///   - onButtonPressed: Handler called when the button is pressed.
+    @discardableResult public func addRightButton(
+        using icon: UIImage? = .symbol("arrowtriangle.up.fill"),
+        selectedIcon: UIImage? = .symbol("arrowtriangle.down.fill"),
+        tintColor: UIColor? = .black,
+        onButtonPressed: @escaping Handler<(UITextField, UIButton)>
+    ) -> Self {
+        with {
+            guard
+                let icon,
+                let selectedIcon
+            else { return }
+
+            $0.onButtonPressed = onButtonPressed
+            $0.clearButtonMode = .never
+
+            let rightButton = UIButton()
+                .image(icon)
+                .image(selectedIcon, for: .selected)
+                .setRatio()
+                .tintColor(tintColor)
+                .setConstraints {
+                    ($0 as? UIButton)?
+                        .imageView?
+                        .setRatio()
+                        .setWidth(to: $1.widthAnchor, multiplier: 0.3)
+                }
+
+            rightButton.addTarget($0, action: #selector(onButtonPressed(sender:)), for: .touchUpInside)
+
+            $0.rightView(HStack(alignment: .center) { rightButton })
+        }
+    }
+
+    @objc private func onButtonPressed(sender: UIButton) {
+        onButtonPressed?((self, sender))
+    }
+}

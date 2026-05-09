@@ -16,7 +16,10 @@ extension Array where Element: FloatingPoint {
 
 extension Array where Element: FloatingPoint {
     /// Calculates the variance of the elements in the array.
-    public var variance: Element { reduce(0, { $0 + ($1-average)*($1-average) }) }
+    public var variance: Element {
+        let avg = average
+        return reduce(0) { $0 + ($1 - avg) * ($1 - avg) }
+    }
 }
 
 extension Array where Element: FloatingPoint {

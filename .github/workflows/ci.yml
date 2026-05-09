@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test & Build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$LATEST" ] && LATEST=/Applications/Xcode.app
+          sudo xcode-select -s "$LATEST/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test \
+            -scheme Common \
+            -project Common.xcodeproj \
+            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Build XCFramework
+        run: |
+          chmod +x ./build_xcframework.sh
+          ./build_xcframework.sh
+
+  documentation:
+    name: Update Docs
+    runs-on: macos-15
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$LATEST" ] && LATEST=/Applications/Xcode.app
+          sudo xcode-select -s "$LATEST/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Install Jazzy
+        run: gem install jazzy
+
+      - name: Generate Documentation
+        run: jazzy
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

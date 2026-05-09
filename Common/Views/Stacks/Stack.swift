@@ -4,8 +4,7 @@
 
 import UIKit
 
-// MARK: Stack
-// MARK: Stack
+// MARK: - Stack
 
 /// A subclass of `UIStackView` that enables layout margins relative arrangement by default.
 public class Stack: UIStackView {

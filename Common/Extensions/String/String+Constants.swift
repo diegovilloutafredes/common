@@ -3,7 +3,6 @@
 //
 
 // MARK: - Constants
-// MARK: - Constants
 extension String {
     /// An empty string ("").
     public static let empty = ""

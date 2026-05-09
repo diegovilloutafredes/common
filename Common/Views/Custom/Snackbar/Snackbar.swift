@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - Snackbar
-// MARK: - Snackbar
 
 /// A utility for displaying snackbar notifications.
 public enum Snackbar {

@@ -3,7 +3,6 @@
 //
 
 // MARK: - Array convenience Extension
-// MARK: - Array convenience Extension
 extension Array where Element == Coordinator {
     
     /// Returns the first coordinator of the specified type.

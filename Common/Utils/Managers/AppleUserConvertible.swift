@@ -3,7 +3,6 @@
 //
 
 // MARK: - AppleUserConvertible
-// MARK: - AppleUserConvertible
 /// A type that can be converted into an `AppleUser`.
 public protocol AppleUserConvertible {
     

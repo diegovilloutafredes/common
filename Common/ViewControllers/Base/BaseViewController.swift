@@ -6,9 +6,6 @@ import UIKit
 
 // MARK: - BaseViewController
 
-/// A base view controller that provides common functionality and lifecycle handling.
-// MARK: - BaseViewController
-
 /// A base view controller that conforms to `UIViewBuildable`.
 /// It automatically sets the `mainView` as the view controller's view in `loadView`.
 open class BaseViewController: UIViewController, UIViewBuildable {
@@ -20,7 +17,9 @@ open class BaseViewController: UIViewController, UIViewBuildable {
     open var mainView: UIView { UIView() }
 
     open override func loadView() {
-        self.view = mainView
+        let container = UIView()
+        container.addSubview(mainView)
+        self.view = container
     }
 
     /// Configures the view.
@@ -46,16 +45,6 @@ extension BaseViewController {
         setupView()
     }
 
-    open override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        Logger.log(["From": Self.self])
-    }
-
-    open override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        Logger.log(["From": Self.self])
-    }
-
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         defer { Logger.log(["From": Self.self]) }
@@ -77,6 +66,11 @@ extension BaseViewController {
 
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        Logger.log(["From": Self.self])
+    }
+
+    open override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         Logger.log(["From": Self.self])
     }
 }

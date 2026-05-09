@@ -14,6 +14,6 @@ extension URL {
         var queryItems = components.queryItems ??  []
         queryItems.append(queryItem)
         components.queryItems = queryItems
-        return components.url!
+        return components.url ?? absoluteURL
     }
 }

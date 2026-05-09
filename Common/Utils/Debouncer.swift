@@ -5,10 +5,10 @@
 import Foundation
 
 // MARK: - Debouncer
-// MARK: - Debouncer
 /// A utility for debouncing function calls, ensuring they are executed only after a specified delay.
-public struct Debouncer {
-    private static var shared = Debouncer()
+@MainActor
+public final class Debouncer {
+    public static let shared = Debouncer()
     private var timers: [String: Timer] = [:]
 
     private init() {}
@@ -20,12 +20,16 @@ public struct Debouncer {
     ///   - seconds: The debounce delay in seconds.
     ///   - function: The function to execute after the delay.
     public static func debounce(from: String = #function, id: String = .empty, seconds: TimeInterval, function: @escaping () -> Void) {
-        let key = from + id
-        shared.timers[key]?.invalidate()
-        shared.timers[key] = .scheduledTimer(
-            withTimeInterval: seconds,
-            repeats: false,
-            block: { _ in function() }
-        )
+        shared._debounce(key: from + id, seconds: seconds, function: function)
+    }
+
+    private func _debounce(key: String, seconds: TimeInterval, function: @escaping () -> Void) {
+        timers[key]?.invalidate()
+        let timer = Timer(timeInterval: seconds, repeats: false) { [weak self, key] _ in
+            function()
+            Task { @MainActor [weak self] in self?.timers[key] = nil }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        timers[key] = timer
     }
 }
