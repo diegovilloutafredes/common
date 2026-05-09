@@ -69,8 +69,13 @@ public actor ImageLoader {
     public func preload(urls: [URL]) {
         for url in urls {
             guard preloadTasks[url] == nil, inFlightTasks[url] == nil else { continue }
+            let fetchTask = Task<UIImage, Error>(priority: .utility) {
+                try await self.fetchAndStore(url: url)
+            }
+            inFlightTasks[url] = fetchTask
             preloadTasks[url] = Task(priority: .utility) {
-                _ = try? await self.imageResult(for: url)
+                _ = try? await fetchTask.value
+                self.inFlightTasks.removeValue(forKey: url)
                 self.preloadTasks.removeValue(forKey: url)
             }
         }
@@ -78,7 +83,10 @@ public actor ImageLoader {
 
     /// Cancels all in-flight preload tasks started by `preload(urls:)`.
     public func cancelPreloads() {
-        preloadTasks.values.forEach { $0.cancel() }
+        for url in preloadTasks.keys {
+            preloadTasks[url]?.cancel()
+            inFlightTasks.removeValue(forKey: url)
+        }
         preloadTasks.removeAll()
     }
 
