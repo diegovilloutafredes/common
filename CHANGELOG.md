@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+---
+
+## [1.0.0] - 2026-05-09
+
 ### Added
 - **`BaseCollectionViewableViewController<ViewModelType>` — zero-boilerplate collection-view base class.** `BaseViewModelableViewController` no longer unconditionally conforms to `UICollectionViewable`. View controllers that own a `VList` or `HList` subclass `BaseCollectionViewableViewController` instead — all `UICollectionViewDataSource`, `UICollectionViewDelegate`, and `UICollectionViewDelegateFlowLayout` methods are implemented in the base class and delegate to `viewModel as? CollectionViewable`. Footer supplementary views are supported via `onFooterItemReuseIdentifierRequested`/`onFooterItemDataSourceRequested` on `CollectionViewDataSourceable`. Override `bottomInsetForLastCollectionSection()` for VCs above a tab bar. `UIScrollViewDelegate` stubs (`scrollViewDidScroll`, `scrollViewDidEndDecelerating`, `scrollViewDidEndDragging`, `scrollViewDidEndScrollingAnimation`) are provided as `open` methods for subclasses to override selectively.
 - **`CollectionViewDataSourceable.onFooterItemDataSourceRequested`/`onFooterItemReuseIdentifierRequested`.** New optional protocol requirements (default implementations return `nil`/`""`) enabling footer supplementary view support through the standard `CollectionViewable` pipeline.
@@ -41,6 +45,13 @@
 ### Added
 - **`DismissType: Sendable`** — enables passing dismiss strategies across concurrency boundaries.
 - **`AlertViewType: Sendable`** — enables passing alert types across concurrency boundaries.
+
+---
+
+### Changed
+- **`URLEncodedFormEncoder` — stripped Alamofire-ported encoding strategies.** Removed `ArrayEncoding`, `BoolEncoding`, `DataEncoding`, and `DateEncoding` configuration enums. The encoder now defaults to a lean URL percent-encoded strategy.
+- **`HTTPHeaders` — removed Alamofire-ported doc verbosity and `sort()`.** Core behaviour unchanged.
+- **CI/release workflows use dynamic Xcode version selection.** Picks the latest `Xcode_*.app` via `sort -V` instead of hardcoding `Xcode_16.app`; simulator destination updated to iPhone 17.
 
 ---
 
