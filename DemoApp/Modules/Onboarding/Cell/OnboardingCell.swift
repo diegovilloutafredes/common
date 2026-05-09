@@ -41,14 +41,13 @@ final class OnboardingCell: BaseViewModelableCell<OnboardingCellViewModel> {
     @UIViewBuilder override var mainView: UIView {
         VStack(margins: .init(top: 24, left: 24, bottom: 24, right: 24)) {
             imageView
-            HStack(
+            VStack(
                 alignment: .center,
-                margins: .init(top: .zero, left: 24, bottom: .zero, right: 24)
+                margins: .init(top: 24, left: 24, bottom: 24, right: 24),
+                spacing: 16
             ) {
-                VStack(spacing: 16) {
-                    titleLabel
-                    subtitleLabel
-                }
+                titleLabel
+                subtitleLabel
             }
             .backgroundColor(.white)
             .round(radius: 24)

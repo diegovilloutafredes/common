@@ -3,7 +3,6 @@
 //
 
 // MARK: - BaseViewModelableView
-// MARK: - BaseViewModelableView
 
 /// A base view that is driven by a View Model and supports view lifecycle events.
 open class BaseViewModelableView<ViewModelType>: ViewModelableView, ViewLifecycleable {

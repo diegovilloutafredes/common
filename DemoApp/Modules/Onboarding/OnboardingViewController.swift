@@ -8,9 +8,8 @@ import UIKit
 // MARK: - View
 typealias OnboardingViewProtocol = ScreenSizeMeasurable & NavigationBarVisibilityTogglable
 
-
 // MARK: - OnboardingViewController
-final class OnboardingViewController: BaseViewModelableViewController<OnboardingViewModelProtocol> {
+final class OnboardingViewController: BaseCollectionViewableViewController<OnboardingViewModelProtocol> {
     enum OnboardingStep: Int {
         case first = 0
         case second
@@ -84,10 +83,9 @@ final class OnboardingViewController: BaseViewModelableViewController<Onboarding
     private var currentStep: OnboardingStep? { .init(rawValue: currentPage) }
     private var lastPageIndex: Int { viewModel.getNumberOfItems(in: .zero) - 1 }
 
-    // MARK: - UIScrollViewDelegate
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageWidth = scrollView.frame.width
-        let page = Int(round(scrollView.contentOffset.x/pageWidth))
+        let page = Int(round(scrollView.contentOffset.x / pageWidth))
         currentPage = page
     }
 }
@@ -134,6 +132,10 @@ extension OnboardingViewController {
 }
 
 // MARK: - Preview
+#if canImport(SwiftUI) && compiler(>=5.9)
+import SwiftUI
+@available(iOS 17.0, *)
 #Preview {
     OnboardingWireframe.createModule { _ in }
 }
+#endif

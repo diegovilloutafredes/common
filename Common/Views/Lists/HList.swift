@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - HList
-// MARK: - HList
 
 /// A horizontally scrolling list built on top of `List` (UICollectionView).
 public final class HList: List {

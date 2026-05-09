@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - CustomAlertViewController
-// MARK: - CustomAlertViewController
 
 /// A custom alert view controller that presents a content view with a dimming background.
 public final class CustomAlertViewController: BaseViewController {
@@ -31,16 +30,19 @@ public final class CustomAlertViewController: BaseViewController {
     }
 
     @UIViewBuilder public override var mainView: UIView {
-        UIButton()
-            .backgroundColor(backgroundColor)
-            .onTap { _ in self.onDismissRequestedHandler?() }
-            .setConstraints { $0.snap(to: $1) }
-        contentView
-            .cornerRadius(.DefaultValues.AlertView.cornerRadius)
-            .setConstraints {
-                $0.alignCenterY(with: $1)
-                $0.snapLeadTrail(to: $1, insets: .init(top: .zero, left: 32, bottom: .zero, right: 32))
-            }
+        UIView {
+            UIButton()
+                .backgroundColor(backgroundColor)
+                .onTap { self.onDismissRequestedHandler?() }
+                .setConstraints { $0.snap(to: $1) }
+            contentView
+                .cornerRadius(.DefaultValues.AlertView.cornerRadius)
+                .setConstraints {
+                    $0.alignCenterY(with: $1)
+                    $0.snapLeadTrail(to: $1, insets: .init(top: .zero, left: 32, bottom: .zero, right: 32))
+                }
+        }
+        .setConstraints { $0.snap(to: $1) }
     }
 
     public override func setupView() {

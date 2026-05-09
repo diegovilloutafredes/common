@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$LATEST" ] && LATEST=/Applications/Xcode.app
+          sudo xcode-select -s "$LATEST/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test \
+            -scheme Common \
+            -project Common.xcodeproj \
+            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            CODE_SIGNING_ALLOWED=NO
+
+  release:
+    name: Build & Release
+    runs-on: macos-15
+    needs: validate
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$LATEST" ] && LATEST=/Applications/Xcode.app
+          sudo xcode-select -s "$LATEST/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build XCFramework
+        run: |
+          chmod +x ./build_xcframework.sh
+          ./build_xcframework.sh
+
+      - name: Zip XCFramework
+        run: |
+          cd XCFramework
+          zip -r Common-${{ github.ref_name }}.xcframework.zip Common.xcframework
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "Common ${{ github.ref_name }}" \
+            --generate-notes \
+            XCFramework/Common-${{ github.ref_name }}.xcframework.zip
+        env:
+          GH_TOKEN: ${{ github.token }}

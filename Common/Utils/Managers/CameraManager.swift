@@ -5,7 +5,6 @@
 import AVFoundation
 
 // MARK: - CameraManager
-// MARK: - CameraManager
 /// A manager that handles camera session configuration and video data output.
 public final class CameraManager: NSObject {
 
@@ -72,8 +71,11 @@ public final class CameraManager: NSObject {
         self.onSampleBufferHandler = onSampleBufferHandler
     }
 
-    private var captureDevice: AVCaptureDevice? { resolveDevice(using: position, type: type) ?? resolveDevice(using: position) ?? resolveDevice() }
-    private var captureDeviceInput: AVCaptureDeviceInput? { captureDevice.isNotNil ? try? .init(device: captureDevice!) : nil }
+    private lazy var captureDevice: AVCaptureDevice? = resolveDevice(using: position, type: type) ?? resolveDevice(using: position) ?? resolveDevice()
+    private var captureDeviceInput: AVCaptureDeviceInput? {
+        guard let captureDevice else { return nil }
+        return try? AVCaptureDeviceInput(device: captureDevice)
+    }
     private let captureSession = AVCaptureSession()
         .sessionPreset(.high)
     private lazy var captureVideoDataOutput = AVCaptureVideoDataOutput()
@@ -102,12 +104,11 @@ extension CameraManager {
                 .async {
                     self.setupCaptureSession()
                     self.captureSession.startRunning()
-
+                    self.configureCaptureDevice()
                     dispatchOnMain {
                         previewView
                             .videoGravity(.resizeAspectFill)
                             .session(self.captureSession)
-                        self.configureCaptureDevice()
                         handler?(CameraAuthorizationManager.currentStatus)
                     }
                 }
@@ -146,7 +147,9 @@ extension CameraManager {
             try captureDevice.lockForConfiguration()
             captureDeviceHandler?(captureDevice)
             captureDevice.unlockForConfiguration()
-        } catch {}
+        } catch {
+            Logger.log(caller: #function, ["lockForConfiguration error": error])
+        }
     }
 
     private func setupCaptureSession() {
@@ -158,16 +161,9 @@ extension CameraManager {
     private func resolveDevice(using position: AVCaptureDevice.Position = .back, type: CameraType = .auto) -> AVCaptureDevice? {
         switch (position, type) {
         case (.back, .auto):
-            {
-                let tripleCamera = resolveDevice(type: .tripleCamera)
-                let dualCamera = resolveDevice(type: .dualCamera)
-                let wideAngleCamera = resolveDevice(type: .wideAngleCamera)
-                return tripleCamera.isNotNil ?
-                tripleCamera :
-                dualCamera.isNotNil ?
-                dualCamera :
-                wideAngleCamera
-            }()
+            resolveDevice(type: .tripleCamera)
+            ?? resolveDevice(type: .dualCamera)
+            ?? resolveDevice(type: .wideAngleCamera)
         case (.front, .auto): .default(.builtInWideAngleCamera, for: .video, position: position)
         case (_, .wideAngleCamera): .default(.builtInWideAngleCamera, for: .video, position: position)
         case (_, .dualCamera): .default(.builtInDualCamera, for: .video, position: position)

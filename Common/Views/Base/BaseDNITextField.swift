@@ -3,7 +3,6 @@
 //
 
 // MARK: - BaseDNITextField
-// MARK: - BaseDNITextField
 
 /// A specialized text field for DNI (National Identification Document) input.
 /// It automatically handles RUT formatting and restricted characters (`0-9`, `k`, `K`).

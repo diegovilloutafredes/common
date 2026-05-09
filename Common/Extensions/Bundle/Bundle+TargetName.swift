@@ -3,7 +3,6 @@
 //
 
 // MARK: - Target Name
-// MARK: - Target Name
 extension Bundle {
     
     /// Returns the target name (CFBundleName) of the bundle.

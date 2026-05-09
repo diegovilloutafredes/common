@@ -5,100 +5,64 @@
 import Foundation
 
 // MARK: - RUT Utilities
-// MARK: - RUT Utilities
 extension String {
-    
-    /// Validates if the string is a valid Chilean RUT (Rol Único Tributario).
-    /// Performs format removal, length check, regex validation, and verifying digit calculation.
+
+    /// Validates if the string is a valid Chilean RUT.
+    /// Accepts both formatted ("12.345.678-9") and unformatted ("123456789") inputs.
     public var isRUT: Bool {
-        removeRUTFormat()
-
-        let rut = uppercased()
-
-        guard rut.count >= 8 || rut.count <= 10 else { return false }
-
-        let rutRegex = "^(\\d{1,3}(\\.?\\d{3}){2})\\-?([\\dkK])$"
-        let rutTest = NSPredicate(format: "SELF MATCHES %@", rutRegex)
-
-        if !rutTest.evaluate(with: rut) { return false }
-
-        let components = getRUTComponents()
-        let number = components.number
-        let verifyingDigit = components.verifyingDigit.uppercased()
-        let calculatedVD = calculateVerifyingDigit(of: number)
-
-        return verifyingDigit == calculatedVD
+        let rut = removeRUTFormat().uppercased()
+        guard rut.count >= 8 && rut.count <= 10 else { return false }
+        guard Self._rutPredicate.evaluate(with: rut) else { return false }
+        let components = rut.rutComponents
+        return components.verifyingDigit == rut.calculatedVerifyingDigit(for: components.number)
     }
-}
 
-extension String {
-    
-    /// Formats the string as a RUT (e.g., 12.345.678-9).
-    /// - Parameter onlyIfValid: If `true`, only formats if the current string is a valid RUT. Defaults to `true`.
-    /// - Returns: The formatted RUT string, or the original string if validation fails or formatting is not possible.
+    /// Formats the string as a Chilean RUT (e.g., "12.345.678-9").
+    /// Accepts both formatted and unformatted inputs.
+    /// - Parameter onlyIfValid: Only formats if the string is a valid RUT. Defaults to `true`.
+    /// - Returns: The formatted RUT string, or `self` if validation fails or formatting is not possible.
     @discardableResult public func formatAsRUT(onlyIfValid: Bool = true) -> Self {
-        removeRUTFormat()
-            .with {
-                guard onlyIfValid ? $0.isRUT : true else { return }
-
-                let components = getRUTComponents()
-                let number = components.number
-                let verifyingDigit = components.verifyingDigit
-
-                guard let formattedNumber = number.asDecimalNumber else { return }
-
-                $0 = "\(formattedNumber)-\(verifyingDigit)"
-            }
+        let stripped = removeRUTFormat()
+        guard onlyIfValid ? stripped.isRUT : true else { return self }
+        let components = stripped.rutComponents
+        guard let formattedNumber = components.number.asInt?.asDecimalNumber else { return self }
+        return "\(formattedNumber)-\(components.verifyingDigit.uppercased())"
     }
-}
 
-extension String {
-    
     /// Removes RUT formatting characters (dots and hyphens).
-    /// - Returns: Cleaned string.
+    /// - Returns: The string with "." and "-" removed.
     @discardableResult public func removeRUTFormat() -> Self {
         with { $0 = $0.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: "-", with: "") }
     }
 }
 
-// MARK: - Convenience
-extension String {
-    private func calculateVerifyingDigit(of rut: String) -> String? {
-        let asArray = rut.map { String($0) }
-        var acumulated = 0
-        var multiplier = 2
+// MARK: - Private
+private extension String {
 
-        stride(from: rut.count - 1, through: .zero, by: -1)
-            .forEach {
-                guard let currentDigit = asArray[$0].asInt else { return }
-                acumulated += currentDigit * multiplier
-                if multiplier == 7 { multiplier = 1 }
-                multiplier += 1
-            }
+    static let _rutPredicate = NSPredicate(
+        format: "SELF MATCHES %@",
+        "^(\\d{1,3}(\\.?\\d{3}){2})\\-?([\\dkK])$"
+    )
 
-        let remainder = acumulated % 11
-        let difference = 11 - remainder
-
-        var verifyingDigit: String {
-            switch difference {
-            case 10: "K"
-            case .zero...9: difference.asString
-            default: .zero
-            }
-        }
-
-        return verifyingDigit
-    }
-}
-
-extension String {
-    private func getRUTComponents() -> (number: String, verifyingDigit: String) {
+    /// Returns the number and verifying digit components of a stripped RUT string.
+    var rutComponents: (number: String, verifyingDigit: String) {
         guard count > 1 else { return (.empty, .empty) }
+        return (String(dropLast()), String(last!))
+    }
 
-        removeRUTFormat()
-        let number = String(dropLast())
-        let verifyingDigit = String(last!)
-
-        return (number, verifyingDigit)
+    /// Computes the expected verifying digit for a RUT number using the Módulo 11 algorithm.
+    func calculatedVerifyingDigit(for number: String) -> String {
+        var accumulated = 0
+        var multiplier = 2
+        for char in number.reversed() {
+            guard let digit = char.wholeNumberValue else { continue }
+            accumulated += digit * multiplier
+            multiplier = multiplier == 7 ? 2 : multiplier + 1
+        }
+        switch 11 - (accumulated % 11) {
+        case 10: return "K"
+        case 11: return .zero  // sum % 11 == 0 → verifying digit is "0"
+        case let d: return String(d)
+        }
     }
 }

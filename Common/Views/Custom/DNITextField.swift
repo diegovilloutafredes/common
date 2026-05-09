@@ -3,7 +3,6 @@
 //
 
 // MARK: - DNITextField
-// MARK: - DNITextField
 
 /// A custom text field for DNI input with specific styling and behavior.
 public final class DNITextField: BaseDNITextField {

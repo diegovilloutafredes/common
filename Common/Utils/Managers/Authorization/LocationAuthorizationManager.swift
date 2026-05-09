@@ -21,6 +21,9 @@ public final class LocationAuthorizationManager: NSObject {
 
     private var requestHandler: Handler<AuthorizationStatus>?
 
+    /// The current location authorization status.
+    public var currentStatus: AuthorizationStatus { locationManager.authorizationStatus.asAuthorizationStatus }
+
     /// Requests location authorization.
     /// - Parameters:
     ///   - authorizationType: The type of authorization to request (always or when in use).

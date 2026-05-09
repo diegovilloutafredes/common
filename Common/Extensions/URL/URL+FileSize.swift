@@ -5,7 +5,6 @@
 import Foundation
 
 // MARK: - FileSize
-// MARK: - FileSize
 extension URL {
     
     /// Returns the file size in bytes.

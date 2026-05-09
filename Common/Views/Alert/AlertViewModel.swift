@@ -5,7 +5,6 @@
 import UIKit
 
 // MARK: - AlertViewModel
-// MARK: - AlertViewModel
 
 /// Defines the requirements for an alert view model.
 public protocol AlertViewModel: ViewModel {
