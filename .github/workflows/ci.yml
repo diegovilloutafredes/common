@@ -46,6 +46,8 @@ jobs:
     name: Update Docs
     runs-on: macos-15
     needs: test
+    permissions:
+      contents: write
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
