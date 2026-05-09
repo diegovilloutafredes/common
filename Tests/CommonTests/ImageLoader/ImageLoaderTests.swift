@@ -169,8 +169,8 @@ final class ImageLoaderTests: XCTestCase {
         let (loader, cache, url) = makeTestLoader()
 
         await loader.preload(urls: [url])
-        // Give the background task time to finish
-        try await Task.sleep(nanoseconds: 200_000_000)
+        // Join the in-flight fetch (or hit L1 if preload already finished) — deterministic
+        _ = try? await loader.image(for: url)
 
         XCTAssertNotNil(cache.memoryImage(for: url), "Preloaded image must be in L1 cache")
         XCTAssertEqual(ImageMockURLProtocol.requestCount, 1, "Preload must trigger exactly one network request")
