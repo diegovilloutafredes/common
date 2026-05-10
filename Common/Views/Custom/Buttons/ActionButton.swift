@@ -80,7 +80,11 @@ public final class ActionButton: BaseButton {
         font(theme.titleFont)
         titleColor(theme.titleColor)
         if shouldApplyDefaultRatio { setRatio(327/40) }
-        onLayoutSubviews { $0.setAsRoundedView() }
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        setAsRoundedView(radius: bounds.height / 2)
     }
 }
 
