@@ -33,7 +33,7 @@ public enum HTTPService {
                 outcome = .failure(.requestError(error))
             }
             guard !Task.isCancelled else { return }
-            dispatchOnMain { result(outcome) }
+            Task { @MainActor in result(outcome) }
         }
     }
 
@@ -60,7 +60,7 @@ public enum HTTPService {
                 outcome = .failure(.requestError(error))
             }
             guard !Task.isCancelled else { return }
-            dispatchOnMain { result(outcome) }
+            Task { @MainActor in result(outcome) }
         }
     }
 }
