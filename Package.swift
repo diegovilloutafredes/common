@@ -13,10 +13,9 @@ let package = Package(
         ),
     ],
     targets: [
-        .target(
+        .binaryTarget(
             name: "Common",
-            path: "Common",
-            exclude: ["Common.h"]
+            path: "XCFramework/Common.xcframework"
         )
     ]
 )
