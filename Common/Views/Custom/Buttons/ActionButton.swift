@@ -74,6 +74,7 @@ public final class ActionButton: BaseButton {
     }
 
     public override func setupView() {
+        clipsToBounds(true)
         backgroundColor(theme.backgroundColor)
         borderColor(theme.borderColor)
         borderWidth(theme.borderWidth)
