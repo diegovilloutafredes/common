@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed
+- **`HTTPService` callback result delivered via `Task { @MainActor in }`**: Replaces `DispatchQueue.main.async` for main-thread delivery in both `request` and `upload` overloads. In Xcode 26's Swift Concurrency runtime, `DispatchQueue.main` is decoupled from `@MainActor` — the old path was not drained during `await fulfillment(of:)` in tests and could silently drop results in production.
+- **`ActionButton` pill corner radius is now resize-safe**: `layoutSubviews()` override replaces the old `onLayoutSubviews` hook so the radius (`bounds.height / 2`) updates on every layout pass — resizing the button always maintains the pill shape.
+- **`ActionButton` sets `clipsToBounds = true` eagerly in `setupView`**: Previously deferred until the first layout pass, causing `clipsToBounds`-dependent tests and snapshot checks to fail before layout ran.
+- **SPM package now distributes via binary target**: `Package.swift` changed from a source `.target` to a `.binaryTarget` pointing to `XCFramework/Common.xcframework`. Consumers now always receive a framework compiled with `BUILD_LIBRARY_FOR_DISTRIBUTION=YES`, providing the ABI-stability dispatch thunks required by Bioidentity XCFrameworks built with library evolution enabled.
+
 ---
 
 ## [1.0.0] - 2026-05-09

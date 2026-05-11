@@ -1309,7 +1309,7 @@ ActionButton("Submit", isEnabled: false)                     // Disabled
 ActionButton("Go", shouldApplyDefaultRatio: false)           // No aspect ratio
 ```
 
-Default aspect ratio: `327/40`. Built-in themes: `DefaultButtonTheme.filled`, `DefaultButtonTheme.border`.
+Default aspect ratio: `327/40`. Built-in themes: `DefaultButtonTheme.filled`, `DefaultButtonTheme.border`. The pill corner radius (`bounds.height / 2`) is recalculated on every layout pass via a `layoutSubviews()` override — resizing the button keeps the pill shape correct. `clipsToBounds` is set to `true` eagerly at init time.
 
 Custom theme via the `ButtonTheme` protocol:
 

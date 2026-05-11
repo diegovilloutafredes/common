@@ -34,6 +34,8 @@ Then add `"Common"` to the dependencies of any target that uses it:
 
 Or in Xcode: **File → Add Package Dependencies…** and enter the repository URL.
 
+> **Binary distribution:** Common ships as a prebuilt XCFramework (binary target compiled with `BUILD_LIBRARY_FOR_DISTRIBUTION=YES`). You get ABI-stable symbols and do not build from source. The resolved package resolves to the xcframework committed at the tagged version.
+
 ---
 
 ## What you can build
