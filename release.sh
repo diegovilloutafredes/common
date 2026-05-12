@@ -42,6 +42,13 @@ if [[ "$CONFIRM" != "y" && "$CONFIRM" != "Y" ]]; then
     exit 0
 fi
 
+echo "Building XCFramework..."
+make build_xcframework
+
+echo "Committing XCFramework..."
+git add -f XCFramework/Common.xcframework
+git commit -m "chore: add xcframework for $NEW_VERSION"
+
 git tag -a "$NEW_VERSION" -m "$NEW_VERSION"
-git push origin "$NEW_VERSION"
-echo "Done! GitHub Actions will now build the XCFramework and create the release for $NEW_VERSION."
+git push origin main "$NEW_VERSION"
+echo "Done! Released $NEW_VERSION."

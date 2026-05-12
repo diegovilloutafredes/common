@@ -25,8 +25,9 @@ timeline.xctimeline
 playground.xcworkspace
 .build/
 
-# XCFramework Build Script
-# We ignore local outputs. CI will build and upload these to GitHub Releases/Artifacts automatically, keeping the repo size small.
+# XCFramework build outputs are ignored from normal commits.
+# release.sh force-adds XCFramework/Common.xcframework and commits it before tagging,
+# so SPM consumers can resolve the path: binary target at each release tag.
 Archives/
 XCFramework/
 
