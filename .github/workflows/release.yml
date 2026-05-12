@@ -34,13 +34,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c "
-import sys,json,re
-data=json.load(sys.stdin)
-phones=[(int(m.group(1)),d['udid']) for rt,devs in data['devices'].items() if 'iOS' in rt for d in devs if d.get('isAvailable') for m in [re.search(r'iPhone (\d+)',d['name'])] if m]
-phones.sort()
-print('id='+phones[-1][1]) if phones else exit(1)
-")
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c "import sys,json,re; d=json.load(sys.stdin); p=sorted((int(m.group(1)),v['udid']) for k,vs in d['devices'].items() if 'iOS' in k for v in vs if v.get('isAvailable') for m in [re.search(r'iPhone (\d+)',v['name'])] if m); print('id='+p[-1][1]) if p else exit(1)")
           xcodebuild test \
             -scheme Common \
             -project Common.xcodeproj \
