@@ -31,10 +31,17 @@ jobs:
 
       - name: Run Unit Tests
         run: |
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c "
+import sys,json,re
+data=json.load(sys.stdin)
+phones=[(int(m.group(1)),d['udid']) for rt,devs in data['devices'].items() if 'iOS' in rt for d in devs if d.get('isAvailable') for m in [re.search(r'iPhone (\d+)',d['name'])] if m]
+phones.sort()
+print('id='+phones[-1][1]) if phones else exit(1)
+")
           xcodebuild test \
             -scheme Common \
             -project Common.xcodeproj \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination "$DEVICE_ID" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Build XCFramework
