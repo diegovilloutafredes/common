@@ -2093,6 +2093,12 @@ Logger.log("some value")                          // generic item
 Logger.log(request, data: data, response: resp)  // network request + response
 // Logger output is compile-time gated: active in DEBUG builds, silenced in release.
 // To opt in during a debug session: Logger.forceEnable()
+// To get logs in a debug app that links a *Release-built* Common.xcframework
+// (the default SPM artefact), flip the runtime gate at startup:
+//   #if DEBUG
+//   Logger.isRuntimeForceEnabled = true
+//   HTTPService.shouldLog = true   // and any other Loggable types you care about
+//   #endif
 ```
 
 ---

@@ -85,6 +85,22 @@ extension Logger {
     #else
     public static let isCompileTimeEnabled = false
     #endif
+
+    /// Runtime override for the compile-time gate. When `true`, `Loggable.shouldLog`
+    /// honours its stored value regardless of how the framework was built.
+    ///
+    /// Intended for debug builds of consumer apps that link a Release-archived
+    /// `Common.xcframework` (in which `isCompileTimeEnabled` is baked as `false`).
+    /// Flip this once at app startup, then control individual subsystems via
+    /// their own `<Type>.shouldLog`:
+    /// ```
+    /// #if DEBUG
+    /// Logger.isRuntimeForceEnabled = true
+    /// HTTPService.shouldLog = true
+    /// #endif
+    /// ```
+    /// Release apps should leave this off.
+    public nonisolated(unsafe) static var isRuntimeForceEnabled: Bool = false
 }
 
 #if DEBUG
