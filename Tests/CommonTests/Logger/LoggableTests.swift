@@ -54,6 +54,30 @@ final class LoggableTests: XCTestCase {
         TestLoggable.shouldLog = true
         XCTAssertTrue(TestLoggable.shouldLog)
     }
+
+    // MARK: - Fluent setters
+
+    func test_isRuntimeForceEnabled_fluentSetter_persists() {
+        Logger.isRuntimeForceEnabled(true)
+        XCTAssertTrue(Logger.isRuntimeForceEnabled)
+        Logger.isRuntimeForceEnabled(false)
+        XCTAssertFalse(Logger.isRuntimeForceEnabled)
+    }
+
+    func test_shouldLog_fluentSetter_persists() {
+        TestLoggable.shouldLog(false)
+        XCTAssertFalse(TestLoggable.shouldLog)
+        TestLoggable.shouldLog(true)
+        XCTAssertTrue(TestLoggable.shouldLog)
+    }
+
+    func test_fluentSetters_chain() {
+        Logger.isRuntimeForceEnabled(true).shouldLog(false)
+        XCTAssertTrue(Logger.isRuntimeForceEnabled)
+        XCTAssertFalse(Logger.shouldLog)
+        // restore for downstream tests
+        Logger.shouldLog(true)
+    }
 }
 
 private enum TestLoggable: Loggable {}

@@ -48,4 +48,11 @@ extension Loggable {
             _loggableStore.add(item: (key: key, value: newValue))
         }
     }
+
+    /// Fluent setter for `shouldLog`. Returns the type for chaining.
+    @discardableResult
+    public static func shouldLog(_ value: Bool) -> Self.Type {
+        shouldLog = value
+        return self
+    }
 }

@@ -2096,9 +2096,11 @@ Logger.log(request, data: data, response: resp)  // network request + response
 // To get logs in a debug app that links a *Release-built* Common.xcframework
 // (the default SPM artefact), flip the runtime gate at startup:
 //   #if DEBUG
-//   Logger.isRuntimeForceEnabled = true
-//   HTTPService.shouldLog = true   // and any other Loggable types you care about
+//   Logger.isRuntimeForceEnabled(true)
+//   HTTPService.shouldLog(true)    // and any other Loggable types you care about
 //   #endif
+// Every settable Logger / Loggable property also has a same-named fluent setter
+// (e.g. `Logger.isRuntimeForceEnabled(true).shouldLog(true)`).
 ```
 
 ---

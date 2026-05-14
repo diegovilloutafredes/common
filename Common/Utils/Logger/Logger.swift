@@ -92,22 +92,29 @@ extension Logger {
     /// Intended for debug builds of consumer apps that link a Release-archived
     /// `Common.xcframework` (in which `isCompileTimeEnabled` is baked as `false`).
     /// Flip this once at app startup, then control individual subsystems via
-    /// their own `<Type>.shouldLog`:
+    /// their own `<Type>.shouldLog`. Prefer the fluent form:
     /// ```
     /// #if DEBUG
-    /// Logger.isRuntimeForceEnabled = true
-    /// HTTPService.shouldLog = true
+    /// Logger.isRuntimeForceEnabled(true)
+    /// HTTPService.shouldLog(true)
     /// #endif
     /// ```
     /// Release apps should leave this off.
     public nonisolated(unsafe) static var isRuntimeForceEnabled: Bool = false
+
+    /// Fluent setter for `isRuntimeForceEnabled`. Returns the type for chaining.
+    @discardableResult
+    public static func isRuntimeForceEnabled(_ value: Bool) -> Self.Type {
+        isRuntimeForceEnabled = value
+        return self
+    }
 }
 
 #if DEBUG
 // MARK: - Debug helpers
 extension Logger {
     public static func forceEnable() {
-        Logger.shouldLog = true
+        Logger.shouldLog(true)
     }
 }
 #endif
