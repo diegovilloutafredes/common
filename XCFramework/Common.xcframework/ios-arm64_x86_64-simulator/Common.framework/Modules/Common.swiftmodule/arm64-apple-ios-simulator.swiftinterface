@@ -1772,6 +1772,8 @@ extension Common.Loggable {
     get
     set
   }
+  @discardableResult
+  public static func shouldLog(_ value: Swift.Bool) -> Self.Type
 }
 public enum Logger {
   public static func log(caller: Swift.String = #function, _ item: Any)
@@ -1783,6 +1785,8 @@ extension Common.Logger : Common.Loggable {
 extension Common.Logger {
   public static let isCompileTimeEnabled: Swift.Bool
   nonisolated(unsafe) public static var isRuntimeForceEnabled: Swift.Bool
+  @discardableResult
+  public static func isRuntimeForceEnabled(_ value: Swift.Bool) -> Common.Logger.Type
 }
 public struct MultipartRequest {
   public init(boundary: Swift.String = UUID().uuidString)

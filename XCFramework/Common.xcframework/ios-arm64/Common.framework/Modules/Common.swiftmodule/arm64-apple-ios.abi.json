@@ -36480,6 +36480,45 @@
                 "accessorKind": "_modify"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "shouldLog",
+            "printedName": "shouldLog(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Metatype",
+                "printedName": "τ_0_0.Type",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common8LoggablePAAE9shouldLogyxmSbFZ",
+            "mangledName": "$s6Common8LoggablePAAE9shouldLogyxmSbFZ",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.Loggable>",
+            "sugared_genericSig": "<Self where Self : Common.Loggable>",
+            "static": true,
+            "declAttributes": [
+              "AccessControl",
+              "DiscardableResult",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Protocol",
@@ -36821,6 +36860,44 @@
                 "accessorKind": "_modify"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "isRuntimeForceEnabled",
+            "printedName": "isRuntimeForceEnabled(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Metatype",
+                "printedName": "Common.Logger.Type",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Logger",
+                    "printedName": "Common.Logger",
+                    "usr": "s:6Common6LoggerO"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common6LoggerO21isRuntimeForceEnabledyACmSbFZ",
+            "mangledName": "$s6Common6LoggerO21isRuntimeForceEnabledyACmSbFZ",
+            "moduleName": "Common",
+            "static": true,
+            "declAttributes": [
+              "AccessControl",
+              "DiscardableResult",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Enum",
@@ -94129,7 +94206,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Utils\/Logger\/Logger.swift",
       "kind": "BooleanLiteral",
-      "offset": 4028,
+      "offset": 4050,
       "length": 5,
       "value": "false"
     },
