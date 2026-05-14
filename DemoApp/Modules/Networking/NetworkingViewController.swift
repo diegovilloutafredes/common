@@ -127,13 +127,11 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
 // MARK: - NetworkingViewModelDelegate
 extension NetworkingViewController: NetworkingViewModelDelegate {
     func didUpdatePosts() {
-        dispatchOnMain { [weak self] in guard let self else { return }; list.reloadData() }
+        list.reloadData()
     }
 
     func didUpdateStatus() {
-        dispatchOnMain { [weak self] in guard let self else { return }
-            statusLabel.text(viewModel.statusText)
-        }
+        statusLabel.text(viewModel.statusText)
     }
 
     func didFailWithError(_ message: String) {

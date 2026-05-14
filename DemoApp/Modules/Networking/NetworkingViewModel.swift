@@ -63,20 +63,23 @@ private extension NetworkingViewModel {
     func loadPostsCallback() {
         delegate?.didStartLoading()
         client.fetchPosts { [weak self] result in
-            guard let self else { return }
-            delegate?.didStopLoading()
-            switch result {
-            case .success(let fetched):
-                posts = fetched
-                statusText = "Fetched \(fetched.count) posts via callback"
-                delegate?.didUpdatePosts()
-                delegate?.didUpdateStatus()
-            case .failure(let error):
-                if posts.isEmpty { posts = Self.mockPosts }
-                statusText = "API error — showing mock data"
-                delegate?.didFailWithError(error.localizedDescription)
-                delegate?.didUpdatePosts()
-                delegate?.didUpdateStatus()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                delegate?.didStopLoading()
+                switch result {
+                case .success(let fetched):
+                    posts = fetched
+                    statusText = "Fetched \(fetched.count) posts via callback"
+                    delegate?.didUpdatePosts()
+                    delegate?.didUpdateStatus()
+                case .failure(let error):
+                    if posts.isEmpty { posts = Self.mockPosts }
+                    statusText = "API error — showing mock data"
+                    delegate?.didFailWithError(error.localizedDescription)
+                    delegate?.didUpdatePosts()
+                    delegate?.didUpdateStatus()
+                @unknown default: break
+                }
             }
         }
     }

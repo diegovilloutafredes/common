@@ -11,7 +11,8 @@ final class AppCoordinator: BaseCoordinator {
     override func start() {
         set(HomeWireframe.createModule(coordinator: self))
         if ProcessInfo.processInfo.arguments.contains("-SmokeTestSnackbar") {
-            dispatchOnMainAfter(.now() + 1) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1))
                 Snackbar.show(.init(message: "Testing snackbar margins", duration: .long))
             }
         }

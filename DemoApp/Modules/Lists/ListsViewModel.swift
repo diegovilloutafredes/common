@@ -93,7 +93,8 @@ extension ListsViewModel: CollectionViewable {
 // MARK: - ListsViewModelProtocol
 extension ListsViewModel: ListsViewModelProtocol {
     func refresh(completion: @escaping Action) {
-        dispatchOnMainAfter(.now() + 1.2) { [weak self] in
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(1.2))
             guard let self else { return }
             let fresh = makeItems(from: nextNumber, count: 6)
             items.insert(contentsOf: fresh, at: 0)
