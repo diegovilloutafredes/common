@@ -7,6 +7,11 @@ import XCTest
 
 final class LoggableTests: XCTestCase {
 
+    override func tearDown() {
+        Logger.isRuntimeForceEnabled = false
+        super.tearDown()
+    }
+
     func test_isCompileTimeEnabled_isTrueInTestTarget() {
         XCTAssertTrue(Logger.isCompileTimeEnabled)
     }
@@ -26,6 +31,28 @@ final class LoggableTests: XCTestCase {
         Logger.shouldLog = false
         Logger.forceEnable()
         XCTAssertTrue(Logger.shouldLog)
+    }
+
+    func test_isRuntimeForceEnabled_defaultsFalse() {
+        XCTAssertFalse(Logger.isRuntimeForceEnabled)
+    }
+
+    func test_isRuntimeForceEnabled_isMutable() {
+        Logger.isRuntimeForceEnabled = true
+        XCTAssertTrue(Logger.isRuntimeForceEnabled)
+        Logger.isRuntimeForceEnabled = false
+        XCTAssertFalse(Logger.isRuntimeForceEnabled)
+    }
+
+    /// Flipping the runtime flag must not interfere with the existing `shouldLog`
+    /// path in DEBUG. Guards against an accidental `&&` (instead of `||`) in the gate.
+    /// Ends with `shouldLog = true` to leave the default state for other tests.
+    func test_isRuntimeForceEnabled_doesNotBreakShouldLogInDebug() {
+        Logger.isRuntimeForceEnabled = true
+        TestLoggable.shouldLog = false
+        XCTAssertFalse(TestLoggable.shouldLog)
+        TestLoggable.shouldLog = true
+        XCTAssertTrue(TestLoggable.shouldLog)
     }
 }
 

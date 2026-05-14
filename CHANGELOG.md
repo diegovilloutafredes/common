@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added
+- **`Logger.isRuntimeForceEnabled` — runtime escape hatch for the compile-time gate.** When `true`, `Loggable.shouldLog` honours its stored value regardless of how the framework was built. Lets debug builds of consumer apps emit logs even when they link a Release-archived `Common.xcframework` (in which `isCompileTimeEnabled` is baked as `false`). Defaults to `false`; release apps should leave it off. Typical usage at app startup:
+  ```swift
+  #if DEBUG
+  Logger.isRuntimeForceEnabled = true
+  HTTPService.shouldLog = true
+  #endif
+  ```
+
 ### Fixed
 - **`HTTPService` callback result delivered via `Task { @MainActor in }`**: Replaces `DispatchQueue.main.async` for main-thread delivery in both `request` and `upload` overloads. In Xcode 26's Swift Concurrency runtime, `DispatchQueue.main` is decoupled from `@MainActor` — the old path was not drained during `await fulfillment(of:)` in tests and could silently drop results in production.
 - **`ActionButton` pill corner radius is now resize-safe**: `layoutSubviews()` override replaces the old `onLayoutSubviews` hook so the radius (`bounds.height / 2`) updates on every layout pass — resizing the button always maintains the pill shape.

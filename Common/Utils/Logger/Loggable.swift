@@ -29,20 +29,20 @@ private var _loggableStore: KeyValueStore {
 extension Loggable {
     public static var shouldLog: Bool {
         get {
-            guard Logger.isCompileTimeEnabled else { return false }
+            guard Logger.isCompileTimeEnabled || Logger.isRuntimeForceEnabled else { return false }
             let key = "\(staticKey).shouldLog"
             if let cached = _loggableCache.withLock({ $0[key] }) { return cached }
             #if DEBUG
             let defaultValue = true
             #else
-            let defaultValue = false
+            let defaultValue = Logger.isRuntimeForceEnabled
             #endif
             let value: Bool = _loggableStore.get(using: key) ?? defaultValue
             _loggableCache.withLock { $0[key] = value }
             return value
         }
         set {
-            guard Logger.isCompileTimeEnabled else { return }
+            guard Logger.isCompileTimeEnabled || Logger.isRuntimeForceEnabled else { return }
             let key = "\(staticKey).shouldLog"
             _loggableCache.withLock { $0[key] = newValue }
             _loggableStore.add(item: (key: key, value: newValue))
