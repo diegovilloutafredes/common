@@ -1271,10 +1271,10 @@ honours its stored value regardless of how the framework was built.</p>
 <p>Intended for debug builds of consumer apps that link a Release-archived
 <code>Common.xcframework</code> (in which <code><a href="../Enums/Logger.html#/s:6Common6LoggerO20isCompileTimeEnabledSbvpZ">isCompileTimeEnabled</a></code> is baked as <code>false</code>).
 Flip this once at app startup, then control individual subsystems via
-their own <code>&lt;Type&gt;.shouldLog</code>:</p>
+their own <code>&lt;Type&gt;.shouldLog</code>. Prefer the fluent form:</p>
 <pre class="highlight swift"><code><span class="cp">#if DEBUG</span>
-<span class="kt">Logger</span><span class="o">.</span><span class="n">isRuntimeForceEnabled</span> <span class="o">=</span> <span class="kc">true</span>
-<span class="kt">HTTPService</span><span class="o">.</span><span class="n">shouldLog</span> <span class="o">=</span> <span class="kc">true</span>
+<span class="kt">Logger</span><span class="o">.</span><span class="nf">isRuntimeForceEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+<span class="kt">HTTPService</span><span class="o">.</span><span class="nf">shouldLog</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
 <span class="cp">#endif</span>
 </code></pre>
 
@@ -1286,6 +1286,34 @@ their own <code>&lt;Type&gt;.shouldLog</code>:</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">nonisolated</span><span class="p">(</span><span class="n">unsafe</span><span class="p">)</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">isRuntimeForceEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6Common6LoggerO21isRuntimeForceEnabledyACmSbFZ"></a>
+                    <a name="//apple_ref/swift/Method/isRuntimeForceEnabled(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6Common6LoggerO21isRuntimeForceEnabledyACmSbFZ">isRuntimeForceEnabled(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Fluent setter for <code><a href="../Enums/Logger.html#/s:6Common6LoggerO21isRuntimeForceEnabledSbvpZ">isRuntimeForceEnabled</a></code>. Returns the type for chaining.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">isRuntimeForceEnabled</span><span class="p">(</span><span class="n">_</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">`</span><span class="nv">Self</span><span class="p">`</span><span class="o">.</span><span class="k">Type</span></code></pre>
 
                         </div>
                       </div>
