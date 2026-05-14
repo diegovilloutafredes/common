@@ -36725,6 +36725,102 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Var",
+            "name": "isRuntimeForceEnabled",
+            "printedName": "isRuntimeForceEnabled",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common6LoggerO21isRuntimeForceEnabledSbvpZ",
+            "mangledName": "$s6Common6LoggerO21isRuntimeForceEnabledSbvpZ",
+            "moduleName": "Common",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "Nonisolated",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common6LoggerO21isRuntimeForceEnabledSbvgZ",
+                "mangledName": "$s6Common6LoggerO21isRuntimeForceEnabledSbvgZ",
+                "moduleName": "Common",
+                "static": true,
+                "implicit": true,
+                "isFromExtension": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common6LoggerO21isRuntimeForceEnabledSbvsZ",
+                "mangledName": "$s6Common6LoggerO21isRuntimeForceEnabledSbvsZ",
+                "moduleName": "Common",
+                "static": true,
+                "implicit": true,
+                "isFromExtension": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common6LoggerO21isRuntimeForceEnabledSbvMZ",
+                "mangledName": "$s6Common6LoggerO21isRuntimeForceEnabledSbvMZ",
+                "moduleName": "Common",
+                "static": true,
+                "implicit": true,
+                "isFromExtension": true,
+                "accessorKind": "_modify"
+              }
+            ]
           }
         ],
         "declKind": "Enum",
@@ -94027,6 +94123,13 @@
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Utils\/Logger\/Logger.swift",
       "kind": "BooleanLiteral",
       "offset": 3306,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Utils\/Logger\/Logger.swift",
+      "kind": "BooleanLiteral",
+      "offset": 4028,
       "length": 5,
       "value": "false"
     },
