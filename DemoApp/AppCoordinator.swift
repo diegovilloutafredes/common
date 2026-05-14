@@ -65,4 +65,8 @@ final class AppCoordinator: BaseCoordinator {
     func showImageLoading() {
         push(ImageLoadingWireframe.createModule())
     }
+
+    func showTypography() {
+        push(TypographyWireframe.createModule())
+    }
 }

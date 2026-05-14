@@ -84,6 +84,11 @@ final class HomeViewModel {
             subtitle: "loadImage(from:), two-tier cache, cell reuse cancellation",
             action: { [weak self] in self?.coordinator?.showImageLoading() }
         ),
+        .init(
+            title: "Typography",
+            subtitle: "AppFontFamily, FontStyle, PostScript derivation",
+            action: { [weak self] in self?.coordinator?.showTypography() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?

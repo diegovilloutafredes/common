@@ -57,7 +57,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
                 $0.attributedTitle = .init(
                     "Submit",
                     attributes: .init()
-                        .with { $0.font = .boldSystemFont(ofSize: 16) }
+                        .with { $0.font = .appFont(style: .bold, size: 16) }
                 )
                 $0.baseBackgroundColor = .systemBlue
                 $0.baseForegroundColor = .white

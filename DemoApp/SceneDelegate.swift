@@ -15,6 +15,9 @@ final class SceneDelegate: UIResponder {
 // MARK: - UIWindowSceneDelegate
 extension SceneDelegate: UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        UIFont.register(fonts: [.montserrat, .varelaRound, .poppins, .lato], styles: UIFont.FontStyle.allCases)
+        UIFont.register(fonts: [.inter], styles: [.regular, .medium, .semiBold, .bold, .light], type: "otf")
+        UIFont.setPrimaryFamily(.montserrat)
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         let navigationController = UINavigationController()
