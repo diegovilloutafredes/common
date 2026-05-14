@@ -42,3 +42,8 @@ docs/
 # Claude Code local project settings
 .claude/
 openspec/
+
+# Local-only design notes / audits — not part of the published library
+FRAMEWORK_REVIEW.md
+NETWORK_LAYER_PROPOSAL.md
+proposals/
