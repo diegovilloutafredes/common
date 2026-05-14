@@ -3,11 +3,22 @@
 ## Unreleased
 
 ### Added
+- **Fluent setters for every settable Logger / Loggable property.** Each `static var` that you can write is now also exposed as a same-named, chainable static method:
+  ```swift
+  // Before (still works):
+  Logger.isRuntimeForceEnabled = true
+  HTTPService.shouldLog = true
+
+  // After (preferred — matches the rest of the framework's fluent style):
+  Logger.isRuntimeForceEnabled(true).shouldLog(true)
+  HTTPService.shouldLog(true)
+  ```
+  Added on `Logger.isRuntimeForceEnabled(_:)` and as a default-implemented `Loggable.shouldLog(_:)` so every conforming type (`Logger`, `HTTPService`, `BaseCoordinator`, consumer types) picks it up automatically. The original `var` setters remain — this is purely additive.
 - **`Logger.isRuntimeForceEnabled` — runtime escape hatch for the compile-time gate.** When `true`, `Loggable.shouldLog` honours its stored value regardless of how the framework was built. Lets debug builds of consumer apps emit logs even when they link a Release-archived `Common.xcframework` (in which `isCompileTimeEnabled` is baked as `false`). Defaults to `false`; release apps should leave it off. Typical usage at app startup:
   ```swift
   #if DEBUG
-  Logger.isRuntimeForceEnabled = true
-  HTTPService.shouldLog = true
+  Logger.isRuntimeForceEnabled(true)
+  HTTPService.shouldLog(true)
   #endif
   ```
 
