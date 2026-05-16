@@ -28,7 +28,7 @@ public final class CircularActivityIndicatorView: UIView {
         self.lineCap = lineCap
         self.lineWidth = lineWidth
         super.init(frame: frame)
-        self.backgroundColor(.clear)
+        setupView()
     }
 
     /// Initializes a new circular activity indicator with default frame.
@@ -47,32 +47,37 @@ public final class CircularActivityIndicatorView: UIView {
 
     private lazy var progressShapeLayer = ProgressShapeLayer(lineCap: lineCap, lineWidth: lineWidth, strokeColor: colors.first ?? .green)
 
+    // Width = height (1:1) is installed at construction time, before the first layout pass,
+    // so callers that constrain only one dimension still get square bounds on the first paint.
+    // `progressShapeLayer` lives on `self.layer` for the view's lifetime; only the animations
+    // are added/removed by `isAnimating`. The layer is hidden when idle so no static stroke shows.
+    private func setupView() {
+        backgroundColor(.clear)
+            .clipsToBounds(true)
+            .setRatio()
+        progressShapeLayer.isHidden = true
+        layer.addSublayer(progressShapeLayer)
+    }
+
     public override func layoutSubviews() {
         super.layoutSubviews()
-        setRatio()
-        setAsRoundedView()
-
-        let path = UIBezierPath(
-            ovalIn: CGRect(
-                x: .zero,
-                y: .zero,
-                width: bounds.width,
-                height: bounds.height
-            )
-        ).cgPath
-        
-        progressShapeLayer.path = path
+        round(radius: bounds.height / 2)
+        progressShapeLayer.frame = bounds
+        progressShapeLayer.path = UIBezierPath(ovalIn: bounds).cgPath
     }
-    
+
     /// Indicates whether the view is currently animating.
     public var isAnimating: Bool = false {
         didSet {
             if isAnimating {
+                progressShapeLayer.isHidden = false
                 animateStroke()
                 animateRotation()
             } else {
-                progressShapeLayer.removeFromSuperlayer()
-                layer.removeAllAnimations()
+                progressShapeLayer.removeAnimation(forKey: "stroke")
+                progressShapeLayer.removeAnimation(forKey: "colour")
+                layer.removeAnimation(forKey: "rotation")
+                progressShapeLayer.isHidden = true
             }
         }
     }
@@ -101,16 +106,14 @@ extension CircularActivityIndicatorView {
         strokeAnimationGroup.repeatDuration = .infinity
         strokeAnimationGroup.animations = [startAnimation, endAnimation]
 
-        progressShapeLayer.add(strokeAnimationGroup, forKey: nil)
+        progressShapeLayer.add(strokeAnimationGroup, forKey: "stroke")
 
         let colorKeyframeAnimation = StrokeColorKeyframeAnimation(
             colors: colors.map { $0.cgColor },
             duration: strokeAnimationGroup.duration * Double(colors.count)
         )
 
-        progressShapeLayer.add(colorKeyframeAnimation, forKey: nil)
-
-        layer.addSublayer(progressShapeLayer)
+        progressShapeLayer.add(colorKeyframeAnimation, forKey: "colour")
     }
 
     private func animateRotation() {
@@ -121,7 +124,7 @@ extension CircularActivityIndicatorView {
             repeatCount: .greatestFiniteMagnitude
         )
 
-        layer.add(rotationAnimation, forKey: nil)
+        layer.add(rotationAnimation, forKey: "rotation")
     }
 }
 
