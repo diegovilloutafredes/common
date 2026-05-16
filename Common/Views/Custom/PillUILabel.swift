@@ -23,6 +23,6 @@ final class PillUILabel: BaseLabel {
         numberOfLines()
         textAlignment(.center)
         textColor(.white)
-        onLayoutSubviews { $0.setAsRoundedView() }
+        setAsRoundedView()
     }
 }
