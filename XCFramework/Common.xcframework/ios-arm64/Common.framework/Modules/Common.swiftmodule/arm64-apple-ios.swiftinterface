@@ -3425,7 +3425,10 @@ extension UIKit.UIView {
 }
 extension UIKit.UIView {
   @discardableResult
-  @_Concurrency.MainActor @preconcurrency public func setAsRoundedView(using maskedCorners: QuartzCore.CACornerMask = .all, radius: CoreFoundation.CGFloat? = nil, animated: Swift.Bool = false) -> Self
+  @_Concurrency.MainActor @preconcurrency public func setAsRoundedView(using maskedCorners: QuartzCore.CACornerMask = .all, radius: CoreFoundation.CGFloat? = nil) -> Self
+  @available(*, deprecated, message: "The 'animated' parameter is no longer supported. Wrap the call in UIView.animate { view.setAsRoundedView(...) } for animated rounding.")
+  @discardableResult
+  @_Concurrency.MainActor @preconcurrency public func setAsRoundedView(using maskedCorners: QuartzCore.CACornerMask = .all, radius: CoreFoundation.CGFloat? = nil, animated: Swift.Bool) -> Self
 }
 extension UIKit.UIView {
   @discardableResult
