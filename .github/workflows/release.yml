@@ -15,16 +15,17 @@ concurrency:
 jobs:
   validate:
     name: Test
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: |
-          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
-          [ -z "$LATEST" ] && LATEST=/Applications/Xcode.app
-          sudo xcode-select -s "$LATEST/Contents/Developer"
-          xcodebuild -version
+      - name: Select Xcode 26.4
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.4'
+
+      - name: Print Xcode version
+        run: xcodebuild -version
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -43,19 +44,17 @@ jobs:
 
   release:
     name: Build & Release
-    runs-on: macos-15
+    runs-on: macos-26
     needs: validate
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: |
-          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
-          [ -z "$LATEST" ] && LATEST=/Applications/Xcode.app
-          sudo xcode-select -s "$LATEST/Contents/Developer"
-          xcodebuild -version
+      - name: Select Xcode 26.4
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.4'
 
       - name: Install XcodeGen
         run: brew install xcodegen
