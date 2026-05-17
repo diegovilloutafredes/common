@@ -3674,7 +3674,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets a handler to execute when layoutSubviews is called and returns self (chainable).</p>
+                        <p>Queue a one-shot handler that fires on the next <code>layoutSubviews</code> pass.</p>
+
+<p>Multiple handlers may be queued on the same view; each fires once in
+registration order then is removed from the queue. A handler may safely
+queue further handlers from within its own body — those fire on the
+<em>next</em> pass, not the current one.</p>
 
                       </div>
                       <div class="declaration">
@@ -4174,9 +4179,9 @@ Replaces any previously registered handler and its gesture recognizer.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:So6UIViewC6CommonE16setAsRoundedView5using6radius8animatedABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgSbtF"></a>
-                    <a name="//apple_ref/swift/Method/setAsRoundedView(using:radius:animated:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:So6UIViewC6CommonE16setAsRoundedView5using6radius8animatedABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgSbtF">setAsRoundedView(using:<wbr>radius:<wbr>animated:<wbr>)</a>
+                    <a name="/s:So6UIViewC6CommonE16setAsRoundedView5using6radiusABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgtF"></a>
+                    <a name="//apple_ref/swift/Method/setAsRoundedView(using:radius:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIViewC6CommonE16setAsRoundedView5using6radiusABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgtF">setAsRoundedView(using:<wbr>radius:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4184,7 +4189,21 @@ Replaces any previously registered handler and its gesture recognizer.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Rounds the view into a circle/pill shape and returns self (chainable).</p>
+                        <p>Rounds the view&rsquo;s corners.</p>
+
+<ul>
+<li>When <code>radius</code> is given, the rounding is applied once synchronously
+and any previous pill tracking on the view is disabled.</li>
+<li>When <code>radius</code> is <code>nil</code>, the view enters pill mode: <code>cornerRadius</code> is
+updated to <code>bounds.height / 2</code> on every layout pass for the lifetime
+of the view, so it stays a perfect pill across resize and rotation.
+If <code>bounds.height</code> is already valid at the call site, the radius is
+<em>also</em> applied immediately — so calling this from inside a
+<code>layoutSubviews</code> override or another <code>onLayoutSubviews</code> handler still
+renders correctly on the first paint.</li>
+</ul>
+
+<p>Both modes set <code>clipsToBounds = true</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -4193,7 +4212,7 @@ Replaces any previously registered handler and its gesture recognizer.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setAsRoundedView</span><span class="p">(</span><span class="n">using</span> <span class="nv">maskedCorners</span><span class="p">:</span> <span class="kt">CACornerMask</span> <span class="o">=</span> <span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="nv">radius</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setAsRoundedView</span><span class="p">(</span><span class="n">using</span> <span class="nv">maskedCorners</span><span class="p">:</span> <span class="kt">CACornerMask</span> <span class="o">=</span> <span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="nv">radius</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
                         </div>
                       </div>
@@ -4221,24 +4240,45 @@ Replaces any previously registered handler and its gesture recognizer.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The corner radius. If nil, uses half the height (pill shape), updated on every layout pass.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>animated</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Whether to animate. Defaults to <code>false</code>.</p>
+                                  <p>An explicit radius; if <code>nil</code>, the view behaves as a pill.</p>
                                 </div>
                               </td>
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIViewC6CommonE16setAsRoundedView5using6radius8animatedABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgSbtF"></a>
+                    <a name="//apple_ref/swift/Method/setAsRoundedView(using:radius:animated:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIViewC6CommonE16setAsRoundedView5using6radius8animatedABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgSbtF">setAsRoundedView(using:<wbr>radius:<wbr>animated:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Deprecated. The <code>animated</code> parameter is no longer supported — it used to
+schedule a one-shot animation on the next layout pass, but that interacts
+poorly with the layout cycle and never re-fires on bounds changes. Wrap
+the call in <code>UIView.animate { ... }</code> if you want animated rounding.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="nv">message</span><span class="p">:</span> <span class="s">"The 'animated' parameter is no longer supported. Wrap the call in UIView.animate { view.setAsRoundedView(...﹚ } for animated rounding."</span><span class="p">)</span>
+<span class="kd">@discardableResult</span>
+<span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setAsRoundedView</span><span class="p">(</span><span class="n">using</span> <span class="nv">maskedCorners</span><span class="p">:</span> <span class="kt">CACornerMask</span> <span class="o">=</span> <span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="nv">radius</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -5302,7 +5342,7 @@ Replaces any previously registered handler and its gesture recognizer.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-05-14)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-05-17)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
