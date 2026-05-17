@@ -59574,6 +59574,53 @@
           {
             "kind": "Function",
             "name": "setAsRoundedView",
+            "printedName": "setAsRoundedView(using:radius:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DynamicSelf",
+                "printedName": "Self"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CACornerMask",
+                "printedName": "QuartzCore.CACornerMask",
+                "hasDefaultArg": true,
+                "usr": "c:@E@CACornerMask"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "CoreGraphics.CGFloat?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGFloat",
+                    "printedName": "CoreGraphics.CGFloat",
+                    "usr": "s:14CoreFoundation7CGFloatV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So6UIViewC6CommonE16setAsRoundedView5using6radiusABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgtF",
+            "mangledName": "$sSo6UIViewC6CommonE16setAsRoundedView5using6radiusABXDSo12CACornerMaskV_12CoreGraphics7CGFloatVSgtF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "DiscardableResult",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setAsRoundedView",
             "printedName": "setAsRoundedView(using:radius:animated:)",
             "children": [
               {
@@ -59607,7 +59654,6 @@
                 "kind": "TypeNominal",
                 "name": "Bool",
                 "printedName": "Swift.Bool",
-                "hasDefaultArg": true,
                 "usr": "s:Sb"
               }
             ],
@@ -59615,11 +59661,13 @@
             "usr": "s:So6UIViewC6CommonE16setAsRoundedView5using6radius8animatedABXDSo12CACornerMaskV_14CoreFoundation7CGFloatVSgSbtF",
             "mangledName": "$sSo6UIViewC6CommonE16setAsRoundedView5using6radius8animatedABXDSo12CACornerMaskV_12CoreGraphics7CGFloatVSgSbtF",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Preconcurrency",
               "Custom",
               "AccessControl",
               "DiscardableResult",
+              "Available",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -93681,14 +93729,49 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1431,
+      "offset": 1414,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2294,
+      "offset": 2812,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "kind": "StringLiteral",
+      "offset": 2964,
+      "length": 8,
+      "value": "\"stroke\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "kind": "StringLiteral",
+      "offset": 3033,
+      "length": 8,
+      "value": "\"colour\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "kind": "StringLiteral",
+      "offset": 3089,
+      "length": 10,
+      "value": "\"rotation\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "kind": "BooleanLiteral",
+      "offset": 3147,
+      "length": 4,
+      "value": "true"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "kind": "BooleanLiteral",
+      "offset": 2712,
       "length": 5,
       "value": "false"
     },
@@ -94905,22 +94988,36 @@
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "kind": "IntegerLiteral",
+      "offset": 173,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "kind": "IntegerLiteral",
+      "offset": 231,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "StringLiteral",
-      "offset": 1035,
+      "offset": 2614,
       "length": 44,
       "value": "\"Could not get `layoutSubviews()` selector.\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "StringLiteral",
-      "offset": 1222,
+      "offset": 2801,
       "length": 61,
       "value": "\"Could not get original `originalLayoutSubviews()` selector.\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "StringLiteral",
-      "offset": 1426,
+      "offset": 3005,
       "length": 61,
       "value": "\"Could not get swizzled `swizzledLayoutSubviews()` selector.\""
     },
@@ -94972,13 +95069,6 @@
       "offset": 338,
       "length": 4,
       "value": "true"
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+SetAsRoundedView.swift",
-      "kind": "BooleanLiteral",
-      "offset": 586,
-      "length": 5,
-      "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+ShadowProperties.swift",
