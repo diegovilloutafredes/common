@@ -20,11 +20,7 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
 
     private lazy var eventStack = VStack(alignment: .fill, spacing: 8) {}
 
-    private lazy var mainScrollView: UIScrollView = {
-        let sv = UIScrollView()
-        sv.alwaysBounceVertical = true
-        return sv
-    }()
+    private lazy var mainScrollView = UIScrollView().with { $0.alwaysBounceVertical = true }
 
     // MARK: - Buttons
 
@@ -63,11 +59,9 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
         super.setupView()
         title = "Coordinator Demo"
         buildScrollContent()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.requestStatsRefresh()
+        onViewWillAppear { [weak self] _ in
+            self?.viewModel.requestStatsRefresh()
+        }
     }
 
     // MARK: - Layout
@@ -104,6 +98,9 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
             eventStack
         }
 
+        // UIScrollView exception: content must be constrained to contentLayoutGuide + match
+        // frameLayoutGuide width to prevent horizontal scroll. setConstraints{} cannot express
+        // cross-guide relationships, so manual NSLayoutConstraint.activate is required here.
         mainScrollView.addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

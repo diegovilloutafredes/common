@@ -20,20 +20,20 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
         title = viewModel.title
         view.backgroundColor(.systemGroupedBackground)
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Clear Cache",
-            style: .plain,
-            target: self,
-            action: #selector(clearCacheTapped)
-        )
-        navigationItem.rightBarButtonItem?.accessibilityIdentifier = "clearCacheButton"
-
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
+        let preloadButton = UIBarButtonItem(
             title: "Preload",
             style: .plain,
             target: self,
             action: #selector(preloadTapped)
         )
+        let clearCacheButton = UIBarButtonItem(
+            title: "Clear Cache",
+            style: .plain,
+            target: self,
+            action: #selector(clearCacheTapped)
+        )
+        clearCacheButton.accessibilityIdentifier = "clearCacheButton"
+        navigationItem.rightBarButtonItems = [clearCacheButton, preloadButton]
     }
 
     @objc private func clearCacheTapped() {

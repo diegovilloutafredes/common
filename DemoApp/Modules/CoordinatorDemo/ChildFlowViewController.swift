@@ -8,7 +8,7 @@ import UIKit
 
 // MARK: - ChildFlowViewController
 
-final class ChildFlowViewController: UIViewController {
+final class ChildFlowViewController: BaseViewController {
     var onComplete: (() -> Void)?
     var onCancel: (() -> Void)?
     var onGoDeeper: (() -> Void)?
@@ -22,7 +22,7 @@ final class ChildFlowViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) { fatalError() }
+    @available(*, unavailable) required init?(coder: NSCoder) { fatalError() }
 
     // MARK: - Stat Labels
 
@@ -66,52 +66,45 @@ final class ChildFlowViewController: UIViewController {
     .setConstraints { $0.set(height: 48) }
     .isHidden(depth >= maxDepth)
 
-    // MARK: - Lifecycle
+    // MARK: - Main View
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = titleFor(depth: depth)
-        view.backgroundColor(.systemBackground)
-        buildUI()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navStackValueLabel.text("\(navigationController?.viewControllers.count ?? 0)")
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if isMovingFromParent { onCancel?() }
-    }
-
-    // MARK: - UI
-
-    private func buildUI() {
-        let statsRow = HStack(distribution: .fillEqually, spacing: 8) {
-            makeStatCard(valueLabel: depthValueLabel, key: "Depth")
-            makeStatCard(valueLabel: navStackValueLabel, key: "Nav Stack")
-            makeStatCard(valueLabel: remainingValueLabel, key: "Remaining")
-        }
-
-        let container = VStack(
+    @UIViewBuilder override var mainView: UIView {
+        VStack(
             alignment: .fill,
             margins: .init(top: 24, left: 16, bottom: 24, right: 16),
             spacing: 16
         ) {
-            statsRow
+            HStack(distribution: .fillEqually, spacing: 8) {
+                makeStatCard(valueLabel: depthValueLabel, key: "Depth")
+                makeStatCard(valueLabel: navStackValueLabel, key: "Nav Stack")
+                makeStatCard(valueLabel: remainingValueLabel, key: "Remaining")
+            }
             completeButton
             goDeeperButton
+        }.setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide) }
+    }
+
+    // MARK: - Lifecycle
+
+    override func setupView() {
+        super.setupView()
+        title = titleFor(depth: depth)
+        view.backgroundColor(.systemBackground)
+
+        onViewWillAppear { [weak self] _ in
+            guard let self else { return }
+            navStackValueLabel.text("\(navigationController?.viewControllers.count ?? 0)")
         }
 
-        view.addSubview(container)
-        container.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
+        // viewWillDisappear + isMovingFromParent is the documented pattern for detecting
+        // back-swipe / back-button dismissal without a dedicated dismiss button.
+        onViewWillDisappear { [weak self] _ in
+            guard let self else { return }
+            if isMovingFromParent { onCancel?() }
+        }
     }
+
+    // MARK: - Helpers
 
     private func makeStatCard(valueLabel: UILabel, key: String) -> UIView {
         VStack(alignment: .center, margins: .init(all: 12), spacing: 2) {

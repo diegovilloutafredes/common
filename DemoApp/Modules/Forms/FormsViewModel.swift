@@ -30,39 +30,48 @@ final class FormsViewModel {
     let title = "Forms & TextFields"
     weak var view: FormsViewProtocol?
 
-    private var fieldStates: [Field: Bool] = [.name: false, .email: false, .password: false]
+    // Current field values — validity derived, never stored separately
+    private var name = ""
+    private var email = ""
+    private var password = ""
 
-    private var allFieldsValid: Bool { fieldStates.values.allSatisfy { $0 } }
+    // Per-field validation rules
+    private func isValid(_ field: Field, value: String) -> Bool {
+        switch field {
+        case .name:     return value.count >= 2
+        case .email:    return value.contains("@") && value.contains(".")
+        case .password: return value.count >= 6
+        }
+    }
+
+    private func errorMessage(for field: Field, value: String) -> String? {
+        guard !value.isEmpty, !isValid(field, value: value) else { return nil }
+        switch field {
+        case .name:     return "Name must be at least 2 characters"
+        case .email:    return "Enter a valid email address"
+        case .password: return "Password must be at least 6 characters"
+        }
+    }
+
+    private var allFieldsValid: Bool {
+        isValid(.name, value: name) && isValid(.email, value: email) && isValid(.password, value: password)
+    }
 }
 
 // MARK: - FormsViewModelProtocol
 extension FormsViewModel: FormsViewModelProtocol {
     func validate(field: Field, value: String) {
-        let isValid: Bool
         switch field {
-        case .name:
-            isValid = value.count >= 2
-            if !isValid && !value.isEmpty {
-                view?.showFieldError(field: field, message: "Name must be at least 2 characters")
-            } else {
-                view?.clearFieldError(field: field)
-            }
-        case .email:
-            isValid = value.contains("@") && value.contains(".")
-            if !isValid && !value.isEmpty {
-                view?.showFieldError(field: field, message: "Enter a valid email address")
-            } else {
-                view?.clearFieldError(field: field)
-            }
-        case .password:
-            isValid = value.count >= 6
-            if !isValid && !value.isEmpty {
-                view?.showFieldError(field: field, message: "Password must be at least 6 characters")
-            } else {
-                view?.clearFieldError(field: field)
-            }
+        case .name:     name = value
+        case .email:    email = value
+        case .password: password = value
         }
-        fieldStates[field] = isValid
+
+        if let message = errorMessage(for: field, value: value) {
+            view?.showFieldError(field: field, message: message)
+        } else {
+            view?.clearFieldError(field: field)
+        }
         view?.updateValidationStatus(isValid: allFieldsValid)
     }
 

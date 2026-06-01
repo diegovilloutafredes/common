@@ -21,7 +21,7 @@ protocol HomeViewModelProtocol: ViewModel, CollectionViewable {
 @MainActor
 final class HomeViewModel {
     let title = "Common Demo"
-    weak var coordinator: AppCoordinator?
+    weak var coordinator: HomeCoordinatorProtocol?
 
     private lazy var dataSource: [DemoFeatureCellViewModelImpl] = [
         .init(
@@ -93,7 +93,7 @@ final class HomeViewModel {
 
     weak var view: HomeViewProtocol?
 
-    init(coordinator: AppCoordinator) {
+    init(coordinator: HomeCoordinatorProtocol) {
         self.coordinator = coordinator
     }
 }

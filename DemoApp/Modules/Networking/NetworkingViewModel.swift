@@ -33,8 +33,6 @@ final class NetworkingViewModel {
     private(set) var statusText = "Tap Fetch to load posts from JSONPlaceholder API"
     private(set) var mode: NetworkingMode = .callback
 
-    private let client = PostClient()
-    private let asyncClient = AsyncPostClient()
     private var posts: [Post] = []
     weak var view: NetworkingViewProtocol?
 }
@@ -62,7 +60,7 @@ private extension NetworkingViewModel {
 
     func loadPostsCallback() {
         delegate?.didStartLoading()
-        client.fetchPosts { [weak self] result in
+        fetchPosts { [weak self] result in
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 delegate?.didStopLoading()
@@ -89,7 +87,7 @@ private extension NetworkingViewModel {
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                let fetched: [Post] = try await asyncClient.fetchPosts()
+                let fetched = try await fetchPostsAsync()
                 posts = fetched
                 statusText = "Fetched \(fetched.count) posts via async/await"
                 delegate?.didStopLoading()
@@ -106,6 +104,10 @@ private extension NetworkingViewModel {
         }
     }
 }
+
+// MARK: - UseCase conformances
+extension NetworkingViewModel: FetchPostsUseCase {}
+extension NetworkingViewModel: FetchPostsAsyncUseCase {}
 
 // MARK: - CollectionViewable
 extension NetworkingViewModel: CollectionViewable {

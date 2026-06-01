@@ -10,7 +10,7 @@ typealias OnboardingViewProtocol = ScreenSizeMeasurable & NavigationBarVisibilit
 
 // MARK: - OnboardingViewController
 final class OnboardingViewController: BaseCollectionViewableViewController<OnboardingViewModelProtocol> {
-    enum OnboardingStep: Int {
+    enum OnboardingPage: Int {
         case first = 0
         case second
         case third
@@ -80,7 +80,7 @@ final class OnboardingViewController: BaseCollectionViewableViewController<Onboa
         }
     }
 
-    private var currentStep: OnboardingStep? { .init(rawValue: currentPage) }
+    private var currentStep: OnboardingPage? { .init(rawValue: currentPage) }
     private var lastPageIndex: Int { viewModel.getNumberOfItems(in: .zero) - 1 }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -103,7 +103,7 @@ extension OnboardingViewController {
         list.setContentOffset(.init(x: list.frame.width * Double(currentPage), y: .zero), animated: false)
     }
 
-    private func on(step: OnboardingStep? = nil) {
+    private func on(step: OnboardingPage? = nil) {
         switch step {
         case .third:
             navigationItem.setRightBarButtonItems(nil, animated: true)

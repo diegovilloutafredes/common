@@ -8,7 +8,7 @@ import UIKit
 
 // MARK: - HomeWireframe
 enum HomeWireframe {
-    @MainActor static func createModule(coordinator: AppCoordinator) -> UIViewController {
+    @MainActor static func createModule(coordinator: HomeCoordinatorProtocol) -> UIViewController {
         let viewModel = HomeViewModel(coordinator: coordinator)
         return HomeViewController(viewModel: viewModel)
             .with { viewModel.view = $0 }

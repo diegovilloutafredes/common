@@ -68,7 +68,7 @@ protocol StorageViewModelProtocol: ViewModel {
 }
 
 // MARK: - StorageViewModel
-final class StorageViewModelImpl: StorageViewModelProtocol {
+final class StorageViewModelImpl: StorageViewModelProtocol, UserLocalStorageUseCase {
     let title = "Storage"
 
     private let keys: [StorageType: String] = [
