@@ -2,46 +2,9 @@ import XCTest
 import UIKit
 @testable import Common
 
-// MARK: - ImageMockURLProtocol
-
-final class ImageMockURLProtocol: URLProtocol {
-    static var requestCount = 0
-    static var responseDelay: TimeInterval = 0
-    static var statusCode: Int = 200
-    static var responseData: Data?
-
-    override class func canInit(with request: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
-
-    override func startLoading() {
-        ImageMockURLProtocol.requestCount += 1
-        let delay = ImageMockURLProtocol.responseDelay
-        let code = ImageMockURLProtocol.statusCode
-        let data = ImageMockURLProtocol.responseData
-
-        DispatchQueue.global().asyncAfter(deadline: .now() + delay) { [weak self] in
-            guard let self else { return }
-            let url = self.request.url ?? URL(string: "https://mock")!
-            let response = HTTPURLResponse(url: url, statusCode: code, httpVersion: nil, headerFields: ["Content-Type": "image/png"])!
-            self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-            if let data {
-                self.client?.urlProtocol(self, didLoad: data)
-            }
-            self.client?.urlProtocolDidFinishLoading(self)
-        }
-    }
-
-    override func stopLoading() {}
-}
+// ImageMockURLProtocol + makeTestPNGData live in ImageTestSupport.swift.
 
 // MARK: - Helpers
-
-private func makeTestPNGData() -> Data {
-    UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1)).image { ctx in
-        UIColor.blue.setFill()
-        ctx.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-    }.pngData()!
-}
 
 private func makeTestLoader() -> (ImageLoader, ImageCache, URL) {
     let config = URLSessionConfiguration.ephemeral
@@ -111,14 +74,12 @@ final class ImageLoaderTests: XCTestCase {
         _ = try await loader.image(for: url)
         XCTAssertEqual(ImageMockURLProtocol.requestCount, 1)
 
-        // The disk write is a detached Task — give it time to land before clearing L1
-        try await Task.sleep(nanoseconds: 100_000_000)
+        // L1 is populated synchronously during the fetch.
+        XCTAssertNotNil(cache.memoryImage(for: url), "Network fetch must store to L1")
 
-        cache.removeMemoryImage(for: url)
-        ImageMockURLProtocol.requestCount = 0
-
-        _ = try await loader.image(for: url)
-        XCTAssertEqual(ImageMockURLProtocol.requestCount, 0, "After clearing L1, disk should serve")
+        // L2 is written on a detached Task — poll until it lands rather than waiting a fixed time.
+        let storedToDisk = await poll(timeout: 2) { await cache.diskData(for: url) != nil }
+        XCTAssertTrue(storedToDisk, "Network fetch must store to L2 (disk)")
     }
 
     // MARK: - 8.6 Deduplication: two concurrent calls → one network request
@@ -215,5 +176,18 @@ final class ImageLoaderTests: XCTestCase {
         try await Task.sleep(nanoseconds: 200_000_000) // wait for mock to fire
 
         XCTAssertFalse(completionCalled, "Completion must not be called after cancellation")
+    }
+
+    // MARK: - Helpers
+
+    /// Polls `condition` until it returns true or `timeout` elapses. Returns the final result.
+    /// Used to await detached side effects (e.g. disk writes) without a brittle fixed sleep.
+    private func poll(timeout: TimeInterval, until condition: () async -> Bool) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if await condition() { return true }
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        return await condition()
     }
 }

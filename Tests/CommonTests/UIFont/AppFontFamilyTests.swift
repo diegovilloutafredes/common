@@ -44,29 +44,9 @@ final class AppFontFamilyTests: XCTestCase {
         }
     }
 
-    // MARK: - PostScript name composition
-
-    func test_postScriptNameComposedFromFamilyAndStyle() {
-        let family = AppFontFamily(rawValue: "montserrat")
-        let name = "\(family.uppercasingFirstLetter)-\(UIFont.FontStyle.bold.uppercasingFirstLetter)"
-        XCTAssertEqual(name, "Montserrat-Bold")
-    }
-
-    func test_postScriptNameAllStyleVariants() {
-        let family = AppFontFamily(rawValue: "inter")
-        let expectations: [(UIFont.FontStyle, String)] = [
-            (.regular,   "Inter-Regular"),
-            (.bold,      "Inter-Bold"),
-            (.semiBold,  "Inter-SemiBold"),
-            (.light,     "Inter-Light"),
-            (.italic,    "Inter-Italic"),
-            (.extraBold, "Inter-ExtraBold"),
-        ]
-        for (style, expected) in expectations {
-            let name = "\(family.uppercasingFirstLetter)-\(style.uppercasingFirstLetter)"
-            XCTAssertEqual(name, expected)
-        }
-    }
+    // PostScript-name composition ("Family-Style") is exercised end-to-end against a real
+    // registered font in FontLoadingTests, which drives the production resolver rather than
+    // re-implementing the interpolation inline.
 
     // MARK: - UIFont.appFont(family:style:size:) — fallback
 

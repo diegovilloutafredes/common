@@ -8,7 +8,11 @@ import XCTest
 final class LoggableTests: XCTestCase {
 
     override func tearDown() {
+        // Reset every mutated process-global static to its DEBUG default so tests are
+        // order-independent — no test needs to manually restore state for the next one.
         Logger.isRuntimeForceEnabled = false
+        Logger.shouldLog = true
+        TestLoggable.shouldLog = true
         super.tearDown()
     }
 
@@ -75,8 +79,7 @@ final class LoggableTests: XCTestCase {
         Logger.isRuntimeForceEnabled(true).shouldLog(false)
         XCTAssertTrue(Logger.isRuntimeForceEnabled)
         XCTAssertFalse(Logger.shouldLog)
-        // restore for downstream tests
-        Logger.shouldLog(true)
+        // tearDown restores defaults — no manual restore needed.
     }
 }
 

@@ -8,7 +8,10 @@ import XCTest
 // MARK: - MockURLProtocol
 
 final class MockURLProtocol: URLProtocol {
-    static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
+    // Returns URLResponse (not HTTPURLResponse) so tests can deliver a non-HTTP response
+    // to exercise the `noDataReceived` guard. HTTPURLResponse is a URLResponse subtype,
+    // so existing handlers that build an HTTPURLResponse still satisfy this signature.
+    static var requestHandler: ((URLRequest) throws -> (URLResponse, Data))?
 
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
@@ -108,38 +111,26 @@ final class HTTPServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - Non-HTTP response returns noDataReceived (covers the fixed silent-swallow bug)
+    // MARK: - Non-HTTP response returns noDataReceived
 
     func test_request_nonHTTPResponse_returnsNoDataReceived() async throws {
+        // Deliver a plain URLResponse (not HTTPURLResponse) — `request` casts via
+        // `response as? HTTPURLResponse` and throws `.noDataReceived` when that fails.
         MockURLProtocol.requestHandler = { request in
-            // Return a URLResponse (not HTTPURLResponse) — simulates a data:// or non-HTTP scheme
             let response = URLResponse(
                 url: request.url!,
-                mimeType: nil,
-                expectedContentLength: 0,
+                mimeType: "image/png",
+                expectedContentLength: 1,
                 textEncodingName: nil
             )
-            // URLProtocol requires HTTPURLResponse, so we cast and simulate via a 200 that gets
-            // treated as non-HTTP by returning a plain URLResponse wrapper.
-            // Since MockURLProtocol's client always delivers the response we give it,
-            // we deliver the plain URLResponse directly.
-            _ = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-            // Embed a sentinel status that will let us test the non-HTTP guard by using
-            // a different approach: simulate a connection error instead.
-            _ = response
-            throw URLError(.cannotConnectToHost)
+            return (response, Data([0x1]))
         }
 
         do {
             let _: TestItem = try await HTTPService.request(TestEndpoint.get)
-            XCTFail("Expected NetworkError")
-        } catch NetworkError.requestError {
-            // Connection failure maps to requestError — non-HTTP guard is tested below
+            XCTFail("Expected NetworkError.noDataReceived")
+        } catch NetworkError.noDataReceived {
+            // pass — non-HTTP response correctly mapped to noDataReceived
         }
     }
 

@@ -33,20 +33,27 @@ final class DemoAppUITests: XCTestCase {
         }
     }
 
-    func test_navigation_pushAndPopDeclarativeUI() {
-        app.staticTexts["Declarative UI"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 10), "Back button should appear after push")
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Declarative UI"].waitForExistence(timeout: 5), "Should return to home")
-    }
+    /// One parameterized test replaces the seven near-identical per-module push/pop tests.
+    /// The coordinator push/pop/set mechanics themselves are exhaustively unit-tested in
+    /// BaseCoordinatorTests; this only confirms each module is wired into the live app and
+    /// returns home on back.
+    func test_navigation_eachModule_pushesAndPopsBackHome() {
+        let modules = [
+            "Declarative UI", "Networking", "Storage",
+            "Extensions", "Lists & Cells", "Onboarding", "Utilities"
+        ]
+        for module in modules {
+            // Modules sit at different scroll offsets; reset to top, then reveal this one.
+            for _ in 0..<8 { app.swipeDown() }
+            scrollUntilVisible(app.staticTexts[module])
+            app.staticTexts[module].tap()
 
-    func test_navigation_pushAndPopNetworking() {
-        app.staticTexts["Networking"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Networking"].waitForExistence(timeout: 3))
+            let backButton = app.navigationBars.buttons.firstMatch
+            XCTAssertTrue(backButton.waitForExistence(timeout: 10), "Back button should appear after pushing \(module)")
+            backButton.tap()
+
+            XCTAssertTrue(app.staticTexts[module].waitForExistence(timeout: 5), "Should return home after popping \(module)")
+        }
     }
 
     // MARK: - Networking — fetch via callback path
@@ -85,14 +92,6 @@ final class DemoAppUITests: XCTestCase {
         XCTAssertGreaterThan(app.cells.count, 0, "Post list should be non-empty")
     }
 
-    func test_navigation_pushAndPopStorage() {
-        app.staticTexts["Storage"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Storage"].waitForExistence(timeout: 3))
-    }
-
     // MARK: - Storage — UserDefaults
 
     func test_storage_userDefaults_saveReadDelete() {
@@ -119,19 +118,14 @@ final class DemoAppUITests: XCTestCase {
         exerciseStorageBackend(index: 2, name: "Keychain", readPrefixes: ["Read:", "Nothing stored in"])
     }
 
-    func test_localAuth_layoutNotStretched() {
+    /// Verifies the Local Authentication screen renders its nav bar + primary control.
+    /// Layout correctness ("not stretched") is a visual check via the attached screenshot —
+    /// it is not (and cannot be) programmatically asserted via XCUITest.
+    func test_localAuth_screenRenders() {
         app.staticTexts["Local Authentication"].tap()
         XCTAssertTrue(app.navigationBars["Local Authentication"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["Authenticate"].exists)
+        XCTAssertTrue(app.buttons["Authenticate"].exists, "Authenticate button should render")
         add(XCTAttachment(screenshot: app.screenshot()))
-    }
-
-    func test_navigation_pushAndPopExtensions() {
-        app.staticTexts["Extensions"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Extensions"].waitForExistence(timeout: 3))
     }
 
     // MARK: - Extensions screen demos
@@ -201,24 +195,7 @@ final class DemoAppUITests: XCTestCase {
         XCTAssertTrue(snackbar.waitForExistence(timeout: 3))
     }
 
-    func test_navigation_pushAndPopOnboarding() {
-        app.staticTexts["Onboarding"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Onboarding"].waitForExistence(timeout: 3))
-    }
-
     // MARK: - Utilities
-
-    func test_navigation_pushAndPopUtilities() {
-        scrollUntilVisible(app.staticTexts["Utilities"])
-        app.staticTexts["Utilities"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Utilities"].waitForExistence(timeout: 3))
-    }
 
     func test_utilities_sectionTitlesVisible() {
         navigateToUtilities()
@@ -230,11 +207,15 @@ final class DemoAppUITests: XCTestCase {
         add(XCTAttachment(screenshot: app.screenshot()))
     }
 
-    func test_utilities_animate_alphaFade() {
+    /// XCUITest cannot read a view's alpha, so this is a smoke test: triggering the fade
+    /// animation must not crash the screen and the control must stay responsive afterward.
+    func test_utilities_fadeAnimation_doesNotCrash() {
         navigateToUtilities()
         scrollUntilVisible(app.buttons["Fade"])
-        app.buttons["Fade"].tap()
-        XCTAssertTrue(app.buttons["Fade"].waitForExistence(timeout: 2))
+        let fade = app.buttons["Fade"]
+        fade.tap()
+        XCTAssertTrue(fade.waitForExistence(timeout: 2), "Fade control must remain after the animation")
+        XCTAssertTrue(fade.isHittable, "Fade control must stay responsive after the animation")
     }
 
     func test_utilities_animate_constraintExpand() {
@@ -270,14 +251,6 @@ final class DemoAppUITests: XCTestCase {
 
     // MARK: - Lists & Cells
 
-    func test_navigation_pushAndPopLists() {
-        app.staticTexts["Lists & Cells"].tap()
-        let backButton = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
-        backButton.tap()
-        XCTAssertTrue(app.staticTexts["Lists & Cells"].waitForExistence(timeout: 3))
-    }
-
     func test_lists_rendersItems() {
         navigateToLists()
         XCTAssertTrue(app.staticTexts["List Item 1"].waitForExistence(timeout: 3), "First item should be visible")
@@ -299,18 +272,30 @@ final class DemoAppUITests: XCTestCase {
         XCTAssertTrue(snackbar.waitForExistence(timeout: 3), "Snackbar should appear after tapping a list item")
     }
 
-    func test_lists_pullToRefresh_addsItems() {
+    func test_lists_pullToRefresh_addsSixItems() {
         navigateToLists()
-        XCTAssertTrue(app.staticTexts["List Item 1"].waitForExistence(timeout: 3))
-        let initialCount = app.cells.count
+        // The "ALL ITEMS" header reflects the item count; it starts at 15.
+        scrollUntilVisible(app.staticTexts["ALL ITEMS (15)"])
+        XCTAssertTrue(app.staticTexts["ALL ITEMS (15)"].exists, "List should start with 15 items")
 
-        app.tables.firstMatch.swipeDown()
+        // Return to the top, then trigger pull-to-refresh with a deliberate long drag — a quick
+        // swipeDown doesn't pull far enough to trip UIRefreshControl. Refresh prepends 6 items.
         let list = app.collectionViews.firstMatch
-        list.swipeDown()
+        for _ in 0..<8 { list.swipeDown() }
+        let top = list.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+        let bottom = list.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95))
+        top.press(forDuration: 0.1, thenDragTo: bottom)
 
-        let firstNewItem = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'List Item 1'")).firstMatch
-        XCTAssertTrue(firstNewItem.waitForExistence(timeout: 5), "New items should appear after pull-to-refresh")
-        XCTAssertGreaterThanOrEqual(app.cells.count, initialCount, "Cell count should not decrease after refresh")
+        // The header count must grow 15 -> 21 after the 1.2s refresh. Give it time before
+        // scrolling away, then scroll down to the (moved) section header if needed.
+        let updatedHeader = app.staticTexts["ALL ITEMS (21)"]
+        var swipes = 0
+        while !updatedHeader.waitForExistence(timeout: 2) && swipes < 8 {
+            app.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(updatedHeader.exists,
+                      "Pull-to-refresh must add 6 items — header should read ALL ITEMS (21)")
     }
 }
 
@@ -324,6 +309,7 @@ private extension DemoAppUITests {
     }
 
     func navigateToLists() {
+        scrollUntilVisible(app.staticTexts["Lists & Cells"])
         app.staticTexts["Lists & Cells"].tap()
         XCTAssertTrue(app.navigationBars["Lists & Cells"].waitForExistence(timeout: 3))
     }

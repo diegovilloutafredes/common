@@ -2,18 +2,7 @@ import XCTest
 import UIKit
 @testable import Common
 
-// MARK: - Helpers
-
-private func makeTestImage(size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
-    UIGraphicsImageRenderer(size: size).image { ctx in
-        UIColor.red.setFill()
-        ctx.fill(CGRect(origin: .zero, size: size))
-    }
-}
-
-private func makeTestPNGData(size: CGSize = CGSize(width: 1, height: 1)) -> Data {
-    makeTestImage(size: size).pngData()!
-}
+// Fixtures (makeTestImage / makeTestPNGData) live in ImageTestSupport.swift.
 
 // MARK: - ImageCacheTests
 
