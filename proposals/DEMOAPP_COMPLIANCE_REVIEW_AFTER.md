@@ -125,3 +125,22 @@ These items remain open (not critical, not blocking):
 2. `FieldsValidator` — not in current framework binary; guide documents it as planned API
 3. `Snackbar.onDismiss`, `NetworkMonitor`, `ViewLifecycleable` real work — gaps but out of scope
 4. Four small-gap items — all deferred, no teaching harm
+
+---
+
+## Verdict — Was the guide/skill "good enough" for a model to use Common correctly?
+
+**Date:** 2026-06-01. The original objective behind this branch was to test whether `COMMON_FRAMEWORK_GUIDE.md` and the distilled `.claude/skills/common-framework.md` are sufficient for an AI to produce idiomatic Common code. Cross-checking both against the actual Common API and against production usage (UniPay) gives a clear answer.
+
+**Conclusion: good, but not yet trustworthy verbatim — the skill is strong; the guide had concrete defects that would make a model emit non-compiling code.** Most of the surface is accurate (all UI/architecture/storage/lifecycle protocols verified to exist; the screen/coordinator/storage templates are correct). The failures were concentrated in **networking** and **form validation**:
+
+| Defect | Where | Severity | Status |
+|---|---|---|---|
+| `ResolveTokensUseCase` — does not exist in Common *or* UniPay | guide §10, skill networking template + checklist | 🔴 emits non-compiling code | **Fixed** — replaced with the real inline-`headers` token pattern (token read from an app-level Storage type, as UniPay does) |
+| `FieldsValidator` / `Field` / `Condition` — entire §9 subsystem absent from Common | guide §9 (skill omits it ✓) | 🔴 emits non-compiling code | **Marked** — §9 now flagged "not shipped in Common; app-level pattern." Promotion to Common is a **decision for the maintainer** (production uses it 29× app-locally) |
+| `@unknown default` justified as "open enum" | skill | 🟡 wrong rationale (it's frozen `Result`) | **Fixed** — corrected rationale |
+| "Don't call `HTTPService` directly" | guide §10 | 🟡 contradicts production (UniPay calls it directly) | **Fixed** — documents both valid client styles |
+| Wireframe + separate ViewModel presented as mandatory | guide/skill | 🟡 over-prescriptive (~60% of UniPay screens skip them) | **Fixed** — skill notes the pattern scales to the screen |
+| `keyboardLayoutGuide` bottom-pin (production standard) | absent from skill UI rules | 🟢 omission | **Fixed** — added |
+
+**Net:** a model handed the *skill* would now produce correct Common code; the chief residual risk was the guide's `ResolveTokensUseCase` and §9, both now corrected/flagged. The one item requiring a human decision is whether to **promote a `FieldsValidator` into Common** (it is genuinely useful and used in production, but lives in the app layer today).

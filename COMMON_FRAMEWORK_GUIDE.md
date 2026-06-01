@@ -1465,7 +1465,9 @@ All base classes: disable `NSCoder` init, set `requiresConstraintBasedLayout = t
 
 ## 9. Form Validation — FieldsValidator
 
-A declarative validation system for form fields.
+> ⚠️ **Not shipped in Common (as of this writing).** `FieldsValidator`, the `Field` key type, and the `Condition` cases (`.notEmpty`, `.isValidEmail`, `.length`, …) shown below are **not present in the Common framework** — calling `FieldsValidator(...)` against Common alone will not compile. This is an **app-level pattern**: production apps (e.g. UniPay) define their own `FieldsValidator` + `Field`/`Condition` in their app target. The example below is the recommended shape to reproduce in your app. (Whether to promote this into Common is an open decision — see `proposals/DEMOAPP_COMPLIANCE_REVIEW_AFTER.md`.)
+
+A declarative validation pattern for form fields.
 
 ### Setup
 
@@ -1583,11 +1585,11 @@ extension ProductRouter: Endpoint {
     }
 
     var headers: HTTPHeaders {
-        .init()
-        .with {
-            guard let accessToken else { return }
-            $0.add(.authorization(bearerToken: accessToken))
-        }
+        // Resolve the auth token inline from an app-level Storage type. Common provides
+        // `HTTPHeaders` + `.authorization(bearerToken:)`, but NOT a token-resolution protocol —
+        // the token lives in your app (see §10/Storage). This mirrors production (UniPay).
+        guard let token = AuthStorage().get()?.accessToken else { return .init() }
+        return .init([.authorization(bearerToken: token)])
     }
 
     var parameters: Encodable? {
@@ -1597,10 +1599,9 @@ extension ProductRouter: Endpoint {
         }
     }
 }
-
-// Attach token resolution
-extension ProductRouter: ResolveTokensUseCase {}
 ```
+
+> **Note:** earlier drafts of this guide referenced an `extension Router: ResolveTokensUseCase {}`. **No such protocol exists in Common** — token resolution is done inline in `headers` as shown above, reading from an app-defined storage type.
 
 URL construction: `baseURL + basePath + version + path`  
 Parameter encoding: POST → JSON body (snake_case keys), GET → URL-encoded (snake_case keys)
@@ -1805,7 +1806,7 @@ NetworkMonitor.shared.onStatusChanged = { [weak self] isConnected, _ in guard le
 
 - **Do** define routes as enum cases conforming to `Endpoint`.
 - **Do** use the UseCase pattern for reusable, testable networking logic.
-- **Don't** call `HTTPService` directly — go through a `BaseClient` subclass via `request(from: #function, ...)`.
+- **Two valid client styles:** (a) subclass `BaseClient` and call `request(from: #function, ...)` — adds in-flight dedup keyed by `#function`; or (b) call `HTTPService.request(router, urlSession:, result:)` directly from the client method. Production (UniPay) predominantly uses (b); the DemoApp uses (a). Pick one per client; both are supported.
 - **Don't** encode parameters manually — `Endpoint` handles encoding based on HTTP method.
 
 ---
@@ -2306,7 +2307,7 @@ func alertView(
 
 - [ ] `enum MyRouter` with one case per endpoint
 - [ ] `extension MyRouter: Endpoint` — implement `baseURL`, `basePath`, `version`, `path`, `method`, `headers`, `parameters`
-- [ ] `extension MyRouter: ResolveTokensUseCase` if the endpoint requires authentication
+- [ ] If the endpoint requires auth, resolve the token inline in `headers` from an app-level Storage type (Common has no token-resolution protocol)
 - [ ] `protocol MyClientProtocol: AnyObject` with method signatures using `NetworkResultHandler<T>`
 - [ ] `final class MyClient: BaseClient` (empty body)
 - [ ] `extension MyClient: MyClientProtocol` with `HTTPService.request(...)` calls
