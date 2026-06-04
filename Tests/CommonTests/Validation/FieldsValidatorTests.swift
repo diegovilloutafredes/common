@@ -10,6 +10,7 @@ import XCTest
 private enum Field: Hashable {
     case name
     case email
+    case rut
     case password
     case confirmPassword
     case currentPassword
@@ -39,8 +40,16 @@ final class FieldsValidatorTests: XCTestCase {
         validator.set("jane@example.com", on: .email)
 
         XCTAssertTrue(validator.state.isValid)
-        XCTAssertTrue(validator.state.fields[.name]?.isValid == true)
-        XCTAssertTrue(validator.state.fields[.email]?.isValid == true)
+        XCTAssertEqual(validator.state.fields[.name]?.isValid, true)
+        XCTAssertEqual(validator.state.fields[.email]?.isValid, true)
+    }
+
+    func test_fieldWithoutRules_isAbsentAndDoesNotAffectValidity() {
+        let validator = Validator(rules: [.name: [.notEmpty]]) { _ in }
+        validator.set("Jane", on: .name)
+
+        XCTAssertNil(validator.state.fields[.email], "Undeclared fields are not part of the state")
+        XCTAssertTrue(validator.state.isValid)
     }
 
     // MARK: Value assignment and nil handling
@@ -51,13 +60,13 @@ final class FieldsValidatorTests: XCTestCase {
         validator.set("Jane", on: .name)
         XCTAssertTrue(validator.state.isValid)
 
-        validator.set(nil, on: .name)
+        validator.set(nil, on: .name) // nil is treated as "", not a removal
         XCTAssertFalse(validator.state.isValid)
     }
 
-    // MARK: Declarative cross-field rules
+    // MARK: Cross-field rules
 
-    func test_matches_passesWhenConfirmationEqualsReference() {
+    func test_matches_passesWhenEqual_failsWhenNot() {
         let validator = Validator(rules: [
             .password: [.notEmpty],
             .confirmPassword: [.matches(.password)]
@@ -65,11 +74,13 @@ final class FieldsValidatorTests: XCTestCase {
 
         validator.set("secret1", on: .password)
         validator.set("secret1", on: .confirmPassword)
+        XCTAssertEqual(validator.state.fields[.confirmPassword]?.isValid, true)
 
-        XCTAssertTrue(validator.state.fields[.confirmPassword]?.isValid == true)
+        validator.set("secret2", on: .confirmPassword)
+        XCTAssertEqual(validator.state.fields[.confirmPassword]?.isValid, false)
     }
 
-    func test_editingReferencedField_reEvaluatesDependent() {
+    func test_matches_reEvaluatesWhenReferencedFieldEdited() {
         let validator = Validator(rules: [
             .password: [.notEmpty],
             .confirmPassword: [.matches(.password)]
@@ -77,13 +88,13 @@ final class FieldsValidatorTests: XCTestCase {
 
         validator.set("secret1", on: .password)
         validator.set("secret1", on: .confirmPassword)
-        XCTAssertTrue(validator.state.fields[.confirmPassword]?.isValid == true)
+        XCTAssertEqual(validator.state.fields[.confirmPassword]?.isValid, true)
 
-        validator.set("secret2", on: .password)
-        XCTAssertFalse(validator.state.fields[.confirmPassword]?.isValid == true)
+        validator.set("changed", on: .password) // editing the reference re-checks the dependent
+        XCTAssertEqual(validator.state.fields[.confirmPassword]?.isValid, false)
     }
 
-    func test_differsFrom_passesWhenValuesDiffer() {
+    func test_differs_passesWhenDifferent_andReEvaluates() {
         let validator = Validator(rules: [
             .currentPassword: [.notEmpty],
             .password: [.differs(from: .currentPassword)]
@@ -91,13 +102,15 @@ final class FieldsValidatorTests: XCTestCase {
 
         validator.set("oldPass", on: .currentPassword)
         validator.set("newPass", on: .password)
+        XCTAssertEqual(validator.state.fields[.password]?.isValid, true)
 
-        XCTAssertTrue(validator.state.fields[.password]?.isValid == true)
+        validator.set("newPass", on: .currentPassword) // now identical → must fail
+        XCTAssertEqual(validator.state.fields[.password]?.isValid, false)
     }
 
     // MARK: Touched-state gates error display
 
-    func test_untouchedInvalidField_showsNoErrors_butIsInvalid() {
+    func test_untouchedInvalidField_hidesErrors_butStaysInvalid() {
         let validator = Validator(rules: [.email: [.notEmpty, .email]]) { _ in }
 
         let field = validator.state.fields[.email]
@@ -106,17 +119,31 @@ final class FieldsValidatorTests: XCTestCase {
         XCTAssertEqual(field?.isValid, false)
     }
 
-    func test_touchedInvalidField_surfacesErrors() {
+    func test_touchedInvalidField_surfacesFailingRules() {
         let validator = Validator(rules: [.password: [.notEmpty, .minLength(6)]]) { _ in }
 
         validator.set("abc", on: .password)
 
         let field = validator.state.fields[.password]
-        XCTAssertTrue(field?.errors.contains { $0.rule == .minLength(6) } == true)
+        XCTAssertEqual(field?.errors.map(\.rule), [.minLength(6)])
         XCTAssertNotNil(field?.message)
     }
 
-    // MARK: Per-field-and-rule message resolution
+    func test_touchAll_revealsErrorsOnUntouchedFields() {
+        let validator = Validator(rules: [
+            .name: [.notEmpty],
+            .email: [.notEmpty, .email]
+        ]) { _ in }
+
+        XCTAssertNil(validator.state.fields[.name]?.message)
+
+        validator.touchAll()
+
+        XCTAssertNotNil(validator.state.fields[.name]?.message)
+        XCTAssertNotNil(validator.state.fields[.email]?.message)
+    }
+
+    // MARK: Message resolution
 
     func test_resolverOverride_winsOverDefault() {
         let validator = Validator(
@@ -129,18 +156,6 @@ final class FieldsValidatorTests: XCTestCase {
         XCTAssertEqual(validator.state.fields[.email]?.message, "Enter a valid email address")
     }
 
-    func test_emptyMessage_suppressesDisplay_butNotValidity() {
-        let validator = Validator(
-            rules: [.name: [.notEmpty]],
-            message: { _, rule in rule == .notEmpty ? "" : rule.defaultMessage }
-        ) { _ in }
-
-        validator.set("", on: .name)
-
-        XCTAssertNil(validator.state.fields[.name]?.message)
-        XCTAssertFalse(validator.state.isValid)
-    }
-
     func test_defaultMessage_usedWhenNoResolver() {
         let validator = Validator(rules: [.name: [.notEmpty]]) { _ in }
 
@@ -149,7 +164,37 @@ final class FieldsValidatorTests: XCTestCase {
         XCTAssertEqual(validator.state.fields[.name]?.message, "This field is required.")
     }
 
-    // MARK: Single change notification per assignment
+    func test_emptyMessage_suppressesDisplay_butNotValidity() {
+        let validator = Validator(
+            rules: [.name: [.notEmpty]],
+            message: { _, rule in rule == .notEmpty ? "" : rule.defaultMessage }
+        ) { _ in }
+
+        validator.set("", on: .name)
+
+        XCTAssertNil(validator.state.fields[.name]?.message)            // hidden
+        XCTAssertEqual(validator.state.fields[.name]?.isValid, false)   // still enforced
+        XCTAssertFalse(validator.state.isValid)
+    }
+
+    func test_message_joinsOnlyNonEmptyFailures() {
+        // notEmpty resolves to "" (suppressed); minLength resolves to text → only that shows.
+        let validator = Validator(
+            rules: [.password: [.notEmpty, .minLength(6)]],
+            message: { _, rule in
+                switch rule {
+                case .notEmpty:         ""
+                case .minLength(let n): "min \(n)"
+                default:                rule.defaultMessage
+                }
+            }
+        ) { _ in }
+
+        validator.set("", on: .password) // both notEmpty and minLength fail
+        XCTAssertEqual(validator.state.fields[.password]?.message, "min 6")
+    }
+
+    // MARK: Reactivity
 
     func test_onChange_firesExactlyOncePerSet() {
         var fires = 0
@@ -166,53 +211,64 @@ final class FieldsValidatorTests: XCTestCase {
         XCTAssertEqual(fires, 1)
     }
 
-    // MARK: Built-in rule semantics
+    func test_onChange_deliversSameValidityAsStateProperty() {
+        var delivered: Validator.State?
+        let validator = Validator(rules: [.name: [.notEmpty]]) { delivered = $0 }
 
-    func test_minLength_boundaryIsInclusive() {
-        let validator = Validator(rules: [.password: [.minLength(8)]]) { _ in }
+        validator.set("Jane", on: .name)
 
-        validator.set("12345678", on: .password) // exactly 8
-        XCTAssertTrue(validator.state.fields[.password]?.isValid == true)
-
-        validator.set("1234567", on: .password) // 7
-        XCTAssertFalse(validator.state.fields[.password]?.isValid == true)
+        XCTAssertEqual(delivered?.isValid, validator.state.isValid)
     }
 
-    func test_containsNumber_passesAndFails() {
-        let validator = Validator(rules: [.password: [.containsNumber]]) { _ in }
+    // MARK: Built-in rule semantics
 
-        validator.set("abc1", on: .password)
-        XCTAssertTrue(validator.state.fields[.password]?.isValid == true)
+    func test_lengthRules_boundariesAreInclusive() {
+        let validator = Validator(rules: [.password: [.minLength(8), .maxLength(10)]]) { _ in }
 
-        validator.set("abc", on: .password)
-        XCTAssertFalse(validator.state.fields[.password]?.isValid == true)
+        validator.set("12345678", on: .password)     // 8 — lower bound
+        XCTAssertEqual(validator.state.fields[.password]?.isValid, true)
+        validator.set("1234567890", on: .password)   // 10 — upper bound
+        XCTAssertEqual(validator.state.fields[.password]?.isValid, true)
+        validator.set("1234567", on: .password)      // 7 — below min
+        XCTAssertEqual(validator.state.fields[.password]?.isValid, false)
+        validator.set("12345678901", on: .password)  // 11 — above max
+        XCTAssertEqual(validator.state.fields[.password]?.isValid, false)
+    }
+
+    func test_characterClassRules() {
+        assertRule(.containsLetter,    passes: "abc",  fails: "123")
+        assertRule(.containsNumber,    passes: "abc1", fails: "abc")
+        assertRule(.containsLowercase, passes: "Abc",  fails: "ABC")
+        assertRule(.containsUppercase, passes: "aBc",  fails: "abc")
+        assertRule(.contains(CharacterSet(charactersIn: "@")), passes: "x@y", fails: "xy")
     }
 
     func test_email_usesCommonExtension() {
-        let validator = Validator(rules: [.email: [.email]]) { _ in }
-
-        validator.set("jane@example.com", on: .email)
-        XCTAssertTrue(validator.state.fields[.email]?.isValid == true)
-
-        validator.set("not-an-email", on: .email)
-        XCTAssertFalse(validator.state.fields[.email]?.isValid == true)
+        assertRule(.email, passes: "jane@example.com", fails: "not-an-email")
     }
 
-    // MARK: Reveal all errors on demand
+    func test_rut_usesCommonExtension() {
+        assertRule(.rut, passes: "12.345.678-5", fails: "12.345.678-0")
+    }
 
-    func test_touchAll_surfacesPendingErrors() {
-        let validator = Validator(rules: [
-            .name: [.notEmpty],
-            .email: [.notEmpty, .email]
-        ]) { _ in }
+    // MARK: Helpers
 
-        // Nothing touched yet → no visible messages.
-        XCTAssertNil(validator.state.fields[.name]?.message)
-        XCTAssertNil(validator.state.fields[.email]?.message)
+    /// Asserts a single-value rule passes for `valid` and fails for `invalid`.
+    private func assertRule(
+        _ rule: Validator.Rule,
+        passes valid: String,
+        fails invalid: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let validator = Validator(rules: [.name: [rule]]) { _ in }
 
-        validator.touchAll()
+        validator.set(valid, on: .name)
+        XCTAssertEqual(validator.state.fields[.name]?.isValid, true,
+                       "\(rule) should pass for \"\(valid)\"", file: file, line: line)
 
-        XCTAssertNotNil(validator.state.fields[.name]?.message)
-        XCTAssertNotNil(validator.state.fields[.email]?.message)
+        validator.set(invalid, on: .name)
+        XCTAssertEqual(validator.state.fields[.name]?.isValid, false,
+                       "\(rule) should fail for \"\(invalid)\"", file: file, line: line)
     }
 }

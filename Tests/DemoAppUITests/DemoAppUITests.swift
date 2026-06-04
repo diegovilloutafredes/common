@@ -366,9 +366,17 @@ private extension DemoAppUITests {
 private extension DemoAppUITests {
 
     func navigateToForms() {
-        scrollUntilVisible(app.staticTexts["Forms & TextFields"])
-        app.staticTexts["Forms & TextFields"].tap()
-        XCTAssertTrue(app.buttons["Submit"].waitForExistence(timeout: 5))
+        let forms = app.staticTexts["Forms & TextFields"]
+        let submit = app.buttons["Submit"]
+        // The cell sits low in the home list; a tap can miss during scroll momentum.
+        // Retry: tap, wait for the screen, and on miss reset to the top and try again.
+        for _ in 0..<4 {
+            scrollUntilVisible(forms)
+            forms.tap()
+            if submit.waitForExistence(timeout: 4) { return }
+            for _ in 0..<10 { app.swipeDown() }
+        }
+        XCTAssertTrue(submit.waitForExistence(timeout: 4), "Forms screen failed to open")
     }
 }
 
