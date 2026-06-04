@@ -44,12 +44,27 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
         self?.viewModel.validate(field: .password, value: field.text ?? "")
     }
     .onReturnKeyPressed { [weak self] _ in
+        self?.confirmPasswordField.becomeFirstResponder()
+    }
+
+    private lazy var confirmPasswordField = makeTextField(
+        placeholder: "Confirm Password",
+        contentType: .password,
+        keyboardType: .default
+    )
+    .isSecureTextEntry(true)
+    .addToggleVisibilityButton()
+    .onEditingChanged { [weak self] field in
+        self?.viewModel.validate(field: .confirmPassword, value: field.text ?? "")
+    }
+    .onReturnKeyPressed { [weak self] _ in
         self?.view.endEditing(true)
     }
 
     private lazy var nameErrorLabel = makeErrorLabel()
     private lazy var emailErrorLabel = makeErrorLabel()
     private lazy var passwordErrorLabel = makeErrorLabel()
+    private lazy var confirmPasswordErrorLabel = makeErrorLabel()
 
     private lazy var submitButton = UIButton(
         configuration: .filled()
@@ -79,6 +94,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
                     VStack(spacing: 4) { nameField; nameErrorLabel }
                     VStack(spacing: 4) { emailField; emailErrorLabel }
                     VStack(spacing: 4) { passwordField; passwordErrorLabel }
+                    VStack(spacing: 4) { confirmPasswordField; confirmPasswordErrorLabel }
                 }
 
                 submitButton
@@ -98,7 +114,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
                             .textColor(.label)
                     }
                     UILabel()
-                        .text("• TextField chaining (.borderColor, .placeholder, .onEditingChanged)\n• Field validation with error labels\n• Keyboard-aware layout (pinBottom to keyboardLayoutGuide)\n• Secure text entry with visibility toggle\n• Return key navigation between fields")
+                        .text("• TextField chaining (.borderColor, .placeholder, .onEditingChanged)\n• Field validation via Common's FieldsValidator\n• Cross-field rule (Confirm Password .matches Password)\n• Keyboard-aware layout (pinBottom to keyboardLayoutGuide)\n• Secure text entry with visibility toggle\n• Return key navigation between fields")
                         .font(.systemFont(ofSize: 13))
                         .textColor(.secondaryLabel)
                         .numberOfLines(0)
@@ -184,6 +200,7 @@ extension FormsViewController: FormsViewProtocol {
         case .name: nameErrorLabel
         case .email: emailErrorLabel
         case .password: passwordErrorLabel
+        case .confirmPassword: confirmPasswordErrorLabel
         }
     }
 
@@ -192,6 +209,7 @@ extension FormsViewController: FormsViewProtocol {
         case .name: nameField
         case .email: emailField
         case .password: passwordField
+        case .confirmPassword: confirmPasswordField
         }
     }
 }

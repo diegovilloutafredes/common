@@ -297,6 +297,38 @@ final class DemoAppUITests: XCTestCase {
         XCTAssertTrue(updatedHeader.exists,
                       "Pull-to-refresh must add 6 items — header should read ALL ITEMS (21)")
     }
+
+    // MARK: - Forms & TextFields — FieldsValidator
+
+    func test_forms_crossFieldValidation_andSubmitGating() {
+        navigateToForms()
+
+        let submit = app.buttons["Submit"]
+        XCTAssertTrue(submit.waitForExistence(timeout: 5))
+        XCTAssertFalse(submit.isEnabled, "Submit should start disabled on an empty form")
+
+        let name = app.textFields["Full Name"]
+        let email = app.textFields["Email Address"]
+        let password = app.secureTextFields["Password (min 6 chars)"]
+        let confirm = app.secureTextFields["Confirm Password"]
+
+        name.tap(); name.typeText("Jane")
+        email.tap(); email.typeText("jane@example.com")
+        password.tap(); password.typeText("secret1")
+        confirm.tap(); confirm.typeText("secret2") // mismatch
+
+        // Cross-field .matches fails → error shown, submit still disabled.
+        XCTAssertTrue(app.staticTexts["Passwords must match"].waitForExistence(timeout: 3))
+        XCTAssertFalse(submit.isEnabled)
+
+        // Fix the confirmation → error clears reactively, submit enables.
+        confirm.tap()
+        confirm.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 8))
+        confirm.typeText("secret1")
+
+        XCTAssertTrue(app.staticTexts["Passwords must match"].waitForNonExistence(timeout: 3))
+        XCTAssertTrue(submit.isEnabled, "Submit should enable once every field is valid")
+    }
 }
 
 // MARK: - Extensions helpers
@@ -326,6 +358,17 @@ private extension DemoAppUITests {
             app.swipeUp()
             swipes += 1
         }
+    }
+}
+
+// MARK: - Forms helpers
+
+private extension DemoAppUITests {
+
+    func navigateToForms() {
+        scrollUntilVisible(app.staticTexts["Forms & TextFields"])
+        app.staticTexts["Forms & TextFields"].tap()
+        XCTAssertTrue(app.buttons["Submit"].waitForExistence(timeout: 5))
     }
 }
 

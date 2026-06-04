@@ -13,6 +13,7 @@ protocol FormsViewProtocol: AnyObject {
 }
 
 // MARK: - FormsViewModelProtocol
+@MainActor
 protocol FormsViewModelProtocol: ViewModel {
     var title: String { get }
     func validate(field: FormsViewModel.Field, value: String)
@@ -20,59 +21,54 @@ protocol FormsViewModelProtocol: ViewModel {
 }
 
 // MARK: - FormsViewModel
+@MainActor
 final class FormsViewModel {
     enum Field: String {
         case name
         case email
         case password
+        case confirmPassword
     }
 
     let title = "Forms & TextFields"
     weak var view: FormsViewProtocol?
 
-    // Current field values — validity derived, never stored separately
-    private var name = ""
-    private var email = ""
-    private var password = ""
-
-    // Per-field validation rules
-    private func isValid(_ field: Field, value: String) -> Bool {
-        switch field {
-        case .name:     return value.count >= 2
-        case .email:    return value.contains("@") && value.contains(".")
-        case .password: return value.count >= 6
+    // Validation is fully delegated to Common's FieldsValidator — no values, rules, or
+    // touched-state are tracked by hand here.
+    private lazy var validator = FieldsValidator<Field>(
+        rules: [
+            .name: [.notEmpty, .minLength(2)],
+            .email: [.notEmpty, .email],
+            .password: [.notEmpty, .minLength(6)],
+            .confirmPassword: [.notEmpty, .matches(.password)]
+        ],
+        message: { field, rule in
+            switch (field, rule) {
+            case (.name, .minLength):          "Name must be at least 2 characters"
+            case (.email, .email):             "Enter a valid email address"
+            case (.password, .minLength):      "Password must be at least 6 characters"
+            case (.confirmPassword, .matches): "Passwords must match"
+            default:                           rule.defaultMessage
+            }
+        },
+        onChange: { [weak self] state in
+            guard let self else { return }
+            self.view?.updateValidationStatus(isValid: state.isValid)
+            state.fields.forEach { field, fieldState in
+                if let message = fieldState.message {
+                    self.view?.showFieldError(field: field, message: message)
+                } else {
+                    self.view?.clearFieldError(field: field)
+                }
+            }
         }
-    }
-
-    private func errorMessage(for field: Field, value: String) -> String? {
-        guard !value.isEmpty, !isValid(field, value: value) else { return nil }
-        switch field {
-        case .name:     return "Name must be at least 2 characters"
-        case .email:    return "Enter a valid email address"
-        case .password: return "Password must be at least 6 characters"
-        }
-    }
-
-    private var allFieldsValid: Bool {
-        isValid(.name, value: name) && isValid(.email, value: email) && isValid(.password, value: password)
-    }
+    )
 }
 
 // MARK: - FormsViewModelProtocol
 extension FormsViewModel: FormsViewModelProtocol {
     func validate(field: Field, value: String) {
-        switch field {
-        case .name:     name = value
-        case .email:    email = value
-        case .password: password = value
-        }
-
-        if let message = errorMessage(for: field, value: value) {
-            view?.showFieldError(field: field, message: message)
-        } else {
-            view?.clearFieldError(field: field)
-        }
-        view?.updateValidationStatus(isValid: allFieldsValid)
+        validator.set(value, on: field)
     }
 
     func submit(name: String, email: String, password: String) {

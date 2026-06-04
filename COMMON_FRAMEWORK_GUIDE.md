@@ -1465,46 +1465,33 @@ All base classes: disable `NSCoder` init, set `requiresConstraintBasedLayout = t
 
 ## 9. Form Validation — FieldsValidator
 
-> ⚠️ **Not shipped in Common (as of this writing).** `FieldsValidator`, the `Field` key type, and the `Condition` cases (`.notEmpty`, `.isValidEmail`, `.length`, …) shown below are **not present in the Common framework** — calling `FieldsValidator(...)` against Common alone will not compile. This is an **app-level pattern**: production apps (e.g. UniPay) define their own `FieldsValidator` + `Field`/`Condition` in their app target. The example below is the recommended shape to reproduce in your app. (Whether to promote this into Common is an open decision — see `proposals/DEMOAPP_COMPLIANCE_REVIEW_AFTER.md`.)
-
-A declarative validation pattern for form fields.
+`FieldsValidator<Field: Hashable>` is a `@MainActor`, reactive form validator shipped in Common. You declare **rules** per field (pure declarations, no values baked in), feed values with `set(_:on:)`, and receive a recomputed `State` through `onChange`. The consumer supplies its own `Field` key type (any `Hashable`). The DemoApp Forms module is a worked example.
 
 ### Setup
 
 ```swift
-private lazy var fieldsValidator = FieldsValidator(
-    initialConditions: [
-        .email: [.notEmpty(.empty)],
-        .password: [.notEmpty(.empty)]
+private enum Field: Hashable { case name, email, password, confirmPassword }
+
+private lazy var validator = FieldsValidator<Field>(
+    rules: [
+        .name:            [.notEmpty, .minLength(2)],
+        .email:           [.notEmpty, .email],
+        .password:        [.notEmpty, .minLength(6)],
+        .confirmPassword: [.notEmpty, .matches(.password)]   // cross-field
     ],
-    onEvaluate: { (fields, fieldValue) in
-        switch fieldValue.field {
-        case .email:
-            [.isValidEmail(fieldValue.newValue), .notEmpty(fieldValue.newValue)]
-        case .password:
-            [
-                .length(fieldValue.newValue, 7, >),
-                .containsLetters(fieldValue.newValue),
-                .containsNumber(fieldValue.newValue),
-                .notEmpty(fieldValue.newValue)
-            ]
-        default: []
+    message: { field, rule in                                // message keyed by BOTH
+        switch (field, rule) {
+        case (.email, .email):             "Enter a valid email address"
+        case (.confirmPassword, .matches): "Passwords must match"
+        default:                           rule.defaultMessage
         }
     },
-    onStatus: { [weak self] result in
+    onChange: { [weak self] state in
         guard let self else { return }
-        actionButton.isEnabled(result.status)
-
-        textFields.values.forEach { $0.borderColor(.gray600) }
-        errorLabels.values.forEach { $0.text(.empty) }
-
-        guard !result.status else { return }
-
-        result.unmetConditionsFields.forEach { field, conditions in
-            conditions.forEach { condition in
-                textFields[field]?.borderColor(.error)
-                errorLabels[field]?.text(condition.asErrorText)
-            }
+        submitButton.isEnabled(state.isValid)
+        state.fields.forEach { field, fieldState in
+            if let message = fieldState.message { showError(field, message) }
+            else { clearError(field) }
         }
     }
 )
@@ -1514,36 +1501,29 @@ private lazy var fieldsValidator = FieldsValidator(
 
 ```swift
 UITextField()
-    .onEditingChanged { [weak self] in
-        guard let self else { return }
-        fieldsValidator.set($0.text, on: .email)
-    }
+    .onEditingChanged { [weak self] in self?.validator.set($0.text, on: .email) }
 ```
 
-### Available fields
+`set(nil, on:)` is treated as the empty string `""` (it does not drop the field). Each `set` fires `onChange` **exactly once**.
 
-`Field` enum: `.email`, `.password`, `.repeatPassword`, `.dni`, `.name`, `.lastName`, `.phoneNumber`, `.custom(String)`
+### Available rules
 
-### Available conditions
+| Rule | Passes when |
+|------|-------------|
+| `.notEmpty` | Value is non-empty |
+| `.minLength(n)` / `.maxLength(n)` | `count >= n` / `count <= n` |
+| `.containsLetter` / `.containsLowercase` / `.containsUppercase` / `.containsNumber` | Contains a scalar of that class |
+| `.contains(CharacterSet)` | Contains a scalar from the set |
+| `.email` / `.rut` | Passes `String.isValidEmail` / `String.isRUT` |
+| `.matches(Field)` / `.differs(from: Field)` | Equals / differs from another field's current value |
 
-| Condition | Description |
-|-----------|-------------|
-| `.notEmpty(value)` | Not empty |
-| `.isValidEmail(value)` | Valid email format |
-| `.isValidRUT(value)` | Valid Chilean RUT |
-| `.length(value, n, op)` | Length compared with operator (`>`, `>=`, etc.) |
-| `.containsLetters(value)` | At least one letter |
-| `.containsNumber(value)` | At least one digit |
-| `.containsUppercase(value)` | At least one uppercase |
-| `.containsLowercase(value)` | At least one lowercase |
-| `.containsCharacterSet(value, set)` | Chars from a `CharacterSet` |
-| `.equal(value1, value2)` | Two values equal |
-| `.notEqual(value1, value2)` | Two values not equal |
+Every rule has a non-empty `defaultMessage`; the `message` resolver overrides per `(Field, Rule)`. A resolver returning `""` enforces validity but **suppresses display** of that rule.
 
-### Status
+### State
 
-- `fieldsValidator.status` — `Bool`, all conditions met
-- `result.unmetConditionsFields` — `[Field: [Condition]]`, which fields failed and why
+- `state.isValid` — `Bool`, every field satisfies every rule (ignores touched-state → use for the submit button).
+- `state.fields[field]` — `FieldState` with `isValid`, `isTouched`, `errors: [Failure]`, and `message: String?` (non-empty messages joined by `"\n"`, or `nil`).
+- **Touched-state is built in:** a field's `errors`/`message` stay empty until `set` is first called on it, so you never hand-roll "don't show errors until the user types." Call `touchAll()` to reveal every field's errors (e.g. on a submit attempt).
 
 ---
 
