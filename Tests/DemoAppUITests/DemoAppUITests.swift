@@ -59,8 +59,7 @@ final class DemoAppUITests: XCTestCase {
     // MARK: - Networking — fetch via callback path
 
     func test_networking_callbackFetch_loadsOrShowsMock() {
-        app.staticTexts["Networking"].tap()
-        XCTAssertTrue(app.buttons["Fetch Posts"].waitForExistence(timeout: 3))
+        openModule("Networking", until: app.buttons["Fetch Posts"])
 
         app.buttons["Fetch Posts"].tap()
 
@@ -75,8 +74,7 @@ final class DemoAppUITests: XCTestCase {
     // MARK: - Networking — fetch via async path
 
     func test_networking_asyncFetch_loadsOrShowsMock() {
-        app.staticTexts["Networking"].tap()
-        XCTAssertTrue(app.buttons["Fetch Posts"].waitForExistence(timeout: 3))
+        openModule("Networking", until: app.buttons["Fetch Posts"])
 
         let segment = app.segmentedControls.firstMatch
         XCTAssertTrue(segment.waitForExistence(timeout: 3))
@@ -90,6 +88,31 @@ final class DemoAppUITests: XCTestCase {
         XCTAssertTrue(statusLabel.waitForExistence(timeout: 15), "Status should update after async fetch")
 
         XCTAssertGreaterThan(app.cells.count, 0, "Post list should be non-empty")
+    }
+
+    // MARK: - Networking — re-fetch clears and reloads per method
+
+    func test_networking_refetch_reloadsAndReflectsMethod() {
+        let fetch = app.buttons["Fetch Posts"]
+        openModule("Networking", until: fetch)
+
+        // Callback fetch loads the list; status mentions callback (or mock/error offline).
+        fetch.tap()
+        let callbackDone = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] 'callback' OR label CONTAINS[c] 'mock' OR label CONTAINS[c] 'error'")
+        ).firstMatch
+        XCTAssertTrue(callbackDone.waitForExistence(timeout: 15), "Callback fetch should complete")
+        XCTAssertTrue(app.cells.firstMatch.waitForExistence(timeout: 15), "Callback fetch should load posts")
+
+        // Switching method and re-fetching deletes the data and reloads it; the async-method
+        // status only appears because a fresh fetch ran (the list was cleared first).
+        app.segmentedControls.firstMatch.buttons["Async"].tap()
+        fetch.tap()
+        let asyncDone = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] 'async' OR label CONTAINS[c] 'mock' OR label CONTAINS[c] 'error'")
+        ).firstMatch
+        XCTAssertTrue(asyncDone.waitForExistence(timeout: 15), "Async re-fetch should complete")
+        XCTAssertTrue(app.cells.firstMatch.waitForExistence(timeout: 15), "Async re-fetch should reload posts")
     }
 
     // MARK: - Storage — UserDefaults
@@ -366,17 +389,21 @@ private extension DemoAppUITests {
 private extension DemoAppUITests {
 
     func navigateToForms() {
-        let forms = app.staticTexts["Forms & TextFields"]
-        let submit = app.buttons["Submit"]
-        // The cell sits low in the home list; a tap can miss during scroll momentum.
-        // Retry: tap, wait for the screen, and on miss reset to the top and try again.
+        openModule("Forms & TextFields", until: app.buttons["Submit"])
+    }
+
+    /// Opens a module from the home list, retrying the cell tap until `landmark` appears.
+    /// The home-list cell tap can miss during scroll momentum, so on a miss this resets
+    /// the list to the top and tries again.
+    func openModule(_ name: String, until landmark: XCUIElement) {
+        let cell = app.staticTexts[name]
         for _ in 0..<4 {
-            scrollUntilVisible(forms)
-            forms.tap()
-            if submit.waitForExistence(timeout: 4) { return }
+            scrollUntilVisible(cell)
+            cell.tap()
+            if landmark.waitForExistence(timeout: 4) { return }
             for _ in 0..<10 { app.swipeDown() }
         }
-        XCTAssertTrue(submit.waitForExistence(timeout: 4), "Forms screen failed to open")
+        XCTAssertTrue(landmark.waitForExistence(timeout: 4), "\(name) screen failed to open")
     }
 }
 

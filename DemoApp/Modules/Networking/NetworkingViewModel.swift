@@ -44,6 +44,13 @@ extension NetworkingViewModel: NetworkingViewModelProtocol {
     }
 
     func loadPosts() {
+        // Clear the current list first so every fetch visibly empties and repopulates,
+        // making the callback vs async/await methods observable on repeated taps.
+        posts = []
+        statusText = "Loading via \(mode == .callback ? "callback" : "async/await")…"
+        delegate?.didUpdatePosts()
+        delegate?.didUpdateStatus()
+
         switch mode {
         case .callback: loadPostsCallback()
         case .async: loadPostsAsync()
