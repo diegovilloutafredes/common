@@ -58,6 +58,7 @@ Then type `/common-framework` at the start of any Claude Code session where you'
 |---|---|
 | Declarative UIKit screens | `@UIViewBuilder`, `VStack`, `HStack`, fluent extensions |
 | Complete MVVM-C modules | `BaseCoordinator`, `BaseViewModelableViewController`, wireframe factory |
+| Declarative form validation | `FieldsValidator`, cross-field `.matches`/`.differs`, built-in touched-state |
 | Async HTTP networking | `AsyncBaseClient`, `Endpoint`, `HTTPService` |
 | Remote image loading with two-tier cache | `UIImageView.loadImage(from:options:)`, `ImageLoader` |
 | Typed Keychain / UserDefaults / file storage | `KeyValueStore`, `SingleRawValueKeyValueObjectStorage` |
@@ -209,6 +210,30 @@ dismiss()                                  // dismiss modal
 ```
 
 ---
+
+### Form validation
+
+`FieldsValidator<Field>` validates form fields declaratively. Declare rules per field, feed values as the user types, and react to a recomputed state. Errors stay hidden until a field is touched, and cross-field rules like `.matches` resolve against another field's current value automatically.
+
+```swift
+enum Field { case email, password, confirmPassword }
+
+let validator = FieldsValidator<Field>(
+    rules: [
+        .email:           [.notEmpty, .email],
+        .password:        [.notEmpty, .minLength(8)],
+        .confirmPassword: [.notEmpty, .matches(.password)]
+    ],
+    onChange: { state in
+        submitButton.isEnabled(state.isValid)        // overall validity
+        for (field, fieldState) in state.fields {
+            errorLabel(for: field).text(fieldState.message)   // nil clears
+        }
+    }
+)
+
+emailField.onEditingChanged { validator.set($0.text, on: .email) }
+```
 
 ### Async networking
 
@@ -536,7 +561,7 @@ make major                # Tag and release a major version
 
 ## Demo App
 
-The project includes a `DemoApp` target that showcases the library across 8 modules: Alerts, Declarative UI, Extensions, Home, Local Auth, Networking, Onboarding, and Storage. Build and run the `DemoApp` scheme in Xcode to explore.
+The project includes a `DemoApp` target that showcases the library across 14 modules: Alerts, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Local Auth, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
 
 ---
 

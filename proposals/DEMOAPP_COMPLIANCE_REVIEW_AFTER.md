@@ -5,6 +5,8 @@ Companion to `DemoApp/REVIEW.md`. Shows the before/after status for every item i
 **Date applied:** 2026-05-11  
 **Build verified:** `xcodebuild build -scheme DemoApp` ✅
 
+> **Status update (2026-06):** `FieldsValidator` has since been **promoted into Common** (`Common/Utils/Validation/FieldsValidator.swift`) as a generic `@MainActor` component, and the DemoApp Forms module now uses it. The notes below describing it as "not in Common / a maintainer decision" are historical and no longer accurate.
+
 ---
 
 ## Compliance Score

@@ -3,6 +3,15 @@
 ## Unreleased
 
 ### Added
+- **`FieldsValidator<Field: Hashable>` — declarative, reactive form-field validator.** Declare rules per field (`[Field: [Rule]]`), feed values with `set(_:on:)`, and receive a recomputed `State` through `onChange`. Rules are pure declarations decoupled from the values they check — `.notEmpty`, `.minLength`/`.maxLength`, `.containsLetter`/`.containsLowercase`/`.containsUppercase`/`.containsNumber`, `.contains(CharacterSet)`, `.email`, `.rut`, and the cross-field `.matches(_:)`/`.differs(from:)` — so no placeholder seeding is needed (an unset field evaluates as `""`). Built-in per-field touched-state hides errors until a field is interacted with; per-`(Field, Rule)` message resolution (with non-empty English defaults) drives display, where an empty resolved message enforces validity but shows nothing. `@MainActor`, with a single synchronous `onChange` per `set`. Demonstrated in the DemoApp Forms module; see `COMMON_FRAMEWORK_GUIDE.md` §9.
+  ```swift
+  let validator = FieldsValidator<Field>(
+      rules: [.email: [.notEmpty, .email],
+              .confirmPassword: [.notEmpty, .matches(.password)]],
+      onChange: { state in submitButton.isEnabled(state.isValid) }
+  )
+  emailField.onEditingChanged { validator.set($0.text, on: .email) }
+  ```
 - **Fluent setters for every settable Logger / Loggable property.** Each `static var` that you can write is now also exposed as a same-named, chainable static method:
   ```swift
   // Before (still works):
@@ -21,6 +30,9 @@
   HTTPService.shouldLog(true)
   #endif
   ```
+
+### Changed
+- **Bundle identifiers renamed `com.trust.*` → `com.diegovillouta.*`**, decoupling the project from the Trust org; the `Common` framework's bundle id is now `com.diegovillouta.common`. The hardcoded `DEVELOPMENT_TEAM` was also removed from the DemoApp target (device runs now select a team per developer; the simulator is unaffected). Note: the committed `XCFramework/Common.xcframework` retains the old id until rebuilt with `make build_xcframework`.
 
 ### Fixed
 - **`HTTPService` callback result delivered via `Task { @MainActor in }`**: Replaces `DispatchQueue.main.async` for main-thread delivery in both `request` and `upload` overloads. In Xcode 26's Swift Concurrency runtime, `DispatchQueue.main` is decoupled from `@MainActor` — the old path was not drained during `await fulfillment(of:)` in tests and could silently drop results in production.
