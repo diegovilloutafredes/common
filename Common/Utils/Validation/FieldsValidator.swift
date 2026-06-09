@@ -24,7 +24,7 @@ public final class FieldsValidator<Field: Hashable> {
 
     private let rules: [Field: [Rule]]
     private let message: ((Field, Rule) -> String)?
-    private let onChange: (State) -> Void
+    private let onChange: Handler<State>
 
     private var values: [Field: String] = [:]
     private var touched: Set<Field> = []
@@ -39,7 +39,7 @@ public final class FieldsValidator<Field: Hashable> {
     public init(
         rules: [Field: [Rule]],
         message: ((Field, Rule) -> String)? = nil,
-        onChange: @escaping (State) -> Void
+        onChange: @escaping Handler<State>
     ) {
         self.rules = rules
         self.message = message
@@ -69,7 +69,7 @@ public final class FieldsValidator<Field: Hashable> {
         for (field, fieldRules) in rules {
             let value = values[field] ?? ""
             let failing = fieldRules.filter { !$0.isSatisfied(by: value, in: values) }
-            if !failing.isEmpty { isValid = false }
+            if failing.isNotEmpty { isValid = false }
 
             let isTouched = touched.contains(field)
             let errors: [Failure] = isTouched
@@ -116,7 +116,7 @@ public extension FieldsValidator {
 
         func isSatisfied(by value: String, in values: [Field: String]) -> Bool {
             switch self {
-            case .notEmpty: !value.isEmpty
+            case .notEmpty: value.isNotEmpty
             case .minLength(let min): value.count >= min
             case .maxLength(let max): value.count <= max
             case .containsLetter: Self.value(value, containsAnyOf: .letters)
@@ -178,8 +178,8 @@ public extension FieldsValidator {
 
         /// The non-empty resolved messages joined by `"\n"`, or `nil` when there are none to show.
         public var message: String? {
-            let joined = errors.map(\.message).filter { !$0.isEmpty }.joined(separator: "\n")
-            return joined.isEmpty ? nil : joined
+            let joined = errors.map(\.message).filter { $0.isNotEmpty }.joined(separator: "\n")
+            return joined.isNotEmpty ? joined : nil
         }
     }
 
