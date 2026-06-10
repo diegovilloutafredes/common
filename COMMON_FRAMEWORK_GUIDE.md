@@ -1942,18 +1942,35 @@ extension CGFloat {
 
 ### Fonts
 
+Font families are declared by the app, not built into Common. Set up once at startup, then use `.appFont` everywhere:
+
 ```swift
-.font(.appFont(size: 16))                                     // regular, default family
+// 1. Declare families in the app target — rawValue is the PostScript base name:
+//    "varelaRound" resolves to "VarelaRound-Regular", "VarelaRound-Bold", etc.
+extension AppFontFamily {
+    static let montserrat  = AppFontFamily(rawValue: "montserrat")
+    static let varelaRound = AppFontFamily(rawValue: "varelaRound")
+}
+
+// 2. Register the font files and pick the default family (e.g. in SceneDelegate).
+//    No UIAppFonts Info.plist entry is needed; missing faces are skipped (logged in DEBUG).
+UIFont.register(fonts: [.montserrat, .varelaRound])                  // "ttf" by default
+UIFont.register(fonts: [.inter], styles: [.regular, .bold], type: "otf")
+UIFont.setPrimaryFamily(.montserrat)
+```
+
+```swift
+.font(.appFont(size: 16))                                     // regular, primary family
 .font(.appFont(style: .bold, size: 14))
 .font(.appFont(style: .medium, size: 16))
 .font(.appFont(style: .semiBold, size: 14))
 .font(.appFont(style: .extraBold, size: 24))
 .font(.appFont(style: .black, size: 22))                      // heaviest weight
-.font(.appFont(.varelaRound, style: .regular, size: 12))      // alternate family
+.font(.appFont(family: .varelaRound, size: 12))               // explicit family
 ```
 
-**Styles:** `.regular`, `.medium`, `.semiBold`, `.bold`, `.extraBold`, `.black`  
-**Families:** `.montserrat` (default), `.varelaRound`
+**Styles** (`UIFont.FontStyle`): `.thin`, `.extraLight`, `.light`, `.regular`, `.medium`, `.semiBold`, `.bold`, `.extraBold`, `.black`, `.italic`  
+**Fallback:** an unset primary family or an unresolvable PostScript name returns a weight-matched system font — `.appFont` never fails.
 
 ### Colors
 

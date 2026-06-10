@@ -57,6 +57,7 @@ Then type `/common-framework` at the start of any Claude Code session where you'
 | Capability | API surface |
 |---|---|
 | Declarative UIKit screens | `@UIViewBuilder`, `VStack`, `HStack`, fluent extensions |
+| Custom font pipeline | `AppFontFamily`, `UIFont.register(fonts:)`, `.appFont(style:size:)` |
 | Complete MVVM-C modules | `BaseCoordinator`, `BaseViewModelableViewController`, wireframe factory |
 | Declarative form validation | `FieldsValidator`, cross-field `.matches`/`.differs`, built-in touched-state |
 | Async HTTP networking | `AsyncBaseClient`, `Endpoint`, `HTTPService` |
@@ -139,6 +140,28 @@ VStack(margins: .init(all: 16), spacing: 12) { titleLabel; bodyLabel }
 // Push content up with keyboard
 .setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide); $0.pinBottom(to: $1.keyboardLayoutGuide.topAnchor) }
 ```
+
+---
+
+### Custom fonts
+
+Declare your families, register the font files at startup — no `UIAppFonts` Info.plist entry needed — and style text with `.appFont` everywhere. Font files just need to be bundle resources named after their PostScript names (`Montserrat-Bold.ttf`).
+
+```swift
+extension AppFontFamily {
+    static let montserrat = AppFontFamily(rawValue: "montserrat")   // → "Montserrat-Bold", ...
+}
+
+// At startup (e.g. SceneDelegate):
+UIFont.register(fonts: [.montserrat])
+UIFont.setPrimaryFamily(.montserrat)
+
+// Anywhere:
+titleLabel.font(.appFont(style: .bold, size: 24))            // primary family
+captionLabel.font(.appFont(family: .montserrat, size: 13))   // explicit family
+```
+
+Missing faces and unregistered families fall back to a weight-matched system font.
 
 ---
 

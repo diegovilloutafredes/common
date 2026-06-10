@@ -12,6 +12,18 @@
   )
   emailField.onEditingChanged { validator.set($0.text, on: .email) }
   ```
+- **`AppFontFamily`-driven custom font system.** `AppFontFamily` is an extensible `RawRepresentable` family identifier — apps declare their own families in an extension, register the font files at runtime with `UIFont.register(fonts:styles:type:on:)` (no `UIAppFonts` Info.plist entry required), and pick an app-wide default with `UIFont.setPrimaryFamily(_:)`. Call sites then use `.appFont(style:size:)` for the primary family or `.appFont(family:style:size:)` for an explicit one. PostScript names are derived by convention as `Family-Style` (`"montserrat"` + `.bold` → `"Montserrat-Bold"`), and both registration and resolution misses degrade to a weight-matched system font — `.appFont` never fails. Demonstrated in the DemoApp Typography module; see `COMMON_FRAMEWORK_GUIDE.md` §13.
+  ```swift
+  extension AppFontFamily { static let montserrat = AppFontFamily(rawValue: "montserrat") }
+
+  // At startup (e.g. SceneDelegate):
+  UIFont.register(fonts: [.montserrat])                 // registers Montserrat-*.ttf from the bundle
+  UIFont.setPrimaryFamily(.montserrat)
+
+  // Anywhere:
+  label.font(.appFont(style: .bold, size: 16))          // primary family
+  label.font(.appFont(family: .montserrat, size: 14))   // explicit family
+  ```
 - **Fluent setters for every settable Logger / Loggable property.** Each `static var` that you can write is now also exposed as a same-named, chainable static method:
   ```swift
   // Before (still works):
