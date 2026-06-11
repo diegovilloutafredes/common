@@ -12,7 +12,10 @@ public enum Logger {
     /// - Parameters:
     ///   - caller: The calling function name.
     ///   - item: The item to log.
-    public static func log(caller: String = #function, _ item: Any) { log(caller: caller, ["item": item]) }
+    // Disfavored so dictionary literals resolve to the KeyValuePairs overload
+    // (Swift otherwise prefers converting the literal's default Dictionary type to Any).
+    @_disfavoredOverload
+    public static func log(caller: String = #function, _ item: Any) { log(caller: caller, orderedItems: [("item", item)]) }
 
     /// Logs a network request and its response.
     /// - Parameters:
@@ -30,25 +33,44 @@ public enum Logger {
         let httpBody = request.httpBody
         let body = httpBody?.asString() ?? .empty
         
+        let orderedItems: [(String, String)] = [
+            ("STATUS CODE", statusCode.asString),
+            ("URL", url?.absoluteString ?? .empty),
+            ("REQUEST HEADERS", requestHeaders.asString() ?? .empty),
+            ("RESPONSE HEADERS", responseHeaders.asString() ?? .empty),
+            ("METHOD", httpMethod ?? .empty),
+            ("DATA", data?.asString() ?? .empty),
+            ("BODY", body)
+        ]
+
         log(
             caller: caller,
-            [
-                "STATUS CODE": statusCode.asString,
-                "URL": url?.absoluteString ?? .empty,
-                "REQUEST HEADERS": requestHeaders.asString() ?? .empty,
-                "RESPONSE HEADERS": responseHeaders.asString() ?? .empty,
-                "METHOD": httpMethod ?? .empty,
-                "DATA": data?.asString() ?? .empty,
-                "BODY": body
-            ].filter { $0.value.isNotEmpty }
+            orderedItems: orderedItems
+                .filter { $0.1.isNotEmpty }
+                .map { ($0.0, $0.1 as Any) }
         )
     }
 
+    /// Logs items to the console with a structured format, in call-site order.
+    /// - Parameters:
+    ///   - caller: The calling function name.
+    ///   - items: The items to log; printed in the order they are written.
+    public static func log(caller: String = #function, _ items: KeyValuePairs<String, Any>) {
+        log(caller: caller, orderedItems: items.map { ($0.key, $0.value) })
+    }
+
     /// Logs a dictionary of items to the console with a structured format.
+    /// Output order is unspecified — prefer the `KeyValuePairs` overload.
     /// - Parameters:
     ///   - caller: The calling function name.
     ///   - items: The items to log.
+    @available(*, deprecated, message: "Pass a literal (KeyValuePairs) to preserve output order.")
+    @_disfavoredOverload
     public static func log(caller: String = #function, _ items: [String: Any]) {
+        log(caller: caller, orderedItems: items.map { ($0.key, $0.value) })
+    }
+
+    private static func log(caller: String, orderedItems: [(String, Any)]) {
         guard shouldLog else { return }
 
         let topText = "🎯 \(bundleIdentifier)"
@@ -70,7 +92,7 @@ public enum Logger {
 
         print("\n\(topContent)")
         print(item(title: "Caller", value: caller))
-        items.sorted { $0.key < $1.key }.forEach { print(item(title: $0.key, value: $0.value)) }
+        orderedItems.forEach { print(item(title: $0.0, value: $0.1)) }
         print("\(bottomContent)\n")
     }
 }

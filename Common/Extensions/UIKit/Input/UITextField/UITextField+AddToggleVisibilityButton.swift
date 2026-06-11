@@ -30,7 +30,10 @@ extension UITextField {
                 .image(notVisibleVisiblePasswordIcon, for: .selected)
                 .setRatio()
                 .tintColor(tintColor)
-                .onTap { self.onTapped($0.0 as! UIButton) }
+                .onTap { [weak self] in
+                    guard let self, let button = $0.0 as? UIButton else { return }
+                    self.onTapped(button)
+                }
 
             $0.rightView(
                 HStack(alignment: .center) {

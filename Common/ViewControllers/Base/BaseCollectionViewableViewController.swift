@@ -20,7 +20,23 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
     UICollectionViewDelegate,
     UICollectionViewDelegateFlowLayout {
 
-    private var asCollectionViewable: CollectionViewable? { viewModel as? CollectionViewable }
+    /// Cached once per `viewModel` assignment — delegate and sizing methods run
+    /// several times per scroll frame, so the conformance cast must not be repeated there.
+    private var asCollectionViewable: CollectionViewable?
+
+    open override var viewModel: ViewModelType {
+        didSet { asCollectionViewable = viewModel as? CollectionViewable }
+    }
+
+    required public init(viewModel: ViewModelType) {
+        super.init(viewModel: viewModel)
+        asCollectionViewable = viewModel as? CollectionViewable
+    }
+
+    @available(*, unavailable)
+    required public init?(coder: NSCoder) {
+        fatalError("NSCoder is not supported")
+    }
 
     open func bottomInsetForLastCollectionSection() -> CGFloat { .zero }
 

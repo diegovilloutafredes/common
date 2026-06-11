@@ -9,7 +9,9 @@ extension UIFont {
       case invalidFontFile
       case fontPathNotFound
       case initFontError
-      case registerFailed
+      /// Core Text rejected the registration; carries the underlying
+      /// `CFError` description (e.g. "already registered") when available.
+      case registerFailed(description: String?)
     }
 
     /// Registers custom fonts from the specified bundle.
@@ -52,7 +54,12 @@ extension UIFont {
 
         var errorRef: Unmanaged<CFError>? = nil
 
-        guard CTFontManagerRegisterGraphicsFont(fontRef, &errorRef)
-        else { throw RegisterFontError.registerFailed }
+        guard CTFontManagerRegisterGraphicsFont(fontRef, &errorRef) else {
+            // Create rule: the out-error is returned retained and must be consumed.
+            let underlyingError = errorRef?.takeRetainedValue()
+            throw RegisterFontError.registerFailed(
+                description: underlyingError.map { CFErrorCopyDescription($0) as String }
+            )
+        }
     }
 }

@@ -148,7 +148,7 @@ extension CameraManager {
             captureDeviceHandler?(captureDevice)
             captureDevice.unlockForConfiguration()
         } catch {
-            Logger.log(caller: #function, ["lockForConfiguration error": error])
+            Logger.log(["lockForConfiguration error": error])
         }
     }
 

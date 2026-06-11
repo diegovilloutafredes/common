@@ -6,11 +6,15 @@ import Foundation
 
 // MARK: - FileStorage
 
-/// A class responsible for storing and retrieving codable objects to and from the file system.
-// MARK: - FileStorage
-/// A storage implementation using the file system.
+/// A storage implementation that persists codable objects to the file system.
+///
+/// - Important: `FileStorage` is **not thread-safe**. `shared` is an
+///   unsynchronized mutable static, and reads/writes go straight to disk with
+///   no locking — concurrent access to the same key from multiple threads can
+///   interleave. Confine usage of a given key to a single thread (typically
+///   the main thread), or add external synchronization.
 public struct FileStorage: KeyValueStorage {
-    
+
     /// The shared instance of `FileStorage`.
     public static var shared = FileStorage()
     

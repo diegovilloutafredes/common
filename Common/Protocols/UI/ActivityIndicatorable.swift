@@ -4,6 +4,10 @@
 
 import UIKit
 
+nonisolated(unsafe) private var stashedRightViewKey: UInt8 = 0
+nonisolated(unsafe) private var stashedRightViewModeKey: UInt8 = 0
+nonisolated(unsafe) private var preHiddenSubviewsKey: UInt8 = 0
+
 // MARK: - ActivityIndicatorable
 /// A protocol for objects that can manage the visibility and state of an activity indicator.
 @MainActor
@@ -37,12 +41,30 @@ extension ActivityIndicatorable where Self: UITextField {
             .color(color)
             .animate()
             .with { $0.sizeToFit() }
+
+        // Stash the current rightView/rightViewMode so stop can restore them.
+        // On a double-start the spinner is already installed — keep the original stash.
+        if !(rightView is UIActivityIndicatorView) {
+            objc_setAssociatedObject(self, &stashedRightViewKey, rightView, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &stashedRightViewModeKey, rightViewMode.rawValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+
         rightView(activityIndicator)
     }
 
     public func stopActivityIndicator() {
         guard let activityIndicator = rightView as? UIActivityIndicatorView else { return }
         activityIndicator.stopAnimating()
+
+        rightView = objc_getAssociatedObject(self, &stashedRightViewKey) as? UIView
+        if
+            let rawMode = objc_getAssociatedObject(self, &stashedRightViewModeKey) as? Int,
+            let mode = UITextField.ViewMode(rawValue: rawMode) {
+            rightViewMode = mode
+        }
+
+        objc_setAssociatedObject(self, &stashedRightViewKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(self, &stashedRightViewModeKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 
@@ -60,6 +82,16 @@ extension ActivityIndicatorable where Self: UIView {
 
         defer { activityIndicator.startAnimating() }
 
+        // Record which subviews were already hidden so stop restores exactly that
+        // state. On a double-start the record already exists — keep the original.
+        if objc_getAssociatedObject(self, &preHiddenSubviewsKey) == nil {
+            let preHidden = NSHashTable<UIView>.weakObjects()
+            subviews
+                .filter { $0.isHidden && !($0 is UIActivityIndicatorView) }
+                .forEach { preHidden.add($0) }
+            objc_setAssociatedObject(self, &preHiddenSubviewsKey, preHidden, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+
         subviews
             .forEach {
                 ($0 as? UIActivityIndicatorView)?.removeFromSuperview()
@@ -71,13 +103,24 @@ extension ActivityIndicatorable where Self: UIView {
 
     public func stopActivityIndicator() {
         dispatchOnMain { [weak self] in guard let self else { return }
-            subviews.forEach { $0.show(animated: false) }
+            let preHidden = objc_getAssociatedObject(self, &preHiddenSubviewsKey) as? NSHashTable<UIView>
+
+            // Never started: nothing to restore, don't disturb subview state.
+            guard preHidden != nil || subviews.contains(where: { $0 is UIActivityIndicatorView })
+            else { return }
+
+            subviews
+                .filter { !(preHidden?.contains($0) ?? false) }
+                .forEach { $0.show(animated: false) }
+
             subviews
                 .compactMap { $0 as? UIActivityIndicatorView }
                 .forEach {
                     $0.stopAnimating()
                     $0.removeFromSuperview()
                 }
+
+            objc_setAssociatedObject(self, &preHiddenSubviewsKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

@@ -1034,6 +1034,8 @@ startActivityIndicator(with: .blue)
 stopActivityIndicator()
 ```
 
+Start/stop is state-preserving: a `UITextField` gets its previous `rightView`/`rightViewMode` back on stop (e.g. a password-toggle button survives a spinner cycle), and a `UIView` restores only the subviews that were visible before start — subviews hidden intentionally stay hidden.
+
 #### `AlertPresentable`
 
 ```swift
@@ -2088,6 +2090,7 @@ array[safe: index]   // -> Element?; nil instead of out-of-bounds crash
 
 // Logging — DEBUG only
 Logger.log("some value")                          // generic item
+Logger.log(["request": r, "response": s])        // structured items, printed in call-site order
 Logger.log(request, data: data, response: resp)  // network request + response
 // Logger output is compile-time gated: active in DEBUG builds, silenced in release.
 // To opt in during a debug session: Logger.forceEnable()

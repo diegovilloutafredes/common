@@ -1,7 +1,7 @@
 # Common Framework — Full Architecture Review
 
 > **Original date:** 2026-04-30  
-> **Last revalidated:** 2026-05-14  
+> **Last revalidated:** 2026-06-11 (statuses updated after `framework-quality-tail`)  
 > **Scope:** All 547 Swift source files (~16k LOC) across Architecture, Views, ViewControllers, Protocols, Network, Storage, Extensions, Utils, ResultBuilders  
 > **Severity key:** 🔴 Critical (correctness/safety) · 🟠 High (SOLID/concurrency) · 🟡 Medium (performance/testability) · 🟢 Low (style/polish)
 
@@ -22,15 +22,15 @@
 | # | Severity | Finding |
 |---|----------|---------|
 | A4 | ✅ | ~~**SRP violation: every VC conforms to `UICollectionViewable` unconditionally.**~~ **Fixed by `base-viewmodelable-viewcontroller-srp`.** `BaseCollectionViewableViewController` is the opt-in base for VCs that own a `VList`/`HList`; `BaseViewModelableViewController` no longer carries collection-view boilerplate. |
-| A5 | 🟠 | **Domain logic in base class: `insetForSectionAt` hardcodes `closestTabBarHeight + 4` for the last section.** Tab bar offset is product-specific, not framework concern. |
-| A6 | 🟡 | `asCollectionViewable`, `asViewLifecycleable`, `asReloadContentRequestable` are computed properties that re-cast on every call. Should be cached at init (e.g., `let asLifecycleable: ViewLifecycleable? = viewModel as? ViewLifecycleable`). |
-| A7 | 🟡 | `viewForSupplementaryElementOfKind` only handles `elementKindSectionHeader`. Footer kind is silently ignored. |
+| A5 | ✅ | ~~**Domain logic in base class: `insetForSectionAt` hardcodes `closestTabBarHeight + 4` for the last section.**~~ **Fixed.** `BaseCollectionViewableViewController` exposes `bottomInsetForLastCollectionSection()` (default `.zero`); subclasses above a tab bar opt in explicitly. |
+| A6 | ✅ | ~~`asCollectionViewable`, `asViewLifecycleable`, `asReloadContentRequestable` are computed properties that re-cast on every call.~~ **Fixed by `framework-quality-tail`.** `BaseViewModelableViewController` caches `_asViewLifecycleable`/`_asReloadContentRequestable` on init + `viewModel` `didSet`; `BaseCollectionViewableViewController` now caches `asCollectionViewable` the same way. |
+| A7 | ✅ | ~~`viewForSupplementaryElementOfKind` only handles `elementKindSectionHeader`. Footer kind is silently ignored.~~ **Fixed.** Both header and footer kinds are handled via `onFooterItemReuseIdentifierRequested`/`onFooterItemDataSourceRequested`. |
 
 ### BaseViewController (`ViewControllers/Base/BaseViewController.swift`)
 
 | # | Severity | Finding |
 |---|----------|---------|
-| A8 | 🟡 | **Missing `viewDidDisappear` override.** `BaseViewModelableViewController` forwards it, but `BaseViewController` never calls `super.viewDidDisappear`. If a subclass skips BVMVC but overrides `viewDidDisappear`, `ViewLifecycleable.onViewDidDisappear` is never called. |
+| A8 | ✅ | ~~**Missing `viewDidDisappear` override.**~~ **Fixed.** `BaseViewController` now overrides `viewDidDisappear` and calls `super`. |
 | A9 | ✅ | ~~**Extra intermediate UIView in every VC.**~~ **Re-classified as intentional.** The container is required so that `setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }` fires against `self.view` (which receives UIKit's safe-area updates). Without it, cells land under the navigation bar and become non-hittable. Documented in `Libraries/CLAUDE.md` → "Known Gotchas → `UIViewBuilder` and `loadView`". |
 | A10 | 🟢 | `prefersHomeIndicatorAutoHidden: Bool { true }` applies globally to all VCs. Controllers where the indicator should be visible (media, games) must override this explicitly. |
 
@@ -76,7 +76,7 @@
 | S1 | ✅ | ~~**All three backends are singletons with no injection seam.**~~ **Fixed by `storage-di-and-error-propagation`.** `InMemoryKeyValueStorage` provides a test backend; `KeyValueStore(keyValueStorage:)` is the DI seam. Tests construct `KeyValueStore(keyValueStorage: InMemoryKeyValueStorage())` without hitting Keychain or disk. | `Storage/InMemory/InMemoryKeyValueStorage.swift` |
 | S2 | ✅ | ~~**All storage operations are silent on failure.**~~ **Fixed by `storage-di-and-error-propagation`.** `tryAdd`, `tryGet`, `tryRemove` added to `KeyValueStorage` with real `StorageError` surfacing for Keychain (`OSStatus`), FileStorage (`Error`-wrapped), and InMemory backends. | `Storage/Protocols/KeyValueStorage.swift`, `Storage/Errors/StorageError.swift` |
 | S3 | ✅ | ~~**`_loggableStore` triggers Keychain init at import time.**~~ **Fixed by `storage-di-and-error-propagation`.** `_loggableStore` is now lazily initialised inside the `_loggableCache` lock on first `shouldLog` access, not at module import. | `Utils/Logger/Loggable.swift` |
-| S4 | 🟡 | Thread safety of `FileStorage` and `KeychainWrapper` is not documented. `KeychainWrapper` calls are generally main-thread safe but async Keychain calls are not guarded. |
+| S4 | ✅ | ~~Thread safety of `FileStorage` and `KeychainWrapper` is not documented.~~ **Fixed by `framework-quality-tail`.** Both types now carry `- Important:` DocC noting `FileStorage.shared` is an unsynchronized mutable static and that `KeychainWrapper` read-modify-write sequences are not atomic. |
 
 ---
 
@@ -97,7 +97,7 @@
 | # | Severity | Finding |
 |---|----------|---------|
 | P1 | 🟠 | **`Dismissable` and `AlertPresentable` depend on `UIApplication.shared.topMostViewController`** — a global mutable walk of the window hierarchy. This is fragile (multi-scene, extensions), not testable, and makes these protocols effectively singletons. The `Dismissable where Self: Navigationable` override improves this but `AlertPresentable` always uses the global walk. |
-| P2 | 🟠 | **`ActivityIndicatorable` has four distinct implementations** (UITextField, UIView, UIViewController, BaseCoordinator) all from the same protocol. This is the opposite of ISP — one name, four behaviours. The UITextField implementation creates and discards a new `UIActivityIndicatorView` on every `startActivityIndicator()` call with no deduplication check. |
+| P2 | 🟠 | **Partial (state bugs fixed by `framework-quality-tail`).** The UITextField implementation now stashes and restores the previous `rightView`/`rightViewMode` (double-start keeps the original stash), and the UIView implementation records pre-hidden subviews and restores exactly that state on stop. Outstanding (design-level): four distinct implementations from one protocol remains the opposite of ISP — one name, four behaviours. |
 | P3 | 🟡 | **`AlertPresentable.applyDefaultAlertStyle` uses KVC** (`setValue(_:forKey:"attributedTitle")`). This is an undocumented private UIKit API that Apple has historically broken. A custom alert (which already exists via `CustomAlertViewController`) should replace it. |
 | P4 | 🟡 | **`BaseModuleDelegate` composition includes `ActivityControllerRequestable`** but this is rarely needed (share sheets). It inflates the coordinator conformance requirement unnecessarily. |
 | P5 | 🟢 | `Withable` and `ValueWithable` serve the same purpose with different signatures. The distinction is subtle and rarely used in production code. |
@@ -110,7 +110,7 @@
 |---|----------|---------|
 | Ut1 | ✅ | ~~**`Debouncer` is a global singleton with mutable `[String: Timer]` behind `nonisolated(unsafe)`.**~~ **Fixed by `swift-6-concurrency-hardening`.** Same finding as C1 — `Debouncer` is now a `@MainActor final class`; `timers` dictionary is main-actor isolated. |
 | Ut2 | ✅ | ~~**`Logger` logging defaults to ON in production**~~ **Fixed by `logger-production-gating`.** `Logger.isCompileTimeEnabled` gates all logging at compile time; Release builds return `false` immediately from `shouldLog` with no Keychain access. Debug default remains `true`. |
-| Ut3 | 🟡 | **`Logger` sorts dictionary keys alphabetically**, losing the semantic ordering of request → response → error. A `KeyValuePairs` or ordered array should replace `[String: Any]` for structured log items. |
+| Ut3 | ✅ | ~~**`Logger` sorts dictionary keys alphabetically**~~ **Fixed by `framework-quality-tail`.** `Logger.log` takes `KeyValuePairs<String, Any>` and prints in call-site order; a deprecated `[String: Any]` overload remains for dictionary-variable callers (order unspecified). |
 | Ut4 | 🟡 | **`Global.swift` has duplicate doc comment line** (`/// Global functions` appears twice) and uses free global functions. A `Dispatch` namespace (enum) would prevent accidental name collisions with consumer code. |
 | Ut5 | 🟢 | `CameraManager`, `LocalAuthenticationManager`, `AppleLoginManager` are not injectable. They hold no state and could be protocols with default implementations (UseCase pattern the project uses elsewhere). |
 
@@ -122,7 +122,7 @@
 |---|----------|---------|
 | E1 | 🟡 | **419 extension files, all `public`.** There is no internal/public split or `@_spi` grouping. Domain-specific helpers (e.g. `String+RUTUtilities`, CVPixelBuffer, CMSampleBuffer, ARSCNView) are framework-level public API but are relevant only to specific consumer verticals. This bloats the public ABI surface. |
 | E2 | 🟡 | **No test coverage for extensions.** `Tests/CommonTests/` contains stubs only. Extensions like `UIImage+AverageColor`, `CGRect+IsClose`, `String+IsValidEmail`, `String+RUTUtilities` have logic that is easy to unit test and fragile to modify without tests. |
-| E3 | 🟡 | **`as! UIButton` force-cast in `UITextField+AddToggleVisibilityButton.swift:33`.** The tap handler casts the sender to `UIButton` unconditionally. Should use `guard let`. |
+| E3 | ✅ | ~~**`as! UIButton` force-cast in `UITextField+AddToggleVisibilityButton.swift:33`.**~~ **Fixed by `framework-quality-tail`.** `guard let` replaces the force-cast, and the `onTap` closure captures `self` weakly — removing a retain cycle (text field → rightView → button → closure → text field). |
 | E4 | 🟢 | `Array+Coordinator.swift` provides `getFirst(_:)` and `removeAll(_:)` by type. These are useful but the names shadow `Array.first` semantics. `first(ofType:)` and `removeAll(ofType:)` would be cleaner. |
 
 ---
@@ -131,7 +131,7 @@
 
 | # | Severity | Finding |
 |---|----------|---------|
-| T1 | 🟡 | **Substantially addressed (was 🔴).** As of 2026-05-14 the framework has 14 test files / **205 test functions** covering Storage DI, the network injection seam, `HTTPService` headers/timeouts, image-loader cache & cancellation, coordinator child lifecycle, BVMVC SRP, the typography system, and a number of extensions. Remaining gaps: RUT validation, email validation, date parsing, and image-processing extensions still untested. |
+| T1 | 🟡 | **Substantially addressed (was 🔴).** As of 2026-06-11 the suite spans 22 test suites covering Storage DI, the network injection seam, `HTTPService` headers/timeouts, image-loader cache & cancellation, coordinator child lifecycle, BVMVC SRP, the typography system, RUT validation, email validation (via `FieldsValidatorTests`), and — added by `framework-quality-tail` — date parsing/formatting, image-processing extensions, `ActivityIndicatorable` state restoration, logger ordering, and font registration errors. Remaining gaps are minor (assorted small extensions). |
 | T2 | ✅ | ~~**Storage singletons make unit testing impossible without swizzling.**~~ **Fixed by `storage-di-and-error-propagation`.** See S1 — `InMemoryKeyValueStorage` provides the test seam. |
 | T3 | ✅ | ~~**`URLSession.shared` default in `HTTPService` requires real network in tests.**~~ **Fixed by `network-layer-consolidation`.** See N4 — `HTTPService.defaultSession` is the injection point; `MockURLProtocol`-based tests override it. |
 | T4 | 🟡 | **`BaseCoordinator` has no protocol.** It's a concrete class. Consumer coordinators that want to be mocked in tests must subclass, not substitute. A `CoordinatorType` protocol (or use the existing `Coordinator` protocol more broadly) would decouple. |

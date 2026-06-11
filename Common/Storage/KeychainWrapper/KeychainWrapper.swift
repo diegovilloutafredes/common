@@ -14,6 +14,13 @@ private let secReturnAttributes: String = kSecReturnAttributes as String
 private let secAttrSynchronizable: String = kSecAttrSynchronizable as String
 
 /// KeychainWrapper is a class to help make Keychain access in Swift more straightforward. It is designed to make accessing the Keychain services more like using NSUserDefaults, which is much more familiar to people.
+///
+/// - Important: Individual Keychain operations are handled atomically by the
+///   Security framework, but `KeychainWrapper` adds no synchronization of its
+///   own: read-modify-write sequences (get, then set) are **not** atomic
+///   across threads, and `standard` is shared process-wide. Serialize
+///   compound operations on a single queue if multiple threads touch the
+///   same keys.
 final public class KeychainWrapper {
     /// Default keychain wrapper access
     public static let standard = KeychainWrapper()
