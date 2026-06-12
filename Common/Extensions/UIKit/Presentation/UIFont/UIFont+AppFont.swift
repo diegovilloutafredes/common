@@ -17,7 +17,7 @@ public extension UIFont {
     /// Returns the app font for an explicit family, style, and size.
     /// PostScript name is derived as `"\(family)-\(style)"` (e.g. `"Montserrat-Bold"`).
     /// Falls back to the system font when the PostScript name cannot be resolved.
-    static func appFont(family: AppFontFamily, style: FontStyle = .regular, size: CGFloat) -> UIFont {
+    static func appFont(_ family: AppFontFamily, style: FontStyle = .regular, size: CGFloat) -> UIFont {
         font(family, with: style, size: size)
     }
 
@@ -27,7 +27,7 @@ public extension UIFont {
         guard let primary = AppFontRegistry.primaryFamily else {
             return systemFallback(for: style, size: size)
         }
-        return appFont(family: primary, style: style, size: size)
+        return appFont(primary, style: style, size: size)
     }
 
     /// Registers font files for the given `AppFontFamily` values.

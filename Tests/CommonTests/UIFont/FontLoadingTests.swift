@@ -31,9 +31,9 @@ final class FontLoadingTests: XCTestCase {
     }
 
     func test_appFont_returnsCustomFace_notSystemFallback() {
-        let font = UIFont.appFont(family: varelaRound, style: .regular, size: 12)
+        let font = UIFont.appFont(varelaRound, style: .regular, size: 12)
         XCTAssertEqual(font.fontName, "VarelaRound-Regular",
-                       "appFont(family:style:size:) fell back to the system font instead of the custom face")
+                       "appFont(_:style:size:) fell back to the system font instead of the custom face")
         XCTAssertEqual(font.pointSize, 12)
     }
 }

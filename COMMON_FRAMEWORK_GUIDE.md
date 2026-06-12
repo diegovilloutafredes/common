@@ -1968,7 +1968,7 @@ UIFont.setPrimaryFamily(.montserrat)
 .font(.appFont(style: .semiBold, size: 14))
 .font(.appFont(style: .extraBold, size: 24))
 .font(.appFont(style: .black, size: 22))                      // heaviest weight
-.font(.appFont(family: .varelaRound, size: 12))               // explicit family
+.font(.appFont(.varelaRound, size: 12))                       // explicit family
 ```
 
 **Styles** (`UIFont.FontStyle`): `.thin`, `.extraLight`, `.light`, `.regular`, `.medium`, `.semiBold`, `.bold`, `.extraBold`, `.black`, `.italic`  

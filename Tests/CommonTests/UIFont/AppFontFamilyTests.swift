@@ -48,21 +48,21 @@ final class AppFontFamilyTests: XCTestCase {
     // registered font in FontLoadingTests, which drives the production resolver rather than
     // re-implementing the interpolation inline.
 
-    // MARK: - UIFont.appFont(family:style:size:) — fallback
+    // MARK: - UIFont.appFont(_:style:size:) — fallback
 
     func test_unknownFamily_returnsNonNilFontAtRequestedSize() {
-        let font = UIFont.appFont(family: AppFontFamily(rawValue: "NonExistentFamily"), style: .regular, size: 16)
+        let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: .regular, size: 16)
         XCTAssertEqual(font.pointSize, 16)
     }
 
     func test_unknownFamily_boldStyle_returnsBoldSystemFont() {
-        let font = UIFont.appFont(family: AppFontFamily(rawValue: "NonExistentFamily"), style: .bold, size: 18)
+        let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: .bold, size: 18)
         XCTAssertEqual(font.pointSize, 18)
         XCTAssertEqual(font.fontDescriptor.symbolicTraits.contains(.traitBold), true)
     }
 
     func test_unknownFamily_italicStyle_returnsItalicSystemFont() {
-        let font = UIFont.appFont(family: AppFontFamily(rawValue: "NonExistentFamily"), style: .italic, size: 14)
+        let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: .italic, size: 14)
         XCTAssertEqual(font.pointSize, 14)
         XCTAssertEqual(font.fontDescriptor.symbolicTraits.contains(.traitItalic), true)
     }

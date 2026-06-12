@@ -113,17 +113,17 @@ private extension TypographyViewController {
     func reloadPreview() {
         let family = viewModel.selectedFamily
         previewTitleLabel
-            .font(.appFont(family: family, style: .bold, size: 26))
+            .font(.appFont(family, style: .bold, size: 26))
             .text(viewModel.families.first(where: { $0.family == family })?.name ?? "")
             .textColor(.label)
 
         previewSubtitleLabel
-            .font(.appFont(family: family, style: .medium, size: 17))
+            .font(.appFont(family, style: .medium, size: 17))
             .text("The quick brown fox jumps over the lazy dog")
             .textColor(.secondaryLabel)
 
         previewBodyLabel
-            .font(.appFont(family: family, style: .regular, size: 14))
+            .font(.appFont(family, style: .regular, size: 14))
             .text("Sphinx of black quartz, judge my vow.")
             .textColor(.secondaryLabel)
 
@@ -147,7 +147,7 @@ private extension TypographyViewController {
             .setConstraints { $0.set(width: 80) }
 
         let sampleLabel = UILabel("Sphinx of black quartz, judge my vow")
-            .font(.appFont(family: family, style: style, size: 16))
+            .font(.appFont(family, style: style, size: 16))
             .textColor(isResolved ? .label : .tertiaryLabel)
             .numberOfLines(1)
 
