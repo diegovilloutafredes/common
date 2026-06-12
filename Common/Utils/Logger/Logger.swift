@@ -90,10 +90,11 @@ public enum Logger {
         let topContent = [topUnderscores, topText, topUnderscores].joined(separator: " ")
         let bottomContent = [bottomUnderscores, bottomText, bottomUnderscores].joined(separator: " ")
 
-        print("\n\(topContent)")
-        print(item(title: "Caller", value: caller))
-        orderedItems.forEach { print(item(title: $0.0, value: $0.1)) }
-        print("\(bottomContent)\n")
+        // Emit the whole frame in a single print so concurrent logs can't interleave lines.
+        let lines = ["\n\(topContent)", item(title: "Caller", value: caller)]
+            + orderedItems.map { item(title: $0.0, value: $0.1) }
+            + ["\(bottomContent)\n"]
+        print(lines.joined(separator: "\n"))
     }
 }
 
@@ -143,7 +144,7 @@ extension Logger {
 
 // MARK: - Convenience
 extension Logger {
-    private static var bundleIdentifier: String { Bundle.main.bundleIdentifier?.uppercased() ?? "\(self)" }
+    private static let bundleIdentifier: String = Bundle.main.bundleIdentifier?.uppercased() ?? "\(Logger.self)"
     private static var currentTime: String { Date().toString(with: .DateFormats.ddMMyyyyHHmm) }
     private static func item(title: String, value: Any) -> String { "| 🔸 \(title): \(value)" }
     private static func underscores(_ count: Int) -> String { String(repeating: "_", count: count) }
