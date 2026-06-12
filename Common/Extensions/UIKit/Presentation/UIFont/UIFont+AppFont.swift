@@ -23,6 +23,12 @@ public extension UIFont {
 
     /// Returns the app font for the registered primary family.
     /// Falls back to the system font when no primary family has been set.
+    ///
+    /// Disfavored so that app-local `appFont` helpers (the pre-`AppFontFamily`
+    /// pattern: `appFont(_ family: MyFamily = .default, style:size:)`) keep
+    /// winning overload resolution — otherwise their label-only call sites
+    /// would silently re-route here and resolve against an unset primary family.
+    @_disfavoredOverload
     static func appFont(style: FontStyle = .regular, size: CGFloat) -> UIFont {
         guard let primary = AppFontRegistry.primaryFamily else {
             return systemFallback(for: style, size: size)
