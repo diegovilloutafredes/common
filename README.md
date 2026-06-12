@@ -158,7 +158,7 @@ UIFont.setPrimaryFamily(.montserrat)
 
 // Anywhere:
 titleLabel.font(.appFont(style: .bold, size: 24))            // primary family
-captionLabel.font(.appFont(family: .montserrat, size: 13))   // explicit family
+captionLabel.font(.appFont(.montserrat, size: 13))           // explicit family
 ```
 
 Missing faces and unregistered families fall back to a weight-matched system font.

@@ -1974,6 +1974,8 @@ UIFont.setPrimaryFamily(.montserrat)
 **Styles** (`UIFont.FontStyle`): `.thin`, `.extraLight`, `.light`, `.regular`, `.medium`, `.semiBold`, `.bold`, `.extraBold`, `.black`, `.italic`  
 **Fallback:** an unset primary family or an unresolvable PostScript name returns a weight-matched system font — `.appFont` never fails.
 
+**Migrating from an app-local `appFont` helper:** apps that predate this system (their own `UIFont` extension with a defaulted family parameter) can link Common as-is — the local helper keeps winning overload resolution over Common's `appFont(style:size:)`, so nothing changes until you opt in. To migrate: delete the local helper file, declare your `AppFontFamily` values, and call `setPrimaryFamily(_:)` at startup; label-only call sites compile unchanged.
+
 ### Colors
 
 ```swift
