@@ -2,9 +2,16 @@
 #
 # fetch-common-xcframework.sh
 #
-# Downloads a version of Common.xcframework from this repository's GitHub
-# Releases into a local directory, intended for non-SPM consumers
+# Downloads a version of Common.xcframework from the common repository's
+# GIT TAG into a local directory, intended for non-SPM consumers
 # (CocoaPods + xcworkspace projects, manual vendored deps, etc.).
+#
+# The tag's committed binary is the authoritative artifact: it is what SPM
+# consumers resolve (Package.swift uses a path: binary target). GitHub
+# release *assets* are mutable and have drifted from the tag before — the
+# v1.3.0 asset was once re-uploaded from unreleased source, which made SDK
+# builds reference symbols absent at consumer runtime (dyld launch crash).
+# Never fetch from release assets.
 #
 # Usage:
 #   ./fetch-common-xcframework.sh                 # latest published release
@@ -19,7 +26,7 @@
 # Exit codes:
 #   0  success
 #   1  usage error / network failure / asset not found
-#   2  missing required tool (curl + unzip — both ship with macOS by default)
+#   2  missing required tool (curl + tar — both ship with macOS by default)
 
 set -euo pipefail
 
@@ -65,22 +72,19 @@ current_installed_version() {
     [ -f "$marker" ] && cat "$marker" || true
 }
 
-download_asset() {
+download_from_tag() {
+    # Stream the tag's source tarball and extract only the committed
+    # xcframework. The tarball root is "<repo>-<version>/", hence the
+    # two stripped components.
     local tag="$1"
-    local asset="Common-${tag}.xcframework.zip"
-
-    if command -v gh >/dev/null 2>&1; then
-        gh release download "$tag" --repo "$REPO" --pattern "$asset" --clobber
-    else
-        local url="https://github.com/${REPO}/releases/download/${tag}/${asset}"
-        curl -fsSL --retry 3 -o "$asset" "$url"
-    fi
+    local url="https://github.com/${REPO}/archive/refs/tags/${tag}.tar.gz"
+    curl -fsSL --retry 3 "$url" | tar -xz --strip-components=2 '*/XCFramework/Common.xcframework'
 }
 
 # ---------- main ----------
 
 require curl
-require unzip
+require tar
 
 TAG="$(resolve_tag)"
 [ -n "$TAG" ] || { err "could not resolve version '$REQUESTED' on $REPO"; exit 1; }
@@ -96,15 +100,10 @@ if [ "$INSTALLED" = "$TAG" ] && [ -d "Common.xcframework" ] && [ "$FORCE" != "1"
     exit 0
 fi
 
-ASSET="Common-${TAG}.xcframework.zip"
-
-info "Downloading $ASSET..."
-download_asset "$TAG"
-
-info "Extracting..."
+info "Fetching Common.xcframework from git tag ${TAG}..."
 rm -rf Common.xcframework
-unzip -q "$ASSET"
-rm "$ASSET"
+download_from_tag "$TAG"
+[ -d Common.xcframework ] || { err "tag ${TAG} does not contain XCFramework/Common.xcframework"; exit 1; }
 
 # Stamp the version so future runs can short-circuit.
 printf '%s\n' "$TAG" > .common-xcframework.version
