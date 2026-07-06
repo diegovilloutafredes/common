@@ -117,6 +117,7 @@ final class FieldsValidatorTests: XCTestCase {
         XCTAssertEqual(field?.errors.isEmpty, true)
         XCTAssertNil(field?.message)
         XCTAssertEqual(field?.isValid, false)
+        XCTAssertEqual(field?.isTouched, false, "isTouched is public API consumers key UI off")
     }
 
     func test_touchedInvalidField_surfacesFailingRules() {
@@ -127,20 +128,27 @@ final class FieldsValidatorTests: XCTestCase {
         let field = validator.state.fields[.password]
         XCTAssertEqual(field?.errors.map(\.rule), [.minLength(6)])
         XCTAssertNotNil(field?.message)
+        XCTAssertEqual(field?.isTouched, true)
     }
 
     func test_touchAll_revealsErrorsOnUntouchedFields() {
+        // Capture through onChange, not just `state`: consumers render from the
+        // callback (the documented contract), so touchAll silently skipping the
+        // notification would break every real form while state-only asserts pass.
+        var fires = 0
+        var delivered: Validator.State?
         let validator = Validator(rules: [
             .name: [.notEmpty],
             .email: [.notEmpty, .email]
-        ]) { _ in }
+        ]) { delivered = $0; fires += 1 }
 
         XCTAssertNil(validator.state.fields[.name]?.message)
 
         validator.touchAll()
 
-        XCTAssertNotNil(validator.state.fields[.name]?.message)
-        XCTAssertNotNil(validator.state.fields[.email]?.message)
+        XCTAssertEqual(fires, 1, "touchAll must fire onChange exactly once")
+        XCTAssertNotNil(delivered?.fields[.name]?.message)
+        XCTAssertNotNil(delivered?.fields[.email]?.message)
     }
 
     // MARK: Message resolution

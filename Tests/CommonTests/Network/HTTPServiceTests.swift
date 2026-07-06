@@ -106,8 +106,35 @@ final class HTTPServiceTests: XCTestCase {
         do {
             let _: TestItem = try await HTTPService.request(TestEndpoint.get)
             XCTFail("Expected NetworkError.responseError")
-        } catch NetworkError.responseError(let statusCode, _, _) {
+        } catch NetworkError.responseError(let statusCode, let jsonObject, _) {
             XCTAssertEqual(statusCode, 404)
+            // The error body must be parsed into jsonObject — this is
+            // responseError(from:statusCode:)'s entire job.
+            XCTAssertEqual(jsonObject["message"] as? String, "not found")
+        }
+    }
+
+    // MARK: - 2xx with undecodable body returns decodingError
+
+    /// The most common real-world client failure: the server says 200 but the
+    /// body doesn't match the model. Must surface as `.decodingError`, not a
+    /// generic response error and never a silent success.
+    func test_request_200_undecodableBody_throwsDecodingError() async throws {
+        MockURLProtocol.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, Data("not json".utf8))
+        }
+
+        do {
+            let _: TestItem = try await HTTPService.request(TestEndpoint.get)
+            XCTFail("Expected NetworkError.decodingError")
+        } catch NetworkError.decodingError(let statusCode, _) {
+            XCTAssertEqual(statusCode, 200)
         }
     }
 
@@ -176,9 +203,12 @@ final class HTTPServiceTests: XCTestCase {
     // MARK: - Callback overload — cancellation
 
     func test_callbackRequest_cancelledMidFlight_doesNotFireHandler() async throws {
-        // Mock handler blocks for 0.5s before delivering — gives us a window to cancel.
+        // Deterministic coordination instead of racing wall-clock sleeps: the
+        // mock BLOCKS on a semaphore that is signalled only AFTER task.cancel()
+        // returns, so the response can never win the race on a loaded CI box.
+        let responseGate = DispatchSemaphore(value: 0)
         MockURLProtocol.requestHandler = { request in
-            Thread.sleep(forTimeInterval: 0.5)
+            responseGate.wait()
             let data = try JSONEncoder().encode(TestItem(id: 1, name: "Widget"))
             let response = HTTPURLResponse(
                 url: request.url!,
@@ -189,19 +219,19 @@ final class HTTPServiceTests: XCTestCase {
             return (response, data)
         }
 
-        let handlerNotCalled = expectation(description: "result handler must not fire after cancel")
-        handlerNotCalled.isInverted = true
-
+        nonisolated(unsafe) var handlerFired = false
         let task: Task<Void, Never> = HTTPService.request(TestEndpoint.get) { (_: Result<TestItem, NetworkError>) in
-            handlerNotCalled.fulfill()
+            handlerFired = true
         }
 
-        // Cancel ~50 ms in, well before the 500 ms response.
-        try await Task.sleep(nanoseconds: 50_000_000)
+        try await Task.sleep(nanoseconds: 50_000_000) // let the request start
         task.cancel()
+        responseGate.signal() // release the mock only after cancellation
 
-        // Wait long enough that the handler would have fired if cancellation didn't suppress it.
-        await fulfillment(of: [handlerNotCalled], timeout: 0.8)
+        await task.value // the wrapper task has fully finished deciding
+        try await Task.sleep(nanoseconds: 100_000_000) // drain any MainActor hop
+
+        XCTAssertFalse(handlerFired, "the handler must not fire after cancellation")
     }
 
     func test_callbackRequest_completesNormally_firesHandler() async throws {
@@ -221,12 +251,39 @@ final class HTTPServiceTests: XCTestCase {
         nonisolated(unsafe) var received: TestItem?
 
         _ = HTTPService.request(TestEndpoint.get) { (result: Result<TestItem, NetworkError>) in
+            // The callback contract is MainActor delivery via `Task { @MainActor in ... }`
+            // — NOT DispatchQueue.main.async, which Xcode 26 does not drain during
+            // `await fulfillment(of:)` and which is a separate scheduler from @MainActor.
+            // Do not "simplify" this assertion away; it pins the delivery thread.
+            XCTAssertTrue(Thread.isMainThread, "callback results must be delivered on the main thread")
             if case .success(let value) = result { received = value }
             handlerCalled.fulfill()
         }
 
         await fulfillment(of: [handlerCalled], timeout: 1.0)
         XCTAssertEqual(received, expected)
+    }
+
+    /// A failing request must still fire the handler — with the mapped error.
+    /// Guards the regression where the callback wrapper returns early on error
+    /// and the caller waits forever.
+    func test_callbackRequest_failure_firesHandlerWithNetworkError() async throws {
+        MockURLProtocol.requestHandler = { _ in
+            throw URLError(.notConnectedToInternet)
+        }
+
+        let handlerCalled = expectation(description: "result handler should fire on failure")
+        nonisolated(unsafe) var receivedError: NetworkError?
+
+        _ = HTTPService.request(TestEndpoint.get) { (result: Result<TestItem, NetworkError>) in
+            if case .failure(let error) = result { receivedError = error }
+            handlerCalled.fulfill()
+        }
+
+        await fulfillment(of: [handlerCalled], timeout: 1.0)
+        guard case .requestError = receivedError else {
+            return XCTFail("Expected .requestError, got \(String(describing: receivedError))")
+        }
     }
 
     // MARK: - 5xx returns responseError
@@ -245,8 +302,10 @@ final class HTTPServiceTests: XCTestCase {
         do {
             let _: TestItem = try await HTTPService.request(TestEndpoint.get)
             XCTFail("Expected NetworkError.responseError")
-        } catch NetworkError.responseError(let statusCode, _, _) {
+        } catch NetworkError.responseError(let statusCode, let jsonObject, _) {
             XCTAssertEqual(statusCode, 500)
+            // Empty body → empty jsonObject (the non-JSON default branch).
+            XCTAssertTrue(jsonObject.isEmpty)
         }
     }
 }

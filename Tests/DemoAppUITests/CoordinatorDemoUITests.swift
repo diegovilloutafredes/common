@@ -4,21 +4,16 @@
 
 import XCTest
 
-final class CoordinatorDemoUITests: XCTestCase {
+final class CoordinatorDemoUITests: UITestCase {
 
-    var app: XCUIApplication!
+    // Six former tests were strict subsets of the survivors (identical walks,
+    // weaker assertions, one full app relaunch each): navigate-only variants of
+    // showsDepthOne / logsFinishedEvent / statsIncrement / canGoDeeperToDeepFlow,
+    // and completingDepth3 ⊂ completingFullChain. Zero detection was lost.
 
     override func setUp() {
         super.setUp()
-        continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
-        navigateToCoordinatorDemo()
-    }
-
-    override func tearDown() {
-        app = nil
-        super.tearDown()
+        openModule("Coordinator", until: app.navigationBars["Coordinator Demo"])
     }
 
     // MARK: - Initial state
@@ -36,14 +31,6 @@ final class CoordinatorDemoUITests: XCTestCase {
     }
 
     // MARK: - Launch child (maxDepth = 1)
-
-    func test_launchChild_navigatesToChildFlow() {
-        app.buttons["Launch Child"].tap()
-        XCTAssertTrue(
-            app.navigationBars["Child Flow"].waitForExistence(timeout: 3),
-            "Should navigate to Child Flow screen"
-        )
-    }
 
     func test_launchChild_showsDepthOne() {
         app.buttons["Launch Child"].tap()
@@ -71,17 +58,6 @@ final class CoordinatorDemoUITests: XCTestCase {
 
     // MARK: - Complete child flow
 
-    func test_completeChild_returnsToHub() {
-        app.buttons["Launch Child"].tap()
-        XCTAssertTrue(app.buttons["Complete"].waitForExistence(timeout: 3))
-        app.buttons["Complete"].tap()
-
-        XCTAssertTrue(
-            app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3),
-            "Should return to hub after complete"
-        )
-    }
-
     func test_completeChild_logsFinishedEvent() {
         app.buttons["Launch Child"].tap()
         XCTAssertTrue(app.buttons["Complete"].waitForExistence(timeout: 3))
@@ -91,40 +67,7 @@ final class CoordinatorDemoUITests: XCTestCase {
         XCTAssertEqual(statLabel("stat.events").label, "2", "Start + finish events = 2")
     }
 
-    // MARK: - Cancel child flow (back button)
-
-    func test_cancelChild_returnsToHub() {
-        app.buttons["Launch Child"].tap()
-        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
-
-        app.navigationBars["Child Flow"].buttons.firstMatch.tap()
-
-        XCTAssertTrue(
-            app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3),
-            "Should return to hub after cancel"
-        )
-    }
-
     // MARK: - Deep flow (maxDepth = 3)
-
-    func test_deepFlow_navigatesToChildFlow() {
-        app.buttons["Launch Deep Flow"].tap()
-        XCTAssertTrue(
-            app.navigationBars["Child Flow"].waitForExistence(timeout: 3),
-            "Deep flow starts at Child Flow (depth 1)"
-        )
-    }
-
-    func test_deepFlow_canGoDeeperToNestedFlow() {
-        app.buttons["Launch Deep Flow"].tap()
-        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
-        app.buttons["Go Deeper"].tap()
-
-        XCTAssertTrue(
-            app.navigationBars["Nested Flow"].waitForExistence(timeout: 3),
-            "Depth 2 shows 'Nested Flow'"
-        )
-    }
 
     func test_deepFlow_canGoDeeperToDeepFlow() {
         app.buttons["Launch Deep Flow"].tap()
@@ -152,16 +95,6 @@ final class CoordinatorDemoUITests: XCTestCase {
         XCTAssertFalse(app.buttons["Go Deeper"].exists, "Go Deeper hidden at max depth")
     }
 
-    func test_deepFlow_completingDepth3_returnsToDepth2() {
-        navigateToDepth3()
-        app.buttons["Complete"].tap()
-
-        XCTAssertTrue(
-            app.navigationBars["Nested Flow"].waitForExistence(timeout: 3),
-            "Completing depth 3 returns to depth 2"
-        )
-    }
-
     func test_deepFlow_completingFullChain_returnsToHub() {
         navigateToDepth3()
         app.buttons["Complete"].tap()
@@ -174,25 +107,10 @@ final class CoordinatorDemoUITests: XCTestCase {
             app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3),
             "Completing full 3-level chain returns to hub"
         )
-    }
-
-    func test_deepFlow_childrenCountReachesThree() {
-        app.buttons["Launch Deep Flow"].tap()
-        XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))
-        app.buttons["Go Deeper"].tap()
-        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
-        app.buttons["Go Deeper"].tap()
-        XCTAssertTrue(app.navigationBars["Deep Flow"].waitForExistence(timeout: 3))
-
-        // Return to hub
-        app.buttons["Complete"].tap()
-        XCTAssertTrue(app.navigationBars["Nested Flow"].waitForExistence(timeout: 3))
-        app.buttons["Complete"].tap()
-        XCTAssertTrue(app.navigationBars["Child Flow"].waitForExistence(timeout: 3))
-        app.buttons["Complete"].tap()
-        XCTAssertTrue(app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 3))
-
-        XCTAssertEqual(statLabel("stat.children").label, "0", "All coordinators finished, children=0")
+        // The stats are the observable proxy for "three children ran and
+        // unwound": every start/finish is an event, and none may linger.
+        XCTAssertEqual(statLabel("stat.children").label, "0", "all coordinators must be released after the chain unwinds")
+        XCTAssertEqual(statLabel("stat.events").label, "6", "3 starts + 3 finishes")
     }
 
     // MARK: - Navigation
@@ -202,8 +120,8 @@ final class CoordinatorDemoUITests: XCTestCase {
         XCTAssertTrue(backButton.exists)
         backButton.tap()
         XCTAssertTrue(
-            app.staticTexts["Coordinator"].waitForExistence(timeout: 3),
-            "Should return to home screen"
+            app.navigationBars["Common Demo"].waitForExistence(timeout: 3),
+            "Should return to the home screen"
         )
     }
 }
@@ -211,20 +129,6 @@ final class CoordinatorDemoUITests: XCTestCase {
 // MARK: - Helpers
 
 private extension CoordinatorDemoUITests {
-    func navigateToCoordinatorDemo() {
-        let cell = app.staticTexts["Coordinator"]
-        var swipes = 0
-        while !cell.isHittable && swipes < 10 {
-            app.swipeUp()
-            swipes += 1
-        }
-        cell.tap()
-        XCTAssertTrue(
-            app.navigationBars["Coordinator Demo"].waitForExistence(timeout: 5),
-            "Should navigate to Coordinator Demo screen"
-        )
-    }
-
     func navigateToDepth3() {
         app.buttons["Launch Deep Flow"].tap()
         XCTAssertTrue(app.buttons["Go Deeper"].waitForExistence(timeout: 3))

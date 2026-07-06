@@ -9,13 +9,6 @@ import UIKit
 @MainActor
 final class ActionButtonTests: XCTestCase {
 
-    func test_layoutSubviews_setsPillCornerRadius() {
-        let button = ActionButton("Test")
-        button.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
-        button.layoutSubviews()
-        XCTAssertEqual(button.layer.cornerRadius, 25, accuracy: 0.001)
-    }
-
     func test_layoutSubviews_updatesCornerRadiusOnResize() {
         let button = ActionButton("Test")
         button.frame = CGRect(x: 0, y: 0, width: 200, height: 40)

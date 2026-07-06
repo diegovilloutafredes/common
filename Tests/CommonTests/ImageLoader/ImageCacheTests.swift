@@ -30,7 +30,11 @@ final class ImageCacheTests: XCTestCase {
     func test_storeAndRetrieveFromMemory() {
         let image = makeTestImage()
         cache.storeInMemory(image, for: url)
-        XCTAssertNotNil(cache.memoryImage(for: url))
+        // NSCache stores by reference — assert identity, not just presence
+        // (a mutant returning UIImage() for any key passes a NotNil check),
+        // and pin key correctness with an unrelated-URL miss.
+        XCTAssertIdentical(cache.memoryImage(for: url), image)
+        XCTAssertNil(cache.memoryImage(for: URL(string: "https://example.com/other.png")!))
     }
 
     // MARK: - 7.3 clearAll empties memory and disk

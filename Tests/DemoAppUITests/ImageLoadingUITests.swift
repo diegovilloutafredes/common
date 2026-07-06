@@ -2,21 +2,14 @@ import XCTest
 
 // MARK: - ImageLoadingUITests
 
-final class ImageLoadingUITests: XCTestCase {
+final class ImageLoadingUITests: UITestCase {
 
-    var app: XCUIApplication!
+    // Disable the GIF animation so its CADisplayLink can't interfere with XCUITest idle detection.
+    override var launchArguments: [String] { ["UI_TESTING"] }
 
     override func setUp() {
         super.setUp()
-        continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
-        navigateToImageLoading()
-    }
-
-    override func tearDown() {
-        app = nil
-        super.tearDown()
+        openModule("Image Loading", until: app.navigationBars["Image Loading"])
     }
 
     // The cache / preload / force-refresh SEMANTICS (cache-first ordering, eviction, dedup,
@@ -32,6 +25,14 @@ final class ImageLoadingUITests: XCTestCase {
         let list = app.collectionViews["imageLoadingList"]
         XCTAssertTrue(list.waitForExistence(timeout: 5), "Image list should exist")
         XCTAssertGreaterThan(app.cells.count, 0, "Image list should render cells")
+        // The GIF banner must render above the list (the VStack { banner; list }
+        // restructure must not collapse either part). This also doubles as the
+        // UI_TESTING-gate skip-path check: with the animation gated off, the
+        // banner's label is what proves the screen still renders it.
+        XCTAssertTrue(
+            app.staticTexts["GIFImageView"].waitForExistence(timeout: 5),
+            "GIFImageView demo banner should render above the list"
+        )
     }
 
     // MARK: - 11.3 Scrolling every section (cache/preload/force-refresh) doesn't crash
@@ -64,18 +65,6 @@ final class ImageLoadingUITests: XCTestCase {
     }
 
     // MARK: - Private
-
-    private func navigateToImageLoading() {
-        let imageLoadingRow = app.staticTexts["Image Loading"]
-        var swipes = 0
-        while !imageLoadingRow.isHittable && swipes < 12 {
-            app.swipeUp()
-            swipes += 1
-        }
-        XCTAssertTrue(imageLoadingRow.waitForExistence(timeout: 5), "Image Loading row must exist on home screen")
-        imageLoadingRow.tap()
-        XCTAssertTrue(app.navigationBars["Image Loading"].waitForExistence(timeout: 5), "Image Loading screen should appear")
-    }
 
     private func scrollToBottom(list: XCUIElement, swipes: Int) {
         for _ in 0..<swipes { list.swipeUp() }

@@ -1,9 +1,6 @@
 build/
 DerivedData/
 
-# CodeGraph — generated code-intelligence index (SQLite), like DerivedData
-.codegraph/
-
 # XcodeGen — project file is generated from project.yml, not committed
 *.xcodeproj/
 *.xcworkspace/
@@ -41,12 +38,3 @@ XCFramework/
 # Documentation
 # Jazzy docs are automatically generated and deployed to the gh-pages branch by CI.
 docs/
-
-# Claude Code local project settings
-.claude/
-openspec/
-
-# Local-only design notes / audits — not part of the published library
-FRAMEWORK_REVIEW.md
-NETWORK_LAYER_PROPOSAL.md
-proposals/

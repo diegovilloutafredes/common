@@ -10,13 +10,13 @@ import XCTest
 /// registered at runtime via `CTFontManagerRegisterGraphicsFont`.
 final class FontLoadingTests: XCTestCase {
 
-    private let varelaRound = AppFontFamily(rawValue: "varelaRound")
+    private let varelaRound = TestFonts.varelaRound
 
     override func setUp() {
         super.setUp()
-        // Process-global registration; the bulk variant logs and swallows the
-        // "already registered" error on repeat runs, so this is idempotent.
-        UIFont.register(fonts: [varelaRound], styles: [.regular], on: Bundle(for: Self.self))
+        // Registers once per process via the bulk API and fails LOUDLY if a
+        // genuine registration error is swallowed (see TestFonts).
+        TestFonts.ensureVarelaRoundRegistered()
     }
 
     override func tearDown() {

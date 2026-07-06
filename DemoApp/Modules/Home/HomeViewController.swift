@@ -21,7 +21,7 @@ final class HomeViewController: BaseCollectionViewableViewController<HomeViewMod
 
     override func setupView() {
         super.setupView()
-        title = viewModel.title
-        view.backgroundColor(.systemGroupedBackground)
+        backgroundColor(.systemGroupedBackground)
+        set(title: viewModel.title)
     }
 }

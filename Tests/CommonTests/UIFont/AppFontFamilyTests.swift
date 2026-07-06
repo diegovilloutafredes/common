@@ -50,9 +50,12 @@ final class AppFontFamilyTests: XCTestCase {
 
     // MARK: - UIFont.appFont(_:style:size:) — fallback
 
-    func test_unknownFamily_returnsNonNilFontAtRequestedSize() {
+    func test_unknownFamily_regularStyle_fallsBackToPlainSystemFont() {
         let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: .regular, size: 16)
         XCTAssertEqual(font.pointSize, 16)
+        // fontName (not just pointSize): a fallback that routed .regular through
+        // boldSystemFont would still be 16pt.
+        XCTAssertEqual(font.fontName, UIFont.systemFont(ofSize: 16).fontName)
     }
 
     func test_unknownFamily_boldStyle_returnsBoldSystemFont() {
@@ -69,23 +72,38 @@ final class AppFontFamilyTests: XCTestCase {
 
     // MARK: - UIFont.appFont(style:size:) — primary family
 
-    func test_noPrimaryFamily_returnsSystemFontAtRequestedSize() {
+    // These three drive the primary-family routing against the REALLY-registered
+    // VarelaRound fixture. Using an unresolvable family here is a tautology: its
+    // fallback output is byte-identical to the no-primary path, so a no-op
+    // setPrimaryFamily would pass.
+
+    func test_noPrimaryFamily_fallsBackToPlainSystemFont() {
         UIFont.setPrimaryFamily(nil)
         let font = UIFont.appFont(style: .regular, size: 13)
         XCTAssertEqual(font.pointSize, 13)
+        XCTAssertEqual(font.fontName, UIFont.systemFont(ofSize: 13).fontName)
     }
 
-    func test_setPrimaryFamily_subsequentCallsUseThatFamily() {
-        UIFont.setPrimaryFamily(AppFontFamily(rawValue: "NonExistentFamily"))
-        let font = UIFont.appFont(style: .bold, size: 20)
+    func test_setPrimaryFamily_subsequentCallsResolveThatFamily() {
+        TestFonts.ensureVarelaRoundRegistered()
+        UIFont.setPrimaryFamily(TestFonts.varelaRound)
+
+        let font = UIFont.appFont(style: .regular, size: 20)
+
+        XCTAssertEqual(font.fontName, TestFonts.postScriptName,
+                       "appFont(style:size:) must route through the primary family, not the system fallback")
         XCTAssertEqual(font.pointSize, 20)
-        XCTAssertEqual(font.fontDescriptor.symbolicTraits.contains(.traitBold), true)
     }
 
     func test_setPrimaryFamilyNil_clearsRegistration() {
-        UIFont.setPrimaryFamily(AppFontFamily(rawValue: "SomeFamily"))
+        TestFonts.ensureVarelaRoundRegistered()
+        UIFont.setPrimaryFamily(TestFonts.varelaRound)
         UIFont.setPrimaryFamily(nil)
+
         let font = UIFont.appFont(style: .regular, size: 11)
-        XCTAssertEqual(font.pointSize, 11)
+
+        XCTAssertNotEqual(font.fontName, TestFonts.postScriptName,
+                          "clearing the primary family must stop resolving to it")
+        XCTAssertEqual(font.fontName, UIFont.systemFont(ofSize: 11).fontName)
     }
 }

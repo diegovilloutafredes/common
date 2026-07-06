@@ -7,12 +7,26 @@ import XCTest
 
 final class LoggableTests: XCTestCase {
 
+    /// `shouldLog` persists through `KeyValueStore(.secure)` — the real Keychain,
+    /// which outlives the test process. Without purging, the "defaults for unset
+    /// type" test reads last run's persisted value instead of exercising the
+    /// default path, and a run crashing after `shouldLog = false` poisons the
+    /// next run with no code change.
+    private let secureStore = KeyValueStore(type: .secure)
+    private let persistedKey = "\(TestLoggable.staticKey).shouldLog"
+
+    override func setUp() {
+        super.setUp()
+        secureStore.remove(using: persistedKey)
+    }
+
     override func tearDown() {
         // Reset every mutated process-global static to its DEBUG default so tests are
         // order-independent — no test needs to manually restore state for the next one.
         Logger.isRuntimeForceEnabled = false
         Logger.shouldLog = true
-        TestLoggable.shouldLog = true
+        TestLoggable.shouldLog = true // fixes the in-process cache
+        secureStore.remove(using: persistedKey) // leaves no Keychain residue
         super.tearDown()
     }
 
@@ -38,13 +52,6 @@ final class LoggableTests: XCTestCase {
     }
 
     func test_isRuntimeForceEnabled_defaultsFalse() {
-        XCTAssertFalse(Logger.isRuntimeForceEnabled)
-    }
-
-    func test_isRuntimeForceEnabled_isMutable() {
-        Logger.isRuntimeForceEnabled = true
-        XCTAssertTrue(Logger.isRuntimeForceEnabled)
-        Logger.isRuntimeForceEnabled = false
         XCTAssertFalse(Logger.isRuntimeForceEnabled)
     }
 

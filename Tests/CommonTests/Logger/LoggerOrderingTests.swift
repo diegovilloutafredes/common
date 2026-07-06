@@ -7,29 +7,40 @@ import XCTest
 
 final class LoggerOrderingTests: XCTestCase {
 
-    /// Redirects stdout into a pipe for the duration of `block` and returns what was printed.
-    private func captureStdout(_ block: () -> Void) -> String {
-        let pipe = Pipe()
-        let savedStdout = dup(STDOUT_FILENO)
-        dup2(pipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO)
+    // Frames are captured through Logger's injectable sink — deterministic and
+    // concurrency-safe, unlike the previous dup2 stdout hijack (which deadlocks
+    // past the 64KB pipe buffer and races any other stdout writer).
 
-        block()
-        fflush(stdout)
+    private let lock = NSLock()
+    private var frames: [String] = []
 
-        dup2(savedStdout, STDOUT_FILENO)
-        close(savedStdout)
-        pipe.fileHandleForWriting.closeFile()
+    override func setUp() {
+        super.setUp()
+        frames = []
+        Logger.printHandler = { [weak self] frame in
+            guard let self else { return }
+            self.lock.lock()
+            self.frames.append(frame)
+            self.lock.unlock()
+        }
+    }
 
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        return String(data: data, encoding: .utf8) ?? .empty
+    override func tearDown() {
+        Logger.printHandler = { print($0) }
+        super.tearDown()
+    }
+
+    private var capturedFrames: [String] {
+        lock.lock()
+        defer { lock.unlock() }
+        return frames
     }
 
     func test_log_printsItemsInCallSiteOrder() {
         // Keys chosen so call-site order differs from alphabetical order.
-        let output = captureStdout {
-            Logger.log(["zulu": "1", "alpha": "2", "mike": "3"])
-        }
+        Logger.log(["zulu": "1", "alpha": "2", "mike": "3"])
 
+        guard let output = capturedFrames.first else { return XCTFail("Expected one frame") }
         guard
             let zulu = output.range(of: "zulu"),
             let alpha = output.range(of: "alpha"),
@@ -40,27 +51,39 @@ final class LoggerOrderingTests: XCTestCase {
         XCTAssertLessThan(alpha.lowerBound, mike.lowerBound, "call-site order should be preserved")
     }
 
-    func test_log_requestStyleOrdering() {
-        let output = captureStdout {
-            Logger.log(["request": "r", "response": "s", "error": "e"])
-        }
+    func test_log_singleItem_printsUnderItemKey() {
+        Logger.log("plain message")
 
-        guard
-            let request = output.range(of: "request"),
-            let response = output.range(of: "response"),
-            let error = output.range(of: "error")
-        else { return XCTFail("Expected all keys in output, got: \(output)") }
-
-        XCTAssertLessThan(request.lowerBound, response.lowerBound)
-        XCTAssertLessThan(response.lowerBound, error.lowerBound)
+        guard let output = capturedFrames.first else { return XCTFail("Expected one frame") }
+        // The composed line, not a loose substring: pins the key AND the
+        // title/value formatting (a bare contains("item") also matches the
+        // bundle id, key renames like "items", etc.).
+        XCTAssertTrue(output.contains("🔸 item: plain message"),
+                      "Any overload should log under the 'item' key, got: \(output)")
     }
 
-    func test_log_singleItem_printsUnderItemKey() {
-        let output = captureStdout {
-            Logger.log("plain message")
-        }
+    /// Pins the single-invocation frame-atomicity contract the logger commit
+    /// introduced: concurrent logs arrive as one COMPLETE frame each — a revert
+    /// to one print-per-line would deliver fragments here.
+    func test_log_concurrentCalls_emitOneCompleteFramePerCall() {
+        let logged = expectation(description: "all concurrent logs returned")
+        logged.expectedFulfillmentCount = 20
 
-        XCTAssertTrue(output.contains("item"), "Any overload should log under the 'item' key, got: \(output)")
-        XCTAssertTrue(output.contains("plain message"))
+        for index in 0..<20 {
+            DispatchQueue.global().async {
+                Logger.log(["index": "\(index)", "payload": "value-\(index)"])
+                logged.fulfill()
+            }
+        }
+        wait(for: [logged], timeout: 5)
+
+        let all = capturedFrames
+        XCTAssertEqual(all.count, 20, "exactly one sink invocation per log call")
+        for frame in all {
+            XCTAssertTrue(frame.contains("🎯"), "frame missing its top border: \(frame)")
+            XCTAssertTrue(frame.contains("🔸 Caller"), "frame missing its caller line: \(frame)")
+            XCTAssertTrue(frame.contains("🔸 index"), "frame missing its items: \(frame)")
+            XCTAssertTrue(frame.contains("🔸 payload"), "frame arrived fragmented: \(frame)")
+        }
     }
 }

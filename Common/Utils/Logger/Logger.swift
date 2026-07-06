@@ -7,7 +7,15 @@ import Foundation
 // MARK: - Logger
 /// A utility for logging messages and network requests to the console.
 public enum Logger {
-    
+
+    /// Output sink for complete log frames — exactly one invocation per `log`
+    /// call, carrying the entire frame. Internal and injectable so tests can
+    /// capture frames deterministically instead of hijacking stdout; the frame
+    /// atomicity (no interleaving under concurrent logging) is part of the
+    /// contract and is pinned by LoggerOrderingTests.
+    nonisolated(unsafe) internal static var printHandler: (String) -> Void = { print($0) }
+
+
     /// Logs a generic item to the console.
     /// - Parameters:
     ///   - caller: The calling function name.
@@ -90,11 +98,12 @@ public enum Logger {
         let topContent = [topUnderscores, topText, topUnderscores].joined(separator: " ")
         let bottomContent = [bottomUnderscores, bottomText, bottomUnderscores].joined(separator: " ")
 
-        // Emit the whole frame in a single print so concurrent logs can't interleave lines.
+        // Emit the whole frame in a single sink invocation so concurrent logs
+        // can't interleave lines.
         let lines = ["\n\(topContent)", item(title: "Caller", value: caller)]
             + orderedItems.map { item(title: $0.0, value: $0.1) }
             + ["\(bottomContent)\n"]
-        print(lines.joined(separator: "\n"))
+        printHandler(lines.joined(separator: "\n"))
     }
 }
 

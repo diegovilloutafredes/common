@@ -4,55 +4,49 @@
 
 import XCTest
 
-final class DemoAppUITests: XCTestCase {
+final class DemoAppUITests: UITestCase {
 
-    var app: XCUIApplication!
-
-    override func setUp() {
-        super.setUp()
-        continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
-    }
-
-    override func tearDown() {
-        app = nil
-        super.tearDown()
-    }
+    /// All 13 home rows, in HomeViewModel's order — the single source of truth
+    /// for module-existence assertions. A renamed or removed row must break
+    /// HERE, loudly, not silently shrink coverage.
+    static let allModules = [
+        "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
+        "Local Authentication", "Extensions", "Onboarding", "Forms & TextFields",
+        "Lists & Cells", "Utilities", "Coordinator", "Image Loading", "Typography"
+    ]
 
     // MARK: - Navigation
 
     func test_homeScreen_showsAllModules() {
-        let modules = [
-            "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
-            "Extensions", "Lists & Cells", "Utilities"
-        ]
-        for module in modules {
+        for module in Self.allModules {
             scrollUntilVisible(app.staticTexts[module])
             XCTAssertTrue(app.staticTexts[module].exists, "Missing module: \(module)")
         }
     }
 
     /// One parameterized test replaces the seven near-identical per-module push/pop tests.
-    /// The coordinator push/pop/set mechanics themselves are exhaustively unit-tested in
+    /// The coordinator push/pop/set stack mechanics and child lifecycle are unit-tested in
     /// BaseCoordinatorTests; this only confirms each module is wired into the live app and
     /// returns home on back.
     func test_navigation_eachModule_pushesAndPopsBackHome() {
         let modules = [
-            "Declarative UI", "Networking", "Storage",
+            "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
             "Extensions", "Lists & Cells", "Onboarding", "Utilities"
         ]
         for module in modules {
-            // Modules sit at different scroll offsets; reset to top, then reveal this one.
-            for _ in 0..<8 { app.swipeDown() }
-            scrollUntilVisible(app.staticTexts[module])
-            app.staticTexts[module].tap()
+            // Route through openModule (reset-to-top + retry) like every other navigation,
+            // so this high-traffic loop can't momentum-miss a tap. The landmark is the
+            // pushed screen's own nav title — proof the RIGHT module opened, not merely
+            // that "something pushed". Exception: Onboarding sets no nav title, so its
+            // landmark falls back to the back button (absent on home, present after a push).
+            let landmark: XCUIElement = module == "Onboarding"
+                ? app.navigationBars.buttons.firstMatch
+                : app.navigationBars[module]
+            openModule(module, until: landmark)
 
-            let backButton = app.navigationBars.buttons.firstMatch
-            XCTAssertTrue(backButton.waitForExistence(timeout: 10), "Back button should appear after pushing \(module)")
-            backButton.tap()
+            app.navigationBars.buttons.firstMatch.tap()
 
-            XCTAssertTrue(app.staticTexts[module].waitForExistence(timeout: 5), "Should return home after popping \(module)")
+            XCTAssertTrue(app.staticTexts[module].waitForExistence(timeout: uiTimeout), "Should return home after popping \(module)")
         }
     }
 
@@ -66,7 +60,7 @@ final class DemoAppUITests: XCTestCase {
         let defaultStatus = "Tap Fetch to load posts from JSONPlaceholder API"
         let statusChanged = NSPredicate(format: "label != %@", defaultStatus)
         let statusLabel = app.staticTexts.matching(statusChanged).firstMatch
-        XCTAssertTrue(statusLabel.waitForExistence(timeout: 15), "Status should update after fetch")
+        XCTAssertTrue(statusLabel.waitForExistence(timeout: networkTimeout), "Status should update after fetch")
 
         XCTAssertGreaterThan(app.cells.count, 0, "Post list should be non-empty")
     }
@@ -85,7 +79,7 @@ final class DemoAppUITests: XCTestCase {
         let defaultStatus = "Tap Fetch to load posts from JSONPlaceholder API"
         let statusChanged = NSPredicate(format: "label != %@", defaultStatus)
         let statusLabel = app.staticTexts.matching(statusChanged).firstMatch
-        XCTAssertTrue(statusLabel.waitForExistence(timeout: 15), "Status should update after async fetch")
+        XCTAssertTrue(statusLabel.waitForExistence(timeout: networkTimeout), "Status should update after async fetch")
 
         XCTAssertGreaterThan(app.cells.count, 0, "Post list should be non-empty")
     }
@@ -101,8 +95,8 @@ final class DemoAppUITests: XCTestCase {
         let callbackDone = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS[c] 'callback' OR label CONTAINS[c] 'mock' OR label CONTAINS[c] 'error'")
         ).firstMatch
-        XCTAssertTrue(callbackDone.waitForExistence(timeout: 15), "Callback fetch should complete")
-        XCTAssertTrue(app.cells.firstMatch.waitForExistence(timeout: 15), "Callback fetch should load posts")
+        XCTAssertTrue(callbackDone.waitForExistence(timeout: networkTimeout), "Callback fetch should complete")
+        XCTAssertTrue(app.cells.firstMatch.waitForExistence(timeout: networkTimeout), "Callback fetch should load posts")
 
         // Switching method and re-fetching deletes the data and reloads it; the async-method
         // status only appears because a fresh fetch ran (the list was cleared first).
@@ -111,8 +105,8 @@ final class DemoAppUITests: XCTestCase {
         let asyncDone = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS[c] 'async' OR label CONTAINS[c] 'mock' OR label CONTAINS[c] 'error'")
         ).firstMatch
-        XCTAssertTrue(asyncDone.waitForExistence(timeout: 15), "Async re-fetch should complete")
-        XCTAssertTrue(app.cells.firstMatch.waitForExistence(timeout: 15), "Async re-fetch should reload posts")
+        XCTAssertTrue(asyncDone.waitForExistence(timeout: networkTimeout), "Async re-fetch should complete")
+        XCTAssertTrue(app.cells.firstMatch.waitForExistence(timeout: networkTimeout), "Async re-fetch should reload posts")
     }
 
     // MARK: - Storage — UserDefaults
@@ -127,7 +121,7 @@ final class DemoAppUITests: XCTestCase {
     func test_storage_fileStorage_saveReadDelete() {
         navigateToStorage()
         let fileStorageSave = app.buttons.matching(identifier: "Save").element(boundBy: 1)
-        while !fileStorageSave.isHittable { app.swipeUp() }
+        scrollUntilVisible(fileStorageSave)
         exerciseStorageBackend(index: 1, name: "FileStorage")
     }
 
@@ -137,7 +131,14 @@ final class DemoAppUITests: XCTestCase {
         navigateToStorage()
         // Scroll until the Keychain Save button is hittable
         let keychainSave = app.buttons.matching(identifier: "Save").element(boundBy: 2)
-        while !keychainSave.isHittable { app.swipeUp() }
+        scrollUntilVisible(keychainSave)
+        // DOCUMENTED TOLERANCE: on unsigned simulator test builds
+        // (CODE_SIGNING_ALLOWED=NO) the keychain reports a successful save but
+        // the item does not persist, so Read legitimately answers "Nothing
+        // stored in" — verified empirically 2026-07 by tightening this to
+        // ["Read:"] and watching it fail. The tolerance covers that environment
+        // limitation ONLY; the save→read round-trip is a known sim-signing gap,
+        // not a covered behavior.
         exerciseStorageBackend(index: 2, name: "Keychain", readPrefixes: ["Read:", "Nothing stored in"])
     }
 
@@ -145,8 +146,7 @@ final class DemoAppUITests: XCTestCase {
     /// Layout correctness ("not stretched") is a visual check via the attached screenshot —
     /// it is not (and cannot be) programmatically asserted via XCUITest.
     func test_localAuth_screenRenders() {
-        app.staticTexts["Local Authentication"].tap()
-        XCTAssertTrue(app.navigationBars["Local Authentication"].waitForExistence(timeout: 3))
+        openModule("Local Authentication", until: app.navigationBars["Local Authentication"])
         XCTAssertTrue(app.buttons["Authenticate"].exists, "Authenticate button should render")
         add(XCTAttachment(screenshot: app.screenshot()))
     }
@@ -359,28 +359,15 @@ final class DemoAppUITests: XCTestCase {
 private extension DemoAppUITests {
 
     func navigateToExtensions() {
-        app.staticTexts["Extensions"].tap()
-        XCTAssertTrue(app.navigationBars["Extensions"].waitForExistence(timeout: 3))
+        openModule("Extensions", until: app.navigationBars["Extensions"])
     }
 
     func navigateToLists() {
-        scrollUntilVisible(app.staticTexts["Lists & Cells"])
-        app.staticTexts["Lists & Cells"].tap()
-        XCTAssertTrue(app.navigationBars["Lists & Cells"].waitForExistence(timeout: 3))
+        openModule("Lists & Cells", until: app.navigationBars["Lists & Cells"])
     }
 
     func navigateToUtilities() {
-        scrollUntilVisible(app.staticTexts["Utilities"])
-        app.staticTexts["Utilities"].tap()
-        XCTAssertTrue(app.navigationBars["Utilities"].waitForExistence(timeout: 3))
-    }
-
-    func scrollUntilVisible(_ element: XCUIElement, maxSwipes: Int = 10) {
-        var swipes = 0
-        while !element.isHittable && swipes < maxSwipes {
-            app.swipeUp()
-            swipes += 1
-        }
+        openModule("Utilities", until: app.navigationBars["Utilities"])
     }
 }
 
@@ -391,20 +378,6 @@ private extension DemoAppUITests {
     func navigateToForms() {
         openModule("Forms & TextFields", until: app.buttons["Submit"])
     }
-
-    /// Opens a module from the home list, retrying the cell tap until `landmark` appears.
-    /// The home-list cell tap can miss during scroll momentum, so on a miss this resets
-    /// the list to the top and tries again.
-    func openModule(_ name: String, until landmark: XCUIElement) {
-        let cell = app.staticTexts[name]
-        for _ in 0..<4 {
-            scrollUntilVisible(cell)
-            cell.tap()
-            if landmark.waitForExistence(timeout: 4) { return }
-            for _ in 0..<10 { app.swipeDown() }
-        }
-        XCTAssertTrue(landmark.waitForExistence(timeout: 4), "\(name) screen failed to open")
-    }
 }
 
 // MARK: - Storage helpers
@@ -412,8 +385,7 @@ private extension DemoAppUITests {
 private extension DemoAppUITests {
 
     func navigateToStorage() {
-        app.staticTexts["Storage"].tap()
-        XCTAssertTrue(app.staticTexts["UserDefaults"].waitForExistence(timeout: 3))
+        openModule("Storage", until: app.staticTexts["UserDefaults"])
     }
 
     func exerciseStorageBackend(index: Int, name: String, readPrefixes: [String] = ["Read:"]) {

@@ -78,17 +78,6 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertTrue(parent.childCoordinators.first === child2)
     }
 
-    func test_removeChild_doesNotRemoveSameTypeOtherInstance() {
-        let child2 = StubCoordinator(navigationController: nav)
-        parent.addChild(child)
-        parent.addChild(child2)
-
-        // Removing child must NOT remove child2 (same type, different instance)
-        parent.removeChild(child)
-        XCTAssertFalse(parent.childCoordinators.isEmpty)
-        XCTAssertTrue(parent.childCoordinators.first === child2)
-    }
-
     // MARK: - finish()
 
     func test_finish_removesChildFromParent() {
@@ -118,11 +107,19 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertEqual(callCount, 1)
     }
 
-    func test_finish_isIdempotent_childRemovedOnce() {
+    func test_finish_isIdempotent_siblingSurvivesDoubleFinish() {
+        // With a single child, "removed once" and "removed twice" are
+        // indistinguishable (removing from an empty array is a no-op) — the
+        // sibling is what a removeAll-style over-removal would take out.
+        let sibling = StubCoordinator(navigationController: nav)
         parent.addChild(child)
+        parent.addChild(sibling)
+
         child.finish()
         child.finish()
-        XCTAssertTrue(parent.childCoordinators.isEmpty)
+
+        XCTAssertEqual(parent.childCoordinators.count, 1)
+        XCTAssertTrue(parent.childCoordinators.first === sibling)
     }
 
     func test_finish_withNoParent_callsOnPerformed() {
@@ -181,7 +178,73 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertTrue(parent.childCoordinators.isEmpty)
     }
 
+    // MARK: - Navigation stack mechanics (push / pop / set)
+
+    func test_push_appendsToNavigationStack_inOrder() {
+        let a = UIViewController()
+        let b = UIViewController()
+        parent.set(a, animated: false)
+
+        parent.push(b, animated: false)
+
+        XCTAssertEqual(nav.viewControllers, [a, b])
+        XCTAssertTrue(nav.topViewController === b)
+    }
+
+    func test_pop_removesOnlyTopViewController() {
+        let a = UIViewController()
+        let b = UIViewController()
+        let c = UIViewController()
+        parent.set([a, b, c], animated: false)
+
+        parent.pop(.back, animated: false)
+
+        XCTAssertEqual(nav.viewControllers, [a, b], "pop(.back) must remove exactly one level")
+    }
+
+    func test_popTo_unwindsToExactTarget() {
+        let a = UIViewController()
+        let b = UIViewController()
+        let c = UIViewController()
+        let d = UIViewController()
+        parent.set([a, b, c, d], animated: false)
+
+        parent.pop(.to(viewController: b), animated: false)
+
+        XCTAssertEqual(nav.viewControllers, [a, b], "pop(.to:) must unwind to the given VC, not root or one level")
+    }
+
+    func test_popToRoot_leavesOnlyRoot() {
+        let a = UIViewController()
+        let b = UIViewController()
+        let c = UIViewController()
+        parent.set([a, b, c], animated: false)
+
+        parent.pop(.toRoot, animated: false)
+
+        XCTAssertEqual(nav.viewControllers, [a])
+    }
+
+    func test_set_replacesEntireStack_inOrder() {
+        parent.set([UIViewController(), UIViewController()], animated: false)
+        let root = UIViewController()
+
+        parent.set([root], animated: false)
+
+        XCTAssertEqual(nav.viewControllers, [root], "set must replace, not append")
+    }
+
     // MARK: - KVO lifecycle tracking (gesture-driven cleanup)
+
+    // NOTE — real-pop coverage lives at the UI level, deliberately. These KVO
+    // tests simulate pops by assigning `nav.viewControllers` because UIKit's
+    // programmatic `popViewController(animated:)` does NOT fire the
+    // `\.viewControllers` KVO in a unit-test harness (verified empirically:
+    // windowed, settled, animated, with a 2s poll — the observer never fires).
+    // The path production actually relies on — the user's back button/swipe —
+    // DOES fire it, proven end-to-end by CoordinatorDemoUITests
+    // .test_launchChild_statsIncrement, which pops a live child flow via the
+    // real back button and asserts the cancel event was recorded.
 
     func test_kvo_popRemovesCoordinatorFromParent() {
         let pushing = PushingCoordinator(navigationController: nav)

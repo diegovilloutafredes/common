@@ -10,12 +10,6 @@ import Common
 final class AppCoordinator: BaseCoordinator, HomeCoordinatorProtocol {
     override func start() {
         set(HomeWireframe.createModule(coordinator: self))
-        if ProcessInfo.processInfo.arguments.contains("-SmokeTestSnackbar") {
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(1))
-                Snackbar.show(.init(message: "Testing snackbar margins", duration: .long))
-            }
-        }
     }
 
     func showDeclarativeUI() {

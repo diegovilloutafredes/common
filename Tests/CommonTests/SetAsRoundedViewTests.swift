@@ -91,6 +91,14 @@ final class SetAsRoundedViewTests: XCTestCase {
         view.setAsRoundedView(using: topCorners)
         XCTAssertEqual(view.layer.maskedCorners, topCorners)
         XCTAssertEqual(view.layer.cornerRadius, 20)
+
+        // Pill mode re-applies on every layout pass from stored state — a
+        // re-application that defaults back to all corners silently un-rounds
+        // a top-corners pill after the first resize/rotation.
+        view.frame = .init(x: 0, y: 0, width: 100, height: 60)
+        view.layoutSubviews()
+        XCTAssertEqual(view.layer.maskedCorners, topCorners, "re-application must keep the stored corners")
+        XCTAssertEqual(view.layer.cornerRadius, 30)
     }
 
     // MARK: - onLayoutSubviews queue (multi-handler)

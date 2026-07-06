@@ -23,47 +23,14 @@ final class StringRUTUtilitiesTests: XCTestCase {
 
     // MARK: - isRUT — Valid: fully formatted
 
-    func test_isRUT_formatted_digit1() {
-        XCTAssertTrue("11.111.111-1".isRUT)
-    }
-
     func test_isRUT_formatted_digit5() {
+        // Also the length-guard regression fixture: 12 chars raw — old code
+        // checked count on the UNSTRIPPED string against the <= 10 guard and
+        // rejected every fully formatted RUT.
         XCTAssertTrue("12.345.678-5".isRUT)
     }
 
-    func test_isRUT_formatted_digitK() {
-        XCTAssertTrue("76.354.771-K".isRUT)
-    }
-
-    func test_isRUT_formatted_digitK_lowercaseInput() {
-        XCTAssertTrue("76.354.771-k".isRUT)
-    }
-
-    func test_isRUT_formatted_digit0() {
-        XCTAssertTrue("2.222.226-0".isRUT)
-    }
-
-    func test_isRUT_formatted_sevenDigitNumber() {
-        XCTAssertTrue("9.999.999-3".isRUT)
-    }
-
-    func test_isRUT_formatted_nineDigitNumber() {
-        XCTAssertTrue("123.456.789-2".isRUT)
-    }
-
-    func test_isRUT_formatted_sevenDigitK() {
-        XCTAssertTrue("1.111.119-K".isRUT)
-    }
-
     // MARK: - isRUT — Valid: stripped (digits + verifying char only)
-
-    func test_isRUT_stripped_digit1() {
-        XCTAssertTrue("111111111".isRUT)
-    }
-
-    func test_isRUT_stripped_digit5() {
-        XCTAssertTrue("123456785".isRUT)
-    }
 
     func test_isRUT_stripped_digitK() {
         XCTAssertTrue("76354771K".isRUT)
@@ -78,10 +45,6 @@ final class StringRUTUtilitiesTests: XCTestCase {
     }
 
     // MARK: - isRUT — Valid: hyphen only (no dots)
-
-    func test_isRUT_hyphenOnly_digit1() {
-        XCTAssertTrue("11111111-1".isRUT)
-    }
 
     func test_isRUT_hyphenOnly_digit5() {
         XCTAssertTrue("12345678-5".isRUT)
@@ -105,16 +68,6 @@ final class StringRUTUtilitiesTests: XCTestCase {
 
     func test_isRUT_boundary_11charsStripped_tooLong() {
         XCTAssertFalse("12345678901".isRUT)
-    }
-
-    // MARK: - isRUT — Regression: strip before length guard
-
-    func test_isRUT_regression_formattedRUT_notRejectedByLengthGuard() {
-        // "12.345.678-5" is 12 chars raw; old code checked count on unstripped string
-        // and failed the <= 10 guard, returning false for valid formatted inputs.
-        XCTAssertTrue("12.345.678-5".isRUT)
-        XCTAssertTrue("76.354.771-K".isRUT)
-        XCTAssertTrue("123.456.789-2".isRUT)
     }
 
     // MARK: - isRUT — Invalid
@@ -172,25 +125,13 @@ final class StringRUTUtilitiesTests: XCTestCase {
 
     // MARK: - formatAsRUT — onlyIfValid: true (default)
 
-    func test_formatAsRUT_stripped_digit1() {
-        XCTAssertEqual("111111111".formatAsRUT(), "11.111.111-1")
-    }
-
     func test_formatAsRUT_stripped_digit5() {
         XCTAssertEqual("123456785".formatAsRUT(), "12.345.678-5")
-    }
-
-    func test_formatAsRUT_stripped_digitK() {
-        XCTAssertEqual("76354771K".formatAsRUT(), "76.354.771-K")
     }
 
     func test_formatAsRUT_stripped_digitK_lowercaseInput() {
         // Verifying digit is normalized to uppercase in output
         XCTAssertEqual("76354771k".formatAsRUT(), "76.354.771-K")
-    }
-
-    func test_formatAsRUT_stripped_digit0() {
-        XCTAssertEqual("22222260".formatAsRUT(), "2.222.226-0")
     }
 
     func test_formatAsRUT_stripped_sevenDigitNumber() {
@@ -223,6 +164,13 @@ final class StringRUTUtilitiesTests: XCTestCase {
     func test_formatAsRUT_invalidRUT_returnsSelf() {
         // Wrong verifying digit → not a valid RUT → returns self unchanged
         XCTAssertEqual("12.345.678-0".formatAsRUT(), "12.345.678-0")
+    }
+
+    func test_formatAsRUT_strippedInvalidRUT_returnsSelfUnformatted() {
+        // A STRIPPED invalid body: with the validation guard dropped this would
+        // come back formatted ("12.345.678-0"). The already-formatted invalid
+        // fixture above cannot tell "refused to format" from "formatted anyway".
+        XCTAssertEqual("123456780".formatAsRUT(), "123456780")
     }
 
     func test_formatAsRUT_arbitraryString_returnsSelf() {

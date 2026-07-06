@@ -11,10 +11,6 @@ import XCTest
 /// no "now" — so results are deterministic on any CI timezone.
 final class DateStringConversionTests: XCTestCase {
 
-    func test_validString_parsesToDate() {
-        XCTAssertNotNil("2026-06-10".asDate(with: "yyyy-MM-dd"))
-    }
-
     func test_parseThenFormat_roundTrips() {
         let date = "2026-06-10".asDate(with: "yyyy-MM-dd")
         XCTAssertEqual(date?.toString(with: "yyyy-MM-dd"), "2026-06-10")
@@ -32,6 +28,14 @@ final class DateStringConversionTests: XCTestCase {
         XCTAssertEqual(components.day, 10)
         XCTAssertEqual(components.hour, 15)
         XCTAssertEqual(components.minute, 30)
+
+        // The explicit expected Date pins the current-zone contract in EVERY
+        // region: a formatter accidentally pinned to UTC passes the component
+        // checks on a UTC CI host but fails this equality everywhere.
+        let expected = Calendar.current.date(
+            from: DateComponents(year: 2026, month: 6, day: 10, hour: 15, minute: 30)
+        )
+        XCTAssertEqual(date, expected)
     }
 
     func test_mismatchedFormat_returnsNil() {

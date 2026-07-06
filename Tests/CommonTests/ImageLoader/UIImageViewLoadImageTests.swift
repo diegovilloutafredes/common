@@ -57,24 +57,49 @@ final class UIImageViewLoadImageTests: XCTestCase {
         XCTAssertEqual(imageView.image, placeholder, "Placeholder must be set synchronously")
     }
 
-    // MARK: - 9.4 Cell-reuse cancellation: only urlB's image is applied
+    // MARK: - 9.4 Cell-reuse cancellation: the stale slow result never lands
 
-    func test_loadImage_cellReuse_onlyLatestURLApplied() async throws {
+    func test_loadImage_cellReuse_staleSlowResultNeverLands() async throws {
         let urlA = URL(string: "https://uiimageview-test.example.com/a.png")!
         let urlB = URL(string: "https://uiimageview-test.example.com/b.png")!
 
-        // A is slow; B is fast via L1 cache
-        cache.storeInMemory(UIImage(data: makeTestPNGData())!, for: urlB)
+        // A is slow (network); B is fast via L1 cache and a DISTINGUISHABLE instance —
+        // asserting identity is what separates "B landed" from "A landed late".
+        let imageB = UIImage(data: makeTestPNGData())!
+        cache.storeInMemory(imageB, for: urlB)
         ImageMockURLProtocol.responseDelay = 0.5
 
         let expectationB = expectation(description: "B loaded")
-        imageView.loadImage(from: urlA, loader: loader) // starts, will be cancelled
+        imageView.loadImage(from: urlA, loader: loader) // superseded by the reuse
         imageView.loadImage(from: urlB, options: ImageLoadOptions(onCompletion: { _ in
             expectationB.fulfill()
         }), loader: loader)
 
         await fulfillment(of: [expectationB], timeout: 3)
-        XCTAssertNotNil(imageView.image, "Image should be set to urlB's result")
+        XCTAssertTrue(imageView.image === imageB, "urlB's cached instance should be displayed")
+
+        // The race this test exists for happens AFTER B lands: wait past A's slow
+        // response and prove the stale image never overwrites B's.
+        try await Task.sleep(nanoseconds: 700_000_000)
+        XCTAssertTrue(imageView.image === imageB,
+                      "the superseded slow load (urlA) must never overwrite the current image")
+    }
+
+    // MARK: - Cache hits skip the fade transition
+
+    func test_loadImage_cacheHit_skipsFadeTransition() async throws {
+        let cached = UIImage(data: makeTestPNGData())!
+        cache.storeInMemory(cached, for: testURL)
+
+        let done = expectation(description: "completion")
+        let options = ImageLoadOptions(transition: .fade(0.25), onCompletion: { _ in done.fulfill() })
+        imageView.loadImage(from: testURL, options: options, loader: loader)
+        await fulfillment(of: [done], timeout: 3)
+
+        // The fade path drops alpha to 0 before animating back; the cache path
+        // must never touch alpha — a fade on every scroll-back is visible flicker.
+        XCTAssertEqual(imageView.alpha, 1, "cache hits must not animate")
+        XCTAssertTrue(imageView.image === cached)
     }
 
     // MARK: - 9.5 onCompletion called with .success

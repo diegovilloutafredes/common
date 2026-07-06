@@ -36,20 +36,6 @@ Or in Xcode: **File → Add Package Dependencies…** and enter the repository U
 
 > **Binary distribution:** Common ships as a prebuilt XCFramework (binary target compiled with `BUILD_LIBRARY_FOR_DISTRIBUTION=YES`). You get ABI-stable symbols and do not build from source. The resolved package resolves to the xcframework committed at the tagged version.
 
-### Claude Code skill (optional)
-
-A `/common-framework` skill is bundled at `.claude/skills/common-framework.md`. It gives Claude Code a distilled reference of all patterns, templates, and gotchas so it can generate correct Common-based code without reading the full guide each time.
-
-Install it globally so it's available in any project:
-
-```bash
-cp .build/checkouts/common/.claude/skills/common-framework.md ~/.claude/skills/
-# or if you have the repo cloned:
-cp path/to/common/.claude/skills/common-framework.md ~/.claude/skills/
-```
-
-Then type `/common-framework` at the start of any Claude Code session where you're building with Common.
-
 ---
 
 ## What you can build

@@ -15,6 +15,10 @@ final class FontRegisterErrorTests: XCTestCase {
 
         // Font registration is process-global: the first registration may have
         // already happened in another test (e.g. FontLoadingTests). Ensure it.
+        // CAVEAT (shared fixture): this direct-filename registration can mask a
+        // broken bulk-API filename composition under randomized ordering —
+        // FontLoadingTests defends itself by asserting its own registration
+        // outcome loudly (TestFonts.ensureVarelaRoundRegistered).
         try? UIFont.register("VarelaRound-Regular", type: "ttf", on: bundle)
 
         XCTAssertThrowsError(try UIFont.register("VarelaRound-Regular", type: "ttf", on: bundle)) { error in

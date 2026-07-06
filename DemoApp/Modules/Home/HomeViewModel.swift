@@ -5,15 +5,8 @@
 
 import Common
 
-// MARK: - DemoFeature
-struct DemoFeature {
-    let title: String
-    let subtitle: String
-    let action: () -> Void
-}
-
 // MARK: - HomeViewModelProtocol
-protocol HomeViewModelProtocol: ViewModel, CollectionViewable {
+protocol HomeViewModelProtocol: CollectionViewable, ViewModel {
     var title: String { get }
 }
 

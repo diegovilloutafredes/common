@@ -37,17 +37,9 @@ final class InMemoryKeyValueStorageTests: XCTestCase {
         XCTAssertEqual(result, "hello")
     }
 
-    func test_roundTrip_int() {
-        storage.add(item: ("count", 42))
-        let result: Int? = storage.get(using: "count")
-        XCTAssertEqual(result, 42)
-    }
-
-    func test_roundTrip_bool() {
-        storage.add(item: ("flag", true))
-        let result: Bool? = storage.get(using: "flag")
-        XCTAssertEqual(result, true)
-    }
+    // int/bool round-trips were dropped: every Storable type traverses the same
+    // asData()/decoded() path (no per-type branching), so the string + struct
+    // pair covers the encoding surface.
 
     func test_roundTrip_codableStruct() {
         let item = Item(id: 7, label: "widget")
@@ -85,6 +77,59 @@ final class InMemoryKeyValueStorageTests: XCTestCase {
         case .success(let value): XCTAssertNil(value)
         case .failure: XCTFail("Expected .success(nil) for missing key")
         }
+    }
+
+    // MARK: - Result-based API (error propagation)
+
+    func test_tryAdd_writesAndRoundTrips() {
+        let item = Item(id: 1, label: "a")
+
+        let result = storage.tryAdd(item: ("key", item))
+
+        guard case .success = result else { return XCTFail("Expected .success, got \(result)") }
+        let read: Item? = storage.get(using: "key")
+        XCTAssertEqual(read, item, "tryAdd must actually write the value")
+    }
+
+    func test_tryGet_typeMismatch_returnsDecodingFailed() {
+        storage.add(item: ("key", "just a string"))
+
+        let result: Result<Item?, StorageError> = storage.tryGet(using: "key")
+
+        // Present-but-undecodable data must surface as an error, not be silently
+        // converted into "key not found".
+        guard case .failure(.decodingFailed) = result else {
+            return XCTFail("Expected .failure(.decodingFailed), got \(result)")
+        }
+    }
+
+    func test_tryRemove_clearsKeyAndSucceeds() {
+        storage.add(item: ("key", "value"))
+
+        let result = storage.tryRemove(using: "key")
+
+        guard case .success = result else { return XCTFail("Expected .success, got \(result)") }
+        let read: String? = storage.get(using: "key")
+        XCTAssertNil(read)
+    }
+
+    // MARK: - KeyValueStore facade delegation
+
+    func test_keyValueStoreFacade_delegatesToInjectedBackend() {
+        let backend = InMemoryKeyValueStorage()
+        let store = KeyValueStore(keyValueStorage: backend)
+        let item = Item(id: 3, label: "delegated")
+
+        store.add(item: ("key", item))
+
+        let viaFacade: Item? = store.get(using: "key")
+        let viaBackend: Item? = backend.get(using: "key")
+        XCTAssertEqual(viaFacade, item)
+        XCTAssertEqual(viaBackend, item, "the facade must delegate to the injected backend, not its own storage")
+
+        store.remove(using: "key")
+        let afterRemove: Item? = backend.get(using: "key")
+        XCTAssertNil(afterRemove)
     }
 
     // MARK: - StorageError localizedDescription
