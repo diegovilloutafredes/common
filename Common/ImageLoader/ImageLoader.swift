@@ -43,7 +43,10 @@ public actor ImageLoader {
 
         // Deduplication: join existing in-flight task if present
         if let existing = inFlightTasks[url] {
-            return ImageResult(image: try await existing.value, source: .network)
+            let image = try await existing.value
+            // Don't deliver to a caller whose task was cancelled while waiting.
+            try Task.checkCancellation()
+            return ImageResult(image: image, source: .network)
         }
 
         // Network fetch — store task for deduplication
@@ -52,7 +55,11 @@ public actor ImageLoader {
         }
         inFlightTasks[url] = task
         defer { inFlightTasks.removeValue(forKey: url) }
-        return ImageResult(image: try await task.value, source: .network)
+        let image = try await task.value
+        // The fetch runs on an unstructured task, so the awaiting caller's
+        // cancellation doesn't propagate into it — check before delivering.
+        try Task.checkCancellation()
+        return ImageResult(image: image, source: .network)
     }
 
     /// Loads and returns the image for `url`, using L1 → L2 → network lookup order.
@@ -81,10 +88,18 @@ public actor ImageLoader {
         }
     }
 
-    /// Cancels all in-flight preload tasks started by `preload(urls:)`.
+    /// Cancels all in-flight preload fetches started by `preload(urls:)` —
+    /// nothing is stored to cache once cancelled. A concurrent normal load that
+    /// joined a preloaded URL receives a cancellation error (preloading is
+    /// best-effort; so is cancelling it).
     public func cancelPreloads() {
         for url in preloadTasks.keys {
             preloadTasks[url]?.cancel()
+            // Cancel the underlying fetch too — cancelling only the wrapper
+            // would let the network request complete and store to cache. For a
+            // preload URL the in-flight task IS the preload-originated fetch
+            // (normal loads join it, they never replace it).
+            inFlightTasks[url]?.cancel()
             inFlightTasks.removeValue(forKey: url)
         }
         preloadTasks.removeAll()
@@ -94,6 +109,8 @@ public actor ImageLoader {
 
     private func fetchAndStore(url: URL) async throws -> UIImage {
         let (data, response) = try await session.data(from: url)
+        // A cancellation that raced the response must not store to cache.
+        try Task.checkCancellation()
 
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
             throw ImageLoaderError.badResponse(statusCode: http.statusCode)

@@ -26,10 +26,23 @@ func makeTestPNGData(size: CGSize = CGSize(width: 1, height: 1)) -> Data {
 /// Field-based mock URLProtocol shared by the image test suites. Delivers a synthetic
 /// HTTP response after `responseDelay`, counting requests for cache-hit assertions.
 final class ImageMockURLProtocol: URLProtocol {
-    static var requestCount = 0
+    // URLSession drives startLoading on its own work queue while tests read
+    // these from the test thread — every access goes through `stateLock` so
+    // count-based asserts can't race (a TSan finding waiting to happen).
+    private static let stateLock = NSLock()
+    private static var _requestCount = 0
+    static var requestCount: Int {
+        get { stateLock.lock(); defer { stateLock.unlock() }; return _requestCount }
+        set { stateLock.lock(); _requestCount = newValue; stateLock.unlock() }
+    }
     static var responseDelay: TimeInterval = 0
     static var statusCode: Int = 200
     static var responseData: Data?
+
+    /// Set by `stopLoading` so a cancelled request doesn't deliver its delayed
+    /// response anyway — delivering after stopLoading violates the URLProtocol
+    /// contract and injects noise into exactly the cancellation tests.
+    private var stopped = false
 
     /// Resets all static state to defaults. Call in each suite's setUp.
     static func reset() {
@@ -49,7 +62,7 @@ final class ImageMockURLProtocol: URLProtocol {
         let data = ImageMockURLProtocol.responseData
 
         DispatchQueue.global().asyncAfter(deadline: .now() + delay) { [weak self] in
-            guard let self else { return }
+            guard let self, !self.stopped else { return }
             let url = self.request.url ?? URL(string: "https://mock")!
             let response = HTTPURLResponse(url: url, statusCode: code, httpVersion: nil, headerFields: ["Content-Type": "image/png"])!
             self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
@@ -60,5 +73,7 @@ final class ImageMockURLProtocol: URLProtocol {
         }
     }
 
-    override func stopLoading() {}
+    override func stopLoading() {
+        stopped = true
+    }
 }

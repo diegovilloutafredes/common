@@ -6,12 +6,15 @@ import UIKit
 
 // MARK: - Helpers
 
-private func makeTestLoader() -> (ImageLoader, ImageCache, URL) {
+private func makeTestLoader(cleanupWith testCase: XCTestCase) -> (ImageLoader, ImageCache, URL) {
     let config = URLSessionConfiguration.ephemeral
     config.protocolClasses = [ImageMockURLProtocol.self]
     let session = URLSession(configuration: config)
     let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+    // Sibling suites clean their temp dirs in tearDown; register cleanup at
+    // creation so this suite stops leaking ~11 directories per run.
+    testCase.addTeardownBlock { try? FileManager.default.removeItem(at: tempDir) }
     let cache = ImageCache(diskDirectory: tempDir)
     let loader = ImageLoader(urlSession: session, cache: cache)
     let url = URL(string: "https://mock.example.com/img.png")!
@@ -33,7 +36,7 @@ final class ImageLoaderTests: XCTestCase {
     // MARK: - 8.2 L1 cache-first
 
     func test_image_returnsFromMemory_withoutNetworkCall() async throws {
-        let (loader, cache, url) = makeTestLoader()
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
         cache.storeInMemory(UIImage(), for: url)
 
         _ = try await loader.image(for: url)
@@ -44,7 +47,7 @@ final class ImageLoaderTests: XCTestCase {
     // MARK: - 8.3 L2 cache-first
 
     func test_image_returnsFromDisk_withoutNetworkCall() async throws {
-        let (loader, cache, url) = makeTestLoader()
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
         let data = makeTestPNGData()
         await cache.storeToDisk(data, for: url, extension: "png")
 
@@ -57,7 +60,7 @@ final class ImageLoaderTests: XCTestCase {
     // MARK: - 8.4 L2 → L1 promotion
 
     func test_diskHit_promotesToL1() async throws {
-        let (loader, cache, url) = makeTestLoader()
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
         let data = makeTestPNGData()
         await cache.storeToDisk(data, for: url, extension: "png")
 
@@ -69,7 +72,7 @@ final class ImageLoaderTests: XCTestCase {
     // MARK: - 8.5 Network fetch stores to L1 and L2
 
     func test_networkFetch_storesToL1AndL2() async throws {
-        let (loader, cache, url) = makeTestLoader()
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
 
         _ = try await loader.image(for: url)
         XCTAssertEqual(ImageMockURLProtocol.requestCount, 1)
@@ -86,7 +89,7 @@ final class ImageLoaderTests: XCTestCase {
 
     func test_deduplication_concurrentCalls_onlyOneNetworkRequest() async throws {
         ImageMockURLProtocol.responseDelay = 0.1
-        let (loader, _, url) = makeTestLoader()
+        let (loader, _, url) = makeTestLoader(cleanupWith: self)
 
         async let img1 = loader.image(for: url)
         async let img2 = loader.image(for: url)
@@ -100,7 +103,7 @@ final class ImageLoaderTests: XCTestCase {
     func test_image_throws_badResponse_on404() async throws {
         ImageMockURLProtocol.statusCode = 404
         ImageMockURLProtocol.responseData = Data()
-        let (loader, _, url) = makeTestLoader()
+        let (loader, _, url) = makeTestLoader(cleanupWith: self)
 
         do {
             _ = try await loader.image(for: url)
@@ -114,7 +117,7 @@ final class ImageLoaderTests: XCTestCase {
 
     func test_image_throws_decodingFailed_onNonImageData() async throws {
         ImageMockURLProtocol.responseData = "not an image".data(using: .utf8)
-        let (loader, _, url) = makeTestLoader()
+        let (loader, _, url) = makeTestLoader(cleanupWith: self)
 
         do {
             _ = try await loader.image(for: url)
@@ -127,7 +130,7 @@ final class ImageLoaderTests: XCTestCase {
     // MARK: - 8.10 Preloading
 
     func test_preload_populatesL1Cache() async throws {
-        let (loader, cache, url) = makeTestLoader()
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
 
         await loader.preload(urls: [url])
         // Join the in-flight fetch (or hit L1 if preload already finished) — deterministic
@@ -139,7 +142,7 @@ final class ImageLoaderTests: XCTestCase {
 
     func test_preload_deduplicates_withConcurrentNormalLoad() async throws {
         ImageMockURLProtocol.responseDelay = 0.1
-        let (loader, _, url) = makeTestLoader()
+        let (loader, _, url) = makeTestLoader(cleanupWith: self)
 
         await loader.preload(urls: [url])
         _ = try await loader.image(for: url)
@@ -149,11 +152,14 @@ final class ImageLoaderTests: XCTestCase {
 
     func test_cancelPreloads_stopsFetch() async throws {
         ImageMockURLProtocol.responseDelay = 1.0
-        let (loader, cache, url) = makeTestLoader()
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
 
         await loader.preload(urls: [url])
         await loader.cancelPreloads()
-        try await Task.sleep(nanoseconds: 200_000_000)
+        // Wait PAST the mock's full response delay: a cancellation that only
+        // drops bookkeeping (but lets the fetch complete) stores to cache at
+        // ~1.0s and must fail this assertion.
+        try await Task.sleep(nanoseconds: 2_000_000_000)
 
         XCTAssertNil(cache.memoryImage(for: url), "Cancelled preload must not populate cache")
     }
@@ -162,7 +168,7 @@ final class ImageLoaderTests: XCTestCase {
 
     func test_cancellation_doesNotDeliverImage() async throws {
         ImageMockURLProtocol.responseDelay = 1.0
-        let (loader, _, url) = makeTestLoader()
+        let (loader, _, url) = makeTestLoader(cleanupWith: self)
 
         var completionCalled = false
         let task = Task {
@@ -173,7 +179,9 @@ final class ImageLoaderTests: XCTestCase {
         try await Task.sleep(nanoseconds: 50_000_000) // 50ms — before response arrives
         task.cancel()
 
-        try await Task.sleep(nanoseconds: 200_000_000) // wait for mock to fire
+        // Wait PAST the mock's full response delay — asserting earlier would
+        // pass even if cancellation did nothing (the response hadn't fired yet).
+        try await Task.sleep(nanoseconds: 1_300_000_000)
 
         XCTAssertFalse(completionCalled, "Completion must not be called after cancellation")
     }
