@@ -348,6 +348,25 @@ await ImageLoader.shared.preload(urls: nextPageURLs)
 
 ---
 
+### Padded labels & animated GIFs
+
+`PaddingLabel` is a `UILabel` with configurable content insets (chips, tags, badges) — the padding is reflected in its intrinsic size and wrapped multi-line text stays within the insets. `GIFImageView` plays animated GIFs via ImageIO, decoding one frame at a time on a `CADisplayLink` (flat memory) and pausing off-screen.
+
+```swift
+// A padded, rounded badge
+PaddingLabel(padding: .init(all: 4))
+    .text("NEW")
+    .backgroundColor(.systemPink)
+    .setAsRoundedView(radius: 4)
+
+// An animated GIF
+let gif = GIFImageView()
+gif.loadGIF(named: "spinner")          // "spinner.gif" in the main bundle
+// or: gif.loadGIF(from: data)
+```
+
+---
+
 ### Typed storage
 
 One unified interface for Keychain, UserDefaults, and file storage. Define a typed schema once and get `add`/`get`/`delete` for free.

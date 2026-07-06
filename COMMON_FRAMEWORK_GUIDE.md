@@ -1463,6 +1463,40 @@ CircularActivityIndicatorView(
 
 All base classes: disable `NSCoder` init, set `requiresConstraintBasedLayout = true`, provide `setupView()` hook.
 
+### PaddingLabel
+
+A `UILabel` that insets its text by a configurable `UIEdgeInsets` — for chips, tags, and badges. The padding is reflected in `intrinsicContentSize`, and wrapped multi-line text stays within the horizontal insets (it overrides `textRect(forBounds:limitedToNumberOfLines:)`, so padding is applied once, not double-counted).
+
+```swift
+PaddingLabel(padding: .init(all: 4))
+    .text(tagTitle)
+    .font(.appFont(style: .bold, size: 10))
+    .backgroundColor(.systemPink.withAlphaComponent(0.2))
+    .setAsRoundedView(radius: 4)
+```
+
+`padding` defaults to `.zero`, in which case it behaves like a plain `UILabel`.
+
+### GIFImageView
+
+A `UIImageView` that plays animated GIFs with ImageIO. Frames are decoded one at a time on a `CADisplayLink` as they are shown, so memory stays flat regardless of the GIF's frame count. Playback pauses automatically while the view is not in a window and resumes when it joins one; an explicit `stopAnimating()` stays stopped until `startAnimating()`.
+
+```swift
+let gif = GIFImageView()
+gif.loadGIF(named: "spinner")                     // "spinner.gif" in the main bundle
+gif.loadGIF(named: "logo", in: brandAssetsBundle) // any other bundle
+gif.loadGIF(from: data)                           // raw GIF data
+```
+
+Notes:
+- `loadGIF(named:in:)` resolves `<name>.gif` in `bundle` (default `.main`); a missing resource is ignored and the view is left unchanged. (A diagnostic is logged only in debug builds of the framework source — the release binary is silent.)
+- Undecodable data is also ignored — a GIF that is already playing keeps playing.
+- Assigning `image` directly stops GIF playback and clears the loaded GIF, so the assigned image sticks.
+- Playback advances by wall time — dropped display-link ticks catch up by skipping frames — and a single-frame GIF is shown as a static image (no display link).
+- Each frame is decoded on the **main thread** as it is displayed — inexpensive for typical UI GIFs, but a very large GIF can hitch. Memory stays flat (`kCGImageSourceShouldCache = false`).
+- Per-frame durations come from the GIF metadata; delays below `0.02s` are normalized to `0.1s`.
+- It animates continuously via `CADisplayLink`, which can interfere with XCUITest's idle detection — disable it (e.g. skip `loadGIF` behind a launch argument) on screens you exercise with UI tests.
+
 ---
 
 ## 9. Form Validation — FieldsValidator

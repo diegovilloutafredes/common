@@ -55,6 +55,21 @@ final class TypographyViewController: BaseViewModelableViewController<Typography
 
     private lazy var stylesContainer = VStack(spacing: 0)
 
+    // MARK: - PaddingLabel demo
+    private lazy var paddingBadgeRow = HStack(alignment: .center, spacing: 8) {
+        PaddingLabel(padding: .init(horizontal: 10, vertical: 4))
+            .text("PaddingLabel")
+            .font(.systemFont(ofSize: 12, weight: .semibold))
+            .textColor(.white)
+            .backgroundColor(.systemPink)
+            .setAsRoundedView(radius: 10)
+        UILabel("padded · rounded · wraps within insets")
+            .font(.systemFont(ofSize: 11))
+            .textColor(.tertiaryLabel)
+            .numberOfLines(0)
+        UIView()
+    }
+
     // MARK: - Layout
     @UIViewBuilder
     override var mainView: UIView {
@@ -69,6 +84,7 @@ final class TypographyViewController: BaseViewModelableViewController<Typography
                     spacing: 20
                 ) {
                     previewCard
+                    paddingBadgeRow
                     sectionHeader
                     stylesContainer
                 }

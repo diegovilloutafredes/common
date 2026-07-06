@@ -10,15 +10,49 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
         .register(ListSectionHeaderView.self, kind: .header)
         .with { $0.accessibilityIdentifier = "imageLoadingList" }
 
+    // MARK: - GIFImageView demo
+    private lazy var gifImageView = GIFImageView()
+        .contentMode(.scaleAspectFit)
+        .setConstraints { $0.set(width: 64); $0.set(height: 64) }
+
+    private lazy var gifBanner = HStack(
+        alignment: .center,
+        margins: .init(horizontal: 16, vertical: 12),
+        spacing: 12
+    ) {
+        gifImageView
+        VStack(spacing: 2) {
+            UILabel("GIFImageView")
+                .font(.systemFont(ofSize: 14, weight: .semibold))
+                .textColor(.label)
+            UILabel("on-demand frame decode · pauses off-screen")
+                .font(.systemFont(ofSize: 11))
+                .textColor(.tertiaryLabel)
+                .numberOfLines(0)
+        }
+        UIView()
+    }
+    .backgroundColor(.secondarySystemGroupedBackground)
+
     @UIViewBuilder
     override var mainView: UIView {
-        list.setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
+        VStack(spacing: 0) {
+            gifBanner
+            list
+        }
+        .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
     }
 
     override func setupView() {
         super.setupView()
         title = viewModel.title
-        view.backgroundColor(.systemGroupedBackground)
+        backgroundColor(.systemGroupedBackground)
+        // A continuously-animating GIF (CADisplayLink) keeps the run loop busy and
+        // interferes with XCUITest's idle detection, slowing/flaking UI tests on this
+        // screen. Skip the animation under UI test — the banner itself still renders.
+        if !ProcessInfo.processInfo.arguments.contains("UI_TESTING") {
+            gifImageView.loadGIF(named: "sample")
+        }
 
         let preloadButton = UIBarButtonItem(
             title: "Preload",
