@@ -240,12 +240,17 @@ final class GIFImageViewTests: XCTestCase {
         window.makeKeyAndVisible()
         let view = GIFImageView()
         window.addSubview(view)
-        // 12 frames x 0.1s = a 1.2s cycle: a 0.35s spin advances ~3 frames with
-        // no risk of wrapping back to index 0 (a 3-frame fixture wraps at
-        // exactly ~0.3s and false-fails this assertion).
+        // 12 frames x 0.1s = a 1.2s cycle: once the index advances it stays
+        // nonzero for >1s, so the 0.05s poll below cannot miss it on a wrap.
         view.loadGIF(from: TestGIF.animated(frameCount: 12))
 
-        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.35))
+        // Poll instead of a fixed spin: CI runners can take seconds to deliver
+        // the first display-link tick; locally the first frame advances in ~0.1s
+        // and the loop exits immediately.
+        let deadline = Date(timeIntervalSinceNow: 5)
+        while view.currentFrameIndex == 0 && Date() < deadline {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
+        }
 
         XCTAssertGreaterThan(view.currentFrameIndex, 0,
                              "real display-link ticks must reach advanceClock through the proxy")

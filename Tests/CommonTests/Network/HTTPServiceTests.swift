@@ -260,7 +260,10 @@ final class HTTPServiceTests: XCTestCase {
             handlerCalled.fulfill()
         }
 
-        await fulfillment(of: [handlerCalled], timeout: 1.0)
+        // Generous timeout: the callback hops through Task { @MainActor } and a
+        // loaded CI runner can take seconds to schedule it. Fulfillment returns
+        // as soon as the expectation fires, so the pass path stays fast.
+        await fulfillment(of: [handlerCalled], timeout: 10.0)
         XCTAssertEqual(received, expected)
     }
 
@@ -280,7 +283,7 @@ final class HTTPServiceTests: XCTestCase {
             handlerCalled.fulfill()
         }
 
-        await fulfillment(of: [handlerCalled], timeout: 1.0)
+        await fulfillment(of: [handlerCalled], timeout: 10.0)
         guard case .requestError = receivedError else {
             return XCTFail("Expected .requestError, got \(String(describing: receivedError))")
         }
