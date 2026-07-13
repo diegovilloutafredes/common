@@ -1,7 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.3.2 effective-5.10 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+// swift-compiler-version: Apple Swift version 6.3.3 effective-5.10 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
 // swift-module-flags: -target x86_64-apple-ios16.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
-// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.2
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.3
 import ARKit
 @_exported import AVFoundation
 import Accelerate
@@ -16,6 +16,7 @@ import CoreMedia
 import CoreNFC
 import CryptoKit
 @_exported import Foundation
+import ImageIO
 @_exported import LocalAuthentication
 @_exported import ObjectiveC
 import PDFKit
@@ -476,6 +477,13 @@ open class BaseClient {
 extension Common.BaseClient : Common.ClientProtocol {
 }
 @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseCollectionViewableViewController<ViewModelType> : Common.BaseViewModelableViewController<ViewModelType>, UIKit.UICollectionViewDataSource, UIKit.UICollectionViewDelegate, UIKit.UICollectionViewDelegateFlowLayout {
+  @_Concurrency.MainActor @preconcurrency override open var viewModel: ViewModelType {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency required public init?(coder: Foundation.NSCoder)
   @_Concurrency.MainActor @preconcurrency open func bottomInsetForLastCollectionSection() -> CoreFoundation.CGFloat
   @_Concurrency.MainActor @preconcurrency @objc open func numberOfSections(in collectionView: UIKit.UICollectionView) -> Swift.Int
   @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, numberOfItemsInSection section: Swift.Int) -> Swift.Int
@@ -491,7 +499,6 @@ extension Common.BaseClient : Common.ClientProtocol {
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndScrollingAnimation(_ scrollView: UIKit.UIScrollView)
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidScroll(_ scrollView: UIKit.UIScrollView)
-  @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
   @objc deinit
 }
 @objc @_Concurrency.MainActor open class BaseCoordinator : ObjectiveC.NSObject, Common.Coordinator, Common.BaseModuleDelegate {
@@ -1226,6 +1233,53 @@ extension Common.Environment {
     get
   }
 }
+@_Concurrency.MainActor final public class FieldsValidator<Field> where Field : Swift.Hashable {
+  @_Concurrency.MainActor public init(rules: [Field : [Common.FieldsValidator<Field>.Rule]], message: ((Field, Common.FieldsValidator<Field>.Rule) -> Swift.String)? = nil, onChange: @escaping Common.Handler<Common.FieldsValidator<Field>.State>)
+  @_Concurrency.MainActor final public func set(_ value: Swift.String?, on field: Field)
+  @_Concurrency.MainActor final public func touchAll()
+  @_Concurrency.MainActor final public var state: Common.FieldsValidator<Field>.State {
+    get
+  }
+  @objc deinit
+}
+extension Common.FieldsValidator {
+  public enum Rule : Swift.Equatable {
+    case notEmpty
+    case minLength(Swift.Int)
+    case maxLength(Swift.Int)
+    case containsLetter
+    case containsLowercase
+    case containsUppercase
+    case containsNumber
+    case contains(Foundation.CharacterSet)
+    case email
+    case rut
+    case matches(Field)
+    case differs(from: Field)
+    public var defaultMessage: Swift.String {
+      get
+    }
+    public static func == (a: Common.FieldsValidator<Field>.Rule, b: Common.FieldsValidator<Field>.Rule) -> Swift.Bool
+  }
+}
+extension Common.FieldsValidator {
+  public struct State {
+    public let isValid: Swift.Bool
+    public let fields: [Field : Common.FieldsValidator<Field>.FieldState]
+  }
+  public struct FieldState {
+    public let isValid: Swift.Bool
+    public let isTouched: Swift.Bool
+    public let errors: [Common.FieldsValidator<Field>.Failure]
+    public var message: Swift.String? {
+      get
+    }
+  }
+  public struct Failure {
+    public let rule: Common.FieldsValidator<Field>.Rule
+    public let message: Swift.String
+  }
+}
 public struct FileStorage : Common.KeyValueStorage {
   public static var shared: Common.FileStorage
 }
@@ -1240,6 +1294,26 @@ extension Common.FileStorage {
 }
 extension Swift.Float {
   public func isClose(to other: Swift.Float, tolerance: Swift.Float = 1e-7) -> Swift.Bool
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class GIFImageView : UIKit.UIImageView {
+  @_Concurrency.MainActor @preconcurrency @objc override final public var image: UIKit.UIImage? {
+    @objc get
+    @objc set
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override final public var isAnimating: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency final public func loadGIF(named name: Swift.String, in bundle: Foundation.Bundle = .main)
+  @_Concurrency.MainActor @preconcurrency final public func loadGIF(from data: Foundation.Data)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func startAnimating()
+  @_Concurrency.MainActor @preconcurrency @objc override final public func stopAnimating()
+  @_Concurrency.MainActor @preconcurrency @objc override final public func didMoveToWindow()
+  @objc deinit
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(image: UIKit.UIImage?)
+  @available(iOS 3.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(image: UIKit.UIImage?, highlightedImage: UIKit.UIImage?)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
 }
 public func dispatchOnGlobal(_ qos: Dispatch.DispatchQoS.QoSClass = .default, action: @escaping Common.Action)
 public func dispatchOnGlobalAfter(_ qos: Dispatch.DispatchQoS.QoSClass = .default, deadline: Dispatch.DispatchTime, action: @escaping Common.Action)
@@ -1776,9 +1850,11 @@ extension Common.Loggable {
   public static func shouldLog(_ value: Swift.Bool) -> Self.Type
 }
 public enum Logger {
-  public static func log(caller: Swift.String = #function, _ item: Any)
+  @_disfavoredOverload public static func log(caller: Swift.String = #function, _ item: Any)
   public static func log(caller: Swift.String = #function, _ request: Foundation.URLRequest, data: Foundation.Data? = nil, response: Foundation.URLResponse?)
-  public static func log(caller: Swift.String = #function, _ items: [Swift.String : Any])
+  public static func log(caller: Swift.String = #function, _ items: Swift.KeyValuePairs<Swift.String, Any>)
+  @available(*, deprecated, message: "Pass a literal (KeyValuePairs) to preserve output order.")
+  @_disfavoredOverload public static func log(caller: Swift.String = #function, _ items: [Swift.String : Any])
 }
 extension Common.Logger : Common.Loggable {
 }
@@ -1946,6 +2022,13 @@ extension PDFKit.PDFView {
 extension PDFKit.PDFView {
   @discardableResult
   @_Concurrency.MainActor @preconcurrency public func document(_ document: PDFKit.PDFDocument?) -> Self
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class PaddingLabel : UIKit.UILabel {
+  @_Concurrency.MainActor @preconcurrency final public let padding: UIKit.UIEdgeInsets
+  @_Concurrency.MainActor @preconcurrency public init(padding: UIKit.UIEdgeInsets = .zero)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func drawText(in rect: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func textRect(forBounds bounds: CoreFoundation.CGRect, limitedToNumberOfLines numberOfLines: Swift.Int) -> CoreFoundation.CGRect
+  @objc deinit
 }
 public protocol ParameterEncoder {
   func encode<Parameters>(_ parameters: Parameters?, into: Foundation.URLRequest) throws -> Foundation.URLRequest where Parameters : Swift.Encodable
@@ -2640,6 +2723,17 @@ extension UIKit.UIEdgeInsets {
   public init(horizontal: CoreFoundation.CGFloat = .zero, vertical: CoreFoundation.CGFloat = .zero)
 }
 extension UIKit.UIFont {
+  public static func setPrimaryFamily(_ family: Common.AppFontFamily?)
+  public static func appFont(_ family: Common.AppFontFamily, style: UIKit.UIFont.FontStyle = .regular, size: CoreFoundation.CGFloat) -> UIKit.UIFont
+  @_disfavoredOverload public static func appFont(style: UIKit.UIFont.FontStyle = .regular, size: CoreFoundation.CGFloat) -> UIKit.UIFont
+  public static func register(fonts names: [Common.AppFontFamily], styles: [UIKit.UIFont.FontStyle] = FontStyle.allCases, type: Swift.String = "ttf", on bundle: Foundation.Bundle = .main)
+}
+public struct AppFontFamily : Swift.RawRepresentable, Swift.Hashable, Common.Uppercaseable {
+  public let rawValue: Swift.String
+  public init(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+}
+extension UIKit.UIFont {
   public static func font(_ name: any Common.Uppercaseable, with style: UIKit.UIFont.FontStyle = .regular, size: CoreFoundation.CGFloat) -> UIKit.UIFont
 }
 extension UIKit.UIFont {
@@ -2647,12 +2741,7 @@ extension UIKit.UIFont {
     case invalidFontFile
     case fontPathNotFound
     case initFontError
-    case registerFailed
-    public static func == (a: UIKit.UIFont.RegisterFontError, b: UIKit.UIFont.RegisterFontError) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
-      get
-    }
+    case registerFailed(description: Swift.String?)
   }
   public static func register(fonts names: [any Common.Uppercaseable], styles: [UIKit.UIFont.FontStyle] = FontStyle.allCases, type: Swift.String = "ttf", on bundle: Foundation.Bundle = .main)
   public static func register(_ fileName: Swift.String, type: Swift.String, on bundle: Foundation.Bundle = .main) throws
@@ -3917,6 +4006,7 @@ extension Common.CameraManager.CameraType : Swift.Hashable {}
 extension Common.Debouncer : Swift.Sendable {}
 extension Common.DismissType : Swift.Equatable {}
 extension Common.DismissType : Swift.Hashable {}
+extension Common.FieldsValidator : Swift.Sendable {}
 extension Common.CachePolicy : Swift.Equatable {}
 extension Common.CachePolicy : Swift.Hashable {}
 extension Common.KeyValueStore.StoreType.NotSecureType : Swift.Equatable {}
@@ -3937,8 +4027,6 @@ extension Common.Toast.Duration : Swift.Hashable {}
 extension Common.Toast.Duration : Swift.RawRepresentable {}
 extension Common.SupplementaryViewKind : Swift.Equatable {}
 extension Common.SupplementaryViewKind : Swift.Hashable {}
-extension UIKit.UIFont.RegisterFontError : Swift.Equatable {}
-extension UIKit.UIFont.RegisterFontError : Swift.Hashable {}
 extension UIKit.UIFont.FontStyle : Swift.Equatable {}
 extension UIKit.UIFont.FontStyle : Swift.Hashable {}
 extension UIKit.UIFont.FontStyle : Swift.RawRepresentable {}
