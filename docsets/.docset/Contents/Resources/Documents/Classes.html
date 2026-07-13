@@ -128,6 +128,24 @@
                 <a href="Classes/Debouncer.html">Debouncer</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/FieldsValidator.html">FieldsValidator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/Rule.html">– Rule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/FieldState.html">– FieldState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/Failure.html">– Failure</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/GIFImageView.html">GIFImageView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/GradientView.html">GradientView</a>
               </li>
               <li class="nav-group-task">
@@ -159,6 +177,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/LocationAuthorizationManager/AuthorizationType.html">– AuthorizationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/PaddingLabel.html">PaddingLabel</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/PreviewView.html">PreviewView</a>
@@ -858,6 +879,9 @@
                 <a href="Structs/AlertViewModelPayload.html">AlertViewModelPayload</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/AppFontFamily.html">AppFontFamily</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/AppleUser.html">AppleUser</a>
               </li>
               <li class="nav-group-task">
@@ -1351,6 +1375,16 @@ Request lifecycle is managed by the caller&rsquo;s <code>Task</code> or SwiftUI 
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>KeychainWrapper is a class to help make Keychain access in Swift more straightforward. It is designed to make accessing the Keychain services more like using NSUserDefaults, which is much more familiar to people.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    Individual Keychain operations are handled atomically by the
+Security framework, but <code>KeychainWrapper</code> adds no synchronization of its
+own: read-modify-write sequences (get, then set) are <strong>not</strong> atomic
+across threads, and <code>standard</code> is shared process-wide. Serialize
+compound operations on a single queue if multiple threads touch the
+same keys.
+
+</div>
 
                         <a href="Classes/KeychainWrapper.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1572,6 +1606,59 @@ Request lifecycle is managed by the caller&rsquo;s <code>Task</code> or SwiftUI 
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">final</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">LocalAuthenticationManager</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">LocalAuthenticationManager</span><span class="p">:</span> <span class="kt"><a href="Protocols/LocalAuthenticationManagerProtocol.html">LocalAuthenticationManagerProtocol</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/FieldsValidator"></a>
+                <a name="//apple_ref/swift/Section/FieldsValidator" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/FieldsValidator"></a>
+                  <h3 class="section-name"><span>FieldsValidator</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6Common15FieldsValidatorC"></a>
+                    <a name="//apple_ref/swift/Class/FieldsValidator" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6Common15FieldsValidatorC">FieldsValidator</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A reactive, declarative form-field validator.</p>
+
+<p>Declare a set of <code>Rule</code>s per field, feed values with <code>set(_:on:)</code>, and receive a
+recomputed <code>State</code> through <code>onChange</code> after every assignment. Rules are pure declarations
+decoupled from the values they check, so no placeholder seeding is required: a field that has
+never been assigned a value is evaluated as the empty string <code>&quot;&quot;</code>, which means an untouched
+required field is invalid from the start.</p>
+
+<p>Cross-field rules (<code>Rule/matches(_:)</code>, <code>Rule/differs(from:)</code>) reference another field and are
+resolved against its current value at evaluation time. Error <em>display</em> is gated by per-field
+touched-state — a field surfaces errors only once <code>set(_:on:)</code> has been called on it — while
+<em>validity</em> always reflects every field.</p>
+
+                        <a href="Classes/FieldsValidator.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">FieldsValidator</span><span class="o">&lt;</span><span class="kt">Field</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Field</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                         </div>
                       </div>
@@ -2341,6 +2428,91 @@ It provides a consistent setup for hosting a main view within the view.</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Common@objc(cs)GIFImageView"></a>
+                    <a name="//apple_ref/swift/Class/GIFImageView" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Common@objc(cs)GIFImageView">GIFImageView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A <code>UIImageView</code> that plays animated GIFs using ImageIO.</p>
+
+<p>Frames are decoded one at a time on a <code>CADisplayLink</code> as they are shown, so
+memory stays flat regardless of the GIF&rsquo;s frame count.</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">view</span> <span class="o">=</span> <span class="kt">GIFImageView</span><span class="p">()</span>
+<span class="n">view</span><span class="o">.</span><span class="nf">loadGIF</span><span class="p">(</span><span class="nv">named</span><span class="p">:</span> <span class="s">"spinner"</span><span class="p">)</span>   <span class="c1">// "spinner.gif" in the main bundle</span>
+<span class="c1">// or: view.loadGIF(from: data)</span>
+</code></pre>
+
+<p>Playback pauses automatically while the view is not in a window and resumes
+when it joins one; an explicit <code>stopAnimating()</code> stays stopped until
+<code>startAnimating()</code> is called. Assigning <code>image</code> directly stops playback
+and clears the loaded GIF, so the assigned image sticks. Each frame is
+decoded on the main thread as it is displayed, which is inexpensive for
+typical UI GIFs but can hitch for very large ones.</p>
+
+                        <a href="Classes/GIFImageView.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">GIFImageView</span> <span class="p">:</span> <span class="kt">UIImageView</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Common@objc(cs)PaddingLabel"></a>
+                    <a name="//apple_ref/swift/Class/PaddingLabel" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Common@objc(cs)PaddingLabel">PaddingLabel</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A <code>UILabel</code> that insets its text by a configurable <code>UIEdgeInsets</code>.</p>
+
+<p><code>UILabel</code> has no built-in content insets; <code>PaddingLabel</code> adds them, which is
+what you want for chips, tags, and badges. Combine it with rounding for a pill:</p>
+<pre class="highlight swift"><code><span class="kt">PaddingLabel</span><span class="p">(</span><span class="nv">padding</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">all</span><span class="p">:</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="o">.</span><span class="nf">text</span><span class="p">(</span><span class="s">"NEW"</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">backgroundColor</span><span class="p">(</span><span class="o">.</span><span class="n">systemPink</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">setAsRoundedView</span><span class="p">(</span><span class="nv">radius</span><span class="p">:</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre>
+
+<p>The padding is reflected in <code>intrinsicContentSize</code> and, unlike a plain
+inset hack, in multi-line layout: wrapped text stays within the horizontal
+insets because <code>textRect(forBounds:limitedToNumberOfLines:)</code> wraps against
+the inset width.</p>
+
+                        <a href="Classes/PaddingLabel.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">PaddingLabel</span> <span class="p">:</span> <span class="kt">UILabel</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -2783,7 +2955,7 @@ It provides common configuration like preventing content inset adjustments and h
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-06-13)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-07-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

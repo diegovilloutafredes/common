@@ -125,6 +125,24 @@
                 <a href="Classes/Debouncer.html">Debouncer</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/FieldsValidator.html">FieldsValidator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/Rule.html">– Rule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/FieldState.html">– FieldState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/Failure.html">– Failure</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/GIFImageView.html">GIFImageView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/GradientView.html">GradientView</a>
               </li>
               <li class="nav-group-task">
@@ -156,6 +174,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/LocationAuthorizationManager/AuthorizationType.html">– AuthorizationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/PaddingLabel.html">PaddingLabel</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/PreviewView.html">PreviewView</a>
@@ -855,6 +876,9 @@
                 <a href="Structs/AlertViewModelPayload.html">AlertViewModelPayload</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/AppFontFamily.html">AppFontFamily</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/AppleUser.html">AppleUser</a>
               </li>
               <li class="nav-group-task">
@@ -1027,8 +1051,16 @@
 <td><code><a href="Structs/UIViewBuilder.html">@UIViewBuilder</a></code>, <code><a href="Classes/VStack.html">VStack</a></code>, <code><a href="Classes/HStack.html">HStack</a></code>, fluent extensions</td>
 </tr>
 <tr>
+<td>Custom font pipeline</td>
+<td><code><a href="Structs/AppFontFamily.html">AppFontFamily</a></code>, <code>UIFont.register(fonts:)</code>, <code>.appFont(style:size:)</code></td>
+</tr>
+<tr>
 <td>Complete MVVM-C modules</td>
 <td><code><a href="Classes/BaseCoordinator.html">BaseCoordinator</a></code>, <code><a href="Classes/BaseViewModelableViewController.html">BaseViewModelableViewController</a></code>, wireframe factory</td>
+</tr>
+<tr>
+<td>Declarative form validation</td>
+<td><code><a href="Classes/FieldsValidator.html">FieldsValidator</a></code>, cross-field <code>.matches</code>/<code>.differs</code>, built-in touched-state</td>
 </tr>
 <tr>
 <td>Async HTTP networking</td>
@@ -1132,6 +1164,25 @@
 </code></pre>
 
 <hr>
+<h3 id='custom-fonts' class='heading'>Custom fonts</h3>
+
+<p>Declare your families, register the font files at startup — no <code>UIAppFonts</code> Info.plist entry needed — and style text with <code>.appFont</code> everywhere. Font files just need to be bundle resources named after their PostScript names (<code>Montserrat-Bold.ttf</code>).</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">AppFontFamily</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">let</span> <span class="nv">montserrat</span> <span class="o">=</span> <span class="kt">AppFontFamily</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="s">"montserrat"</span><span class="p">)</span>   <span class="c1">// → "Montserrat-Bold", ...</span>
+<span class="p">}</span>
+
+<span class="c1">// At startup (e.g. SceneDelegate):</span>
+<span class="kt">UIFont</span><span class="o">.</span><span class="nf">register</span><span class="p">(</span><span class="nv">fonts</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="n">montserrat</span><span class="p">])</span>
+<span class="kt">UIFont</span><span class="o">.</span><span class="nf">setPrimaryFamily</span><span class="p">(</span><span class="o">.</span><span class="n">montserrat</span><span class="p">)</span>
+
+<span class="c1">// Anywhere:</span>
+<span class="n">titleLabel</span><span class="o">.</span><span class="nf">font</span><span class="p">(</span><span class="o">.</span><span class="nf">appFont</span><span class="p">(</span><span class="nv">style</span><span class="p">:</span> <span class="o">.</span><span class="n">bold</span><span class="p">,</span> <span class="nv">size</span><span class="p">:</span> <span class="mi">24</span><span class="p">))</span>            <span class="c1">// primary family</span>
+<span class="n">captionLabel</span><span class="o">.</span><span class="nf">font</span><span class="p">(</span><span class="o">.</span><span class="nf">appFont</span><span class="p">(</span><span class="o">.</span><span class="n">montserrat</span><span class="p">,</span> <span class="nv">size</span><span class="p">:</span> <span class="mi">13</span><span class="p">))</span>           <span class="c1">// explicit family</span>
+</code></pre>
+
+<p>Missing faces and unregistered families fall back to a weight-matched system font.</p>
+
+<hr>
 <h3 id='mvvm-c-module-wiring' class='heading'>MVVM-C module wiring</h3>
 
 <p>Each feature is a self-contained module: a <strong>Wireframe</strong> factory wires the ViewModel and ViewController together, while the <strong>Coordinator</strong> owns navigation. The ViewController never knows about navigation; it only fires typed actions back through a closure.</p>
@@ -1196,6 +1247,27 @@
 </code></pre>
 
 <hr>
+<h3 id='form-validation' class='heading'>Form validation</h3>
+
+<p><code><a href="Classes/FieldsValidator.html">FieldsValidator&lt;Field&gt;</a></code> validates form fields declaratively. Declare rules per field, feed values as the user types, and react to a recomputed state. Errors stay hidden until a field is touched, and cross-field rules like <code>.matches</code> resolve against another field&rsquo;s current value automatically.</p>
+<pre class="highlight swift"><code><span class="kd">enum</span> <span class="kt">Field</span> <span class="p">{</span> <span class="k">case</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">confirmPassword</span> <span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">validator</span> <span class="o">=</span> <span class="kt">FieldsValidator</span><span class="o">&lt;</span><span class="kt">Field</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="nv">rules</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nv">email</span><span class="p">:</span>           <span class="p">[</span><span class="o">.</span><span class="n">notEmpty</span><span class="p">,</span> <span class="o">.</span><span class="n">email</span><span class="p">],</span>
+        <span class="o">.</span><span class="nv">password</span><span class="p">:</span>        <span class="p">[</span><span class="o">.</span><span class="n">notEmpty</span><span class="p">,</span> <span class="o">.</span><span class="nf">minLength</span><span class="p">(</span><span class="mi">8</span><span class="p">)],</span>
+        <span class="o">.</span><span class="nv">confirmPassword</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="n">notEmpty</span><span class="p">,</span> <span class="o">.</span><span class="nf">matches</span><span class="p">(</span><span class="o">.</span><span class="n">password</span><span class="p">)]</span>
+    <span class="p">],</span>
+    <span class="nv">onChange</span><span class="p">:</span> <span class="p">{</span> <span class="n">state</span> <span class="k">in</span>
+        <span class="n">submitButton</span><span class="o">.</span><span class="nf">isEnabled</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">isValid</span><span class="p">)</span>        <span class="c1">// overall validity</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">fieldState</span><span class="p">)</span> <span class="k">in</span> <span class="n">state</span><span class="o">.</span><span class="n">fields</span> <span class="p">{</span>
+            <span class="nf">errorLabel</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="n">field</span><span class="p">)</span><span class="o">.</span><span class="nf">text</span><span class="p">(</span><span class="n">fieldState</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>   <span class="c1">// nil clears</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">emailField</span><span class="o">.</span><span class="n">onEditingChanged</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="nv">$0</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="nv">on</span><span class="p">:</span> <span class="o">.</span><span class="n">email</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
 <h3 id='async-networking' class='heading'>Async networking</h3>
 
 <p>Subclass <code><a href="Classes/AsyncBaseClient.html">AsyncBaseClient</a></code> and define your endpoint. Responses are decoded automatically; errors are typed.</p>
@@ -1277,6 +1349,22 @@
 
 <span class="c1">// Preload a list of upcoming images at background priority</span>
 <span class="k">await</span> <span class="kt">ImageLoader</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">preload</span><span class="p">(</span><span class="nv">urls</span><span class="p">:</span> <span class="n">nextPageURLs</span><span class="p">)</span>
+</code></pre>
+
+<hr>
+<h3 id='padded-labels-amp-animated-gifs' class='heading'>Padded labels &amp; animated GIFs</h3>
+
+<p><code><a href="Classes/PaddingLabel.html">PaddingLabel</a></code> is a <code>UILabel</code> with configurable content insets (chips, tags, badges) — the padding is reflected in its intrinsic size and wrapped multi-line text stays within the insets. <code><a href="Classes/GIFImageView.html">GIFImageView</a></code> plays animated GIFs via ImageIO, decoding one frame at a time on a <code>CADisplayLink</code> (flat memory) and pausing off-screen.</p>
+<pre class="highlight swift"><code><span class="c1">// A padded, rounded badge</span>
+<span class="kt">PaddingLabel</span><span class="p">(</span><span class="nv">padding</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">all</span><span class="p">:</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="o">.</span><span class="nf">text</span><span class="p">(</span><span class="s">"NEW"</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">backgroundColor</span><span class="p">(</span><span class="o">.</span><span class="n">systemPink</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">setAsRoundedView</span><span class="p">(</span><span class="nv">radius</span><span class="p">:</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="c1">// An animated GIF</span>
+<span class="k">let</span> <span class="nv">gif</span> <span class="o">=</span> <span class="kt">GIFImageView</span><span class="p">()</span>
+<span class="n">gif</span><span class="o">.</span><span class="nf">loadGIF</span><span class="p">(</span><span class="nv">named</span><span class="p">:</span> <span class="s">"spinner"</span><span class="p">)</span>          <span class="c1">// "spinner.gif" in the main bundle</span>
+<span class="c1">// or: gif.loadGIF(from: data)</span>
 </code></pre>
 
 <hr>
@@ -1485,7 +1573,7 @@ make major                <span class="c"># Tag and release a major version</spa
 <hr>
 <h2 id='demo-app' class='heading'>Demo App</h2>
 
-<p>The project includes a <code>DemoApp</code> target that showcases the library across 8 modules: Alerts, Declarative UI, Extensions, Home, Local Auth, Networking, Onboarding, and Storage. Build and run the <code>DemoApp</code> scheme in Xcode to explore.</p>
+<p>The project includes a <code>DemoApp</code> target that showcases the library across 14 modules: Alerts, Coordinator, Declarative UI, Extensions, Forms &amp; TextFields, Home, Image Loading, Lists &amp; Cells, Local Auth, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the <code>DemoApp</code> scheme in Xcode to explore.</p>
 
 <hr>
 <h2 id='documentation' class='heading'>Documentation</h2>
@@ -1513,7 +1601,7 @@ make major                <span class="c"># Tag and release a major version</spa
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-06-13)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-07-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

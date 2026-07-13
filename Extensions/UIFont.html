@@ -130,6 +130,24 @@
                 <a href="../Classes/Debouncer.html">Debouncer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator.html">FieldsValidator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/Rule.html">– Rule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/FieldState.html">– FieldState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/Failure.html">– Failure</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/GIFImageView.html">GIFImageView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/GradientView.html">GradientView</a>
               </li>
               <li class="nav-group-task">
@@ -161,6 +179,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/LocationAuthorizationManager/AuthorizationType.html">– AuthorizationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PaddingLabel.html">PaddingLabel</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/PreviewView.html">PreviewView</a>
@@ -860,6 +881,9 @@
                 <a href="../Structs/AlertViewModelPayload.html">AlertViewModelPayload</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/AppFontFamily.html">AppFontFamily</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/AppleUser.html">AppleUser</a>
               </li>
               <li class="nav-group-task">
@@ -986,7 +1010,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIFont</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">UIFont</span></code></pre>
 
                 </div>
               </div>
@@ -995,6 +1019,130 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC6CommonE16setPrimaryFamilyyyAC07AppFontE0VSgFZ"></a>
+                    <a name="//apple_ref/swift/Method/setPrimaryFamily(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC6CommonE16setPrimaryFamilyyyAC07AppFontE0VSgFZ">setPrimaryFamily(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers the app&rsquo;s primary font family, used by <code><a href="../Extensions/UIFont.html#/s:So6UIFontC6CommonE7appFont5style4sizeA2bCE0D5StyleO_14CoreFoundation7CGFloatVtFZ">appFont(style:size:)</a></code>.
+Call once at app startup (e.g. in SceneDelegate). Pass <code>nil</code> to clear.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">setPrimaryFamily</span><span class="p">(</span><span class="n">_</span> <span class="nv">family</span><span class="p">:</span> <span class="kt"><a href="../Structs/AppFontFamily.html">AppFontFamily</a></span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC6CommonE7appFont_5style4sizeAbC03AppD6FamilyV_AbCE0D5StyleO14CoreFoundation7CGFloatVtFZ"></a>
+                    <a name="//apple_ref/swift/Method/appFont(_:style:size:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC6CommonE7appFont_5style4sizeAbC03AppD6FamilyV_AbCE0D5StyleO14CoreFoundation7CGFloatVtFZ">appFont(_:<wbr>style:<wbr>size:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns the app font for an explicit family, style, and size.
+PostScript name is derived as <code>&quot;\(family)-\(style)&quot;</code> (e.g. <code>&quot;Montserrat-Bold&quot;</code>).
+Falls back to the system font when the PostScript name cannot be resolved.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">appFont</span><span class="p">(</span><span class="n">_</span> <span class="nv">family</span><span class="p">:</span> <span class="kt"><a href="../Structs/AppFontFamily.html">AppFontFamily</a></span><span class="p">,</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Extensions/UIFont/FontStyle.html">FontStyle</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">regular</span><span class="p">,</span> <span class="nv">size</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC6CommonE7appFont5style4sizeA2bCE0D5StyleO_14CoreFoundation7CGFloatVtFZ"></a>
+                    <a name="//apple_ref/swift/Method/appFont(style:size:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC6CommonE7appFont5style4sizeA2bCE0D5StyleO_14CoreFoundation7CGFloatVtFZ">appFont(style:<wbr>size:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns the app font for the registered primary family.
+Falls back to the system font when no primary family has been set.</p>
+
+<p>Disfavored so that app-local <code>appFont</code> helpers (the pre-<code><a href="../Structs/AppFontFamily.html">AppFontFamily</a></code>
+pattern: <code>appFont(_ family: MyFamily = .default, style:size:)</code>) keep
+winning overload resolution — otherwise their label-only call sites
+would silently re-route here and resolve against an unset primary family.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@_disfavoredOverload</span>
+<span class="kd">static</span> <span class="kd">func</span> <span class="nf">appFont</span><span class="p">(</span><span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Extensions/UIFont/FontStyle.html">FontStyle</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">regular</span><span class="p">,</span> <span class="nv">size</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC6CommonE8register5fonts6styles4type2onySayAC13AppFontFamilyVG_SayAbCE0I5StyleOGSSSo8NSBundleCtFZ"></a>
+                    <a name="//apple_ref/swift/Method/register(fonts:styles:type:on:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC6CommonE8register5fonts6styles4type2onySayAC13AppFontFamilyVG_SayAbCE0I5StyleOGSSSo8NSBundleCtFZ">register(fonts:<wbr>styles:<wbr>type:<wbr>on:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers font files for the given <code><a href="../Structs/AppFontFamily.html">AppFontFamily</a></code> values.
+Convenience overload of <code>register(fonts:styles:type:on:)</code> — avoids explicit <code>[any Uppercaseable]</code> casting.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">register</span><span class="p">(</span>
+    <span class="n">fonts</span> <span class="nv">names</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/AppFontFamily.html">AppFontFamily</a></span><span class="p">],</span>
+    <span class="nv">styles</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Extensions/UIFont/FontStyle.html">FontStyle</a></span><span class="p">]</span> <span class="o">=</span> <span class="kt"><a href="../Extensions/UIFont/FontStyle.html">FontStyle</a></span><span class="o">.</span><span class="n">allCases</span><span class="p">,</span>
+    <span class="nv">type</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"ttf"</span><span class="p">,</span>
+    <span class="n">on</span> <span class="nv">bundle</span><span class="p">:</span> <span class="kt">Bundle</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1300,7 +1448,7 @@ Falls back to system font if the custom font cannot be loaded.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-06-13)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-07-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

@@ -128,6 +128,24 @@
                 <a href="Classes/Debouncer.html">Debouncer</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/FieldsValidator.html">FieldsValidator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/Rule.html">– Rule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/FieldState.html">– FieldState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FieldsValidator/Failure.html">– Failure</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/GIFImageView.html">GIFImageView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/GradientView.html">GradientView</a>
               </li>
               <li class="nav-group-task">
@@ -159,6 +177,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/LocationAuthorizationManager/AuthorizationType.html">– AuthorizationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/PaddingLabel.html">PaddingLabel</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/PreviewView.html">PreviewView</a>
@@ -858,6 +879,9 @@
                 <a href="Structs/AlertViewModelPayload.html">AlertViewModelPayload</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/AppFontFamily.html">AppFontFamily</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/AppleUser.html">AppleUser</a>
               </li>
               <li class="nav-group-task">
@@ -1009,6 +1033,55 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AES</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/AppFontFamily"></a>
+                <a name="//apple_ref/swift/Section/AppFontFamily" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/AppFontFamily"></a>
+                  <h3 class="section-name"><span>AppFontFamily</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6Common13AppFontFamilyV"></a>
+                    <a name="//apple_ref/swift/Struct/AppFontFamily" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6Common13AppFontFamilyV">AppFontFamily</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An extensible font family identifier. Set <code>rawValue</code> to the PostScript base name of the font
+family (e.g. <code>&quot;montserrat&quot;</code> → resolves to <code>&quot;Montserrat-Bold&quot;</code>, <code>&quot;Montserrat-Regular&quot;</code>, etc.).</p>
+
+<p>Extend this type in your app target to declare your own families:</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">AppFontFamily</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">let</span> <span class="nv">montserrat</span>  <span class="o">=</span> <span class="kt">AppFontFamily</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="s">"montserrat"</span><span class="p">)</span>
+    <span class="kd">static</span> <span class="k">let</span> <span class="nv">varelaRound</span> <span class="o">=</span> <span class="kt">AppFontFamily</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="s">"varelaRound"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+
+                        <a href="Structs/AppFontFamily.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AppFontFamily</span> <span class="p">:</span> <span class="kt">RawRepresentable</span><span class="p">,</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt"><a href="Protocols/Uppercaseable.html">Uppercaseable</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1311,7 +1384,16 @@ Wrap siblings in a <code><a href="Classes/VStack.html">VStack</a></code> or <cod
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A storage implementation using the file system.</p>
+                        <p>A storage implementation that persists codable objects to the file system.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <code>FileStorage</code> is <strong>not thread-safe</strong>. <code>shared</code> is an
+unsynchronized mutable static, and reads/writes go straight to disk with
+no locking — concurrent access to the same key from multiple threads can
+interleave. Confine usage of a given key to a single thread (typically
+the main thread), or add external synchronization.
+
+</div>
 
                         <a href="Structs/FileStorage.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1498,7 +1580,7 @@ Wrap siblings in a <code><a href="Classes/VStack.html">VStack</a></code> or <cod
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-06-13)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-07-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

@@ -130,6 +130,24 @@
                 <a href="../Classes/Debouncer.html">Debouncer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator.html">FieldsValidator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/Rule.html">– Rule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/FieldState.html">– FieldState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FieldsValidator/Failure.html">– Failure</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/GIFImageView.html">GIFImageView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/GradientView.html">GradientView</a>
               </li>
               <li class="nav-group-task">
@@ -161,6 +179,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/LocationAuthorizationManager/AuthorizationType.html">– AuthorizationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PaddingLabel.html">PaddingLabel</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/PreviewView.html">PreviewView</a>
@@ -860,6 +881,9 @@
                 <a href="../Structs/AlertViewModelPayload.html">AlertViewModelPayload</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/AppFontFamily.html">AppFontFamily</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/AppleUser.html">AppleUser</a>
               </li>
               <li class="nav-group-task">
@@ -1250,6 +1274,67 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:So11UIImageViewC6CommonE9loadImage4from7options6loaderABXD10Foundation3URLV_AC0E11LoadOptionsVAC0E6LoaderCtF"></a>
+                    <a name="//apple_ref/swift/Method/loadImage(from:options:loader:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So11UIImageViewC6CommonE9loadImage4from7options6loaderABXD10Foundation3URLV_AC0E11LoadOptionsVAC0E6LoaderCtF">loadImage(from:<wbr>options:<wbr>loader:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Loads a remote image into this <code>UIImageView</code>.</p>
+
+<p>Cancels any in-flight load on this view before starting. Sets <code>options.placeholder</code>
+immediately. Applies <code>options.transition</code> only on network-fetched results (not cache hits).
+Pass a custom <code>loader</code> to override the shared instance (useful for testing).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadImage</span><span class="p">(</span><span class="n">from</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/ImageLoadOptions.html">ImageLoadOptions</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span> <span class="nv">loader</span><span class="p">:</span> <span class="kt"><a href="../Actors/ImageLoader.html">ImageLoader</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">shared</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So11UIImageViewC6CommonE15cancelImageLoadyyF"></a>
+                    <a name="//apple_ref/swift/Method/cancelImageLoad()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So11UIImageViewC6CommonE15cancelImageLoadyyF">cancelImageLoad()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Cancels any in-flight image load on this view without modifying <code>image</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancelImageLoad</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:So11UIImageViewC6CommonE6symbol_4withABXDSS_So0A19SymbolConfigurationCSgtF"></a>
                     <a name="//apple_ref/swift/Method/symbol(_:with:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:So11UIImageViewC6CommonE6symbol_4withABXDSS_So0A19SymbolConfigurationCSgtF">symbol(_:<wbr>with:<wbr>)</a>
@@ -1355,73 +1440,12 @@
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:So11UIImageViewC6CommonE9loadImage4from7options6loaderABXD10Foundation3URLV_AC0E11LoadOptionsVAC0E6LoaderCtF"></a>
-                    <a name="//apple_ref/swift/Method/loadImage(from:options:loader:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:So11UIImageViewC6CommonE9loadImage4from7options6loaderABXD10Foundation3URLV_AC0E11LoadOptionsVAC0E6LoaderCtF">loadImage(from:<wbr>options:<wbr>loader:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Loads a remote image into this <code>UIImageView</code>.</p>
-
-<p>Cancels any in-flight load on this view before starting. Sets <code>options.placeholder</code>
-immediately. Applies <code>options.transition</code> only on network-fetched results (not cache hits).
-Pass a custom <code>loader</code> to override the shared instance (useful for testing).</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadImage</span><span class="p">(</span><span class="n">from</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/ImageLoadOptions.html">ImageLoadOptions</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span> <span class="nv">loader</span><span class="p">:</span> <span class="kt"><a href="../Actors/ImageLoader.html">ImageLoader</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">shared</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:So11UIImageViewC6CommonE15cancelImageLoadyyF"></a>
-                    <a name="//apple_ref/swift/Method/cancelImageLoad()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:So11UIImageViewC6CommonE15cancelImageLoadyyF">cancelImageLoad()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Cancels any in-flight image load on this view without modifying <code>image</code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancelImageLoad</span><span class="p">()</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-06-13)</p>
+          <p>&copy; 2026 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2026-07-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
