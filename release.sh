@@ -47,7 +47,7 @@ make build_xcframework
 
 echo "Committing XCFramework..."
 git add -f XCFramework/Common.xcframework
-git commit -m "chore: add xcframework for $NEW_VERSION"
+git commit -m "Add xcframework for $NEW_VERSION"
 
 git tag -a "$NEW_VERSION" -m "$NEW_VERSION"
 git push origin main "$NEW_VERSION"
