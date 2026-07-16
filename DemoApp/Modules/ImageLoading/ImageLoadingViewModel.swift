@@ -198,6 +198,12 @@ extension ImageLoadingViewModel: ImageLoadingViewModelProtocol {
     }
 }
 
+// MARK: - ViewLifecycleable
+
+extension ImageLoadingViewModel: ViewLifecycleable {
+    func onViewWillDisappear() { Task { await ImageLoader.shared.cancelPreloads() } }
+}
+
 // MARK: - CollectionViewable
 
 extension ImageLoadingViewModel: CollectionViewable {

@@ -15,15 +15,9 @@ protocol TypographyViewModelProtocol: ViewModel {
     func select(family: AppFontFamily)
 }
 
-// MARK: - TypographyViewModelDelegate
-protocol TypographyViewModelDelegate: AnyObject {
-    func didSelectFamily()
-}
-
 // MARK: - TypographyViewModel
 final class TypographyViewModel {
     let title = "Typography"
-    weak var delegate: TypographyViewModelDelegate?
     weak var view: TypographyViewProtocol?
 
     let families: [(family: AppFontFamily, name: String)] = [
@@ -42,6 +36,6 @@ final class TypographyViewModel {
 extension TypographyViewModel: TypographyViewModelProtocol {
     func select(family: AppFontFamily) {
         selectedFamily = family
-        delegate?.didSelectFamily()
+        view?.updateSelectedFamily()
     }
 }

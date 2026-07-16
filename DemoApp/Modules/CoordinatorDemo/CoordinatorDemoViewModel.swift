@@ -42,9 +42,13 @@ protocol CoordinatorDemoViewModelProtocol: ViewModel {
 
 final class CoordinatorDemoViewModel: CoordinatorDemoViewModelProtocol {
     weak var view: CoordinatorDemoViewProtocol?
-    weak var delegate: CoordinatorDemoViewModelDelegate?
+    private weak var delegate: CoordinatorDemoViewModelDelegate?
 
     private var eventCount = 0
+
+    init(delegate: CoordinatorDemoViewModelDelegate) {
+        self.delegate = delegate
+    }
 
     func launchChild() { delegate?.didRequestLaunchChild() }
     func launchDeepFlow() { delegate?.didRequestLaunchDeepFlow() }

@@ -67,17 +67,24 @@ protocol StorageViewModelProtocol: ViewModel {
     func delete(type: StorageType)
 }
 
+// MARK: - DemoItemStorage
+/// Typed enum-key storage over the backing store of the caller's choice —
+/// the `SingleRawValueKeyValueObjectStorage` pattern from the framework guide.
+private struct DemoItemStorage: SingleRawValueKeyValueObjectStorage {
+    let type: KeyValueStore.StoreType
+
+    enum Keys: String { case item = "demo_item" }
+
+    func add(item: StorageItem) { add(item: (.item, item)) }
+    func get() -> StorageItem? { get(using: .item) }
+    func delete() { remove(using: .item) }
+}
+
 // MARK: - StorageViewModel
-final class StorageViewModelImpl: StorageViewModelProtocol, UserLocalStorageUseCase {
+final class StorageViewModelImpl: StorageViewModelProtocol {
     let title = "Storage"
 
-    private let keys: [StorageType: String] = [
-        .userDefaults: "demo_userdefaults",
-        .file: "demo_file",
-        .keychain: "demo_keychain"
-    ]
-
-    private func store(for type: StorageType) -> KeyValueStore {
+    private func storage(for type: StorageType) -> DemoItemStorage {
         switch type {
         case .userDefaults: .init(type: .notSecure(.userDefaults))
         case .file: .init(type: .notSecure(.files))
@@ -88,15 +95,15 @@ final class StorageViewModelImpl: StorageViewModelProtocol, UserLocalStorageUseC
     @discardableResult
     func save(type: StorageType) -> StorageItem {
         let item = StorageItem(value: type.exampleValue, timestamp: .now)
-        store(for: type).add(item: (keys[type]!, item))
+        storage(for: type).add(item: item)
         return item
     }
 
     func read(type: StorageType) -> StorageItem? {
-        store(for: type).get(using: keys[type]!)
+        storage(for: type).get()
     }
 
     func delete(type: StorageType) {
-        store(for: type).remove(using: keys[type]!)
+        storage(for: type).delete()
     }
 }

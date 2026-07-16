@@ -45,7 +45,7 @@ final class LocalAuthViewModelImpl: LocalAuthViewModelProtocol {
     func authenticate() {
         view?.showLoading()
         manager.authenticate { [weak self] success in
-            dispatchOnMain {
+            Task { @MainActor in
                 self?.view?.hideLoading()
                 self?.view?.updateResult(success: success)
             }

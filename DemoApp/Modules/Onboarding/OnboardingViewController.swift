@@ -38,12 +38,11 @@ final class OnboardingViewController: BaseCollectionViewableViewController<Onboa
         .isUserInteractionEnabled(false)
         .currentPage(.zero)
         .currentPageIndicatorTintColor(.black)
-        .numberOfPages(viewModel.getNumberOfItems(in: .zero))
         .pageIndicatorTintColor(.black.withAlphaComponent(0.3))
         .setConstraints { $0.set(height: 32) }
 
     private lazy var actionButton = UIButton()
-        .onTap(onActionButtonPressed)
+        .onTap { [weak self] in self?.onActionButtonPressed() }
         .setRatio(327/60)
 
     @UIViewBuilder
@@ -57,6 +56,7 @@ final class OnboardingViewController: BaseCollectionViewableViewController<Onboa
 
     override func setupView() {
         super.setupView()
+        pageControl.numberOfPages(viewModel.getNumberOfItems(in: .zero))
         currentPage = .zero
     }
 
@@ -85,14 +85,9 @@ final class OnboardingViewController: BaseCollectionViewableViewController<Onboa
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageWidth = scrollView.frame.width
-        let page = Int(round(scrollView.contentOffset.x / pageWidth))
-        currentPage = page
+        guard pageWidth > 0 else { return }
+        currentPage = Int(round(scrollView.contentOffset.x / pageWidth))
     }
-}
-
-// MARK: - Button handler
-extension OnboardingViewController {
-    @objc private func onSkipButtonPressed() { viewModel.onRequested(.skip) }
 }
 
 // MARK: - Convenience
@@ -111,9 +106,7 @@ extension OnboardingViewController {
             navigationItem.setRightBarButton(
                 .init(
                     title: "Saltar",
-                    style: .plain,
-                    target: self,
-                    action: #selector(onSkipButtonPressed)
+                    primaryAction: .init { [weak self] _ in self?.viewModel.onRequested(.skip) }
                 ),
                 animated: true
             )

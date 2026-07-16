@@ -27,11 +27,10 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
             $0.leftViewMode = .always
         }
         .onEditingChanged { [weak self] field in
-            guard let self else { return }
             let text = field.text ?? ""
-            Debouncer.debounce(id: "search", seconds: 0.5) {
+            Debouncer.debounce(id: "search", seconds: 0.5) { [weak self] in
                 let output = text.isEmpty ? "Type to see debounced output…" : "Debounced: \"\(text)\""
-                self.debouncedOutputLabel.text(output)
+                self?.debouncedOutputLabel.text(output)
             }
         }
 
@@ -226,6 +225,8 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
     }
 
     private func setupConstraintAnimation() {
+        // Deliberate raw-anchor use: the animation demo mutates this constraint's
+        // `constant`, so it needs a stored reference — the DSL doesn't expose one.
         let c = constraintBar.widthAnchor.constraint(equalToConstant: 80)
         c.isActive = true
         barWidthConstraint = c

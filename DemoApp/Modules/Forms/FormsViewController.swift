@@ -195,6 +195,10 @@ extension FormsViewController: FormsViewProtocol {
         textField(for: field).borderColor(.systemGray3)
     }
 
+    func showSubmissionSuccess(message: String) {
+        Snackbar.show(.init(message: message))
+    }
+
     private func errorLabel(for field: FormsViewModel.Field) -> UILabel {
         switch field {
         case .name: nameErrorLabel

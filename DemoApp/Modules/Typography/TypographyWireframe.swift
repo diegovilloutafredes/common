@@ -11,6 +11,6 @@ enum TypographyWireframe {
     static func createModule() -> UIViewController {
         let viewModel = TypographyViewModel()
         return TypographyViewController(viewModel: viewModel)
-            .with { viewModel.view = $0; viewModel.delegate = $0 }
+            .with { viewModel.view = $0 }
     }
 }

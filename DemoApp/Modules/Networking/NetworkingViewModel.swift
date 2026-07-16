@@ -17,19 +17,9 @@ protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
     func setMode(_ mode: NetworkingMode)
 }
 
-// MARK: - NetworkingViewModelDelegate
-protocol NetworkingViewModelDelegate: AnyObject {
-    func didUpdatePosts()
-    func didUpdateStatus()
-    func didFailWithError(_ message: String)
-    func didStartLoading()
-    func didStopLoading()
-}
-
 // MARK: - NetworkingViewModel
 final class NetworkingViewModel {
     let title = "Networking"
-    weak var delegate: NetworkingViewModelDelegate?
     private(set) var statusText = "Tap Fetch to load posts from JSONPlaceholder API"
     private(set) var mode: NetworkingMode = .callback
 
@@ -48,8 +38,8 @@ extension NetworkingViewModel: NetworkingViewModelProtocol {
         // making the callback vs async/await methods observable on repeated taps.
         posts = []
         statusText = "Loading via \(mode == .callback ? "callback" : "async/await")…"
-        delegate?.didUpdatePosts()
-        delegate?.didUpdateStatus()
+        view?.didUpdatePosts()
+        view?.didUpdateStatus()
 
         switch mode {
         case .callback: loadPostsCallback()
@@ -66,23 +56,23 @@ private extension NetworkingViewModel {
     ]
 
     func loadPostsCallback() {
-        delegate?.didStartLoading()
+        view?.didStartLoading()
         fetchPosts { [weak self] result in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                delegate?.didStopLoading()
+                view?.didStopLoading()
                 switch result {
                 case .success(let fetched):
                     posts = fetched
                     statusText = "Fetched \(fetched.count) posts via callback"
-                    delegate?.didUpdatePosts()
-                    delegate?.didUpdateStatus()
+                    view?.didUpdatePosts()
+                    view?.didUpdateStatus()
                 case .failure(let error):
                     if posts.isEmpty { posts = Self.mockPosts }
                     statusText = "API error — showing mock data"
-                    delegate?.didFailWithError(error.localizedDescription)
-                    delegate?.didUpdatePosts()
-                    delegate?.didUpdateStatus()
+                    view?.didFailWithError(error.localizedDescription)
+                    view?.didUpdatePosts()
+                    view?.didUpdateStatus()
                 @unknown default: break
                 }
             }
@@ -90,23 +80,23 @@ private extension NetworkingViewModel {
     }
 
     func loadPostsAsync() {
-        delegate?.didStartLoading()
+        view?.didStartLoading()
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
                 let fetched = try await fetchPostsAsync()
                 posts = fetched
                 statusText = "Fetched \(fetched.count) posts via async/await"
-                delegate?.didStopLoading()
-                delegate?.didUpdatePosts()
-                delegate?.didUpdateStatus()
+                view?.didStopLoading()
+                view?.didUpdatePosts()
+                view?.didUpdateStatus()
             } catch {
                 if posts.isEmpty { posts = Self.mockPosts }
                 statusText = "API error — showing mock data"
-                delegate?.didStopLoading()
-                delegate?.didFailWithError(error.localizedDescription)
-                delegate?.didUpdatePosts()
-                delegate?.didUpdateStatus()
+                view?.didStopLoading()
+                view?.didFailWithError(error.localizedDescription)
+                view?.didUpdatePosts()
+                view?.didUpdateStatus()
             }
         }
     }

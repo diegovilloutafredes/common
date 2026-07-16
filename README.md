@@ -332,7 +332,7 @@ override func prepareForReuse() {
 await ImageLoader.shared.preload(urls: nextPageURLs)
 
 // Cancel all in-flight preloads (e.g. the user left the screen)
-ImageLoader.shared.cancelPreloads()
+await ImageLoader.shared.cancelPreloads()
 ```
 
 ---

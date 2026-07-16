@@ -7,7 +7,9 @@ import Common
 import UIKit
 
 // MARK: - TypographyViewProtocol
-protocol TypographyViewProtocol: AnyObject {}
+protocol TypographyViewProtocol: AnyObject {
+    func updateSelectedFamily()
+}
 
 // MARK: - TypographyViewController
 final class TypographyViewController: BaseViewModelableViewController<TypographyViewModelProtocol> {
@@ -20,16 +22,7 @@ final class TypographyViewController: BaseViewModelableViewController<Typography
         }
         .setConstraints { $0.set(height: 56) }
 
-    private lazy var familyChipsStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .center
-        viewModel.families.enumerated().forEach { index, item in
-            stack.addArrangedSubview(makeChip(for: item.family, name: item.name, index: index))
-        }
-        return stack
-    }()
+    private lazy var familyChipsStack = HStack(alignment: .center, spacing: 8)
 
     // MARK: - Preview Card
     private lazy var previewTitleLabel   = UILabel().numberOfLines(0)
@@ -99,25 +92,21 @@ final class TypographyViewController: BaseViewModelableViewController<Typography
         title = viewModel.title
         view.backgroundColor(.systemGroupedBackground)
         familyScrollView.addSubview(familyChipsStack)
-        familyChipsStack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            familyChipsStack.leadingAnchor.constraint(equalTo: familyScrollView.contentLayoutGuide.leadingAnchor),
-            familyChipsStack.trailingAnchor.constraint(equalTo: familyScrollView.contentLayoutGuide.trailingAnchor),
-            familyChipsStack.topAnchor.constraint(equalTo: familyScrollView.topAnchor, constant: 12),
-            familyChipsStack.bottomAnchor.constraint(equalTo: familyScrollView.bottomAnchor, constant: -12),
-            familyChipsStack.heightAnchor.constraint(equalToConstant: 32),
-        ])
+        familyChipsStack.setConstraints {
+            $0.snap(to: $1, insets: .init(horizontal: .zero, vertical: 12))
+            $0.set(height: 32)
+        }
+        viewModel.families.enumerated().forEach { index, item in
+            familyChipsStack.addArrangedSubview(makeChip(for: item.family, name: item.name, index: index))
+        }
         reloadPreview()
         updateChipSelection()
     }
 }
 
 // MARK: - TypographyViewProtocol
-extension TypographyViewController: TypographyViewProtocol {}
-
-// MARK: - TypographyViewModelDelegate
-extension TypographyViewController: TypographyViewModelDelegate {
-    func didSelectFamily() {
+extension TypographyViewController: TypographyViewProtocol {
+    func updateSelectedFamily() {
         reloadPreview()
         updateChipSelection()
     }
@@ -147,7 +136,7 @@ private extension TypographyViewController {
     }
 
     func rebuildStyleRows(for family: AppFontFamily) {
-        stylesContainer.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        stylesContainer.removeArrangedSubviews()
         viewModel.previewStyles.forEach { style in
             stylesContainer.addArrangedSubview(makeStyleRow(family: family, style: style))
         }
@@ -182,9 +171,7 @@ private extension TypographyViewController {
                 sampleLabel
                 resolvedLabel
             }
-            UIView()
-                .backgroundColor(.separator)
-                .setConstraints { $0.set(height: 0.5) }
+            Separator(color: .separator, height: 0.5)
         }
     }
 

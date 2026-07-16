@@ -10,6 +10,7 @@ protocol FormsViewProtocol: AnyObject {
     func updateValidationStatus(isValid: Bool)
     func showFieldError(field: FormsViewModel.Field, message: String)
     func clearFieldError(field: FormsViewModel.Field)
+    func showSubmissionSuccess(message: String)
 }
 
 // MARK: - FormsViewModelProtocol
@@ -72,6 +73,7 @@ extension FormsViewModel: FormsViewModelProtocol {
     }
 
     func submit(name: String, email: String, password: String) {
-        Snackbar.show(.init(message: "Form submitted: \(name) (\(email))"))
+        validator.touchAll()
+        view?.showSubmissionSuccess(message: "Form submitted: \(name) (\(email))")
     }
 }

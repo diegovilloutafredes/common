@@ -7,7 +7,13 @@ import Common
 import UIKit
 
 // MARK: - NetworkingViewProtocol
-typealias NetworkingViewProtocol = ScreenSizeMeasurable
+protocol NetworkingViewProtocol: ScreenSizeMeasurable {
+    func didUpdatePosts()
+    func didUpdateStatus()
+    func didFailWithError(_ message: String)
+    func didStartLoading()
+    func didStopLoading()
+}
 
 // MARK: - PostCellViewModel
 protocol PostCellViewModel: ViewModel {
@@ -124,8 +130,8 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
     }
 }
 
-// MARK: - NetworkingViewModelDelegate
-extension NetworkingViewController: NetworkingViewModelDelegate {
+// MARK: - NetworkingViewProtocol
+extension NetworkingViewController: NetworkingViewProtocol {
     func didUpdatePosts() {
         list.reloadData()
     }

@@ -13,12 +13,9 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
     private var activeCount = 0
 
     override func start() {
-        let vm = CoordinatorDemoViewModel()
-        vm.delegate = self
-        viewModel = vm
-        let vc = CoordinatorDemoViewController(viewModel: vm)
-        vm.view = vc
-        push(vc)
+        let module = CoordinatorDemoWireframe.createModule(with: self)
+        viewModel = module.viewModel
+        push(module.viewController)
     }
 
     private var navStackCount: Int { navigationController.viewControllers.count }
