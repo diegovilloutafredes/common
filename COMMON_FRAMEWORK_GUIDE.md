@@ -837,9 +837,13 @@ backgroundColor(.systemBackground)
 setupAsKeyboardDismissable()
 dismissKeyboard()
 animate { /* UIView animations */ }
-dispatchOnMain { /* main-thread work */ }
-dispatchOnMainAfter(.now() + 0.3) { /* delayed work */ }
 ```
+
+> **Main-thread delivery:** use `Task { @MainActor in ... }`, not the legacy
+> `dispatchOnMain` / `dispatchOnMainAfter` helpers. Those are `DispatchQueue`-backed,
+> and under Xcode 26's concurrency runtime `DispatchQueue.main` is a separate
+> scheduler from `@MainActor` — callbacks delivered through it silently fail to
+> fire in async test contexts (`await fulfillment(of:)`).
 
 ### Do's and Don'ts
 
@@ -1230,8 +1234,10 @@ Lifecycle hooks can be attached to VC instances in the coordinator — one of th
 private var splashViewController: UIViewController {
     SplashViewController()
         .onViewWillAppear { $0.hideNavigationBar(animated: false) }
-        .onViewDidAppear { [weak self] _ in guard let self else { return }
-            dispatchOnMainAfter(.now() + 0.3) { [weak self] in guard let self else { return }
+        .onViewDidAppear { [weak self] _ in
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(0.3))
+                guard let self else { return }
                 set(initialViewController, animated: true)
             }
         }
@@ -2086,7 +2092,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 - **Use `.setRatio()` on images** to maintain aspect ratios.
 - **Mark `init?(coder:)` unavailable** on every ViewController.
 - **Prefer `.filled()` configuration** for primary action buttons, `.borderless()` for links.
-- **Use `dispatchOnMain { }`** for UI updates from background threads.
+- **Use `Task { @MainActor in }`** for UI updates from background threads — not `dispatchOnMain` or `DispatchQueue.main.async` (see the main-thread delivery note in section 5).
 - **Use `lazy var`** for subviews that need `self` references.
 
 ### Don't
@@ -2103,9 +2109,12 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 ### Utilities
 
 ```swift
-// Main thread dispatch
-dispatchOnMain { updateUI() }
-dispatchOnMainAfter(.now() + 0.5) { animate() }
+// Main thread dispatch — Swift Concurrency, not the legacy DispatchQueue helpers
+Task { @MainActor in updateUI() }
+Task { @MainActor in
+    try? await Task.sleep(for: .seconds(0.5))
+    animate()
+}
 
 // Haptics
 view.vibrate()
@@ -2230,6 +2239,20 @@ public enum ImageTransition {
 ```
 
 Cache hits (L1 or L2) always use `.none` — the transition is only applied when the image came from the network.
+
+### Preloading
+
+Warm the cache for images the user is about to see (e.g. the next page of a list). Preloads run at background priority and deduplicate against in-flight fetches, so a preloaded URL that a cell then requests joins the same task:
+
+```swift
+// Warm the cache for upcoming cells
+await ImageLoader.shared.preload(urls: nextPageURLs)
+
+// Cancel all in-flight preloads (e.g. in onViewWillDisappear)
+await ImageLoader.shared.cancelPreloads()
+```
+
+Cancel preloads when the screen goes away — otherwise abandoned fetches keep running. `cancelPreloads()` only cancels fetches started by `preload(urls:)`; loads owned by visible image views are unaffected.
 
 ### Cache management
 
