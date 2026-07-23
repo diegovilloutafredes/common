@@ -30,6 +30,7 @@ extension FileStorage {
             let data = item.value.asData(),
             let fileURL = fileURL(using: item.key)
         else { return }
+        ensureDirectoryExists(for: fileURL)
         try? data.write(to: fileURL)
     }
 
@@ -64,6 +65,7 @@ extension FileStorage {
             return .failure(.fileIOError(CocoaError(.fileWriteUnknown)))
         }
         do {
+            ensureDirectoryExists(for: url)
             try data.write(to: url)
             return .success(())
         } catch {
@@ -103,4 +105,15 @@ extension FileStorage {
 
 extension FileStorage {
     private func fileURL(using pathComponent: String) -> URL? { URL.documentsDirectory?.appendingPathComponent(pathComponent) }
+
+    /// `URL.documentsDirectory` returns the container path whether or not the
+    /// directory exists on disk. In environments where it hasn't been created
+    /// yet (fresh app containers, simulator test hosts) `Data.write(to:)` fails
+    /// — silently, under the fire-and-forget API — and the value is dropped.
+    private func ensureDirectoryExists(for fileURL: URL) {
+        try? FileManager.default.createDirectory(
+            at: fileURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+    }
 }

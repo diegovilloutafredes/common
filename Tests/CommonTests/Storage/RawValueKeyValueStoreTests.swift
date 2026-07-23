@@ -91,3 +91,25 @@ final class RawValueKeyValueStoreTests: XCTestCase {
         XCTAssertEqual(DefaultBackedStorage().get(), stored)
     }
 }
+
+// MARK: - FileStorageDirectoryCreationTests
+
+/// FileStorage must survive a missing Documents directory — `Data.write(to:)`
+/// fails (silently, in the fire-and-forget API) when the parent directory
+/// doesn't exist, which is the state of a fresh app container.
+final class FileStorageDirectoryCreationTests: XCTestCase {
+
+    func test_add_createsDocumentsDirectoryWhenMissing() throws {
+        let documents = try XCTUnwrap(URL.documentsDirectory)
+        // Only remove it when empty-or-absent-of-others: our own key is the sole
+        // thing this suite writes there, and sibling tests recreate on demand.
+        try? FileManager.default.removeItem(at: documents)
+        defer { FileStorage.shared.remove(using: "fs_mkdir_item") }
+
+        let stored = Item(value: "created")
+        FileStorage.shared.add(item: ("fs_mkdir_item", stored))
+
+        let read: Item? = FileStorage.shared.get(using: "fs_mkdir_item")
+        XCTAssertEqual(read, stored, "add must create the missing Documents directory before writing")
+    }
+}
