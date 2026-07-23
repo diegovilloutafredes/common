@@ -30,6 +30,16 @@ private struct DefaultBackedStorage: SingleRawValueKeyValueObjectStorage {
     func delete() { remove(using: .item) }
 }
 
+/// Conformer declaring `.secure` — the exact shape of the original bug report
+/// (a "keychain" store silently writing to UserDefaults).
+private struct SecureBackedStorage: SingleRawValueKeyValueObjectStorage {
+    var type: KeyValueStore.StoreType { .secure }
+    enum Keys: String { case item = "rvkvs_secure_item" }
+    func add(item: Item) { add(item: (.item, item)) }
+    func get() -> Item? { get(using: .item) }
+    func delete() { remove(using: .item) }
+}
+
 // MARK: - RawValueKeyValueStoreTests
 
 final class RawValueKeyValueStoreTests: XCTestCase {
@@ -40,7 +50,21 @@ final class RawValueKeyValueStoreTests: XCTestCase {
     override func tearDown() {
         FilesBackedStorage().delete()
         DefaultBackedStorage().delete()
+        SecureBackedStorage().delete()
         super.tearDown()
+    }
+
+    /// `.secure` must route to the Keychain, not UserDefaults — the exact bug
+    /// this suite exists for. Only the negative half is assertable: on unsigned
+    /// simulator test hosts the keychain accepts writes but reads return nil,
+    /// so a round-trip cannot be verified. The regression this guards (routing
+    /// `.secure` to UserDefaults) IS caught: the buggy dispatch would make
+    /// `fromDefaults` non-nil.
+    func test_secureStoreType_doesNotWriteToUserDefaults() {
+        SecureBackedStorage().add(item: Item(value: "secure"))
+
+        let fromDefaults: Item? = userDefaultsStore.get(using: "rvkvs_secure_item")
+        XCTAssertNil(fromDefaults, "a .secure conformer must NOT write to UserDefaults")
     }
 
     /// A conformer's declared `type` must actually pick the backing store.

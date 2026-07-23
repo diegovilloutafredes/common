@@ -146,15 +146,11 @@ final class StringRUTUtilitiesTests: XCTestCase {
         XCTAssertEqual("12345678-5".formatAsRUT(), "12.345.678-5")
     }
 
+    // Also a regression pin: the outer-self bug fed unstripped rutComponents,
+    // producing number = "12.345.678-" → asInt → nil → the stripped "123456785".
+    // The equality below fails on exactly that output — no separate test needed.
     func test_formatAsRUT_alreadyFormatted() {
         XCTAssertEqual("12.345.678-5".formatAsRUT(), "12.345.678-5")
-    }
-
-    // Regression: outer-self bug — formatted input used unstripped rutComponents,
-    // producing number = "12.345.678-" → asInt → nil → returned stripped string "123456785".
-    func test_formatAsRUT_regression_formattedInput_notReturnedAsStripped() {
-        XCTAssertEqual("12.345.678-5".formatAsRUT(), "12.345.678-5")
-        XCTAssertNotEqual("12.345.678-5".formatAsRUT(), "123456785")  // the specific wrong value the bug produced
     }
 
     func test_formatAsRUT_regression_formattedKInput() {

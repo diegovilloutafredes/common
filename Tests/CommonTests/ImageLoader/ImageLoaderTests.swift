@@ -51,22 +51,25 @@ final class ImageLoaderTests: XCTestCase {
         let data = makeTestPNGData()
         await cache.storeToDisk(data, for: url, extension: "png")
 
-        let image = try await loader.image(for: url)
+        _ = try await loader.image(for: url)
 
-        XCTAssertNotNil(image)
         XCTAssertEqual(ImageMockURLProtocol.requestCount, 0, "L2 hit must not hit network")
     }
 
-    // MARK: - 8.4 L2 → L1 promotion
+    // (L2 → L1 promotion is ImageCache behavior, covered by
+    // ImageCacheTests.test_diskData_promotesToMemory; that the loader takes the
+    // disk path at all is proven by the test above.)
 
-    func test_diskHit_promotesToL1() async throws {
+    // MARK: - CachePolicy.reloadIgnoringCache bypasses both cache tiers
+
+    func test_reloadIgnoringCache_fetchesFromNetwork_despiteCacheHit() async throws {
         let (loader, cache, url) = makeTestLoader(cleanupWith: self)
-        let data = makeTestPNGData()
-        await cache.storeToDisk(data, for: url, extension: "png")
+        cache.storeInMemory(UIImage(data: makeTestPNGData())!, for: url)
 
-        _ = try await loader.image(for: url)
+        let result = try await loader.imageResult(for: url, cachePolicy: .reloadIgnoringCache)
 
-        XCTAssertNotNil(cache.memoryImage(for: url), "Disk hit should promote to L1")
+        XCTAssertEqual(ImageMockURLProtocol.requestCount, 1, "reloadIgnoringCache must skip L1/L2 and hit the network")
+        XCTAssertEqual(result.source, .network)
     }
 
     // MARK: - 8.5 Network fetch stores to L1 and L2

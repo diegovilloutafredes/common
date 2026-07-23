@@ -23,14 +23,14 @@ final class ImageLoadingUITests: UITestCase {
     func test_imageLoading_screenAppearsWithCells() {
         XCTAssertTrue(app.navigationBars["Image Loading"].exists, "Image Loading nav bar should be visible")
         let list = app.collectionViews["imageLoadingList"]
-        XCTAssertTrue(list.waitForExistence(timeout: 5), "Image list should exist")
+        XCTAssertTrue(list.waitForExistence(timeout: uiTimeout), "Image list should exist")
         XCTAssertGreaterThan(app.cells.count, 0, "Image list should render cells")
         // The GIF banner must render above the list (the VStack { banner; list }
         // restructure must not collapse either part). This also doubles as the
         // UI_TESTING-gate skip-path check: with the animation gated off, the
         // banner's label is what proves the screen still renders it.
         XCTAssertTrue(
-            app.staticTexts["GIFImageView"].waitForExistence(timeout: 5),
+            app.staticTexts["GIFImageView"].waitForExistence(timeout: uiTimeout),
             "GIFImageView demo banner should render above the list"
         )
     }
@@ -39,7 +39,7 @@ final class ImageLoadingUITests: UITestCase {
 
     func test_imageLoading_scrollingAllSections_doesNotCrash() {
         let list = app.collectionViews["imageLoadingList"]
-        XCTAssertTrue(list.waitForExistence(timeout: 5))
+        XCTAssertTrue(list.waitForExistence(timeout: uiTimeout))
         XCTAssertGreaterThan(app.cells.count, 0, "Cells must be visible before scroll")
 
         scrollToBottom(list: list, swipes: 10)
@@ -53,13 +53,13 @@ final class ImageLoadingUITests: UITestCase {
     func test_imageLoading_actionButtons_existAndDoNotCrash() {
         let clearCache = app.buttons["Clear Cache"]
         let preload = app.buttons["Preload"]
-        XCTAssertTrue(clearCache.waitForExistence(timeout: 3), "Clear Cache action should be wired into the nav bar")
-        XCTAssertTrue(preload.waitForExistence(timeout: 3), "Preload action should be wired into the nav bar")
+        XCTAssertTrue(clearCache.waitForExistence(timeout: uiTimeout), "Clear Cache action should be wired into the nav bar")
+        XCTAssertTrue(preload.waitForExistence(timeout: uiTimeout), "Preload action should be wired into the nav bar")
 
         clearCache.tap()
         preload.tap()
 
-        XCTAssertTrue(app.collectionViews["imageLoadingList"].waitForExistence(timeout: 5),
+        XCTAssertTrue(app.collectionViews["imageLoadingList"].waitForExistence(timeout: uiTimeout),
                       "List must remain functional after cache clear + preload")
         XCTAssertGreaterThan(app.cells.count, 0)
     }

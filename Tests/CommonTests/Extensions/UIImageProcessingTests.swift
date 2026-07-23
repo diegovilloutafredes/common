@@ -178,6 +178,37 @@ final class UIImageProcessingTests: XCTestCase {
         assertColor(tinted?.averageColor(), isCloseTo: (r: 1, g: 0, b: 0))
     }
 
+    /// A fully opaque fixture can't observe the mask semantics — deleting the
+    /// `clip(to:mask:)` would fill the whole rect and still pass the test above.
+    /// A half-transparent fixture is what proves the tint respects the alpha mask.
+    func test_imageWithColor_respectsAlphaMask() throws {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.opaque = false
+        format.scale = 1
+        let fixture = UIGraphicsImageRenderer(size: .init(width: 40, height: 20), format: format)
+            .image { _ in
+                UIColor.white.setFill()
+                UIRectFill(CGRect(x: 0, y: 0, width: 20, height: 20)) // left half opaque, right half transparent
+            }
+
+        let cg = try XCTUnwrap(fixture.image(with: .red)?.cgImage)
+
+        // Downsample to 2x1 with nearest-neighbor: pixel 0 samples the opaque
+        // half, pixel 1 the transparent half.
+        var pixels = [UInt8](repeating: 0, count: 8)
+        let context = try XCTUnwrap(CGContext(
+            data: &pixels, width: 2, height: 1, bitsPerComponent: 8, bytesPerRow: 8,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ))
+        context.interpolationQuality = .none
+        context.draw(cg, in: CGRect(x: 0, y: 0, width: 2, height: 1))
+
+        XCTAssertGreaterThan(pixels[0], 200, "opaque half must be tinted red")
+        XCTAssertGreaterThan(pixels[3], 200, "opaque half must stay opaque")
+        XCTAssertEqual(pixels[7], 0, "transparent half must stay transparent — a dropped clip mask fills the whole rect")
+    }
+
     // MARK: - asBase64String
 
     func test_asBase64String_decodesBackToAnImage() {

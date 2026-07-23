@@ -90,27 +90,27 @@ final class ImageCacheTests: XCTestCase {
     // MARK: - 7.6 Disk size cap: oldest files are evicted
 
     func test_diskSizeCap_evictsOldestFiles() async throws {
-        // Use a 3-byte cap so even tiny files exceed it
-        let tinyCache = ImageCache(diskCapacityLimit: 3, diskDirectory: tempDir)
+        // A 5-byte cap fits TWO 2-byte files, so the third write forces eviction
+        // while two candidates are on disk — the only arrangement that proves
+        // oldest-FIRST order (a 3-byte cap leaves one candidate per pass, and an
+        // evict-newest-first bug would pass unnoticed).
+        let tinyCache = ImageCache(diskCapacityLimit: 5, diskDirectory: tempDir)
         let url1 = URL(string: "https://example.com/a.png")!
         let url2 = URL(string: "https://example.com/b.png")!
         let url3 = URL(string: "https://example.com/c.png")!
 
-        let data1 = Data(repeating: 1, count: 2)
-        let data2 = Data(repeating: 2, count: 2)
-        let data3 = Data(repeating: 3, count: 2)
-
-        await tinyCache.storeToDisk(data1, for: url1, extension: "dat")
+        await tinyCache.storeToDisk(Data(repeating: 1, count: 2), for: url1, extension: "dat")
         // Ensure different modification dates
         try await Task.sleep(nanoseconds: 10_000_000)
-        await tinyCache.storeToDisk(data2, for: url2, extension: "dat")
+        await tinyCache.storeToDisk(Data(repeating: 2, count: 2), for: url2, extension: "dat")
         try await Task.sleep(nanoseconds: 10_000_000)
-        // Writing data3 (2 bytes) should cause data1 to be evicted (oldest)
-        await tinyCache.storeToDisk(data3, for: url3, extension: "dat")
+        // 2+2+2 > 5: evicting the single oldest file (url1) is enough to fit.
+        await tinyCache.storeToDisk(Data(repeating: 3, count: 2), for: url3, extension: "dat")
 
         let remaining = (try? FileManager.default.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: nil)) ?? []
         let keys = remaining.map { $0.deletingPathExtension().lastPathComponent }
-        XCTAssertFalse(keys.contains(tinyCache.diskKey(for: url1)), "Oldest file should be evicted")
+        XCTAssertFalse(keys.contains(tinyCache.diskKey(for: url1)), "Oldest file must be the one evicted")
+        XCTAssertTrue(keys.contains(tinyCache.diskKey(for: url2)), "Middle file must survive — its eviction means wrong order")
         XCTAssertTrue(keys.contains(tinyCache.diskKey(for: url3)), "Newest file should be present")
     }
 

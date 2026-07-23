@@ -148,10 +148,16 @@ final class BaseCoordinatorTests: XCTestCase {
     }
 
     func test_cancel_isIdempotent() {
+        // Re-adding the child between calls is what discriminates the guard:
+        // a second cancel() must short-circuit on isFinished and leave the
+        // re-added child in place; without the guard it would remove it again.
         parent.addChild(child)
         child.cancel()
-        child.cancel()
         XCTAssertTrue(parent.childCoordinators.isEmpty)
+
+        parent.addChild(child)
+        child.cancel()
+        XCTAssertEqual(parent.childCoordinators.count, 1)
     }
 
     func test_finish_afterCancel_isNoOp() {
@@ -246,6 +252,10 @@ final class BaseCoordinatorTests: XCTestCase {
     // .test_launchChild_statsIncrement, which pops a live child flow via the
     // real back button and asserts the cancel event was recorded.
 
+    /// Also codifies that KVO-driven cancel runs on the same runloop tick as the
+    /// nav-stack mutation (no expectation/await below). The implementation depends
+    /// on `MainActor.assumeIsolated` in `beginLifecycleTracking`; switching that
+    /// to `Task { @MainActor in ... }` would defer cleanup and break this test.
     func test_kvo_popRemovesCoordinatorFromParent() {
         let pushing = PushingCoordinator(navigationController: nav)
         parent.addChildAndStart(pushing)
@@ -279,18 +289,18 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertTrue(parent.childCoordinators.isEmpty)
     }
 
-    /// Codifies that KVO-driven cancel runs on the same runloop tick as the
-    /// nav-stack mutation (no Task hop). The implementation depends on
-    /// `MainActor.assumeIsolated` in `beginLifecycleTracking`; switching that
-    /// to `Task { @MainActor in ... }` would defer cleanup and break this test.
-    func test_kvo_popCancelsSynchronously() {
-        let pushing = PushingCoordinator(navigationController: nav)
-        parent.addChildAndStart(pushing)
-
-        nav.viewControllers = Array(nav.viewControllers.dropLast())
-
-        // No expectation / no await — cleanup must happen before the next line runs.
-        XCTAssertTrue(parent.childCoordinators.isEmpty)
+    /// A tracked-then-finished coordinator must deallocate: a strong `self`
+    /// capture in the KVO closure (or the observation outliving termination)
+    /// would leak every child flow.
+    func test_finishedCoordinator_deallocates() {
+        weak var weakCoordinator: BaseCoordinator?
+        autoreleasepool {
+            let pushing = PushingCoordinator(navigationController: nav)
+            parent.addChildAndStart(pushing)
+            weakCoordinator = pushing
+            pushing.finish()
+        }
+        XCTAssertNil(weakCoordinator, "finished coordinator must not be retained by its KVO observation")
     }
 
     func test_kvo_noTrackingWhenCoordinatorDoesNotPush() {

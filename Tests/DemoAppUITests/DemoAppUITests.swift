@@ -6,7 +6,7 @@ import XCTest
 
 final class DemoAppUITests: UITestCase {
 
-    /// All 13 home rows, in HomeViewModel's order — the single source of truth
+    /// All 14 home rows, in HomeViewModel's order — the single source of truth
     /// for module-existence assertions. A renamed or removed row must break
     /// HERE, loudly, not silently shrink coverage.
     static let allModules = [
@@ -51,39 +51,10 @@ final class DemoAppUITests: UITestCase {
         }
     }
 
-    // MARK: - Networking — fetch via callback path
-
-    func test_networking_callbackFetch_loadsOrShowsMock() {
-        openModule("Networking", until: app.buttons["Fetch Posts"])
-
-        app.buttons["Fetch Posts"].tap()
-
-        let defaultStatus = "Tap Fetch to load posts from JSONPlaceholder API"
-        let statusChanged = NSPredicate(format: "label != %@", defaultStatus)
-        let statusLabel = app.staticTexts.matching(statusChanged).firstMatch
-        XCTAssertTrue(statusLabel.waitForExistence(timeout: networkTimeout), "Status should update after fetch")
-
-        XCTAssertGreaterThan(app.cells.count, 0, "Post list should be non-empty")
-    }
-
-    // MARK: - Networking — fetch via async path
-
-    func test_networking_asyncFetch_loadsOrShowsMock() {
-        openModule("Networking", until: app.buttons["Fetch Posts"])
-
-        let segment = app.segmentedControls.firstMatch
-        XCTAssertTrue(segment.waitForExistence(timeout: 3))
-        segment.buttons["Async"].tap()
-
-        app.buttons["Fetch Posts"].tap()
-
-        let defaultStatus = "Tap Fetch to load posts from JSONPlaceholder API"
-        let statusChanged = NSPredicate(format: "label != %@", defaultStatus)
-        let statusLabel = app.staticTexts.matching(statusChanged).firstMatch
-        XCTAssertTrue(statusLabel.waitForExistence(timeout: networkTimeout), "Status should update after async fetch")
-
-        XCTAssertGreaterThan(app.cells.count, 0, "Post list should be non-empty")
-    }
+    // (The separate callback-fetch and async-fetch smoke tests were removed:
+    // their "status changed" predicate matched the permanent header label, so
+    // they asserted nothing the refetch test below doesn't prove with honest
+    // per-method CONTAINS predicates and waited cell existence.)
 
     // MARK: - Networking — re-fetch clears and reloads per method
 
@@ -143,6 +114,32 @@ final class DemoAppUITests: UITestCase {
         exerciseStorageBackend(index: 2, name: "Keychain", readPrefixes: ["Read:", "Nothing stored in"])
     }
 
+    // MARK: - Storage — InMemory + direct KeychainWrapper cards
+
+    /// InMemory is the one backend immune to the sim-keychain caveat, so its
+    /// full save→read→delete round-trip is honestly assertable.
+    func test_storage_inMemory_saveReadDelete() {
+        navigateToStorage()
+        let inMemorySave = app.buttons.matching(identifier: "Save").element(boundBy: 3)
+        scrollUntilVisible(inMemorySave)
+        exerciseStorageBackend(index: 3, name: "InMemory")
+    }
+
+    func test_storage_directKeychainCard_buttonsWired() {
+        navigateToStorage()
+        let directSave = app.buttons.matching(identifier: "Save").element(boundBy: 4)
+        scrollUntilVisible(directSave)
+        XCTAssertTrue(app.staticTexts["KeychainWrapper (direct)"].exists)
+
+        directSave.tap()
+        // Direct-card snackbars use their own wording ("Saved \"<secret>\"") —
+        // distinct from the typed cards' "Saved to <title>".
+        waitForSnackbar(prefixes: ["Saved \""], label: "Save", backend: "KeychainWrapper direct")
+
+        app.buttons.matching(identifier: "Delete").element(boundBy: 4).tap()
+        waitForSnackbar(prefixes: ["Deleted from Keychain"], label: "Delete", backend: "KeychainWrapper direct")
+    }
+
     /// Verifies the Local Authentication screen renders its nav bar + primary control.
     /// Layout correctness ("not stretched") is a visual check via the attached screenshot —
     /// it is not (and cannot be) programmatically asserted via XCUITest.
@@ -191,12 +188,12 @@ final class DemoAppUITests: UITestCase {
     func test_extensions_switch_togglesLabel() {
         navigateToExtensions()
         let toggle = app.switches.firstMatch
-        XCTAssertTrue(toggle.waitForExistence(timeout: 3))
+        XCTAssertTrue(toggle.waitForExistence(timeout: uiTimeout))
         XCTAssertTrue(app.staticTexts["OFF"].exists)
         toggle.tap()
-        XCTAssertTrue(app.staticTexts["ON"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["ON"].waitForExistence(timeout: uiTimeout))
         toggle.tap()
-        XCTAssertTrue(app.staticTexts["OFF"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["OFF"].waitForExistence(timeout: uiTimeout))
     }
 
     func test_extensions_notificationButton_updatesLabel() {
@@ -207,7 +204,7 @@ final class DemoAppUITests: UITestCase {
         XCTAssertTrue(app.staticTexts["Waiting for notification…"].exists)
         button.tap()
         let received = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Received at'")).firstMatch
-        XCTAssertTrue(received.waitForExistence(timeout: 2))
+        XCTAssertTrue(received.waitForExistence(timeout: uiTimeout))
     }
 
     func test_extensions_tapMeButton_showsSnackbar() {
@@ -216,7 +213,7 @@ final class DemoAppUITests: UITestCase {
         scrollUntilVisible(button)
         button.tap()
         let snackbar = app.staticTexts["Button tapped!"]
-        XCTAssertTrue(snackbar.waitForExistence(timeout: 3))
+        XCTAssertTrue(snackbar.waitForExistence(timeout: uiTimeout))
     }
 
     // MARK: - Components
@@ -237,12 +234,27 @@ final class DemoAppUITests: UITestCase {
 
     func test_utilities_sectionTitlesVisible() {
         navigateToUtilities()
-        XCTAssertTrue(app.staticTexts["Debouncer.debounce(seconds:function:)"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Debouncer.debounce(seconds:function:)"].waitForExistence(timeout: uiTimeout))
         XCTAssertTrue(app.staticTexts["UIDatePicker.onValueChanged(_:)"].exists)
         XCTAssertTrue(app.staticTexts["CircularActivityIndicatorView"].exists)
         scrollUntilVisible(app.staticTexts["UIView.animate — properties & constraint"])
         XCTAssertTrue(app.staticTexts["UIView.animate — properties & constraint"].exists)
+        scrollUntilVisible(app.staticTexts["Shake & Vibrate"])
+        XCTAssertTrue(app.staticTexts["Logger"].exists)
+        XCTAssertTrue(app.staticTexts["Shake & Vibrate"].exists)
         add(XCTAttachment(screenshot: app.screenshot()))
+    }
+
+    /// The Logger demo's label update is deterministic UI wiring — the console
+    /// output itself is unassertable from XCUITest, the label is the proxy.
+    func test_utilities_loggerEmit_updatesStatusLabel() {
+        navigateToUtilities()
+        scrollUntilVisible(app.buttons["Emit Log Frame"])
+        app.buttons["Emit Log Frame"].tap()
+        XCTAssertTrue(
+            app.staticTexts["Emitted frame #1 — check the Xcode console"].waitForExistence(timeout: uiTimeout),
+            "tapping Emit Log Frame must update the status label"
+        )
     }
 
     /// XCUITest cannot read a view's alpha, so this is a smoke test: triggering the fade
@@ -252,7 +264,7 @@ final class DemoAppUITests: UITestCase {
         scrollUntilVisible(app.buttons["Fade"])
         let fade = app.buttons["Fade"]
         fade.tap()
-        XCTAssertTrue(fade.waitForExistence(timeout: 2), "Fade control must remain after the animation")
+        XCTAssertTrue(fade.waitForExistence(timeout: uiTimeout), "Fade control must remain after the animation")
         XCTAssertTrue(fade.isHittable, "Fade control must stay responsive after the animation")
     }
 
@@ -261,19 +273,19 @@ final class DemoAppUITests: UITestCase {
         scrollUntilVisible(app.buttons["Expand"])
         XCTAssertTrue(app.buttons["Expand"].exists)
         app.buttons["Expand"].tap()
-        XCTAssertTrue(app.buttons["Collapse"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["Collapse"].waitForExistence(timeout: uiTimeout))
         app.buttons["Collapse"].tap()
-        XCTAssertTrue(app.buttons["Expand"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["Expand"].waitForExistence(timeout: uiTimeout))
     }
 
     func test_utilities_debouncer_updatesLabel() {
         navigateToUtilities()
         let field = app.textFields.firstMatch
-        XCTAssertTrue(field.waitForExistence(timeout: 3))
+        XCTAssertTrue(field.waitForExistence(timeout: uiTimeout))
         field.tap()
         field.typeText("Hello")
         let debounced = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Debounced:'")).firstMatch
-        XCTAssertTrue(debounced.waitForExistence(timeout: 3), "Debounced label should update after typing")
+        XCTAssertTrue(debounced.waitForExistence(timeout: uiTimeout), "Debounced label should update after typing")
     }
 
     func test_utilities_spinner_toggles() {
@@ -282,32 +294,32 @@ final class DemoAppUITests: UITestCase {
         scrollUntilVisible(startButton)
         XCTAssertTrue(startButton.exists)
         startButton.tap()
-        XCTAssertTrue(app.buttons["Stop Spinner"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["Stop Spinner"].waitForExistence(timeout: uiTimeout))
         app.buttons["Stop Spinner"].tap()
-        XCTAssertTrue(app.buttons["Start Spinner"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["Start Spinner"].waitForExistence(timeout: uiTimeout))
     }
 
     // MARK: - Lists & Cells
 
     func test_lists_rendersItems() {
         navigateToLists()
-        XCTAssertTrue(app.staticTexts["List Item 1"].waitForExistence(timeout: 3), "First item should be visible")
+        XCTAssertTrue(app.staticTexts["List Item 1"].waitForExistence(timeout: uiTimeout), "First item should be visible")
         XCTAssertGreaterThan(app.cells.count, 0, "List should have cells")
     }
 
     func test_lists_sectionHeadersVisible() {
         navigateToLists()
-        XCTAssertTrue(app.staticTexts["RECENT"].waitForExistence(timeout: 3), "Recent section header should be visible")
+        XCTAssertTrue(app.staticTexts["RECENT"].waitForExistence(timeout: uiTimeout), "Recent section header should be visible")
         scrollUntilVisible(app.staticTexts["ALL ITEMS (15)"])
         XCTAssertTrue(app.staticTexts["ALL ITEMS (15)"].exists, "All Items section header should be visible")
     }
 
     func test_lists_tapItem_showsSnackbar() {
         navigateToLists()
-        XCTAssertTrue(app.staticTexts["List Item 1"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["List Item 1"].waitForExistence(timeout: uiTimeout))
         app.staticTexts["List Item 1"].firstMatch.tap()
         let snackbar = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Tapped:'")).firstMatch
-        XCTAssertTrue(snackbar.waitForExistence(timeout: 3), "Snackbar should appear after tapping a list item")
+        XCTAssertTrue(snackbar.waitForExistence(timeout: uiTimeout), "Snackbar should appear after tapping a list item")
     }
 
     func test_lists_pullToRefresh_addsSixItems() {
@@ -328,7 +340,7 @@ final class DemoAppUITests: UITestCase {
         // scrolling away, then scroll down to the (moved) section header if needed.
         let updatedHeader = app.staticTexts["ALL ITEMS (21)"]
         var swipes = 0
-        while !updatedHeader.waitForExistence(timeout: 2) && swipes < 8 {
+        while !updatedHeader.waitForExistence(timeout: uiTimeout) && swipes < 8 {
             app.swipeUp()
             swipes += 1
         }
@@ -342,7 +354,7 @@ final class DemoAppUITests: UITestCase {
         navigateToForms()
 
         let submit = app.buttons["Submit"]
-        XCTAssertTrue(submit.waitForExistence(timeout: 5))
+        XCTAssertTrue(submit.waitForExistence(timeout: uiTimeout))
         XCTAssertFalse(submit.isEnabled, "Submit should start disabled on an empty form")
 
         let name = app.textFields["Full Name"]
@@ -356,7 +368,7 @@ final class DemoAppUITests: UITestCase {
         confirm.tap(); confirm.typeText("secret2") // mismatch
 
         // Cross-field .matches fails → error shown, submit still disabled.
-        XCTAssertTrue(app.staticTexts["Passwords must match"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Passwords must match"].waitForExistence(timeout: uiTimeout))
         XCTAssertFalse(submit.isEnabled)
 
         // Fix the confirmation → error clears reactively, submit enables.
@@ -408,23 +420,27 @@ private extension DemoAppUITests {
         let read   = app.buttons.matching(identifier: "Read").element(boundBy: index)
         let delete = app.buttons.matching(identifier: "Delete").element(boundBy: index)
 
-        XCTAssertTrue(save.waitForExistence(timeout: 3), "\(name) Save button should exist")
+        XCTAssertTrue(save.waitForExistence(timeout: uiTimeout), "\(name) Save button should exist")
 
+        // The full "Saved to <name>" text (not just the shared prefix) is what
+        // catches positional drift: if the cards reorder, boundBy taps a
+        // different backend and the mismatched title fails here instead of
+        // silently exercising the wrong store.
         save.tap()
-        waitForSnackbar(prefixes: ["Saved to"], label: "Save", backend: name)
+        waitForSnackbar(prefixes: ["Saved to \(name)"], label: "Save", backend: name)
 
         read.tap()
         waitForSnackbar(prefixes: readPrefixes, label: "Read", backend: name)
 
         delete.tap()
-        waitForSnackbar(prefixes: ["Deleted from"], label: "Delete", backend: name)
+        waitForSnackbar(prefixes: ["Deleted from \(name)"], label: "Delete", backend: name)
     }
 
     func waitForSnackbar(prefixes: [String], label: String, backend: String) {
         let subpredicates = prefixes.map { NSPredicate(format: "label BEGINSWITH %@", $0) }
         let predicate = NSCompoundPredicate(orPredicateWithSubpredicates: subpredicates)
         let snackbar = app.staticTexts.matching(predicate).firstMatch
-        XCTAssertTrue(snackbar.waitForExistence(timeout: 5), "\(label) snackbar should appear for \(backend)")
+        XCTAssertTrue(snackbar.waitForExistence(timeout: uiTimeout), "\(label) snackbar should appear for \(backend)")
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: snackbar)
         waitForExpectations(timeout: 5)
     }

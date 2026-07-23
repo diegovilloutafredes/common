@@ -276,6 +276,25 @@ final class GIFImageViewTests: XCTestCase {
         view.stopAnimating()
     }
 
+    /// The other half of the stop contract: startAnimating() must actually
+    /// resume — re-creating the torn-down display link while on a window.
+    func test_startAnimating_resumesAfterExplicitStop() {
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
+        let view = GIFImageView()
+        window.addSubview(view)
+        view.loadGIF(from: TestGIF.animated(frameCount: 3))
+
+        view.stopAnimating()
+        XCTAssertFalse(view.isAnimating)
+
+        view.startAnimating()
+        XCTAssertTrue(view.isAnimating, "startAnimating must re-create the display link after an explicit stop")
+        XCTAssertEqual(view.displayLink?.isPaused, false)
+
+        view.stopAnimating()
+        view.removeFromSuperview()
+    }
+
     /// An explicit stopAnimating() must survive window re-entry — the
     /// documented contract is that only startAnimating() resumes it.
     func test_stopAnimating_staysStoppedAcrossWindowReentry() {

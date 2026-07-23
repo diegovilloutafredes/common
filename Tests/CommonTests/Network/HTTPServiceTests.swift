@@ -180,8 +180,9 @@ final class HTTPServiceTests: XCTestCase {
 
     func test_request_appliesDefaultTimeoutInterval() async throws {
         let customTimeout: TimeInterval = 42
+        let originalTimeout = HTTPService.defaultTimeoutInterval
         HTTPService.defaultTimeoutInterval = customTimeout
-        defer { HTTPService.defaultTimeoutInterval = 60 }
+        defer { HTTPService.defaultTimeoutInterval = originalTimeout }
 
         var capturedTimeout: TimeInterval?
         MockURLProtocol.requestHandler = { request in
@@ -287,6 +288,50 @@ final class HTTPServiceTests: XCTestCase {
         guard case .requestError = receivedError else {
             return XCTFail("Expected .requestError, got \(String(describing: receivedError))")
         }
+    }
+
+    // MARK: - Multipart upload
+
+    func test_upload_multipart_setsContentTypeAndAssemblesBody() async throws {
+        var multipart = MultipartRequest(boundary: "test-boundary")
+        multipart.add(key: "field", value: "value1")
+        multipart.add(key: "file", fileName: "a.txt", fileMimeType: "text/plain", fileData: Data("hello".utf8))
+
+        var capturedContentType: String?
+        var capturedBody: Data?
+        MockURLProtocol.requestHandler = { request in
+            capturedContentType = request.value(forHTTPHeaderField: "Content-Type")
+            // URLSession hands URLProtocol the body as a stream, not httpBody.
+            if let stream = request.httpBodyStream {
+                stream.open()
+                defer { stream.close() }
+                var body = Data()
+                let bufferSize = 4096
+                let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+                defer { buffer.deallocate() }
+                while stream.hasBytesAvailable {
+                    let read = stream.read(buffer, maxLength: bufferSize)
+                    guard read > 0 else { break }
+                    body.append(buffer, count: read)
+                }
+                capturedBody = body
+            }
+            let data = try JSONEncoder().encode(TestItem(id: 1, name: "ok"))
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, data)
+        }
+
+        let result: TestItem = try await HTTPService.upload(multipart: multipart, to: TestEndpoint.get)
+
+        XCTAssertEqual(result.name, "ok")
+        XCTAssertEqual(capturedContentType, "multipart/form-data; boundary=test-boundary")
+        let body = String(decoding: try XCTUnwrap(capturedBody), as: UTF8.self)
+        XCTAssertTrue(body.contains("--test-boundary"), "body must open with the boundary separator")
+        XCTAssertTrue(body.contains("Content-Disposition: form-data; name=\"field\""))
+        XCTAssertTrue(body.contains("value1"))
+        XCTAssertTrue(body.contains("filename=\"a.txt\""))
+        XCTAssertTrue(body.contains("Content-Type: text/plain"))
+        XCTAssertTrue(body.contains("hello"))
     }
 
     // MARK: - 5xx returns responseError

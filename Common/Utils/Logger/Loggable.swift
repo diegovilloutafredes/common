@@ -25,6 +25,13 @@ private var _loggableStore: KeyValueStore {
     }
 }
 
+/// Clears the in-process `shouldLog` cache so the next read consults the backing
+/// store. Test-only seam: without it the cache-first getter makes store reads and
+/// the default-value path unobservable within a process.
+internal func _resetLoggableCacheForTesting() {
+    _loggableCache.withLock { $0.removeAll() }
+}
+
 // MARK: - Default implementation
 extension Loggable {
     public static var shouldLog: Bool {

@@ -96,9 +96,11 @@ final class UIImageViewLoadImageTests: XCTestCase {
         imageView.loadImage(from: testURL, options: options, loader: loader)
         await fulfillment(of: [done], timeout: 3)
 
-        // The fade path drops alpha to 0 before animating back; the cache path
-        // must never touch alpha — a fade on every scroll-back is visible flicker.
+        // The final alpha alone can't discriminate (UIView.animate sets the model
+        // alpha back to 1 synchronously) — the layer's attached animations can:
+        // the fade path adds an opacity animation, the cache path must add none.
         XCTAssertEqual(imageView.alpha, 1, "cache hits must not animate")
+        XCTAssertNil(imageView.layer.animationKeys(), "cache hits must not attach a fade animation")
         XCTAssertTrue(imageView.image === cached)
     }
 

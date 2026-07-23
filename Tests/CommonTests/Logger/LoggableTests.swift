@@ -18,6 +18,9 @@ final class LoggableTests: XCTestCase {
     override func setUp() {
         super.setUp()
         secureStore.remove(using: persistedKey)
+        // The getter is cache-first; clear the cache so each test observes the
+        // store/default path instead of values a previous test cached.
+        _resetLoggableCacheForTesting()
     }
 
     override func tearDown() {
@@ -44,6 +47,13 @@ final class LoggableTests: XCTestCase {
         TestLoggable.shouldLog = true
         XCTAssertTrue(TestLoggable.shouldLog)
     }
+
+    // NOTE: the setter's write-through to the Keychain store is NOT verifiable
+    // here — on unsigned simulator test hosts (CODE_SIGNING_ALLOWED=NO) keychain
+    // writes report success but reads return nil even in-process (verified
+    // empirically 2026-07-23 by asserting a post-cache-clear read and watching
+    // it fall through to the default). The cache reset in setUp is what keeps
+    // the default-path and setter tests honest and order-independent.
 
     func test_forceEnable_setsLoggerShouldLogTrue() {
         Logger.shouldLog = false
