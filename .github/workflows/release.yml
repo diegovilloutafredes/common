@@ -16,6 +16,7 @@ jobs:
   validate:
     name: Test
     runs-on: macos-26
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -26,6 +27,12 @@ jobs:
 
       - name: Print Xcode version
         run: xcodebuild -version
+
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-${{ runner.os }}-xcodegen
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -40,32 +47,38 @@ jobs:
             -scheme Common \
             -project Common.xcodeproj \
             -destination "$DEVICE_ID" \
+            -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-test-results
+          path: TestResults.xcresult
+          if-no-files-found: ignore
+
   release:
-    name: Build & Release
-    runs-on: macos-26
+    name: Publish Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: validate
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode 26.4
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.4'
-
-      - name: Install XcodeGen
-        run: brew install xcodegen
-
-      - name: Generate Xcode Project
-        run: xcodegen generate
-
-      - name: Build XCFramework
+      # The release asset is the XCFramework COMMITTED at this tag (release.sh
+      # rebuilds and commits it before tagging) — the same binary SPM's path:
+      # target resolves. Publishing the committed binary instead of rebuilding
+      # guarantees the asset can never drift from the tag, which is the failure
+      # mode that once shipped a crashing v1.3.0 asset. CI's push run validates
+      # that the source at this commit still builds an XCFramework.
+      - name: Verify committed XCFramework
         run: |
-          chmod +x ./build_xcframework.sh
-          ./build_xcframework.sh
+          test -f XCFramework/Common.xcframework/Info.plist
+          test -d XCFramework/Common.xcframework/ios-arm64
+          test -d XCFramework/Common.xcframework/ios-arm64_x86_64-simulator
 
       - name: Zip XCFramework
         run: |

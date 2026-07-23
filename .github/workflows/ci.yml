@@ -9,10 +9,15 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Test & Build
     runs-on: macos-26
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -24,8 +29,25 @@ jobs:
       - name: Print Xcode version
         run: xcodebuild -version
 
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-${{ runner.os }}-xcodegen
+
       - name: Install XcodeGen
         run: brew install xcodegen
+
+      # The compilation cache lives outside DerivedData and is keyed by the
+      # DerivedData path, which is stable across runs (same checkout path).
+      # restore-keys lets a partial cache from any earlier commit warm the build.
+      - name: Cache Swift compilation cache
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex
+          key: compilation-cache-${{ runner.os }}-${{ hashFiles('project.yml', 'Common/**', 'DemoApp/**', 'Tests/**') }}
+          restore-keys: |
+            compilation-cache-${{ runner.os }}-
 
       - name: Generate Xcode Project
         run: xcodegen generate
@@ -37,6 +59,15 @@ jobs:
             -scheme Common \
             -project Common.xcodeproj \
             -destination "$DEVICE_ID" \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Build DemoApp
+        run: |
+          xcodebuild build \
+            -scheme DemoApp \
+            -project Common.xcodeproj \
+            -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Build XCFramework
@@ -44,9 +75,18 @@ jobs:
           chmod +x ./build_xcframework.sh
           ./build_xcframework.sh
 
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults.xcresult
+          if-no-files-found: ignore
+
   documentation:
     name: Update Docs
     runs-on: macos-26
+    timeout-minutes: 30
     needs: test
     permissions:
       contents: write
@@ -59,17 +99,31 @@ jobs:
         with:
           xcode-version: '26.4'
 
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-${{ runner.os }}-xcodegen
+
       - name: Install XcodeGen
         run: brew install xcodegen
 
       - name: Generate Xcode Project
         run: xcodegen generate
 
+      - name: Cache Ruby gems
+        uses: actions/cache@v4
+        with:
+          path: ~/.gem
+          key: gems-${{ runner.os }}-jazzy
+
       - name: Install Jazzy
-        run: gem install jazzy
+        run: gem install jazzy --user-install
 
       - name: Generate Documentation
-        run: jazzy
+        run: |
+          export PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+          jazzy
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
