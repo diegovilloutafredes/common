@@ -38,7 +38,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - 9.2 Basic load
+    // MARK: - Basic load
 
     func test_loadImage_setsImageAfterFetch() async throws {
         let expectation = expectation(description: "onCompletion called")
@@ -48,7 +48,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         XCTAssertNotNil(imageView.image)
     }
 
-    // MARK: - 9.3 Placeholder shown synchronously
+    // MARK: - Placeholder shown synchronously
 
     func test_loadImage_showsPlaceholderImmediately() {
         let placeholder = UIImage(systemName: "photo")!
@@ -57,7 +57,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         XCTAssertEqual(imageView.image, placeholder, "Placeholder must be set synchronously")
     }
 
-    // MARK: - 9.4 Cell-reuse cancellation: the stale slow result never lands
+    // MARK: - Cell-reuse cancellation: the stale slow result never lands
 
     func test_loadImage_cellReuse_staleSlowResultNeverLands() async throws {
         let urlA = URL(string: "https://uiimageview-test.example.com/a.png")!
@@ -104,7 +104,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         XCTAssertTrue(imageView.image === cached)
     }
 
-    // MARK: - 9.5 onCompletion called with .success
+    // MARK: - onCompletion called with .success
 
     func test_loadImage_callsCompletionWithSuccess() async throws {
         let expectation = expectation(description: "success completion")
@@ -121,7 +121,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         }
     }
 
-    // MARK: - 9.6 onCompletion called with .failure; failureImage is set
+    // MARK: - onCompletion called with .failure; failureImage is set
 
     func test_loadImage_callsCompletionWithFailure_andSetsFailureImage() async throws {
         ImageMockURLProtocol.statusCode = 500
@@ -142,7 +142,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         XCTAssertEqual(imageView.image, failureImage, "failureImage must be applied on error")
     }
 
-    // MARK: - 9.7 Cancelled task does not call onCompletion
+    // MARK: - Cancelled task does not call onCompletion
 
     func test_cancelImageLoad_doesNotCallCompletion() async throws {
         ImageMockURLProtocol.responseDelay = 0.5
@@ -155,7 +155,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         XCTAssertFalse(completionCalled, "Completion must not be called after explicit cancel")
     }
 
-    // MARK: - 9.8 cancelImageLoad does not modify imageView.image
+    // MARK: - cancelImageLoad does not modify imageView.image
 
     func test_cancelImageLoad_doesNotModifyImage() {
         // loadImage sets placeholder synchronously; cancelImageLoad must not further modify the image

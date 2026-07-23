@@ -25,7 +25,7 @@ final class ImageCacheTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - 7.2 Memory store/retrieve round-trip
+    // MARK: - Memory store/retrieve round-trip
 
     func test_storeAndRetrieveFromMemory() {
         let image = makeTestImage()
@@ -37,7 +37,7 @@ final class ImageCacheTests: XCTestCase {
         XCTAssertNil(cache.memoryImage(for: URL(string: "https://example.com/other.png")!))
     }
 
-    // MARK: - 7.3 clearAll empties memory and disk
+    // MARK: - clearAll empties memory and disk
 
     func test_clearAll_emptiesMemoryAndDisk() async {
         let image = makeTestImage()
@@ -52,7 +52,7 @@ final class ImageCacheTests: XCTestCase {
         XCTAssertNil(diskResult)
     }
 
-    // MARK: - 7.4 removeImage removes from L1 and disk
+    // MARK: - removeImage removes from L1 and disk
 
     func test_removeImage_removesFromMemoryAndDisk() async {
         let image = makeTestImage()
@@ -67,7 +67,7 @@ final class ImageCacheTests: XCTestCase {
         XCTAssertNil(diskResult)
     }
 
-    // MARK: - 7.5 Disk TTL: stale entry is deleted and returns nil
+    // MARK: - Disk TTL: stale entry is deleted and returns nil
 
     func test_diskData_staleEntry_returnsNilAndDeletesFile() async throws {
         let data = makeTestPNGData()
@@ -87,7 +87,7 @@ final class ImageCacheTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: file.path), "Stale file must be removed")
     }
 
-    // MARK: - 7.6 Disk size cap: oldest files are evicted
+    // MARK: - Disk size cap: oldest files are evicted
 
     func test_diskSizeCap_evictsOldestFiles() async throws {
         // A 5-byte cap fits TWO 2-byte files, so the third write forces eviction
@@ -114,7 +114,7 @@ final class ImageCacheTests: XCTestCase {
         XCTAssertTrue(keys.contains(tinyCache.diskKey(for: url3)), "Newest file should be present")
     }
 
-    // MARK: - 7.7 Disk-to-memory promotion
+    // MARK: - Disk-to-memory promotion
 
     func test_diskData_promotesToMemory() async throws {
         let data = makeTestPNGData()

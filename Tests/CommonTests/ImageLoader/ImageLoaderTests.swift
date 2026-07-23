@@ -33,7 +33,7 @@ final class ImageLoaderTests: XCTestCase {
         ImageMockURLProtocol.responseData = makeTestPNGData()
     }
 
-    // MARK: - 8.2 L1 cache-first
+    // MARK: - L1 cache-first
 
     func test_image_returnsFromMemory_withoutNetworkCall() async throws {
         let (loader, cache, url) = makeTestLoader(cleanupWith: self)
@@ -44,7 +44,7 @@ final class ImageLoaderTests: XCTestCase {
         XCTAssertEqual(ImageMockURLProtocol.requestCount, 0, "L1 hit must not hit network")
     }
 
-    // MARK: - 8.3 L2 cache-first
+    // MARK: - L2 cache-first
 
     func test_image_returnsFromDisk_withoutNetworkCall() async throws {
         let (loader, cache, url) = makeTestLoader(cleanupWith: self)
@@ -72,7 +72,7 @@ final class ImageLoaderTests: XCTestCase {
         XCTAssertEqual(result.source, .network)
     }
 
-    // MARK: - 8.5 Network fetch stores to L1 and L2
+    // MARK: - Network fetch stores to L1 and L2
 
     func test_networkFetch_storesToL1AndL2() async throws {
         let (loader, cache, url) = makeTestLoader(cleanupWith: self)
@@ -88,7 +88,7 @@ final class ImageLoaderTests: XCTestCase {
         XCTAssertTrue(storedToDisk, "Network fetch must store to L2 (disk)")
     }
 
-    // MARK: - 8.6 Deduplication: two concurrent calls → one network request
+    // MARK: - Deduplication: two concurrent calls → one network request
 
     func test_deduplication_concurrentCalls_onlyOneNetworkRequest() async throws {
         ImageMockURLProtocol.responseDelay = 0.1
@@ -101,7 +101,7 @@ final class ImageLoaderTests: XCTestCase {
         XCTAssertEqual(ImageMockURLProtocol.requestCount, 1, "Two concurrent calls should share one network request")
     }
 
-    // MARK: - 8.7 badResponse on 404
+    // MARK: - badResponse on 404
 
     func test_image_throws_badResponse_on404() async throws {
         ImageMockURLProtocol.statusCode = 404
@@ -116,7 +116,7 @@ final class ImageLoaderTests: XCTestCase {
         }
     }
 
-    // MARK: - 8.8 decodingFailed on non-image data
+    // MARK: - decodingFailed on non-image data
 
     func test_image_throws_decodingFailed_onNonImageData() async throws {
         ImageMockURLProtocol.responseData = "not an image".data(using: .utf8)
@@ -130,7 +130,7 @@ final class ImageLoaderTests: XCTestCase {
         }
     }
 
-    // MARK: - 8.10 Preloading
+    // MARK: - Preloading
 
     func test_preload_populatesL1Cache() async throws {
         let (loader, cache, url) = makeTestLoader(cleanupWith: self)
@@ -167,7 +167,7 @@ final class ImageLoaderTests: XCTestCase {
         XCTAssertNil(cache.memoryImage(for: url), "Cancelled preload must not populate cache")
     }
 
-    // MARK: - 8.9 Task cancellation
+    // MARK: - Task cancellation
 
     func test_cancellation_doesNotDeliverImage() async throws {
         ImageMockURLProtocol.responseDelay = 1.0
