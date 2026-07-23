@@ -1327,6 +1327,30 @@ public enum EmptyResult<Failure> where Failure : Swift.Error {
   @_Concurrency.MainActor func onGoBackRequested()
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class GradientView : UIKit.UIView {
+  @_Concurrency.MainActor @preconcurrency final public var startColor: UIKit.UIColor {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency final public var endColor: UIKit.UIColor {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency final public var startLocation: Swift.Double {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency final public var endLocation: Swift.Double {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency final public var horizontalMode: Swift.Bool {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency final public var diagonalMode: Swift.Bool {
+    get
+    set
+  }
   @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
     @objc get
   }
@@ -2045,6 +2069,15 @@ extension Common.ParameterEncoder where Self == Common.URLEncodedFormParameterEn
   }
   public static func urlEncodedForm(encoder: Common.URLEncodedFormEncoder = URLEncodedFormEncoder(), destination: Common.URLEncodedFormParameterEncoder.Destination = .methodDependent) -> Common.URLEncodedFormParameterEncoder
 }
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class PillUILabel : Common.BaseLabel {
+  @_Concurrency.MainActor @preconcurrency @objc override final public var intrinsicContentSize: CoreFoundation.CGSize {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+}
 public enum PresentType {
   case dismissingCurrent
   case overCurrent
@@ -2107,6 +2140,12 @@ extension Common.ProgressAnimationView : QuartzCore.CAAnimationDelegate {
   @_Concurrency.MainActor @preconcurrency @objc final public func animationDidStop(_ anim: QuartzCore.CAAnimation, finished flag: Swift.Bool)
 }
 public protocol RawValueKeyValueStore : Common.RawValueKeyableStorage {
+  var type: Common.KeyValueStore.StoreType { get }
+}
+extension Common.RawValueKeyValueStore {
+  public var type: Common.KeyValueStore.StoreType {
+    get
+  }
 }
 extension Common.RawValueKeyValueStore where Self.Keys.RawValue == Swift.String {
   public func add(item: Common.Tuple<Self.Keys, any Swift.Decodable & Swift.Encodable>)
