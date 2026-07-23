@@ -22,7 +22,9 @@ public final class ProgressAnimationView: UIView {
         let endLocations = [1, 1]
 
         layer.colors = [progressColor, backgroundColor]
-        layer.frame = frame
+        // Sublayer coordinates are relative to this view's own layer — `frame`
+        // (superview coordinates) would offset the gradient by the view's origin.
+        layer.frame = bounds
         layer.locations = startLocations as [NSNumber]
         layer.startPoint = .init(x: 0.0, y: 1.0)
         layer.endPoint = .init(x: 1.0, y: 1.0)

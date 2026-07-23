@@ -8,17 +8,17 @@ import UIKit
 /// A view that displays a color gradient using `CAGradientLayer`.
 public final class GradientView: UIView {
     /// The starting color of the gradient.
-    var startColor: UIColor = .black { didSet { updateColors() }}
+    public var startColor: UIColor = .black { didSet { updateColors() }}
     /// The ending color of the gradient.
-    var endColor: UIColor = .white { didSet { updateColors() }}
+    public var endColor: UIColor = .white { didSet { updateColors() }}
     /// The starting location of the gradient.
-    var startLocation: Double = .zero { didSet { updateLocations() }}
+    public var startLocation: Double = .zero { didSet { updateLocations() }}
     /// The ending location of the gradient.
-    var endLocation: Double = 0.50 { didSet { updateLocations() }}
+    public var endLocation: Double = 0.50 { didSet { updateLocations() }}
     /// Whether the gradient is drawn horizontally.
-    var horizontalMode: Bool = false { didSet { updatePoints() }}
+    public var horizontalMode: Bool = false { didSet { updatePoints() }}
     /// Whether the gradient is drawn diagonally.
-    var diagonalMode: Bool = false { didSet { updatePoints() }}
+    public var diagonalMode: Bool = false { didSet { updatePoints() }}
 
     public override class var layerClass: AnyClass { CAGradientLayer.self }
 
