@@ -88,6 +88,56 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
         .round(radius: 8)
         .setConstraints { $0.set(height: 40) }
 
+    // MARK: - Logger demo
+    private lazy var loggerStatusLabel: UILabel = UILabel()
+        .text("No logs emitted yet")
+        .font(.monospacedSystemFont(ofSize: 12, weight: .regular))
+        .textColor(.secondaryLabel)
+        .numberOfLines(0)
+
+    private lazy var loggerButton: UIButton = UIButton(
+        configuration: .filled()
+            .with {
+                $0.title = "Emit Log Frame"
+                $0.baseBackgroundColor = .systemTeal
+                $0.cornerStyle = .capsule
+            }
+    )
+    .onTap { [weak self] in self?.emitLogFrame() }
+    .setConstraints { $0.set(height: 44) }
+
+    // MARK: - Shake & vibrate demo
+    private lazy var shakeTarget: UILabel = UILabel()
+        .text("Shake me")
+        .font(.systemFont(ofSize: 14, weight: .medium))
+        .textColor(.white)
+        .textAlignment(.center)
+        .backgroundColor(.systemRed)
+        .round(radius: 8)
+        .setConstraints { $0.set(height: 44) }
+
+    private lazy var shakeButton: UIButton = UIButton(
+        configuration: .filled()
+            .with {
+                $0.title = "Shake"
+                $0.baseBackgroundColor = .systemRed
+                $0.cornerStyle = .capsule
+            }
+    )
+    .onTap { [weak self] in self?.shakeTarget.shake() }
+    .setConstraints { $0.set(height: 44) }
+
+    private lazy var vibrateButton: UIButton = UIButton(
+        configuration: .filled()
+            .with {
+                $0.title = "Vibrate"
+                $0.baseBackgroundColor = .systemGray
+                $0.cornerStyle = .capsule
+            }
+    )
+    .onTap { [weak self] in self?.vibrate() }
+    .setConstraints { $0.set(height: 44) }
+
     private lazy var expandCollapseButton: UIButton = UIButton(
         configuration: .filled()
             .with {
@@ -207,6 +257,27 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
                         }
                     }
                 }
+                demoSection(
+                    title: "Logger",
+                    description: "Compile-time DEBUG gated — silent in Release unless forceEnable() opts in. Frames print atomically to the Xcode console."
+                ) {
+                    VStack(spacing: 8) {
+                        loggerStatusLabel
+                        loggerButton
+                    }
+                }
+                demoSection(
+                    title: "Shake & Vibrate",
+                    description: "UIView.shake() keyframe animation and UIViewController.vibrate() haptic (silent in the simulator)."
+                ) {
+                    VStack(spacing: 12) {
+                        shakeTarget
+                        HStack(distribution: .fillEqually, spacing: 8) {
+                            shakeButton
+                            vibrateButton
+                        }
+                    }
+                }
             }
             .setConstraints {
                 $0.snap(to: $1)
@@ -220,8 +291,18 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
-        view.onTap { [weak self] _, _ in self?.view.endEditing(true) }
+        setupAsKeyboardDismissable()
         setupConstraintAnimation()
+    }
+
+    private var logCount = 0
+
+    private func emitLogFrame() {
+        logCount += 1
+        Logger.forceEnable()
+        Logger.log(["screen": "Utilities", "event": "logger-demo", "count": logCount])
+        loggerStatusLabel.text("Emitted frame #\(logCount) — check the Xcode console")
+            .textColor(.systemGreen)
     }
 
     private func setupConstraintAnimation() {

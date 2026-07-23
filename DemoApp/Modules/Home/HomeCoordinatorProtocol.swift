@@ -20,4 +20,5 @@ protocol HomeCoordinatorProtocol: AnyObject {
     func showCoordinatorDemo()
     func showImageLoading()
     func showTypography()
+    func showComponents()
 }

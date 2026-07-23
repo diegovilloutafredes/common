@@ -592,7 +592,7 @@ make major                # Tag and release a major version
 
 ## Demo App
 
-The project includes a `DemoApp` target that showcases the library across 14 modules: Alerts, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Local Auth, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
+The project includes a `DemoApp` target that showcases the library across 15 modules: Alerts, Components, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Local Auth, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
 
 ---
 

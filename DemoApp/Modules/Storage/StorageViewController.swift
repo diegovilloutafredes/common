@@ -22,6 +22,8 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
                 sectionCard(for: .userDefaults)
                 sectionCard(for: .file)
                 sectionCard(for: .keychain)
+                sectionCard(for: .inMemory)
+                directKeychainCard()
             }.setConstraints {
                 $0.snap(to: $1)
                 $0.setWidth(to: $1.widthAnchor)
@@ -34,6 +36,7 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         title = viewModel.title
         view.backgroundColor(.systemBackground)
         StorageType.allCases.forEach { refreshLabel(for: $0) }
+        refreshDirectLabel()
     }
 
     private func sectionCard(for type: StorageType) -> UIView {
@@ -88,6 +91,65 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         }
         .backgroundColor(.secondarySystemBackground)
         .round(radius: 12)
+    }
+
+    private lazy var directStatusLabel = makeStatusLabel()
+
+    private func directKeychainCard() -> UIView {
+        VStack(
+            margins: .init(top: 16, left: 16, bottom: 16, right: 16),
+            spacing: 12
+        ) {
+            HStack(alignment: .center, spacing: 10) {
+                UIImageView(image: .init(systemName: "key.fill"))
+                    .tintColor(.systemTeal)
+                    .contentMode(.scaleAspectFit)
+                    .setConstraints { $0.set(width: 24); $0.set(height: 24) }
+                UILabel()
+                    .text("KeychainWrapper (direct)")
+                    .font(.boldSystemFont(ofSize: 18))
+                    .textColor(.label)
+            }
+
+            UILabel()
+                .text("The low-level typed API under KeyValueStore(.secure): set(_:forKey:), string(forKey:), removeObject(forKey:).")
+                .font(.systemFont(ofSize: 13))
+                .textColor(.secondaryLabel)
+                .numberOfLines(0)
+
+            HStack(distribution: .fillEqually, spacing: 8) {
+                makeButton(title: "Save", color: .systemTeal) { [weak self] in
+                    guard let self else { return }
+                    let secret = viewModel.saveDirectSecret()
+                    refreshDirectLabel()
+                    Snackbar.show(.init(message: "Saved \"\(secret)\""))
+                }
+                makeButton(title: "Read", color: .systemOrange) { [weak self] in
+                    guard let self else { return }
+                    refreshDirectLabel()
+                    let value = viewModel.readDirectSecret()
+                    Snackbar.show(.init(message: value.map { "Read: \"\($0)\"" } ?? "Nothing stored"))
+                }
+                makeButton(title: "Delete", color: .systemRed) { [weak self] in
+                    guard let self else { return }
+                    viewModel.deleteDirectSecret()
+                    refreshDirectLabel()
+                    Snackbar.show(.init(message: "Deleted from Keychain"))
+                }
+            }
+
+            directStatusLabel
+        }
+        .backgroundColor(.secondarySystemBackground)
+        .round(radius: 12)
+    }
+
+    private func refreshDirectLabel() {
+        if let secret = viewModel.readDirectSecret() {
+            directStatusLabel.text("Stored: \"\(secret)\"").textColor(.systemGreen)
+        } else {
+            directStatusLabel.text("Empty — nothing stored").textColor(.secondaryLabel)
+        }
     }
 
     private func refreshLabel(for type: StorageType) {

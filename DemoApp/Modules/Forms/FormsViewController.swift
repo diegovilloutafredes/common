@@ -137,7 +137,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
-        view.onTap { [weak self] _, _ in self?.view.endEditing(true) }
+        setupAsKeyboardDismissable()
     }
 
     private func onSubmit() {

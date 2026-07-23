@@ -17,12 +17,14 @@ enum StorageType: String, CaseIterable {
     case userDefaults
     case file
     case keychain
+    case inMemory
 
     var title: String {
         switch self {
         case .userDefaults: "UserDefaults"
         case .file: "FileStorage"
         case .keychain: "Keychain"
+        case .inMemory: "InMemory"
         }
     }
 
@@ -31,6 +33,7 @@ enum StorageType: String, CaseIterable {
         case .userDefaults: "Best for app preferences and settings. Not encrypted."
         case .file: "Best for documents, cached data, and large payloads."
         case .keychain: "Best for passwords, tokens, and sensitive credentials. Encrypted."
+        case .inMemory: "Best for tests and previews. Cleared when the app terminates."
         }
     }
 
@@ -39,6 +42,7 @@ enum StorageType: String, CaseIterable {
         case .userDefaults: "dark_mode: true"
         case .file: "profile_cache.json"
         case .keychain: "eyJhbGciOiJIUzI1NiJ9..."
+        case .inMemory: "session_state: onboarding"
         }
     }
 
@@ -47,6 +51,7 @@ enum StorageType: String, CaseIterable {
         case .userDefaults: "gearshape.fill"
         case .file: "doc.fill"
         case .keychain: "lock.shield.fill"
+        case .inMemory: "memorychip"
         }
     }
 
@@ -55,6 +60,7 @@ enum StorageType: String, CaseIterable {
         case .userDefaults: .systemBlue
         case .file: .systemGreen
         case .keychain: .systemPurple
+        case .inMemory: .systemOrange
         }
     }
 }
@@ -65,6 +71,9 @@ protocol StorageViewModelProtocol: ViewModel {
     func save(type: StorageType) -> StorageItem
     func read(type: StorageType) -> StorageItem?
     func delete(type: StorageType)
+    func saveDirectSecret() -> String
+    func readDirectSecret() -> String?
+    func deleteDirectSecret()
 }
 
 // MARK: - DemoItemStorage
@@ -84,26 +93,58 @@ private struct DemoItemStorage: SingleRawValueKeyValueObjectStorage {
 final class StorageViewModelImpl: StorageViewModelProtocol {
     let title = "Storage"
 
-    private func storage(for type: StorageType) -> DemoItemStorage {
+    // The in-memory backend is a live object, not a rebuildable value — hold one
+    // instance so save/read hit the same store. This is InMemoryKeyValueStorage's
+    // documented use: KeyValueStore(keyValueStorage:) with a test/preview backend.
+    private let inMemoryStore = KeyValueStore(keyValueStorage: InMemoryKeyValueStorage())
+    private let inMemoryKey = "demo_item"
+
+    private func storage(for type: StorageType) -> DemoItemStorage? {
         switch type {
         case .userDefaults: .init(type: .notSecure(.userDefaults))
         case .file: .init(type: .notSecure(.files))
         case .keychain: .init(type: .secure)
+        case .inMemory: nil // lives in inMemoryStore
         }
     }
 
     @discardableResult
     func save(type: StorageType) -> StorageItem {
         let item = StorageItem(value: type.exampleValue, timestamp: .now)
-        storage(for: type).add(item: item)
+        if let storage = storage(for: type) {
+            storage.add(item: item)
+        } else {
+            inMemoryStore.add(item: (inMemoryKey, item))
+        }
         return item
     }
 
     func read(type: StorageType) -> StorageItem? {
-        storage(for: type).get()
+        guard let storage = storage(for: type) else { return inMemoryStore.get(using: inMemoryKey) }
+        return storage.get()
     }
 
     func delete(type: StorageType) {
-        storage(for: type).delete()
+        guard let storage = storage(for: type) else { return inMemoryStore.remove(using: inMemoryKey) }
+        storage.delete()
+    }
+}
+
+// MARK: - Direct KeychainWrapper (low-level API)
+extension StorageViewModelImpl {
+    private var directKey: String { "demo_direct_secret" }
+
+    func saveDirectSecret() -> String {
+        let secret = String.random(length: 12)
+        KeychainWrapper.standard.set(secret, forKey: directKey)
+        return secret
+    }
+
+    func readDirectSecret() -> String? {
+        KeychainWrapper.standard.string(forKey: directKey)
+    }
+
+    func deleteDirectSecret() {
+        KeychainWrapper.standard.removeObject(forKey: directKey)
     }
 }

@@ -63,4 +63,8 @@ final class AppCoordinator: BaseCoordinator, HomeCoordinatorProtocol {
     func showTypography() {
         push(TypographyWireframe.createModule())
     }
+
+    func showComponents() {
+        push(ComponentsWireframe.createModule { [weak self] in self?.pop() })
+    }
 }

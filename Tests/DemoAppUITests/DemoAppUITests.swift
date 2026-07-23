@@ -12,7 +12,8 @@ final class DemoAppUITests: UITestCase {
     static let allModules = [
         "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
         "Local Authentication", "Extensions", "Onboarding", "Forms & TextFields",
-        "Lists & Cells", "Utilities", "Coordinator", "Image Loading", "Typography"
+        "Lists & Cells", "Utilities", "Coordinator", "Image Loading", "Typography",
+        "Components"
     ]
 
     // MARK: - Navigation
@@ -31,7 +32,7 @@ final class DemoAppUITests: UITestCase {
     func test_navigation_eachModule_pushesAndPopsBackHome() {
         let modules = [
             "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
-            "Extensions", "Lists & Cells", "Onboarding", "Utilities"
+            "Extensions", "Lists & Cells", "Onboarding", "Utilities", "Components"
         ]
         for module in modules {
             // Route through openModule (reset-to-top + retry) like every other navigation,
@@ -216,6 +217,20 @@ final class DemoAppUITests: UITestCase {
         button.tap()
         let snackbar = app.staticTexts["Button tapped!"]
         XCTAssertTrue(snackbar.waitForExistence(timeout: 3))
+    }
+
+    // MARK: - Components
+
+    func test_components_sectionsRenderAndProgressCompletes() {
+        openModule("Components", until: app.navigationBars["Components"])
+        XCTAssertTrue(app.staticTexts["GradientView"].waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(app.staticTexts["PillUILabel"].exists)
+        scrollUntilVisible(app.buttons["Animate"])
+        XCTAssertTrue(app.staticTexts["ProgressAnimationView"].exists)
+        app.buttons["Animate"].tap()
+        // The 1.5 s animation's completion updates the status label — proof the
+        // CAAnimationDelegate completion path fires, not merely that the tap landed.
+        XCTAssertTrue(app.staticTexts["Completed ✓"].waitForExistence(timeout: uiTimeout))
     }
 
     // MARK: - Utilities

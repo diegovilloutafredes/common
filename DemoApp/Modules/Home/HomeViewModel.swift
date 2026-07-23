@@ -82,6 +82,11 @@ final class HomeViewModel {
             subtitle: "AppFontFamily, FontStyle, PostScript derivation",
             action: { [weak self] in self?.coordinator?.showTypography() }
         ),
+        .init(
+            title: "Components",
+            subtitle: "GradientView, PillUILabel, ProgressAnimationView",
+            action: { [weak self] in self?.coordinator?.showComponents() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?
