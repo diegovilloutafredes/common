@@ -266,7 +266,7 @@ final class GIFImageViewTests: XCTestCase {
         let view = GIFImageView()
         view.loadGIF(from: TestGIF.animated(frameCount: 3)) // off-window → paused
         XCTAssertEqual(view.displayLink?.isPaused, true)
-        XCTAssertFalse(view.isAnimating, "a paused link is not animating")
+        XCTAssertFalse(view.isPlayingGIF, "a paused link is not playing")
 
         window.addSubview(view)
         XCTAssertEqual(view.displayLink?.isPaused, false, "joining a window must resume")
@@ -285,10 +285,10 @@ final class GIFImageViewTests: XCTestCase {
         view.loadGIF(from: TestGIF.animated(frameCount: 3))
 
         view.stopAnimating()
-        XCTAssertFalse(view.isAnimating)
+        XCTAssertFalse(view.isPlayingGIF)
 
         view.startAnimating()
-        XCTAssertTrue(view.isAnimating, "startAnimating must re-create the display link after an explicit stop")
+        XCTAssertTrue(view.isPlayingGIF, "startAnimating must re-create the display link after an explicit stop")
         XCTAssertEqual(view.displayLink?.isPaused, false)
 
         view.stopAnimating()
@@ -308,7 +308,7 @@ final class GIFImageViewTests: XCTestCase {
         window.addSubview(view) // re-enter
 
         XCTAssertNil(view.displayLink, "window re-entry must not resurrect an explicitly stopped animation")
-        XCTAssertFalse(view.isAnimating)
+        XCTAssertFalse(view.isPlayingGIF)
         view.removeFromSuperview()
     }
 
@@ -363,18 +363,98 @@ final class GIFImageViewTests: XCTestCase {
         XCTAssertTrue(view.image === staticImage)
     }
 
-    func test_isAnimating_reflectsDisplayLinkPlayback() {
+    func test_isPlayingGIF_reflectsDisplayLinkPlayback() {
         let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
         let view = GIFImageView()
         window.addSubview(view)
 
-        XCTAssertFalse(view.isAnimating)
+        XCTAssertFalse(view.isPlayingGIF)
         view.loadGIF(from: TestGIF.animated(frameCount: 3))
-        XCTAssertTrue(view.isAnimating, "isAnimating must be true while the display link drives frames")
+        XCTAssertTrue(view.isPlayingGIF, "isPlayingGIF must be true while the display link drives frames")
 
         view.stopAnimating()
-        XCTAssertFalse(view.isAnimating, "isAnimating must be false after stopAnimating()")
+        XCTAssertFalse(view.isPlayingGIF, "isPlayingGIF must be false after stopAnimating()")
+
+        // The stock UIImageView semantic must be back: isAnimating never
+        // reflects GIF playback (an override here is what suppressed layer
+        // commits and blanked every GIF — the DemoApp regression).
+        view.loadGIF(from: TestGIF.animated(frameCount: 3))
+        XCTAssertFalse(view.isAnimating, "isAnimating must keep UIKit's animationImages semantics — overriding it breaks display")
+        view.stopAnimating()
         view.removeFromSuperview()
+    }
+
+    // MARK: - Layer display (the DemoApp regression)
+
+    /// A GIF loaded off-window (the `viewDidLoad` pattern) must actually display
+    /// once the view joins a window: the painted frame has to reach
+    /// `layer.contents`. An `isAnimating` override that reports `true` while the
+    /// display link runs makes UIImageView take its `animationImages` path (nil)
+    /// and commit nothing — a valid `image` with permanently empty contents.
+    func test_gifLoadedOffWindow_commitsFrameToLayerAfterJoiningWindow() {
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
+        window.makeKeyAndVisible()
+
+        // Control: prove the test medium first. A plain UIImageView with a
+        // static image must get layer contents under the same window + flush —
+        // otherwise this test cannot see the bug and must not judge the fix.
+        let control = UIImageView(image: TestGIF.solidFrameImage())
+        control.frame = .init(x: 0, y: 0, width: 64, height: 64)
+        window.addSubview(control)
+        window.layoutIfNeeded()
+        CATransaction.flush()
+        XCTAssertNotNil(control.layer.contents,
+                        "test medium broken: a plain UIImageView did not commit contents — do not trust the GIF assertion below")
+
+        let view = GIFImageView()
+        view.loadGIF(from: TestGIF.animated(frameCount: 12)) // off-window, like viewDidLoad
+        view.frame = .init(x: 0, y: 0, width: 64, height: 64)
+        window.addSubview(view)
+        window.layoutIfNeeded()
+
+        // Spin the real run loop until display-link ticks are flowing — the
+        // demo-app scenario. A synchronous flush right after addSubview misses
+        // the bug: the tick that arrives while `isAnimating` is true is what
+        // kills the pending frame-0 commit.
+        let deadline = Date(timeIntervalSinceNow: 5)
+        while view.currentFrameIndex == 0 && Date() < deadline {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
+        }
+        XCTAssertGreaterThan(view.currentFrameIndex, 0, "ticks never arrived — cannot exercise the display path")
+        CATransaction.flush()
+
+        XCTAssertNotNil(view.layer.contents,
+                        "the painted GIF frame never reached layer.contents — UIImageView is suppressing display of `image`")
+
+        view.stopAnimating()
+        view.removeFromSuperview()
+        control.removeFromSuperview()
+        window.isHidden = true
+    }
+
+    /// The resume path must display too: UIKit's internal animating flag (set by
+    /// `super.startAnimating()`) could suppress contents through the same door
+    /// even without the `isAnimating` override.
+    func test_startAnimatingResume_stillCommitsFramesToLayer() {
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
+        window.makeKeyAndVisible()
+        let view = GIFImageView()
+        view.frame = .init(x: 0, y: 0, width: 64, height: 64)
+        window.addSubview(view)
+        view.loadGIF(from: TestGIF.animated(frameCount: 3))
+
+        view.stopAnimating()
+        view.startAnimating()
+        view.advanceClock(to: 10.0)
+        view.advanceClock(to: 10.12) // crosses the 0.1s frame boundary → repaints
+        CATransaction.flush()
+
+        XCTAssertNotNil(view.layer.contents,
+                        "frames rendered after a startAnimating() resume must reach layer.contents")
+
+        view.stopAnimating()
+        view.removeFromSuperview()
+        window.isHidden = true
     }
 
     // MARK: - Single-frame GIFs

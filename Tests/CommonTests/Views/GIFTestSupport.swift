@@ -43,6 +43,11 @@ enum TestGIF {
         return bundle
     }
 
+    /// A solid-color static `UIImage` for control views in display tests.
+    static func solidFrameImage(size: CGSize = .init(width: 4, height: 4)) -> UIImage {
+        UIImage(cgImage: solidImage(size: size, hue: 0))
+    }
+
     private static func solidImage(size: CGSize, hue: CGFloat) -> CGImage {
         let renderer = UIGraphicsImageRenderer(size: size)
         let image = renderer.image { context in

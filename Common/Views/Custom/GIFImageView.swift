@@ -46,10 +46,15 @@ public final class GIFImageView: UIImageView {
         }
     }
 
-    /// `true` while the display link is actively driving GIF frames (also when
-    /// `UIImageView`'s own `animationImages` animation is running).
-    public override var isAnimating: Bool {
-        super.isAnimating || displayLink?.isPaused == false
+    /// `true` while the display link is actively driving GIF frames.
+    ///
+    /// Deliberately NOT an `isAnimating` override: UIKit's `UIImageView`
+    /// consults `isAnimating` (via dynamic dispatch) when deciding whether to
+    /// commit `image` to the layer. An override that reports `true` while the
+    /// display link runs makes UIKit wait for `animationImages` frames that
+    /// never come — the view stays blank (or frozen) even though `image` is set.
+    public var isPlayingGIF: Bool {
+        displayLink?.isPaused == false
     }
 
     // MARK: - Loading
