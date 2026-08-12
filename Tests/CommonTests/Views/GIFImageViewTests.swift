@@ -388,9 +388,15 @@ final class GIFImageViewTests: XCTestCase {
 
     /// A GIF loaded off-window (the `viewDidLoad` pattern) must actually display
     /// once the view joins a window: the painted frame has to reach
-    /// `layer.contents`. An `isAnimating` override that reports `true` while the
-    /// display link runs makes UIImageView take its `animationImages` path (nil)
-    /// and commit nothing — a valid `image` with permanently empty contents.
+    /// `layer.contents`.
+    ///
+    /// HONEST SCOPE — verified by mutation testing: this harness commits layer
+    /// contents even with the `isAnimating` override bug reintroduced, so this
+    /// test CANNOT detect that class of UIKit display suppression (a headless
+    /// test window displays where a real app does not). It guards the grosser
+    /// regressions only — frames not painted, image never set, layer detached.
+    /// The true check for display suppression is visual verification in the
+    /// running DemoApp; see the fix commit for the diagnosis.
     func test_gifLoadedOffWindow_commitsFrameToLayerAfterJoiningWindow() {
         let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
         window.makeKeyAndVisible()
@@ -434,7 +440,9 @@ final class GIFImageViewTests: XCTestCase {
 
     /// The resume path must display too: UIKit's internal animating flag (set by
     /// `super.startAnimating()`) could suppress contents through the same door
-    /// even without the `isAnimating` override.
+    /// even without the `isAnimating` override. (Same honest-scope caveat as the
+    /// test above — this harness cannot see real display suppression; the resume
+    /// path was verified visually on the simulator.)
     func test_startAnimatingResume_stillCommitsFramesToLayer() {
         let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
         window.makeKeyAndVisible()
