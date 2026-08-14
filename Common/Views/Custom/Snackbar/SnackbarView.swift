@@ -27,7 +27,7 @@ extension SnackbarViewModel {
 final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
     @UIViewBuilder override var mainView: UIView {
         UIView {
-            HStack( // DEBUG: outer wrapper should have red tint if 16pt gap exists
+            HStack(
                 alignment: .center,
                 distribution: .equalSpacing,
                 margins: .init(top: 16, left: 16, bottom: 16, right: 16),
@@ -60,21 +60,23 @@ final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
     // MARK: - Setup
     override func setupView() {
         super.setupView()
-        guard let keyWindow else { return }
+        guard let hostWindow else { return }
         setConstraints { $0.snapLeadBottomTrail(to: $1.safeAreaLayoutGuide) }
-        keyWindow.addSubview(self)
+        hostWindow.addSubview(self)
     }
 
     private var timer: Timer?
 
-    private var translationDistance: CGFloat { (keyWindow?.safeAreaInsets.bottom ?? .zero) + bounds.height + 32 }
+    private var hostWindow: UIWindow? { Snackbar.hostWindow() }
+
+    private var translationDistance: CGFloat { (hostWindow?.safeAreaInsets.bottom ?? .zero) + bounds.height + 32 }
 }
 
 extension SnackbarView {
     func present() {
-        guard let keyWindow else { return }
+        guard let hostWindow else { return }
 
-        keyWindow.layoutIfNeeded()
+        hostWindow.layoutIfNeeded()
 
         transform(.init(translationX: .zero, y: translationDistance))
 
@@ -95,7 +97,7 @@ extension SnackbarView {
     func dismiss() {
         timer?.invalidate()
 
-        guard keyWindow.isNotNil else {
+        guard hostWindow.isNotNil else {
             removeFromSuperview()
             viewModel.onDismiss?()
             return

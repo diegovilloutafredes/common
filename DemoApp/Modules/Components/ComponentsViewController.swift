@@ -72,7 +72,7 @@ final class ComponentsViewController: BaseViewModelableViewController<Components
                 }
                 demoSection(
                     title: "PillUILabel",
-                    description: "Label with pill-shaped background — padding is baked into its intrinsic size."
+                    description: "Label with pill-shaped background — padding is honored in measurement and drawing, so it survives compression and wrapping."
                 ) {
                     HStack(alignment: .center, spacing: 8) {
                         PillUILabel()

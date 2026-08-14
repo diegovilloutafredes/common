@@ -57,13 +57,38 @@ public final class CircularActivityIndicatorView: UIView {
             .setRatio()
         progressShapeLayer.isHidden = true
         layer.addSublayer(progressShapeLayer)
+        // Core Animation strips animations when the app backgrounds, with no view
+        // callback — restore them on foreground or the spinner returns as a
+        // static complete ring while `isAnimating` still reads true.
+        foregroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.restoreAnimationsIfNeeded() }
+        }
+    }
+
+    private var foregroundObserver: (any NSObjectProtocol)?
+
+    deinit {
+        foregroundObserver.map(NotificationCenter.default.removeObserver)
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
         round(radius: bounds.height / 2)
         progressShapeLayer.frame = bounds
-        progressShapeLayer.path = UIBezierPath(ovalIn: bounds).cgPath
+        // The stroke is centered on the path: inset by half the line width so it
+        // stays inside the clipped bounds instead of rendering at half thickness.
+        progressShapeLayer.path = UIBezierPath(ovalIn: bounds.insetBy(dx: lineWidth / 2, dy: lineWidth / 2)).cgPath
+    }
+
+    /// Layer transitions also strip animations (window removal, full-screen
+    /// covers) — re-add them whenever the view becomes visible while animating.
+    public override func didMoveToWindow() {
+        super.didMoveToWindow()
+        restoreAnimationsIfNeeded()
     }
 
     /// Indicates whether the view is currently animating.
@@ -74,12 +99,26 @@ public final class CircularActivityIndicatorView: UIView {
                 animateStroke()
                 animateRotation()
             } else {
-                progressShapeLayer.removeAnimation(forKey: "stroke")
-                progressShapeLayer.removeAnimation(forKey: "colour")
-                layer.removeAnimation(forKey: "rotation")
+                removeAnimations()
                 progressShapeLayer.isHidden = true
             }
         }
+    }
+
+    /// Re-adds the animations Core Animation may have stripped. Re-adding resets
+    /// their phase, which is meaningless for an indeterminate spinner.
+    private func restoreAnimationsIfNeeded() {
+        guard isAnimating, window.isNotNil else { return }
+        removeAnimations()
+        progressShapeLayer.isHidden = false
+        animateStroke()
+        animateRotation()
+    }
+
+    private func removeAnimations() {
+        progressShapeLayer.removeAnimation(forKey: "stroke")
+        progressShapeLayer.removeAnimation(forKey: "colour")
+        layer.removeAnimation(forKey: "rotation")
     }
 }
 

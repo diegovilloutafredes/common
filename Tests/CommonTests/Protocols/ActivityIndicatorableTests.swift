@@ -22,6 +22,10 @@ final class ActivityIndicatorableTests: XCTestCase {
 
         textField.startActivityIndicator()
         XCTAssertTrue(textField.rightView is UIActivityIndicatorView)
+        // Presence is not visibility: hidesWhenStopped defaults to true, so an
+        // installed-but-stopped spinner renders as nothing.
+        XCTAssertEqual((textField.rightView as? UIActivityIndicatorView)?.isAnimating, true,
+                       "the installed spinner must be animating — a stopped one is invisible")
 
         textField.stopActivityIndicator()
         XCTAssertTrue(textField.rightView === originalRightView)
@@ -81,7 +85,12 @@ final class ActivityIndicatorableTests: XCTestCase {
         view.addSubview(UIView())
 
         view.startActivityIndicator()
-        XCTAssertTrue(view.subviews.contains { $0 is UIActivityIndicatorView })
+        let spinner = view.subviews.compactMap { $0 as? UIActivityIndicatorView }.first
+        XCTAssertNotNil(spinner)
+        // Presence is not visibility: hidesWhenStopped defaults to true, so an
+        // installed-but-stopped spinner renders as nothing.
+        XCTAssertEqual(spinner?.isAnimating, true,
+                       "the installed spinner must be animating — a stopped one is invisible")
 
         view.stopActivityIndicator()
         XCTAssertFalse(view.subviews.contains { $0 is UIActivityIndicatorView })

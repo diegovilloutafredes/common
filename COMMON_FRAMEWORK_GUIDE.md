@@ -1458,6 +1458,11 @@ CircularActivityIndicatorView(
 .startAnimating()
 ```
 
+Animations survive backgrounding and window transitions: Core Animation strips
+them, and the view re-adds them automatically while `isAnimating` is `true`
+(re-adding resets the phase — meaningless for an indeterminate spinner). An
+explicitly stopped indicator stays stopped.
+
 ### Base classes summary
 
 | Class | Extends | Purpose |

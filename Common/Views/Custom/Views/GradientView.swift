@@ -25,6 +25,33 @@ public final class GradientView: UIView {
     /// The underlying `CAGradientLayer`.
     var gradientLayer: CAGradientLayer { layer as! CAGradientLayer }
 
+    /// Initializes a new gradient view.
+    /// - Parameter frame: The frame rectangle for the view.
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        // CGColors do not re-resolve dynamic UIColors: without this hook a
+        // dark/light flip keeps the stale gradient until an incidental relayout.
+        if #available(iOS 17.0, *) {
+            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: GradientView, _: UITraitCollection) in
+                self.updateColors()
+            }
+        }
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("NSCoder is not supported")
+    }
+
+    // iOS 16 fallback — iOS 17+ uses the registered trait observation above.
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #unavailable(iOS 17.0),
+           traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            updateColors()
+        }
+    }
+
     public override func layoutSubviews() {
         super.layoutSubviews()
         updatePoints()
@@ -49,7 +76,12 @@ extension GradientView {
     }
 
     func updateColors() {
-        gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
+        // Resolve against the view's own traits — bare `.cgColor` resolves with
+        // the ambient UITraitCollection.current, which is wrong off-layout.
+        gradientLayer.colors = [
+            startColor.resolvedColor(with: traitCollection).cgColor,
+            endColor.resolvedColor(with: traitCollection).cgColor
+        ]
     }
 }
 

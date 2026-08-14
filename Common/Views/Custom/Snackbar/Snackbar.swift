@@ -58,14 +58,29 @@ public enum Snackbar {
         }
     }
 
-    /// Shows a snackbar with the given view model.
+    /// The window that hosts snackbars. Injectable seam: the hostless unit-test
+    /// bundle has no foreground-active scene, so UIApplication discovery
+    /// returns nil there.
+    @MainActor static var hostWindow: () -> UIWindow? = { UIApplication.shared.keyWindow }
+
+    /// The snackbar currently on screen, if any — at most one is visible at a time.
+    /// Tracked directly (weak) rather than searched for: the snackbar lives on the
+    /// key window, so a `topMostView` subview search never finds it.
+    @MainActor private(set) static weak var current: SnackbarView?
+
+    /// Shows a snackbar with the given view model, dismissing any snackbar
+    /// already on screen first.
     /// - Parameter viewModel: The data to display.
     public static func show(_ viewModel: ViewModel) {
         dispatchOnMain {
-            let existingSnackbar = UIApplication.shared.topMostView?.subviews.first { $0 is SnackbarView } as? SnackbarView
-            existingSnackbar?.dismiss()
-            let snackbar = SnackbarView(viewModel: viewModel)
-            snackbar.present()
+            // dispatchOnMain guarantees main-thread execution; assert that to
+            // the type system for the MainActor-isolated state below.
+            MainActor.assumeIsolated {
+                current?.dismiss()
+                let snackbar = SnackbarView(viewModel: viewModel)
+                current = snackbar
+                snackbar.present()
+            }
         }
     }
 }
