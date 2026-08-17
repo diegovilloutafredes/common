@@ -1093,25 +1093,31 @@ final class CheckoutCoordinator: BaseCoordinator {
 }
 ```
 
-### Detecting swipe-back cancels from a ViewController
+### Swipe-back and back-button cancellation
 
-UIKit fires `viewWillDisappear` when a VC is being popped by a back-gesture. `isMovingFromParent` is `true` only during a real pop (not a push on top). Use this to bridge the UIKit event into `cancel()`:
+**Nothing to wire.** A coordinator started with `addChildAndStart` cancels itself when its entry screen leaves the navigation stack — back button, swipe-back, `pop()`, `pop(.to(_:))`, `pop(.toRoot)`, or a stack replacement. `BaseCoordinator` tracks the screen through UIKit's view-controller containment callback, so no ViewController code participates.
+
+Override `cancel()` when the flow needs to react to abandonment:
 
 ```swift
-final class CheckoutViewController: UIViewController {
-    var onCancel: (() -> Void)?
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if isMovingFromParent { onCancel?() }
+final class CheckoutCoordinator: BaseCoordinator {
+    override func cancel() {
+        analytics.log("checkout_abandoned")
+        super.cancel()   // always call super — it performs the teardown
     }
 }
-
-// In the coordinator's start():
-vc.onCancel = { [weak self] in self?.cancel() }
 ```
 
-> **Important:** Do not use `navigationController(_:didShow:animated:)` or KVO alone for detecting back-gestures — `viewWillDisappear + isMovingFromParent` is the reliable cross-version pattern.
+If a **ViewController** needs its own reaction to being popped (stopping a camera session, invalidating a timer), use the lifecycle hook — but don't call `cancel()` from it; the coordinator has already handled itself:
+
+```swift
+onViewWillDisappear { [weak self] _ in
+    guard let self, isMovingFromParent else { return }
+    stopCameraSession()
+}
+```
+
+> Popping past several child coordinators at once (`pop(.to(_:))`, `pop(.toRoot)`) cancels **each** of them.
 
 ### Coordinator protocol isolation
 

@@ -69,7 +69,7 @@ final class HomeViewModel {
         ),
         .init(
             title: "Coordinator",
-            subtitle: "Child lifecycle, cancel vs finish, KVO tracking",
+            subtitle: "Child lifecycle, auto-cancel, sheets, pop-to cascade",
             action: { [weak self] in self?.coordinator?.showCoordinatorDemo() }
         ),
         .init(

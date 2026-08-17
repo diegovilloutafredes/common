@@ -27,6 +27,7 @@ protocol CoordinatorDemoViewProtocol: AnyObject {
 protocol CoordinatorDemoViewModelDelegate: AnyObject {
     func didRequestLaunchChild()
     func didRequestLaunchDeepFlow()
+    func didRequestPresentSheet()
     func didRequestStatsRefresh()
 }
 
@@ -35,6 +36,7 @@ protocol CoordinatorDemoViewModelDelegate: AnyObject {
 protocol CoordinatorDemoViewModelProtocol: ViewModel {
     func launchChild()
     func launchDeepFlow()
+    func presentSheet()
     func requestStatsRefresh()
 }
 
@@ -52,6 +54,7 @@ final class CoordinatorDemoViewModel: CoordinatorDemoViewModelProtocol {
 
     func launchChild() { delegate?.didRequestLaunchChild() }
     func launchDeepFlow() { delegate?.didRequestLaunchDeepFlow() }
+    func presentSheet() { delegate?.didRequestPresentSheet() }
     func requestStatsRefresh() { delegate?.didRequestStatsRefresh() }
 
     func logAndRefresh(_ event: CoordinatorEvent, children: Int, navStack: Int) {

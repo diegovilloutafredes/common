@@ -113,6 +113,40 @@ final class CoordinatorDemoUITests: UITestCase {
         assertStat("stat.events", equals: "6", "3 starts + 3 finishes")
     }
 
+    // MARK: - Sheet presentation
+
+    func test_presentSheet_andDismissViaCoordinator() {
+        app.buttons["Present Sheet"].tap()
+        XCTAssertTrue(app.buttons["Dismiss Sheet"].waitForExistence(timeout: uiTimeout),
+                      "the coordinator should present the sheet flow")
+
+        app.buttons["Dismiss Sheet"].tap()
+
+        let gone = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"),
+            object: app.buttons["Dismiss Sheet"]
+        )
+        XCTAssertEqual(XCTWaiter().wait(for: [gone], timeout: uiTimeout), .completed,
+                       "the coordinator's dismiss() should remove the sheet")
+        // 📤 present + 📥 dismiss
+        assertStat("stat.events", equals: "2", "present + dismiss events")
+    }
+
+    // MARK: - Abort-all cascade
+
+    func test_abortAll_popsToHubAndAutoCancelsAllChildren() {
+        navigateToDepth3()
+
+        app.buttons["Abort All"].tap()
+
+        XCTAssertTrue(app.navigationBars["Coordinator Demo"].waitForExistence(timeout: uiTimeout),
+                      "pop(.to(hub)) should land directly on the hub")
+        // 3 starts + 1 abort marker + 3 auto-cancels = 7; children back to 0 with
+        // zero per-child teardown code — the framework cancels the whole subtree.
+        assertStat("stat.children", equals: "0", "every stacked child must auto-cancel")
+        assertStat("stat.events", equals: "7", "3 starts + abort marker + 3 cascade cancels")
+    }
+
     // MARK: - Navigation
 
     func test_canReturnToHome() {

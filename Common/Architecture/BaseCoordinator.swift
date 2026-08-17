@@ -34,7 +34,6 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
 
     private var isFinished = false
     private weak var trackedViewController: UIViewController?
-    private var viewControllersObservation: NSKeyValueObservation?
 
     // MARK: - Coordinator
 
@@ -62,7 +61,8 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     }
 
     /// Cancels this coordinator's flow without firing `onPerformed`.
-    /// Called automatically when the coordinator's tracked entry VC leaves the nav stack (e.g. swipe-back).
+    /// Called automatically when the coordinator's tracked entry view controller leaves the
+    /// navigation stack — back button, swipe-back, `pop()`, `pop(.to(_:))`, or stack replacement.
     /// Idempotent — safe to call multiple times; only the first call has effect.
     open func cancel() {
         guard !isFinished else { return }
@@ -74,32 +74,47 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     private func terminate() {
         isFinished = true
         stopLifecycleTracking()
+        cancelChildren()
         parent?.removeChild(self)
     }
 
+    /// Abandoning a flow abandons everything it started.
+    ///
+    /// Child coordinators are retained only by `childCoordinators`, so without
+    /// this they would simply deallocate — never observing their own
+    /// cancellation, silently skipping whatever their `cancel()` override does.
+    /// It also makes multi-level teardown order-independent: whichever
+    /// coordinator in a popped subtree is notified first tears down the rest.
+    private func cancelChildren() {
+        // Snapshot and clear first: each child's terminate() calls back into
+        // removeChild on this coordinator.
+        let children = childCoordinators
+        childCoordinators = []
+        children.forEach { ($0 as? BaseCoordinator)?.cancel() }
+    }
+
+    /// Tracks `viewController` so this coordinator cancels itself when that
+    /// screen leaves the navigation stack.
+    ///
+    /// Tracking rides UIKit's view-controller containment callback, which is
+    /// delivered for every removal path — back button, swipe-back,
+    /// `popViewController`, `popToViewController`, and stack assignment.
     private func beginLifecycleTracking(for viewController: UIViewController) {
         trackedViewController = viewController
-        viewControllersObservation = navigationController.observe(
-            \.viewControllers,
-            options: [.new]
-        ) { [weak self] _, change in
-            // UIKit delivers nav-stack KVO on the main thread; assert that to the
-            // type system so the MainActor-isolated property/method access is sound.
-            // Crashes (rather than silently corrupts) if a future caller delivers off-main.
-            MainActor.assumeIsolated {
-                guard
-                    let self,
-                    let tracked = self.trackedViewController,
-                    !(change.newValue ?? []).contains(tracked)
-                else { return }
-                self.cancel()
-            }
-        }
+        viewController.trackRemoval(by: self)
     }
 
     private func stopLifecycleTracking() {
-        viewControllersObservation = nil
+        trackedViewController?.stopTrackingRemoval()
         trackedViewController = nil
+    }
+
+    /// Called by the containment hook when a tracked screen leaves its container.
+    /// Ignores view controllers this coordinator no longer tracks, which is what
+    /// lets `set(_:)` re-anchor mid-flight without a false cancel.
+    func trackedViewControllerDidLeaveContainer(_ viewController: UIViewController) {
+        guard !isFinished, trackedViewController === viewController else { return }
+        cancel()
     }
 }
 
@@ -116,8 +131,9 @@ extension BaseCoordinator {
     }
 
     /// Adds a child coordinator and starts it immediately.
-    /// Automatically tracks the first VC the coordinator pushes so that a swipe-back gesture
-    /// triggers `cancel()` and removes the coordinator from the child list.
+    /// Automatically tracks the first view controller the coordinator pushes, so any removal of
+    /// that screen — back button, swipe-back, or a programmatic pop — triggers `cancel()` and
+    /// removes the coordinator from the child list. Requires no ViewController-side code.
     /// - Parameter coordinator: The child coordinator to add and start.
     public func addChildAndStart(_ coordinator: some Coordinator) {
         Logger.log(["\(Self.self)": coordinator])
@@ -164,29 +180,24 @@ extension BaseCoordinator: Navigationable {
 
     /// Replaces the nav stack with the given array and re-anchors lifecycle tracking.
     ///
-    /// Two cases handled transparently:
-    /// - Tracking already active (started via `addChildAndStart`): `trackedViewController` is updated
-    ///   to the new first VC **before** calling `setViewControllers`, because KVO fires synchronously
-    ///   inside that call. Updating after would be too late — the old tracked VC would already be
-    ///   gone and `cancel()` would have fired incorrectly.
-    /// - Tracking not yet active (coordinator added via `addChild` alone): tracking is bootstrapped
-    ///   after the nav call, since no observer exists to false-fire during it.
+    /// The outgoing screen's registration is cleared **before** the nav call: UIKit
+    /// reports its removal synchronously inside `setViewControllers`, and an
+    /// outgoing screen that still pointed here would cancel the flow this call is
+    /// re-rooting. Tracking then follows the new first view controller — whether or
+    /// not it was active before, so a coordinator added via `addChild` alone is
+    /// bootstrapped here too.
     ///
-    /// `set([])` intentionally lets existing tracking fire `cancel()` — an empty-stack replacement
-    /// is treated as flow abandonment.
+    /// `set([])` explicitly cancels — an empty-stack replacement is flow abandonment.
     public func set(_ viewControllers: [UIViewController], animated: Bool = false) {
         guard let first = viewControllers.first else {
-            // UIKit silently ignores setViewControllers([]) so KVO never fires.
-            // Treat empty replacement as explicit flow abandonment.
             navigationController.setViewControllers([], animated: animated)
             cancel()
             return
         }
-        // Re-anchor BEFORE the nav call — KVO fires synchronously inside setViewControllers,
-        // and the guard checks whether trackedViewController is still in the new stack.
+        trackedViewController?.stopTrackingRemoval()
         trackedViewController = first
         navigationController.setViewControllers(viewControllers, animated: animated)
-        if viewControllersObservation == nil, !isFinished {
+        if !isFinished {
             beginLifecycleTracking(for: first)
         }
     }

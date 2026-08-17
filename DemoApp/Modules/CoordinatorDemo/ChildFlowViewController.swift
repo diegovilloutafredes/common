@@ -10,8 +10,8 @@ import UIKit
 
 final class ChildFlowViewController: BaseViewController {
     var onComplete: (() -> Void)?
-    var onCancel: (() -> Void)?
     var onGoDeeper: (() -> Void)?
+    var onAbortAll: (() -> Void)?
 
     private let depth: Int
     private let maxDepth: Int
@@ -66,6 +66,18 @@ final class ChildFlowViewController: BaseViewController {
     .setConstraints { $0.set(height: 48) }
     .isHidden(depth >= maxDepth)
 
+    private lazy var abortAllButton = UIButton(
+        configuration: .bordered().with {
+            $0.title = "Abort All"
+            $0.cornerStyle = .capsule
+            $0.baseForegroundColor = .systemRed
+            $0.image = UIImage(systemName: "xmark.octagon.fill")
+            $0.imagePadding = 6
+        }
+    )
+    .onTap { [weak self] in self?.onAbortAll?() }
+    .setConstraints { $0.set(height: 48) }
+
     // MARK: - Main View
 
     @UIViewBuilder override var mainView: UIView {
@@ -81,6 +93,7 @@ final class ChildFlowViewController: BaseViewController {
             }
             completeButton
             goDeeperButton
+            abortAllButton
         }.setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide) }
     }
 
@@ -96,12 +109,10 @@ final class ChildFlowViewController: BaseViewController {
             navStackValueLabel.text("\(navigationController?.viewControllers.count ?? 0)")
         }
 
-        // viewWillDisappear + isMovingFromParent is the documented pattern for detecting
-        // back-swipe / back-button dismissal without a dedicated dismiss button.
-        onViewWillDisappear { [weak self] _ in
-            guard let self else { return }
-            if isMovingFromParent { onCancel?() }
-        }
+        // Deliberately NO dismissal detection here: leaving this screen via the
+        // back button or swipe fires the coordinator's cancel() automatically —
+        // BaseCoordinator tracks the screen it pushed (installed by
+        // addChildAndStart). The ViewController needs zero lifecycle code for it.
     }
 
     // MARK: - Helpers

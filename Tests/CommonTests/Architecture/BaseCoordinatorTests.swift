@@ -23,6 +23,38 @@ final class BaseCoordinatorTests: XCTestCase {
         }
     }
 
+    /// Pushes a VC and reports its own cancellation — the flag outlives the
+    /// coordinator, so tests can observe cancels without holding it alive.
+    private final class CancelObservingCoordinator: BaseCoordinator {
+        let pushedVC = UIViewController()
+        private let onCancelled: () -> Void
+
+        init(navigationController: UINavigationController, onCancelled: @escaping () -> Void) {
+            self.onCancelled = onCancelled
+            super.init(navigationController: navigationController)
+        }
+
+        override func start() {
+            navigationController.viewControllers =
+                navigationController.viewControllers + [pushedVC]
+        }
+
+        override func cancel() {
+            onCancelled()
+            super.cancel()
+        }
+    }
+
+    /// Records UIKit's containment callback so the harness can prove which
+    /// removal paths deliver it.
+    private final class ContainmentProbeViewController: UIViewController {
+        var leftParentCount = 0
+        override func didMove(toParent parent: UIViewController?) {
+            super.didMove(toParent: parent)
+            if parent == nil { leftParentCount += 1 }
+        }
+    }
+
     private var nav: UINavigationController!
     private var parent: StubCoordinator!
     private var child: StubCoordinator!
@@ -240,23 +272,20 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertEqual(nav.viewControllers, [root], "set must replace, not append")
     }
 
-    // MARK: - KVO lifecycle tracking (gesture-driven cleanup)
+    // MARK: - Stack-removal tracking (gesture-driven cleanup)
 
-    // NOTE — real-pop coverage lives at the UI level, deliberately. These KVO
-    // tests simulate pops by assigning `nav.viewControllers` because UIKit's
-    // programmatic `popViewController(animated:)` does NOT fire the
-    // `\.viewControllers` KVO in a unit-test harness (verified empirically:
-    // windowed, settled, animated, with a 2s poll — the observer never fires).
-    // The path production actually relies on — the user's back button/swipe —
-    // DOES fire it, proven end-to-end by CoordinatorDemoUITests
-    // .test_launchChild_statsIncrement, which pops a live child flow via the
-    // real back button and asserts the cancel event was recorded.
+    // Tracking rides UIKit's view-controller containment callback. The probes
+    // above measure why: `didMove(toParent: nil)` is delivered for real pops,
+    // multi-pops, AND stack assignment, whereas KVO on `\.viewControllers`
+    // (the previous mechanism) fires only for assignment — so back-button,
+    // swipe-back, and popViewController removals went unreported, and no unit
+    // test could see it because they all simulate pops by assigning the stack.
 
-    /// Also codifies that KVO-driven cancel runs on the same runloop tick as the
-    /// nav-stack mutation (no expectation/await below). The implementation depends
-    /// on `MainActor.assumeIsolated` in `beginLifecycleTracking`; switching that
-    /// to `Task { @MainActor in ... }` would defer cleanup and break this test.
-    func test_kvo_popRemovesCoordinatorFromParent() {
+    /// Also codifies that removal-driven cancel runs on the same runloop tick as
+    /// the nav-stack mutation (no expectation/await below): the containment
+    /// callback is delivered synchronously, so deferring cleanup onto a Task
+    /// would break this test.
+    func test_stackRemoval_popRemovesCoordinatorFromParent() {
         let pushing = PushingCoordinator(navigationController: nav)
         parent.addChildAndStart(pushing)
         XCTAssertEqual(parent.childCoordinators.count, 1)
@@ -264,10 +293,10 @@ final class BaseCoordinatorTests: XCTestCase {
         nav.viewControllers = Array(nav.viewControllers.dropLast())
 
         XCTAssertTrue(parent.childCoordinators.isEmpty,
-                      "KVO should have triggered cancel() and removed coordinator from parent")
+                      "stack removal should have triggered cancel() and removed coordinator from parent")
     }
 
-    func test_kvo_popDoesNotFireOnPerformed() {
+    func test_stackRemoval_popDoesNotFireOnPerformed() {
         var called = false
         let pushing = PushingCoordinator(navigationController: nav) { _ in called = true }
         parent.addChildAndStart(pushing)
@@ -277,21 +306,21 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertFalse(called, "cancel() must not fire onPerformed")
     }
 
-    func test_kvo_finishBeforePopSuppressesDoubleCleanup() {
+    func test_stackRemoval_finishBeforePopSuppressesDoubleCleanup() {
         var callCount = 0
         let pushing = PushingCoordinator(navigationController: nav) { _ in callCount += 1 }
         parent.addChildAndStart(pushing)
 
         pushing.finish()                                              // marks isFinished = true, stops tracking
-        nav.viewControllers = Array(nav.viewControllers.dropLast())  // KVO fires but isFinished guard skips it
+        nav.viewControllers = Array(nav.viewControllers.dropLast())  // removal reported, but tracking is already torn down
 
         XCTAssertEqual(callCount, 1)
         XCTAssertTrue(parent.childCoordinators.isEmpty)
     }
 
-    /// A tracked-then-finished coordinator must deallocate: a strong `self`
-    /// capture in the KVO closure (or the observation outliving termination)
-    /// would leak every child flow.
+    /// A tracked-then-finished coordinator must deallocate: a strong reference
+    /// from the tracked view controller's registration (or a registration
+    /// outliving termination) would leak every child flow.
     func test_finishedCoordinator_deallocates() {
         weak var weakCoordinator: BaseCoordinator?
         autoreleasepool {
@@ -300,10 +329,10 @@ final class BaseCoordinatorTests: XCTestCase {
             weakCoordinator = pushing
             pushing.finish()
         }
-        XCTAssertNil(weakCoordinator, "finished coordinator must not be retained by its KVO observation")
+        XCTAssertNil(weakCoordinator, "finished coordinator must not be retained by its removal registration")
     }
 
-    func test_kvo_noTrackingWhenCoordinatorDoesNotPush() {
+    func test_stackRemoval_noTrackingWhenCoordinatorDoesNotPush() {
         parent.addChildAndStart(child)  // StubCoordinator.start() does not push any VC
 
         // Unrelated nav mutations must not affect an untracked coordinator.
@@ -312,6 +341,125 @@ final class BaseCoordinatorTests: XCTestCase {
 
         XCTAssertEqual(parent.childCoordinators.count, 1,
                        "Non-pushing coordinator must not be removed by unrelated nav changes")
+    }
+
+    // MARK: - Containment probe (which removal paths does UIKit report?)
+
+    func test_probe_realPopDeliversContainmentCallback() {
+        nav.viewControllers = [UIViewController()] // root: popping a lone root is a no-op
+        let probe = ContainmentProbeViewController()
+        nav.pushViewController(probe, animated: false)
+        XCTAssertEqual(probe.leftParentCount, 0)
+
+        nav.popViewController(animated: false)
+
+        XCTAssertEqual(probe.leftParentCount, 1, "PROBE: real pop must deliver didMove(toParent: nil)")
+    }
+
+    func test_probe_stackAssignmentDeliversContainmentCallback() {
+        let root = UIViewController()
+        nav.viewControllers = [root]
+        let probe = ContainmentProbeViewController()
+        nav.viewControllers = [root, probe]
+
+        nav.viewControllers = [root]
+
+        XCTAssertEqual(probe.leftParentCount, 1, "PROBE: stack assignment must deliver didMove(toParent: nil)")
+    }
+
+    func test_probe_popToViewControllerDeliversContainmentCallbackForEachRemoved() {
+        let root = UIViewController()
+        nav.viewControllers = [root]
+        let first = ContainmentProbeViewController()
+        let second = ContainmentProbeViewController()
+        nav.pushViewController(first, animated: false)
+        nav.pushViewController(second, animated: false)
+
+        nav.popToViewController(root, animated: false)
+
+        XCTAssertEqual(first.leftParentCount, 1, "PROBE: multi-pop must report every removed VC")
+        XCTAssertEqual(second.leftParentCount, 1, "PROBE: multi-pop must report every removed VC")
+    }
+
+    // MARK: - Real pop cancellation (the production path)
+
+    func test_realPop_cancelsTrackedCoordinator() {
+        nav.viewControllers = [UIViewController()] // seed a root so the pop is legal
+        let pushing = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(pushing)
+        XCTAssertEqual(parent.childCoordinators.count, 1)
+        XCTAssertEqual(nav.viewControllers.count, 2, "precondition: tracked VC sits above a root")
+
+        nav.popViewController(animated: false)
+
+        XCTAssertTrue(parent.childCoordinators.isEmpty,
+                      "a real pop (back button / popViewController) must cancel the child coordinator")
+    }
+
+    func test_realPop_doesNotFireOnPerformed() {
+        nav.viewControllers = [UIViewController()]
+        var called = false
+        let pushing = PushingCoordinator(navigationController: nav) { _ in called = true }
+        parent.addChildAndStart(pushing)
+
+        nav.popViewController(animated: false)
+
+        XCTAssertFalse(called, "pop-driven cancel() must not fire onPerformed")
+    }
+
+    func test_popToViewController_cancelsEveryStackedCoordinator() {
+        let root = UIViewController()
+        nav.viewControllers = [root]
+
+        let first = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(first)
+        let second = PushingCoordinator(navigationController: nav)
+        first.addChildAndStart(second)
+        XCTAssertEqual(parent.childCoordinators.count, 1)
+        XCTAssertEqual(first.childCoordinators.count, 1)
+
+        nav.popToViewController(root, animated: false)
+
+        XCTAssertTrue(first.childCoordinators.isEmpty, "the deeper coordinator must cancel")
+        XCTAssertTrue(parent.childCoordinators.isEmpty, "the shallower coordinator must cancel")
+    }
+
+    // MARK: - Cancellation cascade
+
+    /// Descendants are retained only by their parent's `childCoordinators`, so a
+    /// parent that cancels first would deallocate them before their own removal
+    /// is reported — their `cancel()` would silently never run. Abandoning a flow
+    /// must abandon the whole subtree.
+    func test_cancel_cascadesToChildCoordinators() {
+        var deepCancelled = false
+        let first = PushingCoordinator(navigationController: nav)
+        parent.addChildAndStart(first)
+        first.addChildAndStart(
+            CancelObservingCoordinator(navigationController: nav) { deepCancelled = true }
+        )
+
+        first.cancel()
+
+        XCTAssertTrue(deepCancelled,
+                      "cancelling a coordinator must cancel its children — they belong to the same abandoned flow")
+    }
+
+    /// Production shape of the multi-pop cascade: only the coordinator tree holds
+    /// the descendants (no test-local strong references propping them up).
+    func test_popToViewController_cancelsEveryCoordinator_whenOnlyTheTreeRetainsThem() {
+        let root = UIViewController()
+        nav.viewControllers = [root]
+        var cancels = 0
+
+        let first = CancelObservingCoordinator(navigationController: nav) { cancels += 1 }
+        parent.addChildAndStart(first)
+        first.addChildAndStart(
+            CancelObservingCoordinator(navigationController: nav) { cancels += 1 }
+        )
+
+        nav.popToViewController(root, animated: false)
+
+        XCTAssertEqual(cancels, 2, "every coordinator in the popped subtree must observe its own cancellation")
     }
 
     // MARK: - set() — re-anchoring and bootstrap

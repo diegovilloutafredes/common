@@ -20,8 +20,6 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
 
     private lazy var eventStack = VStack(alignment: .fill, spacing: 8) {}
 
-    private lazy var mainScrollView = UIScrollView().with { $0.alwaysBounceVertical = true }
-
     // MARK: - Buttons
 
     private lazy var launchChildButton = UIButton(
@@ -46,7 +44,47 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
     .onTap { [weak self] in self?.viewModel.launchDeepFlow() }
     .setConstraints { $0.set(height: 48) }
 
+    private lazy var presentSheetButton = UIButton(
+        configuration: .gray().with {
+            $0.title = "Present Sheet"
+            $0.cornerStyle = .capsule
+            $0.image = UIImage(systemName: "rectangle.bottomhalf.filled")
+            $0.imagePadding = 6
+        }
+    )
+    .onTap { [weak self] in self?.viewModel.presentSheet() }
+    .setConstraints { $0.set(height: 48) }
+
     // MARK: - Main View
+
+    private lazy var mainScrollView = UIScrollView {
+        VStack(
+            alignment: .fill,
+            margins: .init(top: 16, left: 16, bottom: 16, right: 16),
+            spacing: 16
+        ) {
+            HStack(distribution: .fillEqually, spacing: 8) {
+                makeStatCard(valueLabel: childrenValueLabel, key: "🌳 Children")
+                makeStatCard(valueLabel: navStackValueLabel, key: "📚 Nav Stack")
+                makeStatCard(valueLabel: eventsValueLabel, key: "📋 Events")
+            }
+            HStack(distribution: .fillEqually, spacing: 12) {
+                launchChildButton
+                launchDeepFlowButton
+            }
+            presentSheetButton
+            Separator(color: .separator, height: 1)
+            UILabel("Recent Events")
+                .font(.systemFont(ofSize: 13, weight: .semibold))
+                .textColor(.secondaryLabel)
+            eventStack
+        }
+        .setConstraints {
+            $0.snap(to: $1)
+            $0.setWidth(to: $1.widthAnchor)
+        }
+    }
+    .with { $0.alwaysBounceVertical = true }
 
     @UIViewBuilder override var mainView: UIView {
         mainScrollView
@@ -58,59 +96,12 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
     override func setupView() {
         super.setupView()
         title = "Coordinator Demo"
-        buildScrollContent()
         onViewWillAppear { [weak self] _ in
             self?.viewModel.requestStatsRefresh()
         }
     }
 
-    // MARK: - Layout
-
-    private func buildScrollContent() {
-        let statsRow = HStack(distribution: .fillEqually, spacing: 8) {
-            makeStatCard(valueLabel: childrenValueLabel, key: "🌳 Children")
-            makeStatCard(valueLabel: navStackValueLabel, key: "📚 Nav Stack")
-            makeStatCard(valueLabel: eventsValueLabel, key: "📋 Events")
-        }
-
-        let buttonsRow = HStack(distribution: .fillEqually, spacing: 12) {
-            launchChildButton
-            launchDeepFlowButton
-        }
-
-        let separator = UIView()
-            .backgroundColor(.separator)
-            .setConstraints { $0.set(height: 1) }
-
-        let eventsHeader = UILabel("Recent Events")
-            .font(.systemFont(ofSize: 13, weight: .semibold))
-            .textColor(.secondaryLabel)
-
-        let content = VStack(
-            alignment: .fill,
-            margins: .init(top: 16, left: 16, bottom: 16, right: 16),
-            spacing: 16
-        ) {
-            statsRow
-            buttonsRow
-            separator
-            eventsHeader
-            eventStack
-        }
-
-        // UIScrollView exception: content must be constrained to contentLayoutGuide + match
-        // frameLayoutGuide width to prevent horizontal scroll. setConstraints{} cannot express
-        // cross-guide relationships, so manual NSLayoutConstraint.activate is required here.
-        mainScrollView.addSubview(content)
-        content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.topAnchor.constraint(equalTo: mainScrollView.contentLayoutGuide.topAnchor),
-            content.leadingAnchor.constraint(equalTo: mainScrollView.contentLayoutGuide.leadingAnchor),
-            content.trailingAnchor.constraint(equalTo: mainScrollView.contentLayoutGuide.trailingAnchor),
-            content.bottomAnchor.constraint(equalTo: mainScrollView.contentLayoutGuide.bottomAnchor),
-            content.widthAnchor.constraint(equalTo: mainScrollView.frameLayoutGuide.widthAnchor),
-        ])
-    }
+    // MARK: - Helpers
 
     private func makeStatValueLabel(id: String) -> UILabel {
         UILabel("0")
@@ -143,10 +134,7 @@ extension CoordinatorDemoViewController: CoordinatorDemoViewProtocol {
     }
 
     func prependEvent(_ event: CoordinatorEvent) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss"
-
-        let timeLabel = UILabel(formatter.string(from: event.time))
+        let timeLabel = UILabel(event.time.toString(with: "HH:mm:ss"))
             .font(.monospacedSystemFont(ofSize: 11, weight: .regular))
             .textColor(.tertiaryLabel)
 
