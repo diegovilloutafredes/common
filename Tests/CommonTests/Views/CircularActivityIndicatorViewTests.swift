@@ -106,6 +106,76 @@ final class CircularActivityIndicatorViewTests: XCTestCase {
                        "the stroke is centered on the path — an un-inset path gets its outer half clipped by clipsToBounds")
     }
 
+    // MARK: - Dynamic stroke colors (C3)
+
+    private static let dynamicColor = UIColor { traits in
+        traits.userInterfaceStyle == .dark ? .white : .black
+    }
+
+    /// Hosts a dynamic-color indicator in a key window so window-level
+    /// appearance overrides propagate trait changes to it.
+    private func makeHostedDynamicColorView() -> (UIWindow, CircularActivityIndicatorView) {
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 100, height: 100))
+        window.makeKeyAndVisible()
+        let view = CircularActivityIndicatorView(colors: [Self.dynamicColor])
+        view.frame = .init(x: 0, y: 0, width: 48, height: 48)
+        window.addSubview(view)
+        view.layoutIfNeeded()
+        return (window, view)
+    }
+
+    private func firstKeyframeColor(of view: CircularActivityIndicatorView) throws -> UIColor {
+        let shape = try shapeLayer(of: view)
+        let colour = try XCTUnwrap(shape.animation(forKey: "colour") as? CAKeyframeAnimation)
+        let first = try XCTUnwrap((colour.values as? [Any])?.first)
+        return UIColor(cgColor: first as! CGColor)
+    }
+
+    private func assertColorEqual(_ color: UIColor, _ expected: UIColor,
+                                  _ message: String, file: StaticString = #filePath, line: UInt = #line) {
+        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0
+        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0
+        color.getRed(&r1, green: &g1, blue: &b1, alpha: nil)
+        expected.getRed(&r2, green: &g2, blue: &b2, alpha: nil)
+        XCTAssertEqual(r1, r2, accuracy: 0.01, message, file: file, line: line)
+        XCTAssertEqual(g1, g2, accuracy: 0.01, message, file: file, line: line)
+        XCTAssertEqual(b1, b2, accuracy: 0.01, message, file: file, line: line)
+    }
+
+    func test_strokeColors_resolveAgainstCurrentTraitsAtAnimationStart() throws {
+        let (window, view) = makeHostedDynamicColorView()
+        defer { window.isHidden = true }
+        window.overrideUserInterfaceStyle = .dark
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
+
+        view.isAnimating = true
+
+        assertColorEqual(try firstKeyframeColor(of: view), .white,
+                         "keyframe colors must resolve against the view's traits, not UIColor's ambient default")
+        let shape = try shapeLayer(of: view)
+        assertColorEqual(UIColor(cgColor: try XCTUnwrap(shape.strokeColor)), .white,
+                         "the base stroke color must resolve against the view's traits too")
+        view.isAnimating = false
+    }
+
+    func test_darkModeFlip_reResolvesStrokeColorsWhileAnimating() throws {
+        let (window, view) = makeHostedDynamicColorView()
+        defer { window.isHidden = true }
+        view.isAnimating = true
+        assertColorEqual(try firstKeyframeColor(of: view), .black, "precondition: light appearance resolves the light variant")
+
+        window.overrideUserInterfaceStyle = .dark
+        // Trait propagation from the window runs on the UIKit update cycle —
+        // give it one pass. (No layout is run on the view itself.)
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
+        XCTAssertEqual(view.traitCollection.userInterfaceStyle, .dark,
+                       "precondition: the trait must reach the view before the hook can be judged")
+
+        assertColorEqual(try firstKeyframeColor(of: view), .white,
+                         "a dark/light flip while animating must re-add the stroke animations with re-resolved colors")
+        view.isAnimating = false
+    }
+
     // MARK: - Leak (foreground observer)
 
     func test_animatingIndicatorDeallocates() {

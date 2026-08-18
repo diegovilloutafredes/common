@@ -266,7 +266,7 @@ final class HTTPServiceTests: XCTestCase {
         // insufficient once (2026-07-23, run 29991874501: 17.5s on a degraded
         // runner). Fulfillment returns as soon as the expectation fires, so the
         // pass path stays fast regardless of the ceiling.
-        await fulfillment(of: [handlerCalled], timeout: 30.0)
+        await fulfillment(of: [handlerCalled], timeout: callbackDeliveryTimeout)
         XCTAssertEqual(received, expected)
     }
 
@@ -286,7 +286,7 @@ final class HTTPServiceTests: XCTestCase {
             handlerCalled.fulfill()
         }
 
-        await fulfillment(of: [handlerCalled], timeout: 30.0)
+        await fulfillment(of: [handlerCalled], timeout: callbackDeliveryTimeout)
         guard case .requestError = receivedError else {
             return XCTFail("Expected .requestError, got \(String(describing: receivedError))")
         }

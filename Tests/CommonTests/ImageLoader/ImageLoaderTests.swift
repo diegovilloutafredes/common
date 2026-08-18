@@ -27,9 +27,10 @@ final class ImageLoaderTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        ImageMockURLProtocol.requestCount = 0
-        ImageMockURLProtocol.responseDelay = 0
-        ImageMockURLProtocol.statusCode = 200
+        // reset() (not field-by-field) so the delivery gates the cancellation
+        // tests install are cleared too — a lingering gate blocks every
+        // subsequent request in the suite until URLSession times it out.
+        ImageMockURLProtocol.reset()
         ImageMockURLProtocol.responseData = makeTestPNGData()
     }
 
@@ -154,15 +155,26 @@ final class ImageLoaderTests: XCTestCase {
     }
 
     func test_cancelPreloads_stopsFetch() async throws {
-        ImageMockURLProtocol.responseDelay = 1.0
+        // Deterministic, not sleep-raced: the mock holds the response until the
+        // test opens the gate, so a cancellation that only drops bookkeeping
+        // (but lets the fetch complete) stores to cache and fails the assertion
+        // on every run — a slow machine can no longer turn it false-green.
+        let gate = DispatchSemaphore(value: 0)
+        let resolved = DispatchSemaphore(value: 0)
+        let stopSignal = DispatchSemaphore(value: 0)
+        ImageMockURLProtocol.releaseGate = gate
+        ImageMockURLProtocol.deliveryResolved = resolved
+        ImageMockURLProtocol.stopSignal = stopSignal
         let (loader, cache, url) = makeTestLoader(cleanupWith: self)
 
         await loader.preload(urls: [url])
         await loader.cancelPreloads()
-        // Wait PAST the mock's full response delay: a cancellation that only
-        // drops bookkeeping (but lets the fetch complete) stores to cache at
-        // ~1.0s and must fail this assertion.
-        try await Task.sleep(nanoseconds: 2_000_000_000)
+        // Cancellation reaches the mock asynchronously — wait for it (bounded:
+        // a broken cancellation never stops the fetch, so the opened gate then
+        // lets it deliver and fail the assertion below).
+        _ = await wait(stopSignal, timeout: .now() + 5)
+        gate.signal()
+        _ = await wait(resolved, timeout: .now() + 10)
 
         XCTAssertNil(cache.memoryImage(for: url), "Cancelled preload must not populate cache")
     }
@@ -170,7 +182,13 @@ final class ImageLoaderTests: XCTestCase {
     // MARK: - Task cancellation
 
     func test_cancellation_doesNotDeliverImage() async throws {
-        ImageMockURLProtocol.responseDelay = 1.0
+        // Deterministic ordering: the fetch is verifiably in flight before the
+        // cancel, the response is held until after it, and the task is fully
+        // finished before the flag is judged — no sleep to race.
+        let gate = DispatchSemaphore(value: 0)
+        let resolved = DispatchSemaphore(value: 0)
+        ImageMockURLProtocol.releaseGate = gate
+        ImageMockURLProtocol.deliveryResolved = resolved
         let (loader, _, url) = makeTestLoader(cleanupWith: self)
 
         var completionCalled = false
@@ -179,17 +197,27 @@ final class ImageLoaderTests: XCTestCase {
             completionCalled = true
         }
 
-        try await Task.sleep(nanoseconds: 50_000_000) // 50ms — before response arrives
+        let started = await poll(timeout: 5) { ImageMockURLProtocol.requestCount >= 1 }
+        XCTAssertTrue(started, "precondition: the fetch must be in flight before cancelling")
         task.cancel()
-
-        // Wait PAST the mock's full response delay — asserting earlier would
-        // pass even if cancellation did nothing (the response hadn't fired yet).
-        try await Task.sleep(nanoseconds: 1_300_000_000)
+        gate.signal()
+        _ = await wait(resolved, timeout: .now() + 10)
+        _ = await task.result
 
         XCTAssertFalse(completionCalled, "Completion must not be called after cancellation")
     }
 
     // MARK: - Helpers
+
+    /// Waits on a semaphore off the cooperative pool so an async test can block
+    /// on mock-side events without starving the concurrency runtime.
+    private func wait(_ semaphore: DispatchSemaphore, timeout: DispatchTime) async -> DispatchTimeoutResult {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                continuation.resume(returning: semaphore.wait(timeout: timeout))
+            }
+        }
+    }
 
     /// Polls `condition` until it returns true or `timeout` elapses. Returns the final result.
     /// Used to await detached side effects (e.g. disk writes) without a brittle fixed sleep.

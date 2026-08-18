@@ -1380,6 +1380,24 @@ Snackbar.show(.init(
 ```
 
 Only one snackbar is shown at a time — a new one dismisses the previous.
+`onDismiss` always fires exactly once, even when no window is available to
+present in (the snackbar then never appears). Only the visible card intercepts
+touches — the transparent strips beside it pass through to the UI beneath —
+and the auto-dismiss timer keeps counting while the user scrolls.
+
+### `Toast`
+
+```swift
+Toast.present(with: "Saved", duration: .short)   // .short (1s), .medium (3s), .long (5s)
+
+Toast.present(with: "Uploaded") { /* runs once the toast is gone */ }
+```
+
+A toast is purely informational: its whole hierarchy is touch-transparent and
+never blocks the UI beneath it. Only one toast is shown at a time — a new
+`present` replaces the current one (firing its completion at replacement).
+The completion is always delivered exactly once, including when no host view
+is available.
 
 ### `HList` and `VList`
 

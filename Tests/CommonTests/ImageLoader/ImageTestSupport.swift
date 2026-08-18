@@ -39,6 +39,15 @@ final class ImageMockURLProtocol: URLProtocol {
     static var statusCode: Int = 200
     static var responseData: Data?
 
+    // Test-controlled delivery gates (single-request use). With `releaseGate`
+    // set, the response is held until the test signals it — cancellation
+    // ordering becomes deterministic instead of sleep-raced. `stopSignal`
+    // fires when `stopLoading` reaches the mock; `deliveryResolved` fires once
+    // the delivery attempt has fully resolved, delivered or short-circuited.
+    static var releaseGate: DispatchSemaphore?
+    static var deliveryResolved: DispatchSemaphore?
+    static var stopSignal: DispatchSemaphore?
+
     /// Set by `stopLoading` so a cancelled request doesn't deliver its delayed
     /// response anyway — delivering after stopLoading violates the URLProtocol
     /// contract and injects noise into exactly the cancellation tests.
@@ -50,6 +59,9 @@ final class ImageMockURLProtocol: URLProtocol {
         responseDelay = 0
         statusCode = 200
         responseData = nil
+        releaseGate = nil
+        deliveryResolved = nil
+        stopSignal = nil
     }
 
     override class func canInit(with request: URLRequest) -> Bool { true }
@@ -62,6 +74,8 @@ final class ImageMockURLProtocol: URLProtocol {
         let data = ImageMockURLProtocol.responseData
 
         DispatchQueue.global().asyncAfter(deadline: .now() + delay) { [weak self] in
+            ImageMockURLProtocol.releaseGate?.wait()
+            defer { ImageMockURLProtocol.deliveryResolved?.signal() }
             guard let self, !self.stopped else { return }
             let url = self.request.url ?? URL(string: "https://mock")!
             let response = HTTPURLResponse(url: url, statusCode: code, httpVersion: nil, headerFields: ["Content-Type": "image/png"])!
@@ -75,5 +89,6 @@ final class ImageMockURLProtocol: URLProtocol {
 
     override func stopLoading() {
         stopped = true
+        ImageMockURLProtocol.stopSignal?.signal()
     }
 }

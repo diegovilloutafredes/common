@@ -220,10 +220,17 @@ final class DemoAppUITests: UITestCase {
 
     func test_components_sectionsRenderAndProgressCompletes() {
         openModule("Components", until: app.navigationBars["Components"])
-        XCTAssertTrue(app.staticTexts["GradientView"].waitForExistence(timeout: uiTimeout))
-        XCTAssertTrue(app.staticTexts["PillUILabel"].exists)
+        // Concrete component instances (by identifier), not the section titles —
+        // a section whose component failed to build still shows its title.
+        XCTAssertTrue(app.otherElements["gradientVertical"].waitForExistence(timeout: uiTimeout),
+                      "the vertical GradientView instance must render")
+        XCTAssertTrue(app.otherElements["gradientDiagonal"].exists,
+                      "the diagonal GradientView instance must render")
+        XCTAssertTrue(app.staticTexts["NEW"].exists && app.staticTexts["Featured"].exists && app.staticTexts["Sale"].exists,
+                      "all three PillUILabel instances must render their text")
         scrollUntilVisible(app.buttons["Animate"])
-        XCTAssertTrue(app.staticTexts["ProgressAnimationView"].exists)
+        XCTAssertTrue(app.otherElements["progressAnimationView"].exists,
+                      "the ProgressAnimationView instance must render")
         app.buttons["Animate"].tap()
         // The 1.5 s animation's completion updates the status label — proof the
         // CAAnimationDelegate completion path fires, not merely that the tap landed.

@@ -29,6 +29,23 @@ public final class CircularActivityIndicatorView: UIView {
         self.lineWidth = lineWidth
         super.init(frame: frame)
         setupView()
+        // CGColors do not re-resolve dynamic UIColors: without this hook a
+        // dark/light flip keeps the stale stroke colors until the animations
+        // happen to be re-added. Re-adding via the restore path re-resolves.
+        if #available(iOS 17.0, *) {
+            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: CircularActivityIndicatorView, _: UITraitCollection) in
+                self.restoreAnimationsIfNeeded()
+            }
+        }
+    }
+
+    // iOS 16 fallback — iOS 17+ uses the registered trait observation above.
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #unavailable(iOS 17.0),
+           traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            restoreAnimationsIfNeeded()
+        }
     }
 
     /// Initializes a new circular activity indicator with default frame.
@@ -147,8 +164,12 @@ extension CircularActivityIndicatorView {
 
         progressShapeLayer.add(strokeAnimationGroup, forKey: "stroke")
 
+        // Resolve against the view's own traits — bare `.cgColor` resolves with
+        // the ambient UITraitCollection.current, which is wrong off-layout. The
+        // base stroke color shows between keyframe passes, so it follows too.
+        progressShapeLayer.strokeColor = (colors.first ?? .green).resolvedColor(with: traitCollection).cgColor
         let colorKeyframeAnimation = StrokeColorKeyframeAnimation(
-            colors: colors.map { $0.cgColor },
+            colors: colors.map { $0.resolvedColor(with: traitCollection).cgColor },
             duration: strokeAnimationGroup.duration * Double(colors.count)
         )
 

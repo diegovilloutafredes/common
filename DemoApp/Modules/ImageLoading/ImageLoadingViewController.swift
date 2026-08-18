@@ -14,6 +14,7 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
     private lazy var gifImageView = GIFImageView()
         .contentMode(.scaleAspectFit)
         .setConstraints { $0.set(width: 64); $0.set(height: 64) }
+        .with { $0.accessibilityIdentifier = "gifImage" }
 
     private lazy var gifBanner = HStack(
         alignment: .center,

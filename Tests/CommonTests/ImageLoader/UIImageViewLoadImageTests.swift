@@ -44,7 +44,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         let expectation = expectation(description: "onCompletion called")
         let options = ImageLoadOptions(onCompletion: { _ in expectation.fulfill() })
         imageView.loadImage(from: testURL, options: options, loader: loader)
-        await fulfillment(of: [expectation], timeout: 3)
+        await fulfillment(of: [expectation], timeout: callbackDeliveryTimeout)
         XCTAssertNotNil(imageView.image)
     }
 
@@ -75,7 +75,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
             expectationB.fulfill()
         }), loader: loader)
 
-        await fulfillment(of: [expectationB], timeout: 3)
+        await fulfillment(of: [expectationB], timeout: callbackDeliveryTimeout)
         XCTAssertTrue(imageView.image === imageB, "urlB's cached instance should be displayed")
 
         // The race this test exists for happens AFTER B lands: wait past A's slow
@@ -94,7 +94,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
         let done = expectation(description: "completion")
         let options = ImageLoadOptions(transition: .fade(0.25), onCompletion: { _ in done.fulfill() })
         imageView.loadImage(from: testURL, options: options, loader: loader)
-        await fulfillment(of: [done], timeout: 3)
+        await fulfillment(of: [done], timeout: callbackDeliveryTimeout)
 
         // The final alpha alone can't discriminate (UIView.animate sets the model
         // alpha back to 1 synchronously) — the layer's attached animations can:
@@ -114,7 +114,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
             expectation.fulfill()
         })
         imageView.loadImage(from: testURL, options: options, loader: loader)
-        await fulfillment(of: [expectation], timeout: 3)
+        await fulfillment(of: [expectation], timeout: callbackDeliveryTimeout)
 
         guard case .success = receivedResult else {
             return XCTFail("Expected success, got \(String(describing: receivedResult))")
@@ -134,7 +134,7 @@ final class UIImageViewLoadImageTests: XCTestCase {
             expectation.fulfill()
         })
         imageView.loadImage(from: testURL, options: options, loader: loader)
-        await fulfillment(of: [expectation], timeout: 3)
+        await fulfillment(of: [expectation], timeout: callbackDeliveryTimeout)
 
         guard case .failure = receivedResult else {
             return XCTFail("Expected failure, got \(String(describing: receivedResult))")

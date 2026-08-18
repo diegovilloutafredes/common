@@ -18,6 +18,7 @@ final class ComponentsViewController: BaseViewModelableViewController<Components
         }
         .round(radius: 12)
         .setConstraints { $0.set(height: 72) }
+        .with { $0.accessibilityIdentifier = "gradientVertical" }
 
     private lazy var diagonalGradient = GradientView()
         .with {
@@ -29,12 +30,14 @@ final class ComponentsViewController: BaseViewModelableViewController<Components
         }
         .round(radius: 12)
         .setConstraints { $0.set(height: 72) }
+        .with { $0.accessibilityIdentifier = "gradientDiagonal" }
 
     // MARK: - ProgressAnimationView demo
     private lazy var progressView = ProgressAnimationView()
         .backgroundColor(.systemGray5)
         .round(radius: 8)
         .setConstraints { $0.set(height: 16) }
+        .with { $0.accessibilityIdentifier = "progressAnimationView" }
 
     private lazy var progressStatusLabel = UILabel()
         .text("Tap Animate to run a 1.5 s determinate sweep")
