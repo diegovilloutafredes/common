@@ -486,11 +486,22 @@ Snackbar.show(Snackbar.ViewModel(
 ))
 ```
 
-**Toast** — brief overlay in the center of the screen:
+Only one snackbar shows at a time — a new `show` dismisses the previous one.
+`onDismiss` always fires exactly once, even when no window is available to
+present in. Only the visible card intercepts touches, and auto-dismiss keeps
+counting while the user scrolls.
+
+**Toast** — a brief pill above the bottom safe area:
 
 ```swift
 Toast.present(with: "Copied to clipboard")
+
+Toast.present(with: "Uploaded", duration: .short) { /* runs once the toast is gone */ }
 ```
+
+A toast is purely informational: it never intercepts touches, a new `present`
+replaces the one on screen instead of stacking, and the completion is always
+delivered exactly once.
 
 **Custom modal alert** — compose any content view and present it as a dismissible overlay. The closure fires when the backdrop or any dismiss-triggering control is tapped.
 

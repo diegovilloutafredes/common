@@ -15,7 +15,7 @@ class UITestCase: XCTestCase {
     /// Ceiling for local-UI waits. Waits return as soon as the element appears,
     /// so a generous timeout costs nothing on green runs — only broken runs pay
     /// it. 8s (not 3-4) because full-suite runs degrade the simulator across
-    /// ~38 fresh app launches and screens legitimately take longer to appear.
+    /// ~43 fresh app launches and screens legitimately take longer to appear.
     let uiTimeout: TimeInterval = 8
     /// Ceiling for real-network operations (the Networking module's fetches).
     let networkTimeout: TimeInterval = 15
