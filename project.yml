@@ -79,12 +79,26 @@ schemes:
       targets:
         Common: all
         CommonTests: [test]
+        HostedTests: [test]
     test:
       config: Debug
       targets:
         - CommonTests
+        - HostedTests
     archive:
       config: Release
+  # Release-configured test lane: runs ReleaseGateTests (which skip in Debug)
+  # against the #else branches consumers actually ship. Testability is enabled
+  # on the command line (ENABLE_TESTABILITY=YES) — it does not define DEBUG.
+  Common-ReleaseGates:
+    build:
+      targets:
+        Common: all
+        CommonTests: [test]
+    test:
+      config: Release
+      targets:
+        - CommonTests
   DemoApp:
     build:
       targets:
@@ -198,6 +212,26 @@ targets:
         SWIFT_VERSION: "5.9"
         PRODUCT_BUNDLE_IDENTIFIER: com.diegovillouta.CommonTests
         GENERATE_INFOPLIST_FILE: YES
+
+  # Hosted lane: injected into DemoApp so the simulator Keychain actually
+  # works — hostless bundles get silent empty reads, which is why the
+  # CommonTests keychain assertions tolerate nil. Strict round-trip asserts
+  # live here. Deployment target must match the host app.
+  HostedTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - Tests/HostedTests
+    dependencies:
+      - target: DemoApp
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        PRODUCT_BUNDLE_IDENTIFIER: com.diegovillouta.HostedTests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/DemoApp.app/DemoApp"
+        BUNDLE_LOADER: "$(TEST_HOST)"
 
   DemoAppUITests:
     type: bundle.ui-testing

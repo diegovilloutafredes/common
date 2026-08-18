@@ -55,12 +55,14 @@ jobs:
       - name: Run Unit Tests
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c "import sys,json,re; d=json.load(sys.stdin); p=sorted((int(m.group(1)),v['udid']) for k,vs in d['devices'].items() if 'iOS' in k for v in vs if v.get('isAvailable') for m in [re.search(r'iPhone (\d+)',v['name'])] if m); print('id='+p[-1][1]) if p else exit(1)")
+          # No CODE_SIGNING_ALLOWED=NO here: the HostedTests keychain lane needs
+          # the DemoApp host ad-hoc signed (certificate-free on simulator) —
+          # fully unsigned hosts get silent SecItem failures.
           xcodebuild test \
             -scheme Common \
             -project Common.xcodeproj \
             -destination "$DEVICE_ID" \
-            -resultBundlePath TestResults.xcresult \
-            CODE_SIGNING_ALLOWED=NO
+            -resultBundlePath TestResults.xcresult
 
       - name: Build DemoApp
         run: |
