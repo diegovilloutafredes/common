@@ -27,9 +27,11 @@ This guide documents how to use the **Common** framework to build UI, wire modul
 15. [Common Pitfalls and Best Practices](#15-common-pitfalls-and-best-practices)
 16. [Environment](#16-environment)
 17. [Image Loading](#17-image-loading)
-18. [Appendix A — alertView() helper](#appendix-a--alertview-helper)
-19. [Appendix B — New screen checklist](#appendix-b--new-screen-checklist)
-20. [Appendix C — New API domain checklist](#appendix-c--new-api-domain-checklist)
+18. [System Managers & Utilities](#18-system-managers--utilities)
+19. [House Style](#19-house-style)
+20. [Appendix A — alertView() helper](#appendix-a--alertview-helper)
+21. [Appendix B — New screen checklist](#appendix-b--new-screen-checklist)
+22. [Appendix C — New API domain checklist](#appendix-c--new-api-domain-checklist)
 
 ---
 
@@ -1354,13 +1356,10 @@ CardView(viewModel: CardViewModelPayload(
 Separator()                               // Black, 1pt height
 Separator(color: .gray400, height: 0.5)  // thin line
 Separator(color: .gray200, height: 16)   // thick spacer
-myView.addSeparator(color: .gray, height: 1)  // convenience extension
-```
 
-### `Footer`
-
-```swift
-Footer(image: .asset(.poweredByTrustColored))
+// addSeparator RETURNS a new VStack wrapping the view + separator — use the
+// return value. Discarding it reparents the view and displays nothing.
+let labelWithSeparator = myLabel.addSeparator(color: .gray, height: 1)
 ```
 
 ### `Snackbar`
@@ -1459,16 +1458,26 @@ let vc = CustomAlertWireframe.createModule(alert) { [weak self] in
 present(vc, animated: true)
 ```
 
-### `CircularProgressView`
+### `ProgressAnimationView`
+
+Determinate gradient progress sweep with a completion callback:
 
 ```swift
-CircularProgressView()
-    .borderColor(.white)
-    .borderWidth(1)
-    .setAsRoundedView()
-    .setProgress(from: 0.5, duration: 30)
-    .setColor(progressColor)
+private lazy var progressView = ProgressAnimationView()
+    .backgroundColor(.systemGray5)
+    .round(radius: 8)
+    .setConstraints { $0.set(height: 16) }
+
+progressView.animate(
+    progressColor: UIColor.systemGreen.cgColor,
+    backgroundColor: UIColor.systemGray5.cgColor,
+    duration: 1.5
+) { [weak self] in self?.onProgressFinished() }
 ```
+
+The completion fires exactly once per `animate` call — including when the
+animation is interrupted (backgrounding, window removal); a newer `animate`
+call supersedes the previous one.
 
 ### `CircularActivityIndicatorView`
 
@@ -1486,6 +1495,22 @@ Animations survive backgrounding and window transitions: Core Animation strips
 them, and the view re-adds them automatically while `isAnimating` is `true`
 (re-adding resets the phase — meaningless for an indeterminate spinner). An
 explicitly stopped indicator stays stopped.
+
+### More components — one-liners
+
+```swift
+// GradientView — CAGradientLayer-backed; colors re-resolve on dark/light flips
+GradientView().colors(startColor: .systemBlue, endColor: .systemTeal).horizontalMode()
+
+// PillUILabel — pill-shaped label; padding honored in measurement AND drawing
+PillUILabel().text("NEW").font(.systemFont(ofSize: 12, weight: .bold))
+
+// PreviewView — AVCaptureVideoPreviewLayer-backed camera preview (see CameraManager, §18)
+PreviewView().videoGravity(.resizeAspectFill)
+
+// DNITextField — Chilean DNI/RUT entry field with built-in formatting
+DNITextField()
+```
 
 ### Base classes summary
 
@@ -1655,7 +1680,7 @@ extension ProductRouter: Endpoint {
 > **Note:** earlier drafts of this guide referenced an `extension Router: ResolveTokensUseCase {}`. **No such protocol exists in Common** — token resolution is done inline in `headers` as shown above, reading from an app-defined storage type.
 
 URL construction: `baseURL + basePath + version + path`  
-Parameter encoding: POST → JSON body (snake_case keys), GET → URL-encoded (snake_case keys)
+Parameter encoding: POST/PUT/PATCH → JSON body (snake_case keys), GET → URL-encoded (snake_case keys)
 
 ### Client
 
@@ -1711,6 +1736,10 @@ func onViewWillAppear() {
 
 ### BaseResponse wrapper
 
+`BaseResponse` is **not part of the framework** — it's an app-side envelope
+shape (like `alertView()` in Appendix A); define it in your project if your
+backend wraps payloads this way:
+
 ```swift
 struct BaseResponse<T: Codable>: Codable {
     let code: String
@@ -1728,12 +1757,12 @@ productClient.list { result in
     switch result {
     case .success(let products): updateUI(with: products)
     case .failure(let error):    showError(error)
-    @unknown default: break
     }
 }
 ```
 
-Always include `@unknown default` — `NetworkResultHandler` uses an open enum.
+No `@unknown default` needed — `NetworkResultHandler` wraps `Swift.Result`,
+which is a frozen enum; the two cases are exhaustive.
 
 ### UseCase pattern
 
@@ -1762,7 +1791,7 @@ extension CheckoutUseCase {
     private var checkoutClient: CheckoutClientProtocol { CheckoutClient() }
 
     func checkout(cart: Cart, onResult: @escaping NetworkEmptyResultHandler) {
-        guard let user else { onResult(.failure(.requestError("not_logged_in"))); return }
+        guard let user else { onResult(.failure(.custom(message: "not_logged_in"))); return }
         checkoutClient.submit(.init(userId: user.id, cart: cart), result: onResult)
     }
 }
@@ -1820,11 +1849,24 @@ extension NetworkError {
 }
 ```
 
+### Test/override points
+
+```swift
+// Both live on HTTPService and apply to every request made through it:
+HTTPService.defaultSession = mockSession       // inject a URLSession (tests)
+HTTPService.defaultTimeoutInterval = 30        // default is 60s
+```
+
 ### File upload (multipart)
 
 ```swift
 func upload(using parameters: UploadParameters, result: @escaping NetworkResultHandler<EmptyResponse>) {
     HTTPService.upload(multipart: parameters.asMultipart, to: UploadRouter.upload, result: result)
+}
+
+// Or, on a BaseClient subclass, the instance form with in-flight dedup:
+func upload(using parameters: UploadParameters, result: @escaping NetworkResultHandler<EmptyResponse>) {
+    upload(from: #function, multipart: parameters.asMultipart, to: UploadRouter.upload, result: result)
 }
 
 extension UploadParameters {
@@ -1835,21 +1877,6 @@ extension UploadParameters {
             $0.add(key: "entity_id", value: entityId)
         }
     }
-}
-```
-
-### NetworkMonitor
-
-```swift
-// One-time check
-guard NetworkMonitor.shared.isConnected else {
-    Snackbar.show(.init(message: "No internet connection"))
-    return
-}
-
-// Continuous observation
-NetworkMonitor.shared.onStatusChanged = { [weak self] isConnected, _ in guard let self else { return }
-    isConnected ? resumeSync() : showOfflineBanner()
 }
 ```
 
@@ -1933,6 +1960,37 @@ protocol ResolveUserStorage {
 extension ResolveUserStorage {
     var userStorage: UserStorageProtocol { UserStorage() }
 }
+```
+
+### Direct `KeychainWrapper`
+
+For raw Keychain access without the `KeyValueStore` facade:
+
+```swift
+KeychainWrapper.standard.set("token-value", forKey: "authToken")
+let token = KeychainWrapper.standard.string(forKey: "authToken")
+KeychainWrapper.standard.removeObject(forKey: "authToken")
+```
+
+- **Important:** individual operations are atomic (Security framework), but
+  `KeychainWrapper` adds no synchronization of its own — a get-then-set
+  sequence is **not** atomic across threads, and `standard` is shared
+  process-wide. Serialize compound operations on one queue.
+- Reads require a signed host process: in a hostless (fully unsigned) test
+  bundle, SecItem calls silently return nothing.
+
+### `FileStorage`
+
+- **Warning:** `FileStorage` is **not thread-safe** and `shared` is an
+  unsynchronized mutable static — confine access to one queue.
+
+### Injecting storage in tests
+
+`KeyValueStore` takes any `KeyValueStorage` backend — use the in-memory one
+to keep tests hermetic:
+
+```swift
+let store = KeyValueStore(keyValueStorage: InMemoryKeyValueStorage())
 ```
 
 ### Do's and Don'ts
@@ -2070,9 +2128,6 @@ UIImageView(image: .close)
 UIImageView(image: .chevronRight)
 UIImageView(image: .exclamationMark)
 
-// Asset-based (from Common framework)
-Footer(image: .asset(.poweredByTrustColored))
-
 // SF Symbols
 UIButton().image(.symbol("xmark"))
 UIImageView(image: .symbol("chevron.down"))
@@ -2093,7 +2148,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 | `Handler<T>` | `(T) -> Void` |
 | `CompletionHandler` | `(() -> Void)?` |
 | `Action` | `() -> Void` |
-| `EmptyResultHandler` | `(Result<Void, Error>) -> Void` |
+| `EmptyResultHandler` | `Handler<EmptyResult<Error>>` — `EmptyResult` is Common's own payload-less enum (`.success` / `.failure(Error)`), not `Swift.Result<Void, _>` |
 | `NetworkResultHandler<T>` | `(Result<T, NetworkError>) -> Void` |
 | `NetworkEmptyResultHandler` | `(EmptyResult<NetworkError>) -> Void` |
 
@@ -2109,6 +2164,23 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 | `SingleRawValueKeyValueObjectStorage` | Single-item key-value storage |
 | `ContentReloadable` | Views that can reload their content |
 | `ViewLifecycleable` | View lifecycle event hooks |
+
+### View-protocol vocabulary
+
+Compose these into your `FooViewProtocol` instead of redeclaring the methods —
+the conformances come free from `BaseViewController`/extensions:
+
+| Protocol | Grants |
+|----------|--------|
+| `BackButtonAddable` | `addBackButton { }` — nav-bar back with a handler |
+| `NavigationBarSetupable` | `setupNavigationBar()` styling hook |
+| `ScreenSizeMeasurable` | Screen bounds/size helpers |
+| `LargeTitleSettable` | Large-title nav configuration |
+| `SafariWebViewRequestable` | Present an in-app Safari view |
+| `AppSettingsRequestable` | Deep-link to the app's Settings page |
+| `KeyboardDismissable` | `dismissKeyboard()` (pair with `setupAsKeyboardDismissable()`) |
+| `ActivityIndicatorable` | `startActivityIndicator()` / `stopActivityIndicator()` |
+| `Vibrator` | `vibrate()` haptic |
 
 ---
 
@@ -2145,19 +2217,18 @@ Task { @MainActor in
     animate()
 }
 
-// Haptics
-view.vibrate()
+// Haptics — vibrate() lives on UIViewController (via Vibrator); shake() on UIView
+vibrate()        // from a UIViewController
 view.shake()
 
 // String formatting
 string.removeRUTFormat()
 string.formatAsRUT()
-string.removeCurrencyFormat()
-string.asCurrency
 string.asDecimalNumber
-string.masked()
-string.maskedEmail
 string.trimmed   // trimmingCharacters(in: .whitespacesAndNewlines)
+
+// Currency formatting lives on Int (es_CL locale)
+1990.asCurrency   // "$1.990"
 
 // Collections
 array[safe: index]   // -> Element?; nil instead of out-of-bounds crash
@@ -2254,6 +2325,7 @@ override var viewModel: MyCellViewModelProtocol? {
 | `placeholder` | `UIImage?` | `nil` | Shown synchronously while the image loads |
 | `failureImage` | `UIImage?` | `nil` | Shown if the fetch throws an error |
 | `transition` | `ImageTransition` | `.none` | How the image appears (`.fade(duration)`) |
+| `cachePolicy` | `CachePolicy` | `.default` | `.default` (L1 → L2 → network) or `.reloadIgnoringCache` (always fetch; cache updated on success) |
 | `onCompletion` | `ResultHandler<UIImage>?` | `nil` | Called on main thread with success or failure |
 
 `ImageLoadOptions.default` sets all properties to their defaults. Pass it explicitly or omit the `options:` argument entirely.
@@ -2286,8 +2358,9 @@ Cancel preloads when the screen goes away — otherwise abandoned fetches keep r
 ### Cache management
 
 ```swift
+// ImageCache methods are synchronous — no await on either call
 // Clear all cached images (memory + disk)
-await ImageLoader.shared.cache.clearAll()
+ImageLoader.shared.cache.clearAll()
 
 // Remove one URL
 ImageLoader.shared.cache.removeImage(for: url)
@@ -2304,6 +2377,139 @@ ImageLoader.shared.cache.removeImage(for: url)
 ### Supported image types
 
 `.jpg`, `.png`, `.webp` — file extension is inferred from the `Content-Type` response header. Unknown types use `.dat` and are still decoded as `UIImage` if the data is valid.
+
+---
+
+## 18. System Managers & Utilities
+
+The `Utils/Managers` surface — system-integration helpers you should reach for
+before touching the frameworks directly.
+
+### `Debouncer`
+
+Collapses rapid repeated calls into one, keyed by call site (`#function`) plus
+an optional id:
+
+```swift
+Debouncer.debounce(seconds: 0.5) { [weak self] in self?.performSearch() }
+// Distinct debounce streams from one call site:
+Debouncer.debounce(id: field.identifier, seconds: 0.5) { validate(field) }
+```
+
+### `LocalAuthenticationManager` — FaceID / TouchID / passcode
+
+```swift
+let auth = LocalAuthenticationManager(reason: "Unlock your account")
+
+auth.localAuthenticationType   // .biometry(.faceId/.touchId/.opticId), .passcode, or .none
+auth.canAuthenticate           // any policy available?
+
+auth.authenticate { [weak self] success in
+    success ? self?.unlock() : self?.showFallback()
+}
+```
+
+The result handler is always delivered on the main thread; `false` covers both
+denial and errors.
+
+### `CameraManager` + `PreviewView`
+
+Frame-capture pipeline: configure, then `begin` on a `PreviewView` — the
+manager handles the authorization request, session setup, and frame delivery:
+
+```swift
+private lazy var previewView = PreviewView().videoGravity(.resizeAspectFill)
+
+private lazy var camera = CameraManager(
+    position: .back,
+    onSampleBufferHandler: { [weak self] sampleBuffer in self?.process(sampleBuffer) }
+)
+
+camera.begin(previewView) { status in /* .authorized, .denied, ... */ }
+camera.finish()                 // stop the session (e.g. onViewWillDisappear)
+camera.set(zoomFactor: 2)
+camera.toggleTorch()
+```
+
+### Authorization managers
+
+Uniform `AuthorizationStatus` vocabulary over the system permission APIs:
+
+```swift
+CameraAuthorizationManager.currentStatus
+CameraAuthorizationManager.requestAuthorization { granted in ... }
+
+NotificationAuthorizationManager.getCurrentStatus { status in ... }
+NotificationAuthorizationManager.requestAuthorization { granted in ... }  // .alert/.badge/.sound by default
+
+LocationAuthorizationManager().request(.whenInUse) { status in ... }      // instance-based (CLLocationManager delegate)
+```
+
+### `NotificationRegisterManager`
+
+APNs registration (pair with `NotificationAuthorizationManager` for the
+permission first):
+
+```swift
+NotificationRegisterManager.registerForRemoteNotifications()
+NotificationRegisterManager.unregisterForRemoteNotifications()
+```
+
+### `AppleLoginManager` — Sign in with Apple
+
+```swift
+private let appleLogin = AppleLoginManager()
+
+appleLogin.performLogin(from: self) { result in
+    switch result {
+    case .success(let (credential, decodedToken)):
+        // credential.asAppleUser → AppleUser(id, name, lastName, email)
+        self.register(user: credential.asAppleUser, token: decodedToken)
+    case .failure(let error):
+        self.show(error)
+    }
+}
+```
+
+Keep the manager alive for the duration of the flow (it is the authorization
+controller's delegate) — store it in a property, not a local.
+
+### `NFCReadingAvailability`
+
+```swift
+guard NFCReadingAvailability.isReadingAvailable else { return showUnsupported() }
+```
+
+---
+
+## 19. House Style
+
+The framework's conventions — follow them for any code that lives in `Common/`
+(and they translate well to consumer code):
+
+- **File anatomy**: 3-line header (`//`, `//  Filename.swift`, `//`) — no
+  author/copyright lines. One primary symbol per file. `// MARK: - SymbolName`
+  per type; protocol conformances as separate `extension Type: Protocol {}`
+  blocks at the bottom of the file, each with its own MARK.
+- **Protocol taxonomy**: capabilities end in `-able` (`Navigationable`,
+  `Actionable` — consistency beats grammar); `*Requestable` = upward delegate
+  with `onXRequested` methods; behavior ships as protocol + constrained default
+  implementation (`extension X where Self: Y`).
+- **Fluent chainables**: `@discardableResult func x(_ value: X) -> Self { with { $0.x = value } }`,
+  one file per chainable property (`UILabel+Font.swift`), rooted in `Withable`.
+- **Closure vocabulary**: `Action`, `Handler<T>`, `NetworkResultHandler<T>`,
+  `CompletionHandler` — a raw `(T) -> Void` in a public signature is a
+  violation. Name protocol compositions (`BaseModuleDelegate`).
+- **Semantic sugar**: `.empty` over `""`, `.zero` over `0`, `.init()` shorthand
+  where the type is inferable, `.isNotNil` / `.isNotEmpty` over negations.
+- **DocC on every public symbol**; `- Note:` / `- Warning:` / `- Important:`
+  for gotchas; inline comments only for invariants and "why", never "what".
+- **Class discipline**: `open class Base*` for extension points, `final class`
+  for leaves; UI types are `@MainActor`; singletons are `static let shared` +
+  `private init()`; nearly every parameter gets a default value; Debug traps
+  via `assertionFailure`, Release degrades gracefully.
+- **Modern Swift**: one-line trivial bodies, switch expressions,
+  `guard let self`, `some Protocol` parameters, `#function`-keyed identity.
 
 ---
 
@@ -2398,6 +2604,6 @@ func alertView(
 - [ ] If the endpoint requires auth, resolve the token inline in `headers` from an app-level Storage type (Common has no token-resolution protocol)
 - [ ] `protocol MyClientProtocol: AnyObject` with method signatures using `NetworkResultHandler<T>`
 - [ ] `final class MyClient: BaseClient` (empty body)
-- [ ] `extension MyClient: MyClientProtocol` with `HTTPService.request(...)` calls
+- [ ] `extension MyClient: MyClientProtocol` — style (a): `request(from: #function, router, result:)` on `BaseClient`; or style (b): direct `HTTPService.request(router, result:)` (see §10 Do's and Don'ts)
 - [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation
 - [ ] Conform the relevant ViewController or Coordinator to `MyUseCase`
