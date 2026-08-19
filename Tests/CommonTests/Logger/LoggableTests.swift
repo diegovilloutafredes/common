@@ -55,11 +55,15 @@ final class LoggableTests: XCTestCase {
     // it fall through to the default). The cache reset in setUp is what keeps
     // the default-path and setter tests honest and order-independent.
 
+    // Logger.forceEnable() exists only in Debug builds — without the guard this
+    // file fails to compile in the Release-gate lane.
+    #if DEBUG
     func test_forceEnable_setsLoggerShouldLogTrue() {
         Logger.shouldLog = false
         Logger.forceEnable()
         XCTAssertTrue(Logger.shouldLog)
     }
+    #endif
 
     func test_isRuntimeForceEnabled_defaultsFalse() {
         XCTAssertFalse(Logger.isRuntimeForceEnabled)
