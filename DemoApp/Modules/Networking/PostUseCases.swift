@@ -44,3 +44,27 @@ extension FetchPostsAsyncUseCase {
         try await AsyncPostClient().fetchPosts()
     }
 }
+
+// MARK: - CreatePostUseCase
+
+protocol CreatePostUseCase {
+    func createPost(_ newPost: NewPost, onResult: @escaping NetworkResultHandler<Post>)
+}
+
+extension CreatePostUseCase {
+    func createPost(_ newPost: NewPost, onResult: @escaping NetworkResultHandler<Post>) {
+        PostClient().createPost(newPost, result: onResult)
+    }
+}
+
+// MARK: - UploadImageUseCase
+
+protocol UploadImageUseCase {
+    func uploadImage(_ imageData: Data, onResult: @escaping NetworkResultHandler<UploadEchoResponse>)
+}
+
+extension UploadImageUseCase {
+    func uploadImage(_ imageData: Data, onResult: @escaping NetworkResultHandler<UploadEchoResponse>) {
+        UploadClient().uploadImage(imageData, result: onResult)
+    }
+}

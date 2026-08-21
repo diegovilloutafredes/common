@@ -12,6 +12,7 @@ final class ListsViewController: BaseCollectionViewableViewController<ListsViewM
     private lazy var list = VList(dataSource: self, delegate: self)
         .register(ListItemCell.self)
         .register(ListSectionHeaderView.self, kind: .header)
+        .register(ListSectionHeaderView.self, kind: .footer)
 
     @UIViewBuilder
     override var mainView: UIView {

@@ -17,6 +17,7 @@ protocol HomeCoordinatorProtocol: AnyObject {
     func showForms()
     func showLists()
     func showUtilities()
+    func showCamera()
     func showCoordinatorDemo()
     func showImageLoading()
     func showTypography()

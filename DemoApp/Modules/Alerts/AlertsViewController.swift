@@ -18,6 +18,35 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
         Toast.present(with: "This is a Toast message", duration: .medium)
     }
 
+    private lazy var actionSnackbarButton = makeButton(title: "Snackbar with Action", color: .systemCyan) {
+        Snackbar.show(.init(
+            message: "Message archived",
+            actionTitle: "Undo",
+            onAction: { Toast.present(with: "Undone ✓", duration: .short) },
+            onDismiss: { Logger.log("Snackbar dismissed") }
+        ))
+    }
+
+    // MARK: - Sheet with detents
+    private lazy var detentsSheetButton = makeButton(title: "Sheet with Detents", color: .systemMint) { [weak self] in
+        guard let self else { return }
+        let sheet = UIViewController()
+            .with { $0.view.backgroundColor = .systemBackground }
+        VStack(alignment: .center, margins: .init(all: 24), spacing: 12) {
+            UILabel().text("Detents sheet").font(.boldSystemFont(ofSize: 20)).textColor(.label)
+            UILabel()
+                .text("Opens at .medium, drag up for .large — configured with the sheetPresentationController detents chainable.")
+                .font(.systemFont(ofSize: 14))
+                .textColor(.secondaryLabel)
+                .numberOfLines(0)
+                .textAlignment(.center)
+        }.with { sheet.view.addSubview($0) }
+            .setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide) }
+        sheet.sheetPresentationController?
+            .detents([.medium(), .large()])
+        present(sheet, animated: true)
+    }
+
     private lazy var activityButton = makeButton(title: "Activity Indicator (2s)", color: .systemPurple) { [weak self] in
         self?.startActivityIndicator()
         Task { @MainActor [weak self] in
@@ -78,8 +107,10 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
                 ) {
                     VStack(spacing: 10) {
                         snackbarButton
+                        actionSnackbarButton
                         toastButton
                         activityButton
+                        detentsSheetButton
                     }
                 }
                 sectionCard(

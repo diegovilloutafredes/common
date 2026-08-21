@@ -13,9 +13,11 @@ import UIKit
 final class SheetFlowViewController: BaseViewController {
 
     private let onDismissRequested: Action
+    private let onSwapRequested: Action?
 
-    init(onDismissRequested: @escaping Action) {
+    init(onDismissRequested: @escaping Action, onSwapRequested: Action? = nil) {
         self.onDismissRequested = onDismissRequested
+        self.onSwapRequested = onSwapRequested
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -32,6 +34,21 @@ final class SheetFlowViewController: BaseViewController {
     .onTap { [weak self] in self?.onDismissRequested() }
     .setConstraints { $0.set(height: 48) }
 
+    // Only the first sheet offers the swap — the replacement sheet has no
+    // onSwapRequested, and ArrayBuilder drops the nil button from layout.
+    private lazy var swapButton: UIButton? = onSwapRequested.map { onSwap in
+        UIButton(
+            configuration: .bordered().with {
+                $0.title = "Swap Sheet — present(.dismissingCurrent)"
+                $0.cornerStyle = .capsule
+                $0.image = UIImage(systemName: "rectangle.2.swap")
+                $0.imagePadding = 6
+            }
+        )
+        .onTap(onSwap)
+        .setConstraints { $0.set(height: 48) }
+    }
+
     @UIViewBuilder override var mainView: UIView {
         VStack(
             alignment: .fill,
@@ -45,6 +62,7 @@ final class SheetFlowViewController: BaseViewController {
                 .textColor(.secondaryLabel)
                 .numberOfLines()
             dismissButton
+            swapButton
             UIView()
         }.setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide) }
     }

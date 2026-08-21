@@ -18,6 +18,9 @@ public protocol CollectionViewSizeable: AnyObject {
     
     /// Returns the size for the header item in the specified section.
     func onSizeForHeaderItem(in section: Int) -> Size
+
+    /// Returns the size for the footer item in the specified section.
+    func onSizeForFooterItem(in section: Int) -> Size
     
     /// Returns the size for the cell at the specified path.
     /// - Parameters:
@@ -33,5 +36,6 @@ extension CollectionViewSizeable {
     public func onMinimumInteritemSpacingFor(section: Int) -> Double { .zero }
     public func onMinimumLineSpacingFor(section: Int) -> Double { .zero }
     public func onSizeForHeaderItem(in section: Int) -> Size { (.zero, .zero) }
+    public func onSizeForFooterItem(in section: Int) -> Size { (.zero, .zero) }
     public func onInsetFor(section: Int) -> Inset { (.zero, .zero, .zero, .zero) }
 }

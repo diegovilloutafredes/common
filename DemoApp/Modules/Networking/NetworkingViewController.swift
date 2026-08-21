@@ -102,6 +102,34 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
     .onTap { [weak self] in guard let self else { return }; viewModel.loadPosts() }
     .setConstraints { $0.set(height: 44) }
 
+    private lazy var createButton = UIButton(
+        configuration: .filled()
+            .with {
+                $0.title = "Create"
+                $0.baseBackgroundColor = .systemGreen
+                $0.cornerStyle = .capsule
+                $0.image = .init(systemName: "plus")
+                $0.imagePadding = 6
+            }
+    )
+    .onTap { [weak self] in guard let self else { return }; viewModel.createPost() }
+    .setConstraints { $0.set(height: 44) }
+
+    private lazy var uploadButton = UIButton(
+        configuration: .filled()
+            .with {
+                $0.title = "Upload"
+                $0.baseBackgroundColor = .systemOrange
+                $0.cornerStyle = .capsule
+                $0.image = .init(systemName: "square.and.arrow.up")
+                $0.imagePadding = 6
+            }
+    )
+    .onTap { [weak self] in guard let self else { return }
+        viewModel.uploadImage(Self.makeDemoPNGData())
+    }
+    .setConstraints { $0.set(height: 44) }
+
     @UIViewBuilder
     override var mainView: UIView {
         VStack {
@@ -110,16 +138,28 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
                 spacing: 8
             ) {
                 UILabel()
-                    .text("GET /posts — JSONPlaceholder API")
+                    .text("GET + POST /posts · multipart /post — JSONPlaceholder & httpbin")
                     .font(.monospacedSystemFont(ofSize: 12, weight: .medium))
                     .textColor(.tertiaryLabel)
                     .textAlignment(.center)
                 modeSegment
                 fetchButton
+                HStack(distribution: .fillEqually, spacing: 8) {
+                    createButton
+                    uploadButton
+                }
                 statusLabel
             }
             list
         }.setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
+    }
+
+    /// A tiny generated PNG so the multipart demo has real bytes to send.
+    private static func makeDemoPNGData() -> Data {
+        UIGraphicsImageRenderer(size: .init(width: 8, height: 8)).image { context in
+            UIColor.systemOrange.setFill()
+            context.fill(.init(x: 0, y: 0, width: 8, height: 8))
+        }.pngData() ?? .init()
     }
 
     override func setupView() {

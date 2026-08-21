@@ -33,6 +33,22 @@ final class DeclarativeUIViewController: BaseViewModelableViewController<Declara
         }
     }
 
+    // MARK: - Single-child Stack Demo
+    private lazy var stackDemo = demoSection(
+        title: "Stack (single child)",
+        description: "The base Stack applies margins around a single child without picking an axis — the lightest way to inset one view."
+    ) {
+        Stack(margins: .init(all: 16)) {
+            UILabel().text("One child, margins only — no VStack/HStack needed")
+                .font(.systemFont(ofSize: 13))
+                .textColor(.label)
+                .numberOfLines(0)
+                .textAlignment(.center)
+        }
+        .backgroundColor(.systemTeal.withAlphaComponent(0.2))
+        .round(radius: 8)
+    }
+
     // MARK: - Alignment Demo
     private lazy var alignmentDemo = demoSection(
         title: "Alignment",
@@ -281,6 +297,7 @@ final class DeclarativeUIViewController: BaseViewModelableViewController<Declara
             ) {
                 vStackDemo
                 hStackDemo
+                stackDemo
                 alignmentDemo
                 distributionDemo
                 marginsDemo

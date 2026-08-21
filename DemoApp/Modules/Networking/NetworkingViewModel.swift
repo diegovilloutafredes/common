@@ -14,6 +14,8 @@ protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
     var statusText: String { get }
     var mode: NetworkingMode { get }
     func loadPosts()
+    func createPost()
+    func uploadImage(_ imageData: Data)
     func setMode(_ mode: NetworkingMode)
 }
 
@@ -46,6 +48,45 @@ extension NetworkingViewModel: NetworkingViewModelProtocol {
         case .async: loadPostsAsync()
         }
     }
+
+    func createPost() {
+        statusText = "POSTing a new post…"
+        view?.didUpdateStatus()
+        view?.didStartLoading()
+        let newPost = NewPost(userId: 1, title: "Hello from Common", body: "JSON body sent via PostEndpoint.create")
+        createPost(newPost) { [weak self] result in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                view?.didStopLoading()
+                switch result {
+                case .success(let created):
+                    statusText = "Created post #\(created.id) via POST (JSON body)"
+                case .failure:
+                    statusText = "POST failed — offline? JSONPlaceholder echoes created posts when reachable"
+                }
+                view?.didUpdateStatus()
+            }
+        }
+    }
+
+    func uploadImage(_ imageData: Data) {
+        statusText = "Uploading \(imageData.count) bytes as multipart…"
+        view?.didUpdateStatus()
+        view?.didStartLoading()
+        uploadImage(imageData) { [weak self] result in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                view?.didStopLoading()
+                switch result {
+                case .success(let echo):
+                    statusText = "Multipart upload echoed by \(echo.url)"
+                case .failure:
+                    statusText = "Upload failed — offline? httpbin.org echoes the multipart body when reachable"
+                }
+                view?.didUpdateStatus()
+            }
+        }
+    }
 }
 
 // MARK: - Private
@@ -73,7 +114,6 @@ private extension NetworkingViewModel {
                     view?.didFailWithError(error.localizedDescription)
                     view?.didUpdatePosts()
                     view?.didUpdateStatus()
-                @unknown default: break
                 }
             }
         }
@@ -105,6 +145,8 @@ private extension NetworkingViewModel {
 // MARK: - UseCase conformances
 extension NetworkingViewModel: FetchPostsUseCase {}
 extension NetworkingViewModel: FetchPostsAsyncUseCase {}
+extension NetworkingViewModel: CreatePostUseCase {}
+extension NetworkingViewModel: UploadImageUseCase {}
 
 // MARK: - CollectionViewable
 extension NetworkingViewModel: CollectionViewable {

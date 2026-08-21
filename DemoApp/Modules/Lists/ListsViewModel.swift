@@ -80,6 +80,21 @@ extension ListsViewModel: CollectionViewable {
         (view?.screenWidth ?? 375, 36)
     }
 
+    // Footer supplementary — only under the last section; section 0 keeps the
+    // zero default so no footer is dequeued there.
+    func onFooterItemReuseIdentifierRequested(in section: Int) -> String {
+        ListSectionHeaderView.reuseIdentifier
+    }
+
+    func onFooterItemDataSourceRequested(in section: Int) -> ViewModel? {
+        guard section == 1 else { return nil }
+        return ListSectionHeaderViewModelImpl(title: "END OF LIST — FOOTER SUPPLEMENTARY")
+    }
+
+    func onSizeForFooterItem(in section: Int) -> Size {
+        section == 1 ? (view?.screenWidth ?? 375, 32) : (.zero, .zero)
+    }
+
     func onMinimumLineSpacingFor(section: Int) -> Double { 4 }
 
     func onInsetFor(section: Int) -> Inset { (top: 4, left: 0, bottom: 8, right: 0) }

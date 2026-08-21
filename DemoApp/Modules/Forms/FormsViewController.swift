@@ -66,6 +66,11 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
     private lazy var passwordErrorLabel = makeErrorLabel()
     private lazy var confirmPasswordErrorLabel = makeErrorLabel()
 
+    private lazy var dniField = DNITextField()
+        .with { $0.accessibilityIdentifier = "dniField" }
+        .borderColor(.separator)
+        .borderWidth(1)
+
     private lazy var submitButton = UIButton(
         configuration: .filled()
             .with {
@@ -95,6 +100,14 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
                     VStack(spacing: 4) { emailField; emailErrorLabel }
                     VStack(spacing: 4) { passwordField; passwordErrorLabel }
                     VStack(spacing: 4) { confirmPasswordField; confirmPasswordErrorLabel }
+                    VStack(spacing: 4) {
+                        dniField
+                        UILabel()
+                            .text("DNITextField — Chilean RUT entry with built-in formatting (display only)")
+                            .font(.systemFont(ofSize: 11))
+                            .textColor(.tertiaryLabel)
+                            .numberOfLines(0)
+                    }
                 }
 
                 submitButton

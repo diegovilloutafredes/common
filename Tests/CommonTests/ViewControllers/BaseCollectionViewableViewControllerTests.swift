@@ -30,6 +30,7 @@ final class BaseCollectionViewableViewControllerTests: XCTestCase {
         func onCellForItem(in section: Int, at index: Int) -> ViewModel? { nil }
         func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { .empty }
         func onSizeForItem(in section: Int, at index: Int) -> Size { (width: 10, height: 20) }
+        func onSizeForFooterItem(in section: Int) -> Size { section == 1 ? (width: 30, height: 40) : (.zero, .zero) }
         func onItemSelected(in section: Int, at index: Int) { selections.append((section, index)) }
     }
 
@@ -61,6 +62,11 @@ final class BaseCollectionViewableViewControllerTests: XCTestCase {
 
         let size = vc.collectionView(collectionView, layout: layout, sizeForItemAt: IndexPath(item: 0, section: 0))
         XCTAssertEqual(size, CGSize(width: 10, height: 20))
+
+        // Footer sizing routes per section; the unimplemented-section default is zero,
+        // so no footer is dequeued where the view model declines one.
+        XCTAssertEqual(vc.collectionView(collectionView, layout: layout, referenceSizeForFooterInSection: 1), CGSize(width: 30, height: 40))
+        XCTAssertEqual(vc.collectionView(collectionView, layout: layout, referenceSizeForFooterInSection: 0), .zero)
     }
 
     /// The generic constraint is intentionally absent (see CLAUDE.md) —

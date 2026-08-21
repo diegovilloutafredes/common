@@ -52,17 +52,36 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
     /// UISheetPresentationController chainables; dismissal routes back through
     /// the coordinator's dismiss().
     private func presentSheet() {
-        let sheet = SheetFlowViewController { [weak self] in
-            guard let self else { return }
-            dismiss()
-            emit(CoordinatorEvent(icon: "📥", message: "Sheet dismissed via coordinator dismiss()", delta: 0))
-        }
+        let sheet = SheetFlowViewController(
+            onDismissRequested: { [weak self] in
+                guard let self else { return }
+                dismiss()
+                emit(CoordinatorEvent(icon: "📥", message: "Sheet dismissed via coordinator dismiss()", delta: 0))
+            },
+            onSwapRequested: { [weak self] in self?.swapSheet() }
+        )
         sheet.sheetPresentationController?
             .detents([.medium()])
             .prefersGrabberVisible(true)
             .preferredCornerRadius(16)
         present(.overCurrent, viewController: sheet)
         emit(CoordinatorEvent(icon: "📤", message: "Sheet presented — medium detent via chainables", delta: 0))
+    }
+
+    /// Replaces the presented sheet in one call: present(.dismissingCurrent)
+    /// dismisses whatever is on top, then presents the new controller.
+    private func swapSheet() {
+        let replacement = SheetFlowViewController { [weak self] in
+            guard let self else { return }
+            dismiss()
+            emit(CoordinatorEvent(icon: "📥", message: "Replacement sheet dismissed", delta: 0))
+        }
+        replacement.sheetPresentationController?
+            .detents([.medium()])
+            .prefersGrabberVisible(true)
+            .preferredCornerRadius(16)
+        present(.dismissingCurrent, viewController: replacement)
+        emit(CoordinatorEvent(icon: "🔁", message: "Sheet swapped via present(.dismissingCurrent)", delta: 0))
     }
 }
 

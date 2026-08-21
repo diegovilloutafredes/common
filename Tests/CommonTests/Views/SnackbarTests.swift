@@ -122,7 +122,10 @@ final class SnackbarTests: XCTestCase {
 
         guard let button = buttons(in: snackbar).first else { return XCTFail("action button must exist") }
         tap(button)
-        pumpRunLoop()
+        // Dismissal completion lands on a later run-loop pass — poll it out
+        // (same shape as test_showAfterDismiss_presentsFreshSnackbar).
+        let deadline = Date(timeIntervalSinceNow: 2)
+        while !snackbars().isEmpty && Date() < deadline { pumpRunLoop() }
 
         XCTAssertEqual(actioned, 1, "the action button must stay tappable after the hit-test carve-out")
         XCTAssertTrue(snackbars().isEmpty, "the action tap must still dismiss the snackbar")

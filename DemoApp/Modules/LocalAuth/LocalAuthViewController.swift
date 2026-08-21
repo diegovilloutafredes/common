@@ -9,6 +9,7 @@ import UIKit
 // MARK: - LocalAuthViewProtocol
 protocol LocalAuthViewProtocol: AnyObject {
     func updateResult(success: Bool)
+    func updateAppleResult(_ message: String)
     func showLoading()
     func hideLoading()
 }
@@ -49,6 +50,21 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
     .onTap { [weak self] in self?.viewModel.authenticate() }
     .setConstraints { $0.set(height: 50) }
 
+    // MARK: - Sign in with Apple
+    private lazy var appleSignInButton = AppleSignInButton()
+        .with { $0.accessibilityIdentifier = "appleSignInButton" }
+        .onTap { [weak self] in guard let self else { return }
+            viewModel.performAppleLogin(from: self)
+        }
+        .setConstraints { $0.set(height: 50); $0.setWidth(to: $1.widthAnchor, multiplier: 0.8) }
+
+    private lazy var appleResultLabel = UILabel()
+        .text("Sign in with Apple — needs the entitlement on a real app; the demo reports the flow outcome either way")
+        .font(.systemFont(ofSize: 12))
+        .textColor(.tertiaryLabel)
+        .numberOfLines(0)
+        .textAlignment(.center)
+
     @UIViewBuilder
     override var mainView: UIView {
         VStack(
@@ -71,6 +87,9 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
             authenticateButton
 
             resultLabel
+
+            appleSignInButton
+            appleResultLabel
         }
         .setConstraints { $0.snapLeadTopTrail(to: $1.safeAreaLayoutGuide) }
     }
@@ -88,6 +107,10 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
 
 // MARK: - LocalAuthViewProtocol
 extension LocalAuthViewController: LocalAuthViewProtocol {
+    func updateAppleResult(_ message: String) {
+        appleResultLabel.text(message).textColor(.secondaryLabel)
+    }
+
     func updateResult(success: Bool) {
         let text = success ? "Authentication Successful" : "Authentication Failed"
         let color: UIColor = success ? .systemGreen : .systemRed

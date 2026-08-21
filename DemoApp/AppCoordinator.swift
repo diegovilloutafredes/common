@@ -52,6 +52,10 @@ final class AppCoordinator: BaseCoordinator, HomeCoordinatorProtocol {
         push(UtilitiesWireframe.createModule())
     }
 
+    func showCamera() {
+        push(CameraWireframe.createModule())
+    }
+
     func showCoordinatorDemo() {
         addChildAndStart(CoordinatorDemoCoordinator(navigationController: navigationController))
     }

@@ -38,8 +38,8 @@ final class HomeViewModel {
             action: { [weak self] in self?.coordinator?.showAlerts() }
         ),
         .init(
-            title: "Local Authentication",
-            subtitle: "FaceID / TouchID / Passcode",
+            title: "Auth",
+            subtitle: "FaceID / TouchID / Apple Sign-In",
             action: { [weak self] in self?.coordinator?.showLocalAuth() }
         ),
         .init(
@@ -66,6 +66,11 @@ final class HomeViewModel {
             title: "Utilities",
             subtitle: "Debouncer, UIDatePicker, CircularActivityIndicator",
             action: { [weak self] in self?.coordinator?.showUtilities() }
+        ),
+        .init(
+            title: "Camera",
+            subtitle: "CameraManager, PreviewView, authorization flow",
+            action: { [weak self] in self?.coordinator?.showCamera() }
         ),
         .init(
             title: "Coordinator",

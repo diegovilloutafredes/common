@@ -141,6 +141,15 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
     open func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        let size = asCollectionViewable?.onSizeForFooterItem(in: section) ?? (.zero, .zero)
+        return .init(width: size.width, height: size.height)
+    }
+
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         let size = asCollectionViewable?.onSizeForItem(in: indexPath.section, at: indexPath.item) ?? (.zero, .zero)

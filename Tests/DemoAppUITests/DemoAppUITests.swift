@@ -6,14 +6,14 @@ import XCTest
 
 final class DemoAppUITests: UITestCase {
 
-    /// All 14 home rows, in HomeViewModel's order — the single source of truth
+    /// All 15 home rows, in HomeViewModel's order — the single source of truth
     /// for module-existence assertions. A renamed or removed row must break
     /// HERE, loudly, not silently shrink coverage.
     static let allModules = [
         "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
-        "Local Authentication", "Extensions", "Onboarding", "Forms & TextFields",
-        "Lists & Cells", "Utilities", "Coordinator", "Image Loading", "Typography",
-        "Components"
+        "Auth", "Extensions", "Onboarding", "Forms & TextFields",
+        "Lists & Cells", "Utilities", "Camera", "Coordinator", "Image Loading",
+        "Typography", "Components"
     ]
 
     // MARK: - Navigation
@@ -140,13 +140,24 @@ final class DemoAppUITests: UITestCase {
         waitForSnackbar(prefixes: ["Deleted from Keychain"], label: "Delete", backend: "KeychainWrapper direct")
     }
 
-    /// Verifies the Local Authentication screen renders its nav bar + primary control.
+    /// Verifies the Auth screen renders its nav bar + primary controls.
     /// Layout correctness ("not stretched") is a visual check via the attached screenshot —
     /// it is not (and cannot be) programmatically asserted via XCUITest.
-    func test_localAuth_screenRenders() {
-        openModule("Local Authentication", until: app.navigationBars["Local Authentication"])
+    func test_auth_screenRenders() {
+        openModule("Auth", until: app.navigationBars["Auth"])
         XCTAssertTrue(app.buttons["Authenticate"].exists, "Authenticate button should render")
+        XCTAssertTrue(app.buttons["appleSignInButton"].exists || app.otherElements["appleSignInButton"].exists,
+                      "Apple sign-in button should render")
         add(XCTAttachment(screenshot: app.screenshot()))
+    }
+
+    /// The Camera screen must open WITHOUT triggering a permission prompt —
+    /// the session only starts on the user-initiated Start tap (never tapped here).
+    func test_camera_screenRendersWithoutPermissionPrompt() {
+        openModule("Camera", until: app.navigationBars["Camera"])
+        XCTAssertTrue(app.buttons["Start Camera"].exists, "Start button should render")
+        XCTAssertTrue(app.otherElements["cameraPreview"].exists, "PreviewView should render")
+        XCTAssertFalse(app.alerts.element.exists, "opening the screen must not request camera permission")
     }
 
     // MARK: - Extensions screen demos

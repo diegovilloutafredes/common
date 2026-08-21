@@ -6,12 +6,16 @@ import AuthenticationServices
 import UIKit
 
 /// A wrapper around `ASAuthorizationAppleIDButton` to simplify its usage in UIKit.
-final class AppleSignInButton: UIButton {
+///
+/// Behaves as a plain `UIButton`: the inner Apple button's tap is re-emitted as
+/// `.touchUpInside`, so `.onTap { }` and target-action both work. Pair with
+/// `AppleLoginManager.performLogin(from:result:)` to run the flow.
+public final class AppleSignInButton: UIButton {
     private let authButtonStyle = ASAuthorizationAppleIDButton.Style.white.rawValue
     private let authButtonType = ASAuthorizationAppleIDButton.ButtonType.default.rawValue
     private let cornerRadius: CGFloat = .DefaultValues.Button.cornerRadius
 
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setupAuthorizationButton()
     }
