@@ -14,7 +14,10 @@
 #
 # Not mirrored: the docs job (Jazzy → gh-pages) — deploy-only, regenerates when
 # CI is re-enabled or via `jazzy` manually.
-set -e
+# -o pipefail is load-bearing: the test steps pipe xcodebuild into grep/tail,
+# and without it a failing suite would exit through tail's status 0 — the
+# script would print the failures and still declare the pipeline green.
+set -eo pipefail
 cd "$(dirname "$0")/.."
 
 DESTINATION="${CI_LOCAL_DESTINATION:-platform=iOS Simulator,name=iPhone 17}"
