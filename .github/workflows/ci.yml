@@ -1,10 +1,15 @@
 name: CI
 
+# TEMPORARILY DISABLED (2026-08-22, by request): automatic push/PR triggers are
+# off; the pipeline can still be started manually from the Actions tab. Run the
+# same steps locally with `make ci` (scripts/ci_local.sh). To re-enable, restore:
+#   on:
+#     push:
+#       branches: [main]
+#     pull_request:
+#       branches: [main]
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
