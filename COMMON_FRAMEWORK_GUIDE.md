@@ -668,24 +668,38 @@ View controllers that own a `VList` or `HList` must subclass `BaseCollectionView
 
 ```swift
 final class ProductsViewController: BaseCollectionViewableViewController<ProductsViewModelProtocol> {
-    private lazy var list = VList()
+    private lazy var list = VList(dataSource: self, delegate: self)
         .register(ProductCell.self)
         .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
 
     @UIViewBuilder
     override var mainView: UIView { list }
-
-    override func setupView() {
-        super.setupView()
-        list.dataSource = self
-        list.delegate = self
-    }
 }
 ```
 
 The base class accesses the ViewModel via `viewModel as? CollectionViewable` at runtime — the generic constraint on `ViewModelType` is intentionally absent because Swift's existential type system prevents protocol types from satisfying generic protocol constraints.
 
 Override `bottomInsetForLastCollectionSection()` when the screen sits above a tab bar (default returns `.zero`).
+
+**Section headers and footers.** Register the supplementary view with `.register(_:kind:)` and have the ViewModel answer the three hooks per kind — reuse identifier, view model, size. The size defaults to `(.zero, .zero)`, which means "no header/footer in this section"; a non-zero size **requires** a matching reuse identifier, or UIKit throws on dequeue.
+
+```swift
+private lazy var list = VList(dataSource: self, delegate: self)
+    .register(ProductCell.self)
+    .register(SectionHeaderView.self, kind: .header)
+    .register(SectionFooterView.self, kind: .footer)
+
+// ViewModel (CollectionViewable) — header in every section, footer under the last one only
+func onHeaderItemReuseIdentifierRequested(in section: Int) -> String { SectionHeaderView.reuseIdentifier }
+func onHeaderItemDataSourceRequested(in section: Int) -> ViewModel? { sections[section].headerViewModel }
+func onSizeForHeaderItem(in section: Int) -> Size { (screenWidth, 36) }
+
+func onFooterItemReuseIdentifierRequested(in section: Int) -> String { SectionFooterView.reuseIdentifier }
+func onFooterItemDataSourceRequested(in section: Int) -> ViewModel? { section == lastSection ? footerViewModel : nil }
+func onSizeForFooterItem(in section: Int) -> Size { section == lastSection ? (screenWidth, 32) : (.zero, .zero) }
+```
+
+Supplementary views subclass `BaseViewModelableReusableView<T>` and bind in `viewModel didSet`, exactly like cells. `Size` and `Inset` are labeled tuples (`(width:height:)`, `(top:left:bottom:right:)`).
 
 ### `BaseViewModelableView<T: ViewModel>`
 
@@ -1415,7 +1429,7 @@ private lazy var list = HList(
 .register(OnboardingCell.self)
 ```
 
-Cells subclass `BaseViewModelableCell<T>` and use `@UIViewBuilder` for layout. Always call `.register(CellType.self)` before use.
+Cells subclass `BaseViewModelableCell<T>` and use `@UIViewBuilder` for layout. Always call `.register(CellType.self)` before use — and `.register(View.self, kind: .header)` / `.footer` for supplementary views (see §5, "Section headers and footers").
 
 **Pull-to-refresh** with `UIRefreshControl.onValueChanged`:
 
@@ -1501,6 +1515,8 @@ explicitly stopped indicator stays stopped.
 ```swift
 // GradientView — CAGradientLayer-backed; colors re-resolve on dark/light flips
 GradientView().colors(startColor: .systemBlue, endColor: .systemTeal).horizontalMode()
+GradientView().colors(startColor: .black, endColor: .clear).endLocation(0.6)
+    .with { $0.diagonalMode = true }   // diagonal: top-left → bottom-right; + horizontalMode: top-right → bottom-left. startLocation is settable too.
 
 // PillUILabel — pill-shaped label; padding honored in measurement AND drawing
 PillUILabel().text("NEW").font(.systemFont(ofSize: 12, weight: .bold))
@@ -1555,6 +1571,8 @@ Notes:
 - Playback advances by wall time — dropped display-link ticks catch up by skipping frames — and a single-frame GIF is shown as a static image (no display link).
 - Each frame is decoded on the **main thread** as it is displayed — inexpensive for typical UI GIFs, but a very large GIF can hitch. Memory stays flat (`kCGImageSourceShouldCache = false`).
 - Per-frame durations come from the GIF metadata; delays below `0.02s` are normalized to `0.1s`.
+- The GIF's loop-count metadata is **not** honored — playback loops until `stopAnimating()` or an `image` assignment.
+- `isPlayingGIF` is `true` only while the display link is actively driving frames: it reads `false` while auto-paused off-window, not just after `stopAnimating()`.
 - It animates continuously via `CADisplayLink`, which can interfere with XCUITest's idle detection — disable it (e.g. skip `loadGIF` behind a launch argument) on screens you exercise with UI tests.
 
 ---
@@ -1611,7 +1629,7 @@ UITextField()
 | `.containsLetter` / `.containsLowercase` / `.containsUppercase` / `.containsNumber` | Contains a scalar of that class |
 | `.contains(CharacterSet)` | Contains a scalar from the set |
 | `.email` / `.rut` | Passes `String.isValidEmail` / `String.isRUT` |
-| `.matches(Field)` / `.differs(from: Field)` | Equals / differs from another field's current value |
+| `.matches(Field)` / `.differs(from: Field)` | Equals / differs from another field's current value (an unset field reads as `""`, so `.matches` alone passes while both are empty — pair it with `.notEmpty`) |
 
 Every rule has a non-empty `defaultMessage`; the `message` resolver overrides per `(Field, Rule)`. A resolver returning `""` enforces validity but **suppresses display** of that rule.
 
@@ -2099,7 +2117,7 @@ UIFont.setPrimaryFamily(.montserrat)
 ```
 
 **Styles** (`UIFont.FontStyle`): `.thin`, `.extraLight`, `.light`, `.regular`, `.medium`, `.semiBold`, `.bold`, `.extraBold`, `.black`, `.italic`  
-**Fallback:** an unset primary family or an unresolvable PostScript name returns a weight-matched system font — `.appFont` never fails.
+**Fallback:** an unset primary family or an unresolvable PostScript name returns the system font at the matching weight (`.thin` → `.thin` … `.medium` → `.medium` … `.extraBold` → `.heavy`, `.black` → `.black`; `.italic` → italic system font) — `.appFont` never fails.
 
 **Migrating from an app-local `appFont` helper:** apps that predate this system (their own `UIFont` extension with a defaulted family parameter) can link Common as-is — the local helper keeps winning overload resolution over Common's `appFont(style:size:)`, so nothing changes until you opt in. To migrate: delete the local helper file, declare your `AppFontFamily` values, and call `setPrimaryFamily(_:)` at startup; label-only call sites compile unchanged.
 
@@ -2236,15 +2254,18 @@ array[safe: index]   // -> Element?; nil instead of out-of-bounds crash
 // Logging — DEBUG only
 Logger.log("some value")                          // generic item
 Logger.log(["request": r, "response": s])        // structured items, printed in call-site order
+// Keep `caller:` defaulted — Logger.log(caller: #function, [...]) resolves to the deprecated unordered overload.
 Logger.log(request, data: data, response: resp)  // network request + response
 // Logger output is compile-time gated: active in DEBUG builds, silenced in release.
-// To opt in during a debug session: Logger.forceEnable()
+// Logger.forceEnable() exists only in Debug builds of the framework SOURCE — it is compiled out
+// in Release and absent from the SPM xcframework. Prefer the runtime gate below.
 // To get logs in a debug app that links a *Release-built* Common.xcframework
 // (the default SPM artefact), flip the runtime gate at startup:
 //   #if DEBUG
 //   Logger.isRuntimeForceEnabled(true)
 //   HTTPService.shouldLog(true)    // and any other Loggable types you care about
 //   #endif
+// Order matters in Release builds: a <Type>.shouldLog(true) issued BEFORE isRuntimeForceEnabled(true) is dropped.
 // Every settable Logger / Loggable property also has a same-named fluent setter
 // (e.g. `Logger.isRuntimeForceEnabled(true).shouldLog(true)`).
 ```
@@ -2473,6 +2494,22 @@ appleLogin.performLogin(from: self) { result in
 
 Keep the manager alive for the duration of the flow (it is the authorization
 controller's delegate) — store it in a property, not a local.
+
+Call `performLogin` once the anchor view controller is in a window (the manager falls back to the key window otherwise). `.canceled` and `.unknown` (the app lacks the Sign in with Apple entitlement) arrive as `.failure` with the system `ASAuthorizationError`; decode problems and a call made while another request is pending arrive as `AppleLoginError` (`.badToken`, `.malformedPayload`, `.alreadyInProgress`), a `LocalizedError`.
+
+### `AppleSignInButton` — the button for that flow
+
+```swift
+private lazy var appleButton = AppleSignInButton()      // .adaptive: black on light, white on dark
+    .onTap { [weak self] in guard let self else { return }
+        appleLogin.performLogin(from: self) { result in /* as above */ }
+    }
+    .setConstraints { $0.set(height: 50) }
+
+AppleSignInButton(type: .continue, style: .whiteOutline)   // fixed style; .black / .white / .whiteOutline
+```
+
+A `UIButton`-shaped wrapper around `ASAuthorizationAppleIDButton`: `.onTap`/target-action work, `isEnabled = false` really disables it, VoiceOver reads Apple's localized label, and the intrinsic size is Apple's. `.adaptive` follows interface-style changes (Apple's style is init-only, so the inner button is rebuilt on a flip).
 
 ### `NFCReadingAvailability`
 

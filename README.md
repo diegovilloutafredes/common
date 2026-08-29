@@ -36,6 +36,8 @@ Or in Xcode: **File → Add Package Dependencies…** and enter the repository U
 
 > **Binary distribution:** Common ships as a prebuilt XCFramework (binary target compiled with `BUILD_LIBRARY_FOR_DISTRIBUTION=YES`). You get ABI-stable symbols and do not build from source. The resolved package resolves to the xcframework committed at the tagged version.
 
+> **Non-SPM consumers** (vendored frameworks, Carthage-style setups): `./fetch-common-xcframework.sh 1.5.0` downloads the `Common.xcframework` committed at that tag — the same artifact SPM resolves — so nothing in the chain depends on a mutable release asset.
+
 ---
 
 ## What you can build
@@ -50,7 +52,9 @@ Or in Xcode: **File → Add Package Dependencies…** and enter the repository U
 | Remote image loading with two-tier cache | `UIImageView.loadImage(from:options:)`, `ImageLoader` |
 | Typed Keychain / UserDefaults / file storage | `KeyValueStore`, `SingleRawValueKeyValueObjectStorage` |
 | Face ID / Touch ID / passcode gate | `LocalAuthenticationManager` |
-| Sign in with Apple | `AppleLoginManager` |
+| Sign in with Apple | `AppleSignInButton`, `AppleLoginManager` |
+| Collection lists with section headers/footers | `VList`, `HList`, `BaseCollectionViewableViewController`, `CollectionViewable` |
+| Gated structured logging | `Logger.log(_:)` (ordered `KeyValuePairs`), `Logger.isRuntimeForceEnabled(_:)` |
 | Feedback UI (toasts, snackbars, modals) | `Snackbar`, `Toast`, `CustomAlertWireframe` |
 | Debounced input | `Debouncer.debounce(seconds:function:)` |
 | AES-128/256 encryption | `AES(key:iv:)` |
@@ -147,7 +151,7 @@ titleLabel.font(.appFont(style: .bold, size: 24))            // primary family
 captionLabel.font(.appFont(.montserrat, size: 13))           // explicit family
 ```
 
-Missing faces and unregistered families fall back to a weight-matched system font.
+Missing faces and unregistered families fall back to the system font at the matching weight (`.medium` → medium, `.extraBold` → heavy, `.italic` → italic).
 
 ---
 
@@ -233,7 +237,8 @@ let validator = FieldsValidator<Field>(
         .password:        [.notEmpty, .minLength(8)],
         .confirmPassword: [.notEmpty, .matches(.password)]
     ],
-    onChange: { state in
+    onChange: { [weak self] state in
+        guard let self else { return }
         submitButton.isEnabled(state.isValid)        // overall validity
         for (field, fieldState) in state.fields {
             errorLabel(for: field).text(fieldState.message)   // nil clears
@@ -337,9 +342,9 @@ await ImageLoader.shared.cancelPreloads()
 
 ---
 
-### Padded labels & animated GIFs
+### Padded labels, pills, gradients & animated GIFs
 
-`PaddingLabel` is a `UILabel` with configurable content insets (chips, tags, badges) — the padding is reflected in its intrinsic size and wrapped multi-line text stays within the insets. `GIFImageView` plays animated GIFs via ImageIO, decoding one frame at a time on a `CADisplayLink` (flat memory) and pausing off-screen.
+`PaddingLabel` is a `UILabel` with configurable content insets (chips, tags, badges) — the padding is reflected in its intrinsic size and wrapped multi-line text stays within the insets. `PillUILabel` is the ready-made pill variant. `GradientView` is a `CAGradientLayer`-backed view whose colors re-resolve on dark/light flips. `GIFImageView` plays animated GIFs via ImageIO, decoding one frame at a time on a `CADisplayLink` (flat memory) and pausing off-screen; playback loops until `stopAnimating()` or an `image` assignment (loop-count metadata is not honored).
 
 ```swift
 // A padded, rounded badge
@@ -347,6 +352,10 @@ PaddingLabel(padding: .init(all: 4))
     .text("NEW")
     .backgroundColor(.systemPink)
     .setAsRoundedView(radius: 4)
+
+// A pill badge and a gradient
+PillUILabel().text("NEW").font(.systemFont(ofSize: 12, weight: .bold))
+GradientView().colors(startColor: .systemBlue, endColor: .systemTeal).horizontalMode()
 
 // An animated GIF
 let gif = GIFImageView()
@@ -444,14 +453,17 @@ final class LockScreenViewModel {
 
 ### Sign in with Apple
 
-`AppleLoginManager` handles the full `ASAuthorizationController` flow and decodes the identity token JWT, returning credentials and the decoded payload in one callback.
+`AppleSignInButton` is a `UIButton`-shaped wrapper around Apple's button (adaptive black/white by default, `.onTap` works). `AppleLoginManager` handles the full `ASAuthorizationController` flow and decodes the identity token JWT, returning credentials and the decoded payload in one callback.
 
 ```swift
+// In the screen:
+AppleSignInButton().onTap { [weak self] in self?.onAppleLoginRequested() }
+
 final class LoginCoordinator: BaseCoordinator {
     // Must be retained for the duration of the flow
     private let appleLogin = AppleLoginManager()
 
-    func startAppleLogin(from vc: UIViewController) {
+    func startAppleLogin(from vc: UIViewController) {   // vc must be in a window
         appleLogin.performLogin(from: vc) { [weak self] result in
             switch result {
             case .success(let (credential, token)):
@@ -461,8 +473,8 @@ final class LoginCoordinator: BaseCoordinator {
                 let sub       = token["sub"] as? String
                 self?.finishLogin(userId: userId, email: email)
 
-            case .failure(let error):
-                self?.view?.showError(error.localizedDescription)
+            case .failure(let error):   // ASAuthorizationError (.canceled, no entitlement) or AppleLoginError
+                Snackbar.show(Snackbar.ViewModel(message: error.localizedDescription))
             }
         }
     }
@@ -593,6 +605,7 @@ Re-run `xcodegen generate` (or `make generate`) whenever `project.yml` changes.
 
 ```bash
 make generate             # Regenerate Common.xcodeproj
+make ci                   # Full local pipeline: tests, Release gates, DemoApp (Debug + Release), XCFramework
 make build_xcframework    # Build Common.xcframework (device + simulator)
 make patch                # Tag and release a patch version
 make minor                # Tag and release a minor version
@@ -603,7 +616,7 @@ make major                # Tag and release a major version
 
 ## Demo App
 
-The project includes a `DemoApp` target that showcases the library across 15 modules: Alerts, Components, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Local Auth, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
+The project includes a `DemoApp` target that showcases the library across 16 modules: Alerts, Auth (Face ID / Touch ID / Sign in with Apple), Camera, Components, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
 
 ---
 
@@ -615,7 +628,7 @@ The codebase is fully documented with DocC comments. Generate HTML documentation
 jazzy
 ```
 
-Output is at `docs/index.html`. Documentation is also published automatically to GitHub Pages on every push to `main`.
+Output is at `docs/index.html`. The CI workflow publishes the same output to GitHub Pages; while its automatic triggers are paused it runs on demand from the Actions tab (`workflow_dispatch`).
 
 ---
 
