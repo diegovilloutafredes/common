@@ -146,8 +146,9 @@ final class DemoAppUITests: UITestCase {
     func test_auth_screenRenders() {
         openModule("Auth", until: app.navigationBars["Auth"])
         XCTAssertTrue(app.buttons["Authenticate"].exists, "Authenticate button should render")
-        XCTAssertTrue(app.buttons["appleSignInButton"].exists || app.otherElements["appleSignInButton"].exists,
-                      "Apple sign-in button should render")
+        XCTAssertTrue(app.buttons["appleSignInButton"].exists, "Apple sign-in button should render as a button")
+        XCTAssertEqual(app.buttons["appleSignInButton"].label, "Sign in with Apple",
+                       "the wrapper must expose the inner Apple button's label to assistive tech")
         add(XCTAttachment(screenshot: app.screenshot()))
     }
 
