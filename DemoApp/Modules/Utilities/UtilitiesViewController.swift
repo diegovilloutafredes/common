@@ -259,7 +259,7 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
                 }
                 demoSection(
                     title: "Logger",
-                    description: "Compile-time DEBUG gated — silent in Release unless forceEnable() opts in. Frames print atomically to the Xcode console."
+                    description: "Compile-time DEBUG gated — silent in Release unless isRuntimeForceEnabled(true) opts in. Frames print atomically to the Xcode console."
                 ) {
                     VStack(spacing: 8) {
                         loggerStatusLabel
@@ -299,7 +299,8 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
 
     private func emitLogFrame() {
         logCount += 1
-        Logger.forceEnable()
+        Logger.isRuntimeForceEnabled(true)
+        Logger.shouldLog(true)
         Logger.log(["screen": "Utilities", "event": "logger-demo", "count": logCount])
         loggerStatusLabel.text("Emitted frame #\(logCount) — check the Xcode console")
             .textColor(.systemGreen)

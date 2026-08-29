@@ -9,7 +9,7 @@
 #      lane; ad-hoc signed, so no CODE_SIGNING_ALLOWED=NO here)
 #   3. Release gate tests — Common-ReleaseGates scheme, Release config,
 #      ENABLE_TESTABILITY=YES (symbol access only; DEBUG stays undefined)
-#   4. DemoApp compile check
+#   4. DemoApp compile check (Debug and Release schemes)
 #   5. XCFramework build (Release archives; validates distribution compile)
 #
 # Not mirrored: the docs job (Jazzy → gh-pages) — deploy-only, regenerates when
@@ -41,9 +41,15 @@ xcodebuild test \
   ENABLE_TESTABILITY=YES \
   | grep -E "Test Suite|Executed|error:|failed" | tail -6
 
-echo "▶ [4/5] DemoApp build"
+echo "▶ [4/5] DemoApp build (Debug + Release)"
 xcodebuild build -quiet \
   -scheme DemoApp \
+  -project Common.xcodeproj \
+  -destination 'generic/platform=iOS Simulator' \
+  CODE_SIGNING_ALLOWED=NO
+# Release catches demo code that only compiles under DEBUG (e.g. Debug-only Logger helpers).
+xcodebuild build -quiet \
+  -scheme DemoApp-Release \
   -project Common.xcodeproj \
   -destination 'generic/platform=iOS Simulator' \
   CODE_SIGNING_ALLOWED=NO
