@@ -5,6 +5,7 @@
 import UIKit
 import ImageIO
 
+// MARK: - GIFImageView
 /// A `UIImageView` that plays animated GIFs using ImageIO.
 ///
 /// Frames are decoded one at a time on a `CADisplayLink` as they are shown, so
@@ -98,6 +99,7 @@ public final class GIFImageView: UIImageView {
 
     // MARK: - Animation control
 
+    /// Resumes GIF playback after an explicit ``stopAnimating()``; no-op without a loaded GIF.
     public override func startAnimating() {
         if displayLink.isNil && imageSource.isNotNil {
             startDisplayLink()
@@ -105,6 +107,7 @@ public final class GIFImageView: UIImageView {
         super.startAnimating()
     }
 
+    /// Stops GIF playback and keeps the current frame; stays stopped until ``startAnimating()``.
     public override func stopAnimating() {
         displayLink?.invalidate()
         displayLink = nil
@@ -210,6 +213,7 @@ public final class GIFImageView: UIImageView {
     }
 }
 
+// MARK: - WeakDisplayLinkProxy
 /// Forwards `CADisplayLink` ticks to a ``GIFImageView`` without retaining it.
 ///
 /// `CADisplayLink` strongly retains its target and the run loop retains the link,

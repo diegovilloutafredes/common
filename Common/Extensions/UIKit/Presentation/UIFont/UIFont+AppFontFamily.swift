@@ -1,3 +1,6 @@
+//
+//  UIFont+AppFontFamily.swift
+//
 
 // MARK: - AppFontFamily
 /// An extensible font family identifier. Set `rawValue` to the PostScript base name of the font
@@ -11,6 +14,8 @@
 /// }
 /// ```
 public struct AppFontFamily: RawRepresentable, Hashable, Uppercaseable {
+    /// The family's PostScript base name (camelCase; uppercased on first letter when resolving).
     public let rawValue: String
+    /// Creates a family identifier from its PostScript base name.
     public init(rawValue: String) { self.rawValue = rawValue }
 }

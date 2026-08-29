@@ -4,6 +4,7 @@
 
 import UIKit
 
+// MARK: - PaddingLabel
 /// A `UILabel` that insets its text by a configurable ``UIEdgeInsets``.
 ///
 /// `UILabel` has no built-in content insets; `PaddingLabel` adds them, which is
@@ -37,6 +38,7 @@ public final class PaddingLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
 
+    /// Draws the text inside the padded rect.
     public override func drawText(in rect: CGRect) {
         super.drawText(in: insetClamped(rect))
     }
@@ -44,6 +46,7 @@ public final class PaddingLabel: UILabel {
     // `intrinsicContentSize` is intentionally NOT overridden: `UILabel` derives
     // it from `textRect(forBounds:limitedToNumberOfLines:)`, so the override
     // below already accounts for the padding. Adding it here too double-counts it.
+    /// Measures the text against the padded bounds and returns the rect grown by the padding.
     public override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         // Wrap against the inset width, then re-expand by the padding so the
         // label reserves room for the insets around the wrapped text.

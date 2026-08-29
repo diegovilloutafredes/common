@@ -32,9 +32,9 @@ public final class FieldsValidator<Field: Hashable> {
     /// Creates a validator.
     /// - Parameters:
     ///   - rules: The rules to enforce per field.
-    ///   - message: Resolves the message for a failing `(field, rule)`. Falls back to
-    ///     ``Rule/defaultMessage`` when `nil` or when it returns a value. Returning `""` suppresses
-    ///     that rule from display while still enforcing its validity.
+    ///   - message: Resolves the message for a failing `(field, rule)`. When `nil`, every rule
+    ///     uses ``Rule/defaultMessage``. Returning `""` suppresses that rule from display while
+    ///     still enforcing its validity.
     ///   - onChange: Called exactly once per ``set(_:on:)`` / ``touchAll()`` with the new state.
     public init(
         rules: [Field: [Rule]],
@@ -145,7 +145,7 @@ public extension FieldsValidator {
             case .containsLowercase: "Must contain a lowercase letter."
             case .containsUppercase: "Must contain an uppercase letter."
             case .containsNumber: "Must contain a number."
-            case .contains: "Contains an invalid character."
+            case .contains: "Must contain a required character."
             case .email: "Enter a valid email address."
             case .rut: "Enter a valid RUT."
             case .matches: "Values must match."
@@ -185,7 +185,9 @@ public extension FieldsValidator {
 
     /// A failing rule paired with its resolved message.
     struct Failure {
+        /// The rule that failed.
         public let rule: Rule
+        /// The resolved message; `""` when the resolver suppressed display.
         public let message: String
     }
 }

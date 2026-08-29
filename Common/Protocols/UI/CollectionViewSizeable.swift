@@ -2,7 +2,9 @@
 //  CollectionViewSizeable.swift
 //
 
+/// Section insets as a labeled tuple; `(.zero, .zero, .zero, .zero)` is the default.
 public typealias Inset = (top: Double, left: Double, bottom: Double, right: Double)
+/// An item, header, or footer size as a labeled tuple; `(.zero, .zero)` means "none" for supplementary views.
 public typealias Size = (width: Double, height: Double)
 
 // MARK: - CollectionViewSizeable

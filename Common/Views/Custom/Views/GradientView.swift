@@ -4,7 +4,7 @@
 
 import UIKit
 
-// MARK: - Class GradientView
+// MARK: - GradientView
 /// A view that displays a color gradient using `CAGradientLayer`.
 public final class GradientView: UIView {
     /// The starting color of the gradient.
@@ -85,7 +85,9 @@ extension GradientView {
     }
 }
 
+// MARK: - Fluent configuration
 extension GradientView {
+    /// Sets both gradient colors. Dynamic colors re-resolve on interface-style changes.
     @discardableResult public func colors(startColor: UIColor, endColor: UIColor) -> Self {
         with {
             $0.startColor = startColor
@@ -95,12 +97,14 @@ extension GradientView {
 }
 
 extension GradientView {
+    /// Runs the gradient left → right instead of top → bottom.
     @discardableResult public func horizontalMode(_ horizontalMode: Bool = true) -> Self {
         with { $0.horizontalMode = horizontalMode }
     }
 }
 
 extension GradientView {
+    /// Sets where (0…1) the end color is fully reached.
     @discardableResult public func endLocation(_ endLocation: Double) -> Self {
         with { $0.endLocation = endLocation }
     }

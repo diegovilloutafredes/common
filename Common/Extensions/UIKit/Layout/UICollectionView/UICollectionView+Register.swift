@@ -26,8 +26,11 @@ extension UICollectionView {
 }
 
 // MARK: - SupplementaryViewKind
+/// The kind of supplementary view to register — maps to UIKit's section header/footer element kinds.
 public enum SupplementaryViewKind: Stringable {
+    /// `UICollectionView.elementKindSectionHeader`.
     case header
+    /// `UICollectionView.elementKindSectionFooter`.
     case footer
 
     public var asString: String {

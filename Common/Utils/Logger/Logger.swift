@@ -112,6 +112,9 @@ extension Logger: Loggable {}
 
 // MARK: - Compile-time gate
 extension Logger {
+    /// Whether logging was compiled in — `true` in Debug builds of the framework, `false` in
+    /// Release (including the distributed xcframework). Baked at build time; see
+    /// ``isRuntimeForceEnabled`` for the runtime escape hatch.
     #if DEBUG
     public static let isCompileTimeEnabled = true
     #else
@@ -145,6 +148,9 @@ extension Logger {
 #if DEBUG
 // MARK: - Debug helpers
 extension Logger {
+    /// Debug-only convenience for `Logger.shouldLog(true)`. Compiled out in Release and
+    /// therefore absent from the distributed xcframework — consumers of the binary use
+    /// ``isRuntimeForceEnabled`` instead.
     public static func forceEnable() {
         Logger.shouldLog(true)
     }

@@ -4,6 +4,7 @@
 
 import UIKit
 
+// MARK: - PillUILabel
 /// A label with pill-shaped background and padding.
 ///
 /// The padding is honored by measurement AND drawing (the same mechanism as

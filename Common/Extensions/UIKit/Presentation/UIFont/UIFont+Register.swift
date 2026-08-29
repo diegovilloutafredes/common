@@ -5,9 +5,13 @@
 import UIKit
 
 extension UIFont {
+    /// Why a font file could not be registered with Core Text.
     public enum RegisterFontError: Error {
+      /// The file was found but could not be read as font data.
       case invalidFontFile
+      /// No resource with the given name and type exists in the bundle.
       case fontPathNotFound
+      /// Core Graphics could not create a font from the file's data.
       case initFontError
       /// Core Text rejected the registration; carries the underlying
       /// `CFError` description (e.g. "already registered") when available.

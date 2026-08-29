@@ -5,7 +5,7 @@
 import os
 
 // MARK: - Loggable
-/// A protocol that providing logging capabilities to conforming types.
+/// A protocol that provides logging capabilities to conforming types.
 public protocol Loggable: Keyable {
 
     /// Determines whether logging is enabled.
