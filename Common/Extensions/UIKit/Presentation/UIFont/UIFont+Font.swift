@@ -22,11 +22,28 @@ extension UIFont {
         return font
     }
 
+    /// The system font at the weight matching `style` (`.italic` → italic system font).
     static func systemFallback(for style: FontStyle, size: CGFloat) -> UIFont {
         switch style {
-        case .black, .bold, .extraBold, .medium, .semiBold: .boldSystemFont(ofSize: size)
-        case .extraLight, .light, .regular, .thin:          .systemFont(ofSize: size)
-        case .italic:                                        .italicSystemFont(ofSize: size)
+        case .italic: .italicSystemFont(ofSize: size)
+        default:      .systemFont(ofSize: size, weight: style.systemWeight)
+        }
+    }
+}
+
+private extension UIFont.FontStyle {
+    var systemWeight: UIFont.Weight {
+        switch self {
+        case .thin:       .thin
+        case .extraLight: .ultraLight
+        case .light:      .light
+        case .regular:    .regular
+        case .medium:     .medium
+        case .semiBold:   .semibold
+        case .bold:       .bold
+        case .extraBold:  .heavy
+        case .black:      .black
+        case .italic:     .regular
         }
     }
 }

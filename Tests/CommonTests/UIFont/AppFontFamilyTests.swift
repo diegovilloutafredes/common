@@ -70,6 +70,30 @@ final class AppFontFamilyTests: XCTestCase {
         XCTAssertEqual(font.fontDescriptor.symbolicTraits.contains(.traitItalic), true)
     }
 
+    // A fallback that collapsed .medium into bold (or .thin into regular) would
+    // still be 16pt with the right symbolic traits — compare the weight-encoding
+    // fontName against the exact system weight instead.
+    func test_unknownFamily_mediumStyle_fallsBackToMediumSystemWeight() {
+        let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: .medium, size: 16)
+        XCTAssertEqual(font.fontName, UIFont.systemFont(ofSize: 16, weight: .medium).fontName)
+    }
+
+    func test_unknownFamily_thinStyle_fallsBackToThinSystemWeight() {
+        let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: .thin, size: 16)
+        XCTAssertEqual(font.fontName, UIFont.systemFont(ofSize: 16, weight: .thin).fontName)
+    }
+
+    func test_unknownFamily_everyStyle_fallsBackToDistinctMatchingWeight() {
+        let expected: [UIFont.FontStyle: UIFont.Weight] = [
+            .thin: .thin, .extraLight: .ultraLight, .light: .light, .regular: .regular, .medium: .medium,
+            .semiBold: .semibold, .bold: .bold, .extraBold: .heavy, .black: .black
+        ]
+        for (style, weight) in expected {
+            let font = UIFont.appFont(AppFontFamily(rawValue: "NonExistentFamily"), style: style, size: 12)
+            XCTAssertEqual(font.fontName, UIFont.systemFont(ofSize: 12, weight: weight).fontName, "\(style)")
+        }
+    }
+
     // MARK: - UIFont.appFont(style:size:) — primary family
 
     // These three drive the primary-family routing against the REALLY-registered
