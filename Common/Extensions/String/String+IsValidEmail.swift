@@ -16,13 +16,14 @@ extension String {
             let emailDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
         else { return false }
 
+        let fullRange = NSRange(location: 0, length: utf16.count)
         let matches = emailDetector.matches(
             in: self,
             options: NSRegularExpression.MatchingOptions.anchored,
-            range: NSRange(location: 0, length: count)
+            range: fullRange
         )
 
-        guard matches.count == 1 else { return false }
+        guard matches.count == 1, matches[0].range == fullRange else { return false }
 
         return matches[0].url?.scheme == "mailto"
     }
