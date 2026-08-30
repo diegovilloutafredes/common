@@ -7,6 +7,10 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  # Forwarded into the simulator test host as GITHUB_ACTIONS (xcodebuild only
+  # passes TEST_RUNNER_-prefixed variables through); the hosted Keychain
+  # round-trip tests XCTSkip on it — the Keychain is unavailable to the host here.
+  TEST_RUNNER_GITHUB_ACTIONS: 'true'
 
 concurrency:
   group: release-${{ github.ref_name }}

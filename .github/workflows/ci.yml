@@ -13,6 +13,10 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  # Forwarded into the simulator test host as GITHUB_ACTIONS (xcodebuild only
+  # passes TEST_RUNNER_-prefixed variables through); the hosted Keychain
+  # round-trip tests XCTSkip on it — the Keychain is unavailable to the host here.
+  TEST_RUNNER_GITHUB_ACTIONS: 'true'
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -63,7 +67,10 @@ jobs:
           echo "DEVICE_ID=$DEVICE_ID" >> "$GITHUB_ENV"
           # No CODE_SIGNING_ALLOWED=NO here: the HostedTests keychain lane needs
           # the DemoApp host ad-hoc signed (certificate-free on simulator) —
-          # fully unsigned hosts get silent SecItem failures.
+          # fully unsigned hosts get silent SecItem failures. On GitHub-hosted
+          # runners the Keychain is unavailable to the host regardless, so the
+          # keychain round-trip tests XCTSkip there via TEST_RUNNER_GITHUB_ACTIONS
+          # (strict lane = `make ci`).
           xcodebuild test \
             -scheme Common \
             -project Common.xcodeproj \

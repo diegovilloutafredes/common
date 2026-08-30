@@ -20,6 +20,17 @@ final class KeychainRoundTripTests: XCTestCase {
 
     private func key(_ name: String) -> String { namespace + name }
 
+    /// GitHub-hosted runners have no signing identity for the DemoApp host, and
+    /// there every SecItem call returns nothing — all seven round-trips fail
+    /// identically. Skip there, loudly; the strict lane runs locally via `make ci`.
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        try XCTSkipIf(
+            ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] == "true",
+            "Simulator Keychain is unavailable to the test host on GitHub-hosted runners; run `make ci` locally for the strict lane."
+        )
+    }
+
     override func tearDown() {
         keychain.allKeys()
             .filter { $0.hasPrefix(namespace) }
