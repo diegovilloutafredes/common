@@ -35,7 +35,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
 
     private lazy var passwordField = makeTextField(
         placeholder: "Password (min 6 chars)",
-        contentType: .password,
+        contentType: .newPassword,
         keyboardType: .default
     )
     .isSecureTextEntry(true)
@@ -49,7 +49,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
 
     private lazy var confirmPasswordField = makeTextField(
         placeholder: "Confirm Password",
-        contentType: .password,
+        contentType: .newPassword,
         keyboardType: .default
     )
     .isSecureTextEntry(true)
