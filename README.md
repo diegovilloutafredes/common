@@ -36,6 +36,23 @@ Or in Xcode: **File → Add Package Dependencies…** and enter the repository U
 
 > **Binary distribution:** Common ships as a prebuilt XCFramework (binary target compiled with `BUILD_LIBRARY_FOR_DISTRIBUTION=YES`). You get ABI-stable symbols and do not build from source. The resolved package resolves to the xcframework committed at the tagged version.
 
+### Coding-agent skill
+
+The repo ships an agent skill (`.claude/skills/common-framework/`, with the full guide linked under `references/`) that teaches a coding agent the framework's patterns. Install it as a plugin, pinned to the release you consume:
+
+```
+/plugin marketplace add diegovilloutafredes/common
+/plugin install common-framework@common
+```
+
+Updates arrive with `/plugin marketplace update` when a new version is tagged. Teams can commit `extraKnownMarketplaces` + `enabledPlugins` in `.claude/settings.json` so every clone gets it. Without plugins, copy the two files into your repo at the tag you use:
+
+```bash
+V=v1.6.0; D=.claude/skills/common-framework; mkdir -p $D/references
+curl -fsSL https://raw.githubusercontent.com/diegovilloutafredes/common/$V/.claude/skills/common-framework/SKILL.md -o $D/SKILL.md
+curl -fsSL https://raw.githubusercontent.com/diegovilloutafredes/common/$V/COMMON_FRAMEWORK_GUIDE.md -o $D/references/COMMON_FRAMEWORK_GUIDE.md
+```
+
 > **Non-SPM consumers** (vendored frameworks, Carthage-style setups): `./fetch-common-xcframework.sh 1.5.0` downloads the `Common.xcframework` committed at that tag — the same artifact SPM resolves — so nothing in the chain depends on a mutable release asset.
 
 ---

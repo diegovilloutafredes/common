@@ -1,0 +1,29 @@
+{
+  "name": "common",
+  "owner": {
+    "name": "Diego Villouta"
+  },
+  "metadata": {
+    "description": "Plugins for the Common iOS framework.",
+    "version": "1.5.0"
+  },
+  "plugins": [
+    {
+      "name": "common-framework",
+      "source": "./",
+      "description": "Skill for building UIKit apps on the Common iOS framework (MVVM-C, declarative UI DSL, networking, FieldsValidator, storage) \u2014 quick reference plus the full framework guide.",
+      "version": "1.5.0",
+      "author": {
+        "name": "Diego Villouta"
+      },
+      "keywords": [
+        "swift",
+        "uikit",
+        "ios",
+        "mvvm-c",
+        "common-framework"
+      ],
+      "category": "development"
+    }
+  ]
+}

@@ -45,8 +45,11 @@ fi
 echo "Building XCFramework..."
 make build_xcframework
 
-echo "Committing XCFramework..."
-git add -f XCFramework/Common.xcframework
+echo "Stamping the plugin manifests with ${NEW_VERSION#v}..."
+sed -i '' "s/\"version\": \"[^\"]*\"/\"version\": \"${NEW_VERSION#v}\"/" .claude-plugin/plugin.json .claude-plugin/marketplace.json
+
+echo "Committing XCFramework and plugin manifests..."
+git add -f XCFramework/Common.xcframework .claude-plugin
 git commit -m "Add xcframework for $NEW_VERSION"
 
 git tag -a "$NEW_VERSION" -m "$NEW_VERSION"
