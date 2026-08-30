@@ -289,15 +289,29 @@ public protocol AppSettingsRequestable : AnyObject {
 extension Common.AppSettingsRequestable {
   public func onAppSettingsRequested()
 }
+public typealias AppleLoginCredentials = (appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])
+public enum AppleLoginError : Foundation.LocalizedError, Swift.Equatable {
+  case badToken
+  case malformedPayload
+  case alreadyInProgress
+  public var errorDescription: Swift.String? {
+    get
+  }
+  public static func == (a: Common.AppleLoginError, b: Common.AppleLoginError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
 public protocol AppleLoginManagerProtocol : AnyObject {
-  func performLogin(from context: UIKit.UIViewController, result: @escaping Common.ResultHandler<(appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])>)
+  func performLogin(from context: UIKit.UIViewController, result: @escaping Common.ResultHandler<Common.AppleLoginCredentials>)
 }
 @objc @_inheritsConvenienceInitializers final public class AppleLoginManager : ObjectiveC.NSObject {
   @objc override dynamic public init()
   @objc deinit
 }
 extension Common.AppleLoginManager : Common.AppleLoginManagerProtocol {
-  final public func performLogin(from context: UIKit.UIViewController, result: @escaping Common.ResultHandler<(appleIdCredential: AuthenticationServices.ASAuthorizationAppleIDCredential, decodedIdentityToken: [Swift.String : Any])>)
+  final public func performLogin(from context: UIKit.UIViewController, result: @escaping Common.ResultHandler<Common.AppleLoginCredentials>)
 }
 extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationControllerDelegate {
   @_Concurrency.MainActor @preconcurrency @objc final public func authorizationController(controller: AuthenticationServices.ASAuthorizationController, didCompleteWithAuthorization authorization: AuthenticationServices.ASAuthorization)
@@ -305,6 +319,36 @@ extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationContr
 }
 extension Common.AppleLoginManager : AuthenticationServices.ASAuthorizationControllerPresentationContextProviding {
   @_Concurrency.MainActor @preconcurrency @objc final public func presentationAnchor(for controller: AuthenticationServices.ASAuthorizationController) -> AuthenticationServices.ASPresentationAnchor
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class AppleSignInButton : UIKit.UIButton {
+  public enum Style {
+    case black
+    case white
+    case whiteOutline
+    case adaptive
+    public static func == (a: Common.AppleSignInButton.Style, b: Common.AppleSignInButton.Style) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  @_Concurrency.MainActor @preconcurrency final public let authorizationButtonType: AuthenticationServices.ASAuthorizationAppleIDButton.ButtonType
+  @_Concurrency.MainActor @preconcurrency final public let style: Common.AppleSignInButton.Style
+  @_Concurrency.MainActor @preconcurrency public init(type: AuthenticationServices.ASAuthorizationAppleIDButton.ButtonType = .default, style: Common.AppleSignInButton.Style = .adaptive, cornerRadius: CoreFoundation.CGFloat = .DefaultValues.Button.cornerRadius)
+  @_Concurrency.MainActor @preconcurrency @objc override convenience dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc override final public var isEnabled: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override final public var intrinsicContentSize: CoreFoundation.CGSize {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override final public var accessibilityLabel: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit.UITraitCollection?)
+  @objc deinit
 }
 public struct AppleUser {
   public let id: Swift.String
@@ -494,6 +538,7 @@ extension Common.BaseClient : Common.ClientProtocol {
   @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, minimumLineSpacingForSectionAt section: Swift.Int) -> CoreFoundation.CGFloat
   @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, insetForSectionAt section: Swift.Int) -> UIKit.UIEdgeInsets
   @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, referenceSizeForHeaderInSection section: Swift.Int) -> CoreFoundation.CGSize
+  @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, referenceSizeForFooterInSection section: Swift.Int) -> CoreFoundation.CGSize
   @_Concurrency.MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, sizeForItemAt indexPath: Foundation.IndexPath) -> CoreFoundation.CGSize
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDecelerating(_ scrollView: UIKit.UIScrollView)
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
@@ -990,13 +1035,15 @@ public struct CardViewModelPayload : Common.CardViewModel {
     @objc get
   }
   @_Concurrency.MainActor @preconcurrency public init(frame: CoreFoundation.CGRect, colors: [UIKit.UIColor], lineCap: QuartzCore.CAShapeLayerLineCap, lineWidth: CoreFoundation.CGFloat)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit.UITraitCollection?)
   @_Concurrency.MainActor @preconcurrency convenience public init(colors: [UIKit.UIColor], lineCap: QuartzCore.CAShapeLayerLineCap = .butt, lineWidth: CoreFoundation.CGFloat = 4)
+  @objc deinit
   @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc override final public func didMoveToWindow()
   @_Concurrency.MainActor @preconcurrency final public var isAnimating: Swift.Bool {
     get
     set
   }
-  @objc deinit
 }
 extension Common.CircularActivityIndicatorView {
   @_Concurrency.MainActor @preconcurrency final public func startAnimating()
@@ -1049,6 +1096,7 @@ public typealias Size = (width: Swift.Double, height: Swift.Double)
   @_Concurrency.MainActor func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor func onSizeForFooterItem(in section: Swift.Int) -> Common.Size
   @_Concurrency.MainActor func onSizeForItem(in section: Swift.Int, at index: Swift.Int) -> Common.Size
   @_Concurrency.MainActor func onInsetFor(section: Swift.Int) -> Common.Inset
 }
@@ -1056,6 +1104,7 @@ extension Common.CollectionViewSizeable {
   @_Concurrency.MainActor public func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor public func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor public func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor public func onSizeForFooterItem(in section: Swift.Int) -> Common.Size
   @_Concurrency.MainActor public func onInsetFor(section: Swift.Int) -> Common.Inset
 }
 public protocol ContentReloadable {
@@ -1300,8 +1349,8 @@ extension Swift.Float {
     @objc get
     @objc set
   }
-  @_Concurrency.MainActor @preconcurrency @objc override final public var isAnimating: Swift.Bool {
-    @objc get
+  @_Concurrency.MainActor @preconcurrency final public var isPlayingGIF: Swift.Bool {
+    get
   }
   @_Concurrency.MainActor @preconcurrency final public func loadGIF(named name: Swift.String, in bundle: Foundation.Bundle = .main)
   @_Concurrency.MainActor @preconcurrency final public func loadGIF(from data: Foundation.Data)
@@ -1326,7 +1375,7 @@ public enum EmptyResult<Failure> where Failure : Swift.Error {
 @_Concurrency.MainActor public protocol GoBackRequestable : AnyObject {
   @_Concurrency.MainActor func onGoBackRequested()
 }
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class GradientView : UIKit.UIView {
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class GradientView : UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency final public var startColor: UIKit.UIColor {
     get
     set
@@ -1354,9 +1403,9 @@ public enum EmptyResult<Failure> where Failure : Swift.Error {
   @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
     @objc get
   }
-  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit.UITraitCollection?)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
   @objc deinit
 }
 extension Common.GradientView {
@@ -2070,10 +2119,9 @@ extension Common.ParameterEncoder where Self == Common.URLEncodedFormParameterEn
   public static func urlEncodedForm(encoder: Common.URLEncodedFormEncoder = URLEncodedFormEncoder(), destination: Common.URLEncodedFormParameterEncoder.Destination = .methodDependent) -> Common.URLEncodedFormParameterEncoder
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class PillUILabel : Common.BaseLabel {
-  @_Concurrency.MainActor @preconcurrency @objc override final public var intrinsicContentSize: CoreFoundation.CGSize {
-    @objc get
-  }
   @_Concurrency.MainActor @preconcurrency override final public func setupView()
+  @_Concurrency.MainActor @preconcurrency @objc override final public func drawText(in rect: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func textRect(forBounds bounds: CoreFoundation.CGRect, limitedToNumberOfLines numberOfLines: Swift.Int) -> CoreFoundation.CGRect
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
   @objc deinit
@@ -2132,12 +2180,10 @@ extension Foundation.ProcessInfo {
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class ProgressAnimationView : UIKit.UIView {
   @_Concurrency.MainActor @preconcurrency final public func animate(progressColor: CoreGraphics.CGColor, backgroundColor: CoreGraphics.CGColor, duration: CoreFoundation.CFTimeInterval, completion: Common.CompletionHandler)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
   @objc deinit
-}
-extension Common.ProgressAnimationView : QuartzCore.CAAnimationDelegate {
-  @_Concurrency.MainActor @preconcurrency @objc final public func animationDidStop(_ anim: QuartzCore.CAAnimation, finished flag: Swift.Bool)
 }
 public protocol RawValueKeyValueStore : Common.RawValueKeyableStorage {
   var type: Common.KeyValueStore.StoreType { get }
@@ -4037,6 +4083,9 @@ extension Common.Withable {
 }
 extension Common.DefaultButtonTheme : Swift.Equatable {}
 extension Common.DefaultButtonTheme : Swift.Hashable {}
+extension Common.AppleLoginError : Swift.Hashable {}
+extension Common.AppleSignInButton.Style : Swift.Equatable {}
+extension Common.AppleSignInButton.Style : Swift.Hashable {}
 extension Common.AuthorizationStatus : Swift.Equatable {}
 extension Common.AuthorizationStatus : Swift.Hashable {}
 extension Common.BaseCoordinator : Swift.Sendable {}

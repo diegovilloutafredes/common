@@ -4902,6 +4902,351 @@
       },
       {
         "kind": "TypeDecl",
+        "name": "AppleLoginError",
+        "printedName": "AppleLoginError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "badToken",
+            "printedName": "badToken",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Common.AppleLoginError.Type) -> Common.AppleLoginError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AppleLoginError",
+                    "printedName": "Common.AppleLoginError",
+                    "usr": "s:6Common15AppleLoginErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "Common.AppleLoginError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "AppleLoginError",
+                        "printedName": "Common.AppleLoginError",
+                        "usr": "s:6Common15AppleLoginErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:6Common15AppleLoginErrorO8badTokenyA2CmF",
+            "mangledName": "$s6Common15AppleLoginErrorO8badTokenyA2CmF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "RawDocComment"
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "malformedPayload",
+            "printedName": "malformedPayload",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Common.AppleLoginError.Type) -> Common.AppleLoginError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AppleLoginError",
+                    "printedName": "Common.AppleLoginError",
+                    "usr": "s:6Common15AppleLoginErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "Common.AppleLoginError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "AppleLoginError",
+                        "printedName": "Common.AppleLoginError",
+                        "usr": "s:6Common15AppleLoginErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:6Common15AppleLoginErrorO16malformedPayloadyA2CmF",
+            "mangledName": "$s6Common15AppleLoginErrorO16malformedPayloadyA2CmF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "RawDocComment"
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "alreadyInProgress",
+            "printedName": "alreadyInProgress",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Common.AppleLoginError.Type) -> Common.AppleLoginError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AppleLoginError",
+                    "printedName": "Common.AppleLoginError",
+                    "usr": "s:6Common15AppleLoginErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "Common.AppleLoginError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "AppleLoginError",
+                        "printedName": "Common.AppleLoginError",
+                        "usr": "s:6Common15AppleLoginErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:6Common15AppleLoginErrorO17alreadyInProgressyA2CmF",
+            "mangledName": "$s6Common15AppleLoginErrorO17alreadyInProgressyA2CmF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "RawDocComment"
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "errorDescription",
+            "printedName": "errorDescription",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common15AppleLoginErrorO16errorDescriptionSSSgvp",
+            "mangledName": "$s6Common15AppleLoginErrorO16errorDescriptionSSSgvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common15AppleLoginErrorO16errorDescriptionSSSgvg",
+                "mangledName": "$s6Common15AppleLoginErrorO16errorDescriptionSSSgvg",
+                "moduleName": "Common",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common15AppleLoginErrorO9hashValueSivp",
+            "mangledName": "$s6Common15AppleLoginErrorO9hashValueSivp",
+            "moduleName": "Common",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common15AppleLoginErrorO9hashValueSivg",
+                "mangledName": "$s6Common15AppleLoginErrorO9hashValueSivg",
+                "moduleName": "Common",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15AppleLoginErrorO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s6Common15AppleLoginErrorO4hash4intoys6HasherVz_tF",
+            "moduleName": "Common",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "AppleLoginError",
+                "printedName": "Common.AppleLoginError",
+                "usr": "s:6Common15AppleLoginErrorO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "AppleLoginError",
+                "printedName": "Common.AppleLoginError",
+                "usr": "s:6Common15AppleLoginErrorO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15AppleLoginErrorO2eeoiySbAC_ACtFZ",
+            "mangledName": "$s6Common15AppleLoginErrorO2eeoiySbAC_ACtFZ",
+            "moduleName": "Common",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:6Common15AppleLoginErrorO",
+        "mangledName": "$s6Common15AppleLoginErrorO",
+        "moduleName": "Common",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "LocalizedError",
+            "printedName": "LocalizedError",
+            "usr": "s:10Foundation14LocalizedErrorP",
+            "mangledName": "$s10Foundation14LocalizedErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
         "name": "AppleLoginManagerProtocol",
         "printedName": "AppleLoginManagerProtocol",
         "children": [
@@ -5253,8 +5598,8 @@
         "mangledName": "$s6Common17AppleLoginManagerC",
         "moduleName": "Common",
         "declAttributes": [
-          "AccessControl",
           "Final",
+          "AccessControl",
           "RawDocComment",
           "ObjC"
         ],
@@ -5374,6 +5719,977 @@
         "printedName": "UIKit",
         "declKind": "Import",
         "moduleName": "Common"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "AppleSignInButton",
+        "printedName": "AppleSignInButton",
+        "children": [
+          {
+            "kind": "TypeDecl",
+            "name": "Style",
+            "printedName": "Style",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "black",
+                "printedName": "black",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Common.AppleSignInButton.Style.Type) -> Common.AppleSignInButton.Style",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Style",
+                        "printedName": "Common.AppleSignInButton.Style",
+                        "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "Common.AppleSignInButton.Style.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Style",
+                            "printedName": "Common.AppleSignInButton.Style",
+                            "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO5blackyA2EmF",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO5blackyA2EmF",
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "white",
+                "printedName": "white",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Common.AppleSignInButton.Style.Type) -> Common.AppleSignInButton.Style",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Style",
+                        "printedName": "Common.AppleSignInButton.Style",
+                        "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "Common.AppleSignInButton.Style.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Style",
+                            "printedName": "Common.AppleSignInButton.Style",
+                            "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO5whiteyA2EmF",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO5whiteyA2EmF",
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "whiteOutline",
+                "printedName": "whiteOutline",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Common.AppleSignInButton.Style.Type) -> Common.AppleSignInButton.Style",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Style",
+                        "printedName": "Common.AppleSignInButton.Style",
+                        "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "Common.AppleSignInButton.Style.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Style",
+                            "printedName": "Common.AppleSignInButton.Style",
+                            "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO12whiteOutlineyA2EmF",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO12whiteOutlineyA2EmF",
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "adaptive",
+                "printedName": "adaptive",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Common.AppleSignInButton.Style.Type) -> Common.AppleSignInButton.Style",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Style",
+                        "printedName": "Common.AppleSignInButton.Style",
+                        "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "Common.AppleSignInButton.Style.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Style",
+                            "printedName": "Common.AppleSignInButton.Style",
+                            "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO8adaptiveyA2EmF",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO8adaptiveyA2EmF",
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
+              },
+              {
+                "kind": "Function",
+                "name": "==",
+                "printedName": "==(_:_:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Style",
+                    "printedName": "Common.AppleSignInButton.Style",
+                    "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Style",
+                    "printedName": "Common.AppleSignInButton.Style",
+                    "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO2eeoiySbAE_AEtFZ",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO2eeoiySbAE_AEtFZ",
+                "moduleName": "Common",
+                "static": true,
+                "implicit": true,
+                "funcSelfKind": "NonMutating"
+              },
+              {
+                "kind": "Var",
+                "name": "hashValue",
+                "printedName": "hashValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO9hashValueSivp",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO9hashValueSivp",
+                "moduleName": "Common",
+                "implicit": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:6Common17AppleSignInButtonC5StyleO9hashValueSivg",
+                    "mangledName": "$s6Common17AppleSignInButtonC5StyleO9hashValueSivg",
+                    "moduleName": "Common",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Function",
+                "name": "hash",
+                "printedName": "hash(into:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Hasher",
+                    "printedName": "Swift.Hasher",
+                    "paramValueOwnership": "InOut",
+                    "usr": "s:s6HasherV"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO4hash4intoys6HasherVz_tF",
+                "mangledName": "$s6Common17AppleSignInButtonC5StyleO4hash4intoys6HasherVz_tF",
+                "moduleName": "Common",
+                "implicit": true,
+                "funcSelfKind": "NonMutating"
+              }
+            ],
+            "declKind": "Enum",
+            "usr": "s:6Common17AppleSignInButtonC5StyleO",
+            "mangledName": "$s6Common17AppleSignInButtonC5StyleO",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Equatable",
+                "printedName": "Equatable",
+                "usr": "s:SQ",
+                "mangledName": "$sSQ"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Hashable",
+                "printedName": "Hashable",
+                "usr": "s:SH",
+                "mangledName": "$sSH"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "authorizationButtonType",
+            "printedName": "authorizationButtonType",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "ButtonType",
+                "printedName": "AuthenticationServices.ASAuthorizationAppleIDButton.ButtonType",
+                "usr": "c:@E@ASAuthorizationAppleIDButtonType"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common17AppleSignInButtonC013authorizationE4TypeSo015ASAuthorizationb8IDButtonG0Vvp",
+            "mangledName": "$s6Common17AppleSignInButtonC013authorizationE4TypeSo015ASAuthorizationb8IDButtonG0Vvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Final",
+              "Preconcurrency",
+              "Custom",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ButtonType",
+                    "printedName": "AuthenticationServices.ASAuthorizationAppleIDButton.ButtonType",
+                    "usr": "c:@E@ASAuthorizationAppleIDButtonType"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common17AppleSignInButtonC013authorizationE4TypeSo015ASAuthorizationb8IDButtonG0Vvg",
+                "mangledName": "$s6Common17AppleSignInButtonC013authorizationE4TypeSo015ASAuthorizationb8IDButtonG0Vvg",
+                "moduleName": "Common",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "style",
+            "printedName": "style",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Style",
+                "printedName": "Common.AppleSignInButton.Style",
+                "usr": "s:6Common17AppleSignInButtonC5StyleO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common17AppleSignInButtonC5styleAC5StyleOvp",
+            "mangledName": "$s6Common17AppleSignInButtonC5styleAC5StyleOvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Final",
+              "Preconcurrency",
+              "Custom",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Style",
+                    "printedName": "Common.AppleSignInButton.Style",
+                    "usr": "s:6Common17AppleSignInButtonC5StyleO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common17AppleSignInButtonC5styleAC5StyleOvg",
+                "mangledName": "$s6Common17AppleSignInButtonC5styleAC5StyleOvg",
+                "moduleName": "Common",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(type:style:cornerRadius:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AppleSignInButton",
+                "printedName": "Common.AppleSignInButton",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "ButtonType",
+                "printedName": "AuthenticationServices.ASAuthorizationAppleIDButton.ButtonType",
+                "hasDefaultArg": true,
+                "usr": "c:@E@ASAuthorizationAppleIDButtonType"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Style",
+                "printedName": "Common.AppleSignInButton.Style",
+                "hasDefaultArg": true,
+                "usr": "s:6Common17AppleSignInButtonC5StyleO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGFloat",
+                "printedName": "CoreGraphics.CGFloat",
+                "hasDefaultArg": true,
+                "usr": "s:14CoreFoundation7CGFloatV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:6Common17AppleSignInButtonC4type5style12cornerRadiusACSo015ASAuthorizationB12IDButtonTypeV_AC5StyleO14CoreFoundation7CGFloatVtcfc",
+            "mangledName": "$s6Common17AppleSignInButtonC4type5style12cornerRadiusACSo015ASAuthorizationB12IDButtonTypeV_AC5StyleO12CoreGraphics7CGFloatVtcfc",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(frame:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AppleSignInButton",
+                "printedName": "Common.AppleSignInButton",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)initWithFrame:",
+            "mangledName": "$s6Common17AppleSignInButtonC5frameACSo6CGRectV_tcfc",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "initWithFrame:",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Convenience",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Convenience"
+          },
+          {
+            "kind": "Var",
+            "name": "isEnabled",
+            "printedName": "isEnabled",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@Common@objc(cs)AppleSignInButton(py)enabled",
+            "mangledName": "$s6Common17AppleSignInButtonC9isEnabledSbvp",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "enabled",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)isEnabled",
+                "mangledName": "$s6Common17AppleSignInButtonC9isEnabledSbvg",
+                "moduleName": "Common",
+                "overriding": true,
+                "implicit": true,
+                "objc_name": "isEnabled",
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)setEnabled:",
+                "mangledName": "$s6Common17AppleSignInButtonC9isEnabledSbvs",
+                "moduleName": "Common",
+                "overriding": true,
+                "implicit": true,
+                "objc_name": "setEnabled:",
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common17AppleSignInButtonC9isEnabledSbvM",
+                "mangledName": "$s6Common17AppleSignInButtonC9isEnabledSbvM",
+                "moduleName": "Common",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "intrinsicContentSize",
+            "printedName": "intrinsicContentSize",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CGSize",
+                "printedName": "CoreFoundation.CGSize",
+                "usr": "c:@S@CGSize"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@Common@objc(cs)AppleSignInButton(py)intrinsicContentSize",
+            "mangledName": "$s6Common17AppleSignInButtonC20intrinsicContentSizeSo6CGSizeVvp",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "intrinsicContentSize",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGSize",
+                    "printedName": "CoreFoundation.CGSize",
+                    "usr": "c:@S@CGSize"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)intrinsicContentSize",
+                "mangledName": "$s6Common17AppleSignInButtonC20intrinsicContentSizeSo6CGSizeVvg",
+                "moduleName": "Common",
+                "overriding": true,
+                "objc_name": "intrinsicContentSize",
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "accessibilityLabel",
+            "printedName": "accessibilityLabel",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@Common@objc(cs)AppleSignInButton(py)accessibilityLabel",
+            "mangledName": "$s6Common17AppleSignInButtonC18accessibilityLabelSSSgvp",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "accessibilityLabel",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)accessibilityLabel",
+                "mangledName": "$s6Common17AppleSignInButtonC18accessibilityLabelSSSgvg",
+                "moduleName": "Common",
+                "overriding": true,
+                "objc_name": "accessibilityLabel",
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)setAccessibilityLabel:",
+                "mangledName": "$s6Common17AppleSignInButtonC18accessibilityLabelSSSgvs",
+                "moduleName": "Common",
+                "overriding": true,
+                "objc_name": "setAccessibilityLabel:",
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common17AppleSignInButtonC18accessibilityLabelSSSgvM",
+                "mangledName": "$s6Common17AppleSignInButtonC18accessibilityLabelSSSgvM",
+                "moduleName": "Common",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "traitCollectionDidChange",
+            "printedName": "traitCollectionDidChange(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UITraitCollection?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UITraitCollection",
+                    "printedName": "UIKit.UITraitCollection",
+                    "usr": "c:objc(cs)UITraitCollection"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)traitCollectionDidChange:",
+            "mangledName": "$s6Common17AppleSignInButtonC24traitCollectionDidChangeyySo07UITraitG0CSgF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "traitCollectionDidChange:",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@Common@objc(cs)AppleSignInButton",
+        "mangledName": "$s6Common17AppleSignInButtonC",
+        "moduleName": "Common",
+        "declAttributes": [
+          "Preconcurrency",
+          "Custom",
+          "Final",
+          "AccessControl",
+          "RawDocComment",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)UIButton",
+        "hasMissingDesignatedInitializers": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "UIKit.UIButton",
+          "UIKit.UIControl",
+          "UIKit.UIView",
+          "UIKit.UIResponder",
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "ActivityIndicatorable",
+            "printedName": "ActivityIndicatorable",
+            "usr": "s:6Common21ActivityIndicatorableP",
+            "mangledName": "$s6Common21ActivityIndicatorableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BackgroundColorable",
+            "printedName": "BackgroundColorable",
+            "usr": "s:6Common19BackgroundColorableP",
+            "mangledName": "$s6Common19BackgroundColorableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Withable",
+            "printedName": "Withable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "T",
+                "printedName": "T",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "NSObject",
+                    "printedName": "ObjectiveC.NSObject",
+                    "usr": "c:objc(cs)NSObject"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:6Common8WithableP",
+            "mangledName": "$s6Common8WithableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "__DefaultCustomPlaygroundQuickLookable",
+            "printedName": "__DefaultCustomPlaygroundQuickLookable",
+            "usr": "s:s38__DefaultCustomPlaygroundQuickLookableP",
+            "mangledName": "$ss38__DefaultCustomPlaygroundQuickLookableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UITraitChangeObservable",
+            "printedName": "UITraitChangeObservable",
+            "usr": "s:5UIKit23UITraitChangeObservableP",
+            "mangledName": "$s5UIKit23UITraitChangeObservableP"
+          }
+        ]
       },
       {
         "kind": "TypeDecl",
@@ -8939,6 +10255,52 @@
             "sugared_genericSig": "<ViewModelType>",
             "isOpen": true,
             "objc_name": "collectionView:layout:referenceSizeForHeaderInSection:",
+            "declAttributes": [
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "collectionView",
+            "printedName": "collectionView(_:layout:referenceSizeForFooterInSection:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CGSize",
+                "printedName": "CoreFoundation.CGSize",
+                "usr": "c:@S@CGSize"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UICollectionView",
+                "printedName": "UIKit.UICollectionView",
+                "usr": "c:objc(cs)UICollectionView"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UICollectionViewLayout",
+                "printedName": "UIKit.UICollectionViewLayout",
+                "usr": "c:objc(cs)UICollectionViewLayout"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common36BaseCollectionViewableViewControllerC010collectionE0_6layout31referenceSizeForFooterInSectionSo6CGSizeVSo012UICollectionE0C_So0pE6LayoutCSitF",
+            "mangledName": "$s6Common36BaseCollectionViewableViewControllerC010collectionE0_6layout31referenceSizeForFooterInSectionSo6CGSizeVSo012UICollectionE0C_So0pE6LayoutCSitF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<ViewModelType>",
+            "isOpen": true,
+            "objc_name": "collectionView:layout:referenceSizeForFooterInSection:",
             "declAttributes": [
               "ObjC",
               "Preconcurrency",
@@ -18211,6 +19573,48 @@
             "init_kind": "Designated"
           },
           {
+            "kind": "Function",
+            "name": "traitCollectionDidChange",
+            "printedName": "traitCollectionDidChange(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UITraitCollection?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UITraitCollection",
+                    "printedName": "UIKit.UITraitCollection",
+                    "usr": "c:objc(cs)UITraitCollection"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)CircularActivityIndicatorView(im)traitCollectionDidChange:",
+            "mangledName": "$s6Common29CircularActivityIndicatorViewC24traitCollectionDidChangeyySo07UITraitG0CSgF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "traitCollectionDidChange:",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
             "kind": "Constructor",
             "name": "init",
             "printedName": "init(colors:lineCap:lineWidth:)",
@@ -18287,6 +19691,34 @@
               "Custom",
               "Override",
               "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didMoveToWindow",
+            "printedName": "didMoveToWindow()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)CircularActivityIndicatorView(im)didMoveToWindow",
+            "mangledName": "$s6Common29CircularActivityIndicatorViewC15didMoveToWindowyyF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "didMoveToWindow",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -19854,6 +21286,51 @@
           },
           {
             "kind": "Function",
+            "name": "onSizeForFooterItem",
+            "printedName": "onSizeForFooterItem(in:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeableP19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
+            "mangledName": "$s6Common22CollectionViewSizeableP19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "protocolReq": true,
+            "declAttributes": [
+              "Custom",
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "onSizeForItem",
             "printedName": "onSizeForItem(in:at:)",
             "children": [
@@ -20056,6 +21533,50 @@
             "declKind": "Func",
             "usr": "s:6Common22CollectionViewSizeablePAAE19onSizeForHeaderItem2inSd5width_Sd6heighttSi_tF",
             "mangledName": "$s6Common22CollectionViewSizeablePAAE19onSizeForHeaderItem2inSd5width_Sd6heighttSi_tF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "declAttributes": [
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSizeForFooterItem",
+            "printedName": "onSizeForFooterItem(in:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeablePAAE19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
+            "mangledName": "$s6Common22CollectionViewSizeablePAAE19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
             "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
@@ -24534,7 +26055,8 @@
                 "moduleName": "Common",
                 "declAttributes": [
                   "HasStorage",
-                  "AccessControl"
+                  "AccessControl",
+                  "RawDocComment"
                 ],
                 "isLet": true,
                 "hasStorage": true,
@@ -24580,7 +26102,8 @@
                 "moduleName": "Common",
                 "declAttributes": [
                   "HasStorage",
-                  "AccessControl"
+                  "AccessControl",
+                  "RawDocComment"
                 ],
                 "isLet": true,
                 "hasStorage": true,
@@ -25243,8 +26766,8 @@
           },
           {
             "kind": "Var",
-            "name": "isAnimating",
-            "printedName": "isAnimating",
+            "name": "isPlayingGIF",
+            "printedName": "isPlayingGIF",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -25254,17 +26777,13 @@
               }
             ],
             "declKind": "Var",
-            "usr": "c:@M@Common@objc(cs)GIFImageView(py)animating",
-            "mangledName": "$s6Common12GIFImageViewC11isAnimatingSbvp",
+            "usr": "s:6Common12GIFImageViewC12isPlayingGIFSbvp",
+            "mangledName": "$s6Common12GIFImageViewC12isPlayingGIFSbvp",
             "moduleName": "Common",
-            "overriding": true,
-            "objc_name": "animating",
             "declAttributes": [
               "Final",
-              "ObjC",
               "Preconcurrency",
               "Custom",
-              "Override",
               "AccessControl",
               "RawDocComment"
             ],
@@ -25282,14 +26801,11 @@
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "c:@M@Common@objc(cs)GIFImageView(im)isAnimating",
-                "mangledName": "$s6Common12GIFImageViewC11isAnimatingSbvg",
+                "usr": "s:6Common12GIFImageViewC12isPlayingGIFSbvg",
+                "mangledName": "$s6Common12GIFImageViewC12isPlayingGIFSbvg",
                 "moduleName": "Common",
-                "overriding": true,
-                "objc_name": "isAnimating",
                 "declAttributes": [
-                  "Final",
-                  "ObjC"
+                  "Final"
                 ],
                 "accessorKind": "get"
               }
@@ -25413,7 +26929,8 @@
               "Preconcurrency",
               "Custom",
               "Override",
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -26839,6 +28356,83 @@
             ]
           },
           {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(frame:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "GradientView",
+                "printedName": "Common.GradientView",
+                "usr": "c:@M@Common@objc(cs)GradientView"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@Common@objc(cs)GradientView(im)initWithFrame:",
+            "mangledName": "$s6Common12GradientViewC5frameACSo6CGRectV_tcfc",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "initWithFrame:",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "traitCollectionDidChange",
+            "printedName": "traitCollectionDidChange(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UITraitCollection?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UITraitCollection",
+                    "printedName": "UIKit.UITraitCollection",
+                    "usr": "c:objc(cs)UITraitCollection"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)GradientView(im)traitCollectionDidChange:",
+            "mangledName": "$s6Common12GradientViewC24traitCollectionDidChangeyySo07UITraitE0CSgF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "traitCollectionDidChange:",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
             "kind": "Function",
             "name": "layoutSubviews",
             "printedName": "layoutSubviews()",
@@ -26864,82 +28458,6 @@
               "AccessControl"
             ],
             "funcSelfKind": "NonMutating"
-          },
-          {
-            "kind": "Constructor",
-            "name": "init",
-            "printedName": "init(frame:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "GradientView",
-                "printedName": "Common.GradientView",
-                "usr": "c:@M@Common@objc(cs)GradientView"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "CGRect",
-                "printedName": "CoreFoundation.CGRect",
-                "usr": "c:@S@CGRect"
-              }
-            ],
-            "declKind": "Constructor",
-            "usr": "c:@M@Common@objc(cs)GradientView(im)initWithFrame:",
-            "mangledName": "$s6Common12GradientViewC5frameACSo6CGRectV_tcfc",
-            "moduleName": "Common",
-            "overriding": true,
-            "implicit": true,
-            "objc_name": "initWithFrame:",
-            "declAttributes": [
-              "Dynamic",
-              "ObjC",
-              "Preconcurrency",
-              "Custom",
-              "Override"
-            ],
-            "init_kind": "Designated"
-          },
-          {
-            "kind": "Constructor",
-            "name": "init",
-            "printedName": "init(coder:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "Optional",
-                "printedName": "Common.GradientView?",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "GradientView",
-                    "printedName": "Common.GradientView",
-                    "usr": "c:@M@Common@objc(cs)GradientView"
-                  }
-                ],
-                "usr": "s:Sq"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "NSCoder",
-                "printedName": "Foundation.NSCoder",
-                "usr": "c:objc(cs)NSCoder"
-              }
-            ],
-            "declKind": "Constructor",
-            "usr": "c:@M@Common@objc(cs)GradientView(im)initWithCoder:",
-            "mangledName": "$s6Common12GradientViewC5coderACSgSo7NSCoderC_tcfc",
-            "moduleName": "Common",
-            "overriding": true,
-            "implicit": true,
-            "objc_name": "initWithCoder:",
-            "declAttributes": [
-              "Dynamic",
-              "ObjC",
-              "Preconcurrency",
-              "Custom",
-              "Required"
-            ],
-            "init_kind": "Designated"
           },
           {
             "kind": "Function",
@@ -26973,7 +28491,8 @@
               "Custom",
               "Final",
               "AccessControl",
-              "DiscardableResult"
+              "DiscardableResult",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -27005,7 +28524,8 @@
               "Preconcurrency",
               "Custom",
               "AccessControl",
-              "DiscardableResult"
+              "DiscardableResult",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -27036,7 +28556,8 @@
               "Custom",
               "Final",
               "AccessControl",
-              "DiscardableResult"
+              "DiscardableResult",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -27055,6 +28576,7 @@
           "ObjC"
         ],
         "superclassUsr": "c:objc(cs)UIView",
+        "hasMissingDesignatedInitializers": true,
         "inheritsConvenienceInitializers": true,
         "superclassNames": [
           "UIKit.UIView",
@@ -41992,7 +43514,8 @@
               "Preconcurrency",
               "Custom",
               "Override",
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -42491,59 +44014,6 @@
         "printedName": "PillUILabel",
         "children": [
           {
-            "kind": "Var",
-            "name": "intrinsicContentSize",
-            "printedName": "intrinsicContentSize",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "CGSize",
-                "printedName": "CoreFoundation.CGSize",
-                "usr": "c:@S@CGSize"
-              }
-            ],
-            "declKind": "Var",
-            "usr": "c:@M@Common@objc(cs)PillUILabel(py)intrinsicContentSize",
-            "mangledName": "$s6Common11PillUILabelC20intrinsicContentSizeSo6CGSizeVvp",
-            "moduleName": "Common",
-            "overriding": true,
-            "objc_name": "intrinsicContentSize",
-            "declAttributes": [
-              "Final",
-              "ObjC",
-              "Preconcurrency",
-              "Custom",
-              "Override",
-              "AccessControl"
-            ],
-            "accessors": [
-              {
-                "kind": "Accessor",
-                "name": "Get",
-                "printedName": "Get()",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "CGSize",
-                    "printedName": "CoreFoundation.CGSize",
-                    "usr": "c:@S@CGSize"
-                  }
-                ],
-                "declKind": "Accessor",
-                "usr": "c:@M@Common@objc(cs)PillUILabel(im)intrinsicContentSize",
-                "mangledName": "$s6Common11PillUILabelC20intrinsicContentSizeSo6CGSizeVvg",
-                "moduleName": "Common",
-                "overriding": true,
-                "objc_name": "intrinsicContentSize",
-                "declAttributes": [
-                  "Final",
-                  "ObjC"
-                ],
-                "accessorKind": "get"
-              }
-            ]
-          },
-          {
             "kind": "Function",
             "name": "setupView",
             "printedName": "setupView()",
@@ -42565,6 +44035,80 @@
               "Custom",
               "Override",
               "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "drawText",
+            "printedName": "drawText(in:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)PillUILabel(im)drawTextInRect:",
+            "mangledName": "$s6Common11PillUILabelC8drawText2inySo6CGRectV_tF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "drawTextInRect:",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "textRect",
+            "printedName": "textRect(forBounds:limitedToNumberOfLines:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)PillUILabel(im)textRectForBounds:limitedToNumberOfLines:",
+            "mangledName": "$s6Common11PillUILabelC8textRect9forBounds22limitedToNumberOfLinesSo6CGRectVAH_SitF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "textRectForBounds:limitedToNumberOfLines:",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -43922,6 +45466,33 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Function",
+            "name": "layoutSubviews",
+            "printedName": "layoutSubviews()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@Common@objc(cs)ProgressAnimationView(im)layoutSubviews",
+            "mangledName": "$s6Common21ProgressAnimationViewC14layoutSubviewsyyF",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "layoutSubviews",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
             "kind": "Constructor",
             "name": "init",
             "printedName": "init(frame:)",
@@ -43996,44 +45567,6 @@
               "Required"
             ],
             "init_kind": "Designated"
-          },
-          {
-            "kind": "Function",
-            "name": "animationDidStop",
-            "printedName": "animationDidStop(_:finished:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "Void",
-                "printedName": "()"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "CAAnimation",
-                "printedName": "QuartzCore.CAAnimation",
-                "usr": "c:objc(cs)CAAnimation"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "Bool",
-                "printedName": "Swift.Bool",
-                "usr": "s:Sb"
-              }
-            ],
-            "declKind": "Func",
-            "usr": "c:@CM@Common@objc(cs)ProgressAnimationView(im)animationDidStop:finished:",
-            "mangledName": "$s6Common21ProgressAnimationViewC16animationDidStop_8finishedySo11CAAnimationC_SbtF",
-            "moduleName": "Common",
-            "objc_name": "animationDidStop:finished:",
-            "declAttributes": [
-              "Final",
-              "ObjC",
-              "Preconcurrency",
-              "Custom",
-              "AccessControl"
-            ],
-            "isFromExtension": true,
-            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Class",
@@ -48609,7 +50142,10 @@
             "declKind": "EnumElement",
             "usr": "s:6Common21SupplementaryViewKindO6headeryA2CmF",
             "mangledName": "$s6Common21SupplementaryViewKindO6headeryA2CmF",
-            "moduleName": "Common"
+            "moduleName": "Common",
+            "declAttributes": [
+              "RawDocComment"
+            ]
           },
           {
             "kind": "Var",
@@ -48646,7 +50182,10 @@
             "declKind": "EnumElement",
             "usr": "s:6Common21SupplementaryViewKindO6footeryA2CmF",
             "mangledName": "$s6Common21SupplementaryViewKindO6footeryA2CmF",
-            "moduleName": "Common"
+            "moduleName": "Common",
+            "declAttributes": [
+              "RawDocComment"
+            ]
           },
           {
             "kind": "Var",
@@ -49058,7 +50597,8 @@
             "moduleName": "Common",
             "declAttributes": [
               "HasStorage",
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "isLet": true,
             "hasStorage": true,
@@ -49107,7 +50647,8 @@
             "mangledName": "$s6Common13AppFontFamilyV8rawValueACSS_tcfc",
             "moduleName": "Common",
             "declAttributes": [
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "init_kind": "Designated"
           }
@@ -50996,6 +52537,16 @@
             "usr": "s:s9EscapableP",
             "mangledName": "$ss9EscapableP"
           }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
         ]
       },
       {
@@ -54810,6 +56361,16 @@
         "kind": "Import",
         "name": "WebKit",
         "printedName": "WebKit",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
         "declKind": "Import",
         "moduleName": "Common",
         "declAttributes": [
@@ -86244,7 +87805,10 @@
                 "declKind": "EnumElement",
                 "usr": "s:So6UIFontC6CommonE17RegisterFontErrorO07invalidD4FileyA2EmF",
                 "mangledName": "$sSo6UIFontC6CommonE17RegisterFontErrorO07invalidD4FileyA2EmF",
-                "moduleName": "Common"
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
               },
               {
                 "kind": "Var",
@@ -86281,7 +87845,10 @@
                 "declKind": "EnumElement",
                 "usr": "s:So6UIFontC6CommonE17RegisterFontErrorO16fontPathNotFoundyA2EmF",
                 "mangledName": "$sSo6UIFontC6CommonE17RegisterFontErrorO16fontPathNotFoundyA2EmF",
-                "moduleName": "Common"
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
               },
               {
                 "kind": "Var",
@@ -86318,7 +87885,10 @@
                 "declKind": "EnumElement",
                 "usr": "s:So6UIFontC6CommonE17RegisterFontErrorO04initdE0yA2EmF",
                 "mangledName": "$sSo6UIFontC6CommonE17RegisterFontErrorO04initdE0yA2EmF",
-                "moduleName": "Common"
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
               },
               {
                 "kind": "Var",
@@ -86394,7 +87964,8 @@
             "mangledName": "$sSo6UIFontC6CommonE17RegisterFontErrorO",
             "moduleName": "Common",
             "declAttributes": [
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "conformances": [
@@ -97252,1953 +98823,1995 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/AVFoundation\/AVCaptureVideoDataOutput\/AVCaptureVideoDataOutput+AlwaysDiscardsLateVideoFrames.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/AVFoundation\/AVCaptureVideoDataOutput\/AVCaptureVideoDataOutput+AlwaysDiscardsLateVideoFrames.swift",
       "kind": "BooleanLiteral",
       "offset": 431,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/AVFoundation\/AVCaptureVideoDataOutput\/AVCaptureVideoDataOutput+SetSampleBufferDelegate.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/AVFoundation\/AVCaptureVideoDataOutput\/AVCaptureVideoDataOutput+SetSampleBufferDelegate.swift",
       "kind": "StringLiteral",
       "offset": 571,
       "length": 22,
       "value": "\"VideoDataOutputQueue\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
       "kind": "BooleanLiteral",
       "offset": 1683,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
       "kind": "BooleanLiteral",
       "offset": 1721,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
       "kind": "BooleanLiteral",
       "offset": 2016,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
       "kind": "IntegerLiteral",
       "offset": 2260,
       "length": 3,
       "value": "327"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Buttons\/ActionButton.swift",
       "kind": "IntegerLiteral",
       "offset": 2264,
       "length": 2,
       "value": "40"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/ActivityIndicatorable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/ActivityIndicatorable.swift",
       "kind": "IntegerLiteral",
       "offset": 114,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/ActivityIndicatorable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/ActivityIndicatorable.swift",
       "kind": "IntegerLiteral",
       "offset": 181,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/ActivityIndicatorable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/ActivityIndicatorable.swift",
       "kind": "IntegerLiteral",
       "offset": 245,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "FloatLiteral",
       "offset": 481,
       "length": 3,
       "value": "0.3"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
       "offset": 563,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 771,
       "length": 2,
       "value": "40"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 1038,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 1048,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 1060,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 1071,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 1298,
       "length": 2,
       "value": "21"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
       "offset": 1535,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 1644,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
       "offset": 2060,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 2470,
       "length": 3,
       "value": "120"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
       "offset": 2474,
       "length": 2,
       "value": "40"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertViewModel.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertViewModel.swift",
       "kind": "BooleanLiteral",
       "offset": 2486,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/Array\/Array+FloatingPoint.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Array\/Array+FloatingPoint.swift",
       "kind": "IntegerLiteral",
       "offset": 817,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/BackButtonAddable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/BackButtonAddable.swift",
       "kind": "IntegerLiteral",
       "offset": 823,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseButton.swift",
       "kind": "BooleanLiteral",
       "offset": 713,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
       "offset": 876,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/Client\/BaseClient.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/Client\/BaseClient.swift",
       "kind": "StringLiteral",
       "offset": 224,
       "length": 32,
       "value": "\"com.common.baseclient.requests\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "Array",
       "offset": 1126,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
       "offset": 1297,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 7029,
+      "offset": 7851,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 7874,
+      "offset": 8379,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseLabel.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseLabel.swift",
       "kind": "BooleanLiteral",
       "offset": 705,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
       "offset": 924,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseTextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseTextField.swift",
       "kind": "BooleanLiteral",
       "offset": 741,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseView.swift",
       "kind": "BooleanLiteral",
       "offset": 1401,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ViewControllers\/Base\/BaseViewController.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ViewControllers\/Base\/BaseViewController.swift",
       "kind": "BooleanLiteral",
       "offset": 1116,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 301,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 402,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 497,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 590,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 685,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 740,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 797,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 853,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 905,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 1004,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+DefaultValues.swift",
       "kind": "IntegerLiteral",
       "offset": 1097,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+IsClose.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGFloat\/CGFloat+IsClose.swift",
       "kind": "FloatLiteral",
       "offset": 413,
       "length": 4,
       "value": "1e-9"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGPoint\/CGPoint+IsNearCenter.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGPoint\/CGPoint+IsNearCenter.swift",
       "kind": "FloatLiteral",
       "offset": 497,
       "length": 3,
       "value": "0.1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGRect\/CGRect+IsClose.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/CoreGraphics\/CGRect\/CGRect+IsClose.swift",
       "kind": "FloatLiteral",
       "offset": 445,
       "length": 4,
       "value": "1e-9"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
       "offset": 3658,
       "length": 59,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
       "offset": 3693,
       "length": 3,
       "value": "\"*\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
       "offset": 3697,
       "length": 1,
       "value": "\".\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
       "offset": 3710,
       "length": 1,
       "value": "\".queue\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
       "offset": 266,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1414,
+      "offset": 2320,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2812,
+      "offset": 4897,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
-      "kind": "StringLiteral",
-      "offset": 2964,
-      "length": 8,
-      "value": "\"stroke\""
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
-      "kind": "StringLiteral",
-      "offset": 3033,
-      "length": 8,
-      "value": "\"colour\""
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
-      "kind": "StringLiteral",
-      "offset": 3089,
-      "length": 10,
-      "value": "\"rotation\""
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 3147,
+      "offset": 5071,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2712,
+      "offset": 4797,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ViewControllers\/Custom\/CustomAlert\/CustomAlertViewController.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ViewControllers\/Custom\/CustomAlert\/CustomAlertViewController.swift",
       "kind": "FloatLiteral",
       "offset": 797,
       "length": 3,
       "value": "0.5"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "BooleanLiteral",
       "offset": 437,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "BooleanLiteral",
       "offset": 671,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "IntegerLiteral",
       "offset": 710,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "StringLiteral",
       "offset": 748,
       "length": 5,
       "value": "\"DNI\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "FloatLiteral",
       "offset": 800,
       "length": 3,
       "value": "0.9"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "IntegerLiteral",
       "offset": 844,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "IntegerLiteral",
       "offset": 969,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "IntegerLiteral",
       "offset": 1092,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "IntegerLiteral",
       "offset": 1176,
       "length": 3,
       "value": "327"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/DNITextField.swift",
       "kind": "IntegerLiteral",
       "offset": 1180,
       "length": 2,
       "value": "56"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/Data\/Data+HexEncodedString.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Data\/Data+HexEncodedString.swift",
       "kind": "IntegerLiteral",
       "offset": 257,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/Data\/Data+HexEncodedString.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Data\/Data+HexEncodedString.swift",
       "kind": "IntegerLiteral",
       "offset": 262,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/Data\/Data+HexEncodedString.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Data\/Data+HexEncodedString.swift",
       "kind": "Array",
       "offset": 604,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Debouncer.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Debouncer.swift",
       "kind": "Dictionary",
       "offset": 296,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Dismissable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Dismissable.swift",
       "kind": "BooleanLiteral",
       "offset": 1046,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Dismissable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Dismissable.swift",
       "kind": "BooleanLiteral",
       "offset": 1614,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/Double\/Double+IsClose.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Double\/Double+IsClose.swift",
       "kind": "FloatLiteral",
       "offset": 425,
       "length": 4,
       "value": "1e-9"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Validation\/FieldsValidator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Validation\/FieldsValidator.swift",
       "kind": "Dictionary",
       "offset": 1161,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Validation\/FieldsValidator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Validation\/FieldsValidator.swift",
       "kind": "Array",
       "offset": 1203,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/Float\/Float+IsClose.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Float\/Float+IsClose.swift",
       "kind": "FloatLiteral",
       "offset": 418,
       "length": 4,
       "value": "1e-7"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
       "kind": "Array",
-      "offset": 1071,
+      "offset": 1095,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1115,
+      "offset": 1139,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
       "kind": "BooleanLiteral",
-      "offset": 1257,
+      "offset": 1281,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/GIFImageView.swift",
-      "kind": "BooleanLiteral",
-      "offset": 1972,
-      "length": 5,
-      "value": "false"
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
       "kind": "FloatLiteral",
-      "offset": 619,
+      "offset": 613,
       "length": 4,
       "value": "0.50"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
       "kind": "BooleanLiteral",
-      "offset": 746,
+      "offset": 740,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
       "kind": "BooleanLiteral",
-      "offset": 867,
+      "offset": 861,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2290,
+      "offset": 3836,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Stacks\/HStack.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Stacks\/HStack.swift",
       "kind": "Array",
       "offset": 798,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPHeaders.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPHeaders.swift",
       "kind": "Array",
       "offset": 116,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 213,
       "length": 9,
       "value": "\"CONNECT\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 310,
       "length": 8,
       "value": "\"DELETE\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 400,
       "length": 5,
       "value": "\"GET\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 489,
       "length": 6,
       "value": "\"HEAD\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 585,
       "length": 9,
       "value": "\"OPTIONS\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 680,
       "length": 7,
       "value": "\"PATCH\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 771,
       "length": 6,
       "value": "\"POST\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 859,
       "length": 5,
       "value": "\"PUT\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 950,
       "length": 7,
       "value": "\"QUERY\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPMethod.swift",
       "kind": "StringLiteral",
       "offset": 1043,
       "length": 7,
       "value": "\"TRACE\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/HTTPService+Async.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPService+Async.swift",
       "kind": "IntegerLiteral",
       "offset": 453,
       "length": 2,
       "value": "60"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 690,
       "length": 2,
       "value": "50"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 695,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 702,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 741,
       "length": 3,
       "value": "150"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 747,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 754,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 792,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 796,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 801,
       "length": 2,
       "value": "60"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageCache.swift",
       "kind": "IntegerLiteral",
       "offset": 806,
       "length": 2,
       "value": "60"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageLoader.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageLoader.swift",
       "kind": "Dictionary",
       "offset": 668,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageLoader.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageLoader.swift",
       "kind": "Dictionary",
       "offset": 729,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/InMemory\/InMemoryKeyValueStorage.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/InMemory\/InMemoryKeyValueStorage.swift",
       "kind": "Dictionary",
       "offset": 480,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "StringLiteral",
       "offset": 2177,
       "length": 17,
       "value": "\"KeychainWrapper\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 3529,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 6129,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 6489,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 6854,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 7219,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 8127,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 9578,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 10540,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 11838,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 12694,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 13008,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 13323,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 13636,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 14592,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 15666,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 16728,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 18552,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 22220,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
       "offset": 23662,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Lists\/List.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Lists\/List.swift",
       "kind": "BooleanLiteral",
       "offset": 2018,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Managers\/LocalAuthenticationManager.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/LocalAuthenticationManager.swift",
       "kind": "StringLiteral",
       "offset": 2419,
       "length": 29,
       "value": "\"Authentication is required.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Loggable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Loggable.swift",
       "kind": "Dictionary",
-      "offset": 639,
+      "offset": 638,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
       "kind": "BooleanLiteral",
-      "offset": 4982,
+      "offset": 5224,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
       "kind": "BooleanLiteral",
-      "offset": 5726,
+      "offset": 5968,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
       "kind": "StringLiteral",
-      "offset": 6258,
+      "offset": 6722,
       "length": 16,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Logger.swift",
       "kind": "StringLiteral",
-      "offset": 6273,
+      "offset": 6737,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/MultipartRequest.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/MultipartRequest.swift",
       "kind": "StringLiteral",
       "offset": 239,
       "length": 6,
       "value": "\"\r\n\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/NSObject\/NSObject+ObserveNotification.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/NSObject\/NSObject+ObserveNotification.swift",
       "kind": "IntegerLiteral",
       "offset": 132,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/NavigationBarVisibilityTogglable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/NavigationBarVisibilityTogglable.swift",
       "kind": "BooleanLiteral",
       "offset": 750,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/NavigationBarVisibilityTogglable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/NavigationBarVisibilityTogglable.swift",
       "kind": "BooleanLiteral",
       "offset": 1047,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
       "kind": "BooleanLiteral",
       "offset": 1852,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
       "kind": "BooleanLiteral",
       "offset": 2254,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
       "kind": "BooleanLiteral",
       "offset": 2426,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Navigationable.swift",
       "kind": "BooleanLiteral",
       "offset": 2556,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/PillUILabel.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/PillUILabel.swift",
       "kind": "IntegerLiteral",
-      "offset": 179,
+      "offset": 446,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/PillUILabel.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/PillUILabel.swift",
       "kind": "IntegerLiteral",
-      "offset": 222,
+      "offset": 489,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/PillUILabel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 377,
-      "length": 1,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/PillUILabel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 442,
-      "length": 1,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Presentable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Presentable.swift",
       "kind": "BooleanLiteral",
       "offset": 1197,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Presentable.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Presentable.swift",
       "kind": "BooleanLiteral",
       "offset": 1888,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/Separator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/ProgressAnimationView.swift",
+      "kind": "StringLiteral",
+      "offset": 865,
+      "length": 32,
+      "value": "\"common.progressAnimation.token\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/Separator.swift",
       "kind": "IntegerLiteral",
       "offset": 441,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/Separator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/Separator.swift",
       "kind": "IntegerLiteral",
       "offset": 1189,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/Separator.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/Separator.swift",
       "kind": "IntegerLiteral",
       "offset": 1539,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/Snackbar.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/Snackbar.swift",
       "kind": "IntegerLiteral",
       "offset": 1584,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/Snackbar.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/Snackbar.swift",
       "kind": "IntegerLiteral",
       "offset": 1688,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Stacks\/Stack.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 826,
+      "length": 2,
+      "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 836,
+      "length": 2,
+      "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 848,
+      "length": 2,
+      "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 859,
+      "length": 2,
+      "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 881,
+      "length": 1,
+      "value": "8"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1066,
+      "length": 1,
+      "value": "3"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1571,
+      "length": 1,
+      "value": "4"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1644,
+      "length": 2,
+      "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1670,
+      "length": 2,
+      "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Stacks\/Stack.swift",
       "kind": "Array",
       "offset": 948,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Stacks\/Stack.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Stacks\/Stack.swift",
       "kind": "BooleanLiteral",
       "offset": 1337,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+Constants.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+Constants.swift",
       "kind": "StringLiteral",
       "offset": 134,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+Constants.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+Constants.swift",
       "kind": "StringLiteral",
       "offset": 213,
       "length": 3,
       "value": "\"0\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 227,
       "length": 10,
       "value": "\"dd MM yy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 275,
       "length": 12,
       "value": "\"dd-MM-yyyy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 324,
       "length": 11,
       "value": "\"dd MMM yy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 375,
       "length": 14,
       "value": "\"dd MMMM yyyy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 431,
       "length": 18,
       "value": "\"dd-MM-yyyy HH:mm\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 494,
       "length": 25,
       "value": "\"dd 'de' MMMM 'del' yyyy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 561,
       "length": 19,
       "value": "\"EEEE dd 'de' MMMM\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 626,
       "length": 24,
       "value": "\"EEEE dd 'de' MMMM yyyy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 684,
       "length": 7,
       "value": "\"HH:mm\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 725,
       "length": 7,
       "value": "\"MM yy\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 770,
       "length": 12,
       "value": "\"yyyy-MM-dd\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 826,
       "length": 21,
       "value": "\"yyyy-MM-dd HH:mm:ss\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 895,
       "length": 27,
       "value": "\"yyyy-MM-dd HH:mm:ss +0000\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 972,
       "length": 28,
       "value": "\"yyyy-MM-dd HH:mm:ss.000000\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 1049,
       "length": 30,
       "value": "\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
       "offset": 1115,
       "length": 8,
       "value": "\"yyMMdd\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 281,
       "length": 9,
       "value": "\"Aceptar\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 341,
       "length": 10,
       "value": "\"Cancelar\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 390,
       "length": 11,
       "value": "\"Atención\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 442,
       "length": 43,
       "value": "\"Ha ocurrido un error, vuelve a intentarlo\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 665,
       "length": 8,
       "value": "\"Volver\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 713,
       "length": 8,
       "value": "\"Buscar\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 761,
       "length": 11,
       "value": "\"Finalizar\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DefaultValues.swift",
       "kind": "StringLiteral",
       "offset": 849,
       "length": 7,
       "value": "\"es_CL\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+GetFromPlist.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+GetFromPlist.swift",
       "kind": "StringLiteral",
       "offset": 467,
       "length": 6,
       "value": "\"Info\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+RUTUtilities.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+RUTUtilities.swift",
       "kind": "BooleanLiteral",
       "offset": 1005,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+RUTUtilities.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+RUTUtilities.swift",
       "kind": "StringLiteral",
       "offset": 1766,
       "length": 17,
       "value": "\"SELF MATCHES %@\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+RUTUtilities.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+RUTUtilities.swift",
       "kind": "StringLiteral",
       "offset": 1793,
       "length": 42,
       "value": "\"^(\\d{1,3}(\\.?\\d{3}){2})\\-?([\\dkK])$\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+Random.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+Random.swift",
       "kind": "StringLiteral",
       "offset": 369,
       "length": 64,
       "value": "\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/TimeInterval\/TimeInterval+DefaultValues.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/TimeInterval\/TimeInterval+DefaultValues.swift",
       "kind": "FloatLiteral",
       "offset": 302,
       "length": 3,
       "value": "0.3"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Toast.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Toast.swift",
       "kind": "IntegerLiteral",
-      "offset": 234,
+      "offset": 230,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Toast.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Toast.swift",
       "kind": "IntegerLiteral",
-      "offset": 258,
+      "offset": 254,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Custom\/Toast.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Toast.swift",
       "kind": "IntegerLiteral",
-      "offset": 280,
+      "offset": 276,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Navigation\/UIBarButtonItem\/UIBarButtonItem+HidesSharedBackground.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Navigation\/UIBarButtonItem\/UIBarButtonItem+HidesSharedBackground.swift",
       "kind": "BooleanLiteral",
       "offset": 362,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIButton\/UIButton+AdjustFontSizeToFitWidth.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIButton\/UIButton+AdjustFontSizeToFitWidth.swift",
       "kind": "BooleanLiteral",
       "offset": 388,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIColor\/UIColor+Init.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIColor\/UIColor+Init.swift",
       "kind": "FloatLiteral",
       "offset": 311,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIControl\/UIControl+OnTap.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIControl\/UIControl+OnTap.swift",
       "kind": "IntegerLiteral",
       "offset": 106,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIDatePicker\/UIDatePicker+.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIDatePicker\/UIDatePicker+.swift",
       "kind": "IntegerLiteral",
       "offset": 116,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIFont\/UIFont+AppFont.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIFont\/UIFont+AppFont.swift",
       "kind": "StringLiteral",
       "offset": 1958,
       "length": 5,
       "value": "\"ttf\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIFont\/UIFont+Register.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIFont\/UIFont+Register.swift",
       "kind": "StringLiteral",
-      "offset": 857,
+      "offset": 1129,
       "length": 5,
       "value": "\"ttf\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+GradientImage.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+GradientImage.swift",
       "kind": "FloatLiteral",
       "offset": 506,
       "length": 3,
       "value": "0.5"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
       "kind": "BooleanLiteral",
       "offset": 692,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
       "kind": "IntegerLiteral",
       "offset": 855,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
       "kind": "IntegerLiteral",
       "offset": 876,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
       "kind": "IntegerLiteral",
       "offset": 1051,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImage\/UIImage+Rotate.swift",
       "kind": "IntegerLiteral",
       "offset": 1070,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImageView\/UIImageView+LoadImage.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIImageView\/UIImageView+LoadImage.swift",
       "kind": "IntegerLiteral",
       "offset": 68,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+AdjustsFontSizeToFitWidth.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+AdjustsFontSizeToFitWidth.swift",
       "kind": "BooleanLiteral",
       "offset": 379,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+Font.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+Font.swift",
       "kind": "IntegerLiteral",
       "offset": 274,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+OnTap.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+OnTap.swift",
       "kind": "IntegerLiteral",
       "offset": 109,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+OnTap.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UILabel\/UILabel+OnTap.swift",
       "kind": "IntegerLiteral",
       "offset": 185,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIProgressView\/UIProgressView+.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Display\/UIProgressView\/UIProgressView+.swift",
       "kind": "BooleanLiteral",
       "offset": 371,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIRefreshControl\/UIRefreshControl+OnValueChanged.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UIRefreshControl\/UIRefreshControl+OnValueChanged.swift",
       "kind": "IntegerLiteral",
       "offset": 138,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISegmentedControl\/UISegmentedControl+OnValueChanged.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISegmentedControl\/UISegmentedControl+OnValueChanged.swift",
       "kind": "IntegerLiteral",
       "offset": 142,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISlider\/UISlider+OnValueChanged.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISlider\/UISlider+OnValueChanged.swift",
       "kind": "IntegerLiteral",
       "offset": 122,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISlider\/UISlider+OnValueChanged.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISlider\/UISlider+OnValueChanged.swift",
       "kind": "BooleanLiteral",
       "offset": 2552,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISwitch\/UISwitch+OnValueChanged.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Controls\/UISwitch\/UISwitch+OnValueChanged.swift",
       "kind": "IntegerLiteral",
       "offset": 122,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Navigation\/UITabBarController\/UITabBarController+Init.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Navigation\/UITabBarController\/UITabBarController+Init.swift",
       "kind": "Array",
       "offset": 378,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddRightButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddRightButton.swift",
       "kind": "IntegerLiteral",
       "offset": 129,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddRightButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddRightButton.swift",
       "kind": "StringLiteral",
       "offset": 971,
       "length": 23,
       "value": "\"arrowtriangle.up.fill\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddRightButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddRightButton.swift",
       "kind": "StringLiteral",
       "offset": 1038,
       "length": 25,
       "value": "\"arrowtriangle.down.fill\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddToggleVisibilityButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddToggleVisibilityButton.swift",
       "kind": "StringLiteral",
       "offset": 529,
       "length": 10,
       "value": "\"eye.fill\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddToggleVisibilityButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AddToggleVisibilityButton.swift",
       "kind": "StringLiteral",
       "offset": 600,
       "length": 16,
       "value": "\"eye.slash.fill\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
       "kind": "IntegerLiteral",
       "offset": 2061,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
       "kind": "IntegerLiteral",
       "offset": 2128,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+AllowedChars&MaxLength&ReturnKeyPressed.swift",
       "kind": "IntegerLiteral",
       "offset": 2204,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+IsSecureEntry.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+IsSecureEntry.swift",
       "kind": "BooleanLiteral",
       "offset": 334,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+OnEditingBegin.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+OnEditingBegin.swift",
       "kind": "IntegerLiteral",
       "offset": 131,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+OnEditingChanged.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+OnEditingChanged.swift",
       "kind": "IntegerLiteral",
       "offset": 132,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+OnEditingEnd.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Input\/UITextField\/UITextField+OnEditingEnd.swift",
       "kind": "IntegerLiteral",
       "offset": 127,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+AutoLayout.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+AutoLayout.swift",
       "kind": "IntegerLiteral",
       "offset": 5462,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+AutoLayout.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+AutoLayout.swift",
       "kind": "IntegerLiteral",
       "offset": 5764,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+AutoLayout.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+AutoLayout.swift",
       "kind": "IntegerLiteral",
       "offset": 7330,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+DebugMode.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+DebugMode.swift",
       "kind": "BooleanLiteral",
       "offset": 325,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Hide.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Hide.swift",
       "kind": "BooleanLiteral",
       "offset": 343,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Init.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Init.swift",
       "kind": "Array",
       "offset": 284,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "IntegerLiteral",
       "offset": 114,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "IntegerLiteral",
       "offset": 173,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "IntegerLiteral",
       "offset": 231,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "StringLiteral",
       "offset": 2614,
       "length": 44,
       "value": "\"Could not get `layoutSubviews()` selector.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "StringLiteral",
       "offset": 2801,
       "length": 61,
       "value": "\"Could not get original `originalLayoutSubviews()` selector.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnLayoutSubviews.swift",
       "kind": "StringLiteral",
       "offset": 3005,
       "length": 61,
       "value": "\"Could not get swizzled `swizzledLayoutSubviews()` selector.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
       "kind": "IntegerLiteral",
       "offset": 118,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
       "kind": "StringLiteral",
       "offset": 1728,
       "length": 48,
       "value": "\"Could not get `didMoveToSuperview()` selector.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
       "kind": "StringLiteral",
       "offset": 1923,
       "length": 65,
       "value": "\"Could not get original `originalDidMoveToSuperview()` selector.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnMoveToSuperview.swift",
       "kind": "StringLiteral",
       "offset": 2135,
       "length": 65,
       "value": "\"Could not get swizzled `swizzledDidMoveToSuperview()` selector.\""
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnTap.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnTap.swift",
       "kind": "IntegerLiteral",
       "offset": 101,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnTap.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+OnTap.swift",
       "kind": "IntegerLiteral",
       "offset": 170,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+SetAlpha.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+SetAlpha.swift",
       "kind": "BooleanLiteral",
       "offset": 338,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+ShadowProperties.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+ShadowProperties.swift",
       "kind": "IntegerLiteral",
       "offset": 1656,
       "length": 2,
       "value": "-3"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+ShadowProperties.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+ShadowProperties.swift",
       "kind": "IntegerLiteral",
       "offset": 1703,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Shake.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Shake.swift",
       "kind": "FloatLiteral",
       "offset": 440,
       "length": 3,
       "value": "0.3"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Shake.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Shake.swift",
       "kind": "IntegerLiteral",
       "offset": 466,
       "length": 2,
       "value": "15"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Shake.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Shake.swift",
       "kind": "IntegerLiteral",
       "offset": 495,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Show.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Show.swift",
       "kind": "BooleanLiteral",
       "offset": 406,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Show.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Show.swift",
       "kind": "IntegerLiteral",
       "offset": 496,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Subviews.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Subviews.swift",
       "kind": "Array",
       "offset": 769,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+DismissFromRootPresentingViewController.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+CoordinatorTracking.swift",
+      "kind": "IntegerLiteral",
+      "offset": 510,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+CoordinatorTracking.swift",
+      "kind": "StringLiteral",
+      "offset": 2437,
+      "length": 60,
+      "value": "\"Could not resolve selectors to swizzle didMove(toParent:).\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+DismissFromRootPresentingViewController.swift",
       "kind": "BooleanLiteral",
       "offset": 438,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+DismissTopMostPresentedViewController.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+DismissTopMostPresentedViewController.swift",
       "kind": "BooleanLiteral",
       "offset": 430,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+HidesBackButton.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+HidesBackButton.swift",
       "kind": "BooleanLiteral",
       "offset": 385,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+IsModalInPresentation.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+IsModalInPresentation.swift",
       "kind": "BooleanLiteral",
       "offset": 343,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+LifecycleHooks.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+LifecycleHooks.swift",
       "kind": "IntegerLiteral",
       "offset": 518,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "IntegerLiteral",
       "offset": 1024,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "IntegerLiteral",
       "offset": 1082,
       "length": 2,
       "value": "28"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "BooleanLiteral",
       "offset": 1266,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "BooleanLiteral",
       "offset": 1302,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/Encoders\/URLEncodedFormEncoder.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/Encoders\/URLEncodedFormEncoder.swift",
       "kind": "Array",
       "offset": 3355,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/Encoders\/URLEncodedFormEncoder.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/Encoders\/URLEncodedFormEncoder.swift",
       "kind": "BooleanLiteral",
       "offset": 8495,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Network\/Encoders\/URLEncodedFormEncoder.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/Encoders\/URLEncodedFormEncoder.swift",
       "kind": "IntegerLiteral",
       "offset": 10960,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Libraries\/common\/framework\/Common\/Views\/Stacks\/VStack.swift",
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Stacks\/VStack.swift",
       "kind": "Array",
       "offset": 794,
       "length": 2,
