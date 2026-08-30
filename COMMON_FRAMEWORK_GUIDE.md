@@ -337,16 +337,19 @@ UILabel("Hello World")
 
 ```swift
 UITextField()
-    .borderColor(.gray600)
+    .borderColor(.systemGray3)
     .borderWidth(1)
     .contentType(.emailAddress)
     .font(.appFont(size: 16))
     .keyboardType(.emailAddress)
-    .placeholder("Enter email", color: .gray600, font: .appFont(size: 16))
+    .placeholder("Enter email", color: .systemGray3, font: .appFont(size: 16))
     .setAsRoundedView(radius: 4)
     .setRatio(327/56)
-    .textColor(.black)
-    .with { $0.leftView(.init(frame: .init(x: 0, y: 0, width: 16, height: $0.frame.height))) }
+    .textColor(.label)
+    .leftView(UIView(frame: .init(x: 0, y: 0, width: 16, height: 0)))   // inset; leftView(_:) also sets leftViewMode(.always)
+    .isSecureTextEntry()                 // password fields; addToggleVisibilityButton() enables it too
+    .autocapitalizationType(.none)
+    .autocorrectionType(.no)
 ```
 
 **Event handlers:**
@@ -681,6 +684,29 @@ The base class accesses the ViewModel via `viewModel as? CollectionViewable` at 
 
 Override `bottomInsetForLastCollectionSection()` when the screen sits above a tab bar (default returns `.zero`).
 
+**The cell contract.** `CollectionViewable` is `CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`; the base VC forwards every `UICollectionView` callback to these hooks, so the ViewModel — not the VC — answers them. Four are required; the rest have defaults:
+
+```swift
+@MainActor
+final class ProductsViewModel {
+    weak var view: ProductsViewProtocol?        // ProductsViewProtocol: ScreenSizeMeasurable → screenWidth
+    private var products: [ProductCellViewModel] = []
+}
+
+extension ProductsViewModel: CollectionViewable {
+    func getNumberOfSections() -> Int { 1 }                                                  // default 1
+    func getNumberOfItems(in section: Int) -> Int { products.count }                         // required
+    func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { ProductCell.reuseIdentifier } // required
+    func onCellForItem(in section: Int, at index: Int) -> ViewModel? { products[index] }     // required — assigned to cell.viewModel
+    func onSizeForItem(in section: Int, at index: Int) -> Size { (view?.screenWidth ?? 375, 68) } // required — (width, height)
+    func onItemSelected(in section: Int, at index: Int) { select(products[index]) }         // default no-op
+    func onInsetFor(section: Int) -> Inset { (top: 4, left: 0, bottom: 8, right: 0) }        // default zero
+    func onMinimumLineSpacingFor(section: Int) -> Double { 4 }                               // default zero (also onMinimumInteritemSpacingFor)
+}
+```
+
+Width comes from the view through `ScreenSizeMeasurable` (every `UIViewController` conforms) — add it to the view protocol. Cells self-register their reuse identifier (`static var reuseIdentifier` on every `UICollectionReusableView` = the type name). Never hand-roll `UICollectionViewDataSource` in the VC: the base class already owns it.
+
 **Section headers and footers.** Register the supplementary view with `.register(_:kind:)` and have the ViewModel answer the three hooks per kind — reuse identifier, view model, size. The size defaults to `(.zero, .zero)`, which means "no header/footer in this section"; a non-zero size **requires** a matching reuse identifier, or UIKit throws on dequeue.
 
 ```swift
@@ -888,7 +914,7 @@ ModuleName/
 
 ```swift
 enum ProfileWireframe {
-    static func createModule(with delegate: BaseModuleDelegate) -> UIViewController {
+    @MainActor static func createModule(with delegate: BaseModuleDelegate) -> UIViewController {
         let viewModel = ProfileViewModel(delegate: delegate)
         return ProfileViewController(viewModel: viewModel)
             .with { viewModel.view = $0 }
@@ -904,6 +930,7 @@ enum ProfileWireframe {
 ### ViewModel pattern
 
 ```swift
+@MainActor
 final class ProfileViewModel {
     weak var delegate: BaseModuleDelegate?
     weak var view: ProfileViewController?
@@ -1149,7 +1176,7 @@ protocol CheckoutCoordinatorProtocol: AnyObject {
 
 // Wireframe takes the protocol, not AppCoordinator
 enum CheckoutWireframe {
-    static func createModule(coordinator: CheckoutCoordinatorProtocol) -> UIViewController {
+    @MainActor static func createModule(coordinator: CheckoutCoordinatorProtocol) -> UIViewController {
         let vm = CheckoutViewModel(coordinator: coordinator)
         return CheckoutViewController(viewModel: vm)
             .with { vm.view = $0 }
@@ -1586,7 +1613,9 @@ Notes:
 ```swift
 private enum Field: Hashable { case name, email, password, confirmPassword }
 
-private lazy var validator = FieldsValidator<Field>(
+// Explicit type annotation: the text fields' handlers reference `validator` back, and an
+// inferred `lazy var` type in that cycle is a "circular reference" compile error.
+private lazy var validator: FieldsValidator<Field> = .init(
     rules: [
         .name:            [.notEmpty, .minLength(2)],
         .email:           [.notEmpty, .email],
@@ -1619,6 +1648,8 @@ UITextField()
 ```
 
 `set(nil, on:)` is treated as the empty string `""` (it does not drop the field). Each `set` fires `onChange` **exactly once**.
+
+**Where it lives.** The DemoApp keeps the validator in the `@MainActor` ViewModel and drives the VC through its view protocol (`showFieldError(field:message:)`, `clearFieldError(field:)`, `updateValidationStatus(isValid:)`), so the VC holds no validation state; the VC-resident form above is the compact alternative. Either way the validator must be created on the main actor.
 
 ### Available rules
 
@@ -2123,20 +2154,22 @@ UIFont.setPrimaryFamily(.montserrat)
 
 ### Colors
 
+Common ships **no color palette** — only system colors and your own. Declare the app palette once and use it through the fluent API:
+
 ```swift
-// Grayscale
-.gray100, .gray200, .gray300, .gray400, .gray500, .gray600, .gray700
+// App target
+extension UIColor {
+    static let gray600 = UIColor(red: 0.42, green: 0.45, blue: 0.49, alpha: 1)
+    static let brandPurple = UIColor(named: "brandPurple")!
+}
 
-// Semantic
-.error, .danger
-
-// Brand
-.backgroundPurple01, .backgroundPurple02, .backgroundCyan01, .backgroundCyan03
-
-// Standard
-.black, .white
+// Anywhere — system colors need no declaration
+.textColor(.label).backgroundColor(.systemBackground).borderColor(.systemGray3)
+.textColor(.gray600).backgroundColor(.brandPurple)
 .black.withAlphaComponent(0.5)
 ```
+
+(Names like `.gray600`, `.error`, `.backgroundPurple01` in consumer apps are *their* extensions, not framework API.)
 
 ### Images
 
@@ -2624,12 +2657,13 @@ func alertView(
 ## Appendix B — New screen checklist
 
 - [ ] `final class MyViewController: BaseViewController` (or `BaseViewModelableViewController<VM>`)
-- [ ] Custom `init` with callback closures; `required init?(coder:)` marked `@available(*, unavailable)`
+- [ ] `BaseViewController` subclass taking closures: custom `init` + `required init?(coder:)` marked `@available(*, unavailable)`. `BaseViewModelableViewController` subclass: **no** initializer — `init(viewModel:)` is inherited and declaring `init?(coder:)` removes it
+- [ ] ViewModel and the wireframe's `createModule` are `@MainActor`
 - [ ] `@UIViewBuilder override var mainView: UIView` with `VStack`/`HStack` layout
 - [ ] `override func setupView()` calls `super.setupView()` first
 - [ ] Lifecycle logic uses `onViewIsAppearing`, `onViewWillDisappear` hooks — not overrides
 - [ ] All closures capture `[weak self]` and immediately `guard let self else { return }`
-- [ ] Network calls go through a `UseCase` — view controller or coordinator conforms, calls method directly
+- [ ] Network calls go through a `UseCase` — the ViewModel, view controller, or coordinator conforms (the DemoApp conforms the ViewModel) and calls the method directly
 - [ ] Navigation fired via callback to coordinator (`onRequested(.action)`)
 
 ---
