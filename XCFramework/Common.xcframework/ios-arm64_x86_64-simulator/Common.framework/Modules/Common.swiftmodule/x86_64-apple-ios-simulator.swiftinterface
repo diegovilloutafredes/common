@@ -544,6 +544,7 @@ extension Common.BaseClient : Common.ClientProtocol {
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidEndScrollingAnimation(_ scrollView: UIKit.UIScrollView)
   @_Concurrency.MainActor @preconcurrency @objc open func scrollViewDidScroll(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor @preconcurrency @objc open func scrollViewWillEndDragging(_ scrollView: UIKit.UIScrollView, withVelocity velocity: CoreFoundation.CGPoint, targetContentOffset: Swift.UnsafeMutablePointer<CoreFoundation.CGPoint>)
   @objc deinit
 }
 @objc @_Concurrency.MainActor open class BaseCoordinator : ObjectiveC.NSObject, Common.Coordinator, Common.BaseModuleDelegate {

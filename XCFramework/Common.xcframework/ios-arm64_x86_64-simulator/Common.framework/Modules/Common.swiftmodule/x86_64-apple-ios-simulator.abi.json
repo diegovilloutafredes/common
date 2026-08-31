@@ -10493,6 +10493,59 @@
               "AccessControl"
             ],
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "scrollViewWillEndDragging",
+            "printedName": "scrollViewWillEndDragging(_:withVelocity:targetContentOffset:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UIScrollView",
+                "printedName": "UIKit.UIScrollView",
+                "usr": "c:objc(cs)UIScrollView"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGPoint",
+                "printedName": "CoreFoundation.CGPoint",
+                "usr": "c:@S@CGPoint"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UnsafeMutablePointer",
+                "printedName": "Swift.UnsafeMutablePointer<CoreFoundation.CGPoint>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGPoint",
+                    "printedName": "CoreFoundation.CGPoint",
+                    "usr": "c:@S@CGPoint"
+                  }
+                ],
+                "usr": "s:Sp"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common36BaseCollectionViewableViewControllerC06scrollE15WillEndDragging_12withVelocity19targetContentOffsetySo08UIScrollE0C_So7CGPointVSpyAJGtF",
+            "mangledName": "$s6Common36BaseCollectionViewableViewControllerC06scrollE15WillEndDragging_12withVelocity19targetContentOffsetySo08UIScrollE0C_So7CGPointVSpyAJGtF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<ViewModelType>",
+            "isOpen": true,
+            "objc_name": "scrollViewWillEndDragging:withVelocity:targetContentOffset:",
+            "declAttributes": [
+              "ObjC",
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Class",
