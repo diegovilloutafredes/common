@@ -93,4 +93,24 @@ final class BaseCollectionViewableViewControllerTests: XCTestCase {
         XCTAssertEqual(first.bottom, 0, "the extra inset must not leak into earlier sections")
         XCTAssertEqual(last.bottom, 49, "the last section must absorb the tab-bar inset")
     }
+
+    func test_scrollViewWillEndDragging_overrideIsReachableViaSelectorDispatch() {
+        final class SnappingViewController: BaseCollectionViewableViewController<SpyViewModel> {
+            var didSnap = false
+            override func scrollViewWillEndDragging(
+                _ scrollView: UIScrollView,
+                withVelocity velocity: CGPoint,
+                targetContentOffset: UnsafeMutablePointer<CGPoint>
+            ) {
+                didSnap = true
+            }
+        }
+        let vc = SnappingViewController(viewModel: SpyViewModel())
+        let delegate: UIScrollViewDelegate = vc
+        var offset = CGPoint.zero
+        withUnsafeMutablePointer(to: &offset) {
+            delegate.scrollViewWillEndDragging?(collectionView, withVelocity: .zero, targetContentOffset: $0)
+        }
+        XCTAssertTrue(vc.didSnap, "a subclass override must be reachable through ObjC selector dispatch")
+    }
 }

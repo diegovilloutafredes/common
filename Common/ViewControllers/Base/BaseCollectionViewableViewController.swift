@@ -157,9 +157,18 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
     }
 
     // MARK: - UIScrollViewDelegate stubs
+    //
+    // Scroll-delegate methods introduced directly in a subclass of this generic class
+    // are invisible to ObjC selector dispatch and are silently never called. Any scroll
+    // callback a subclass needs must exist here as an open stub to override.
 
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {}
     open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {}
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {}
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {}
+    open func scrollViewWillEndDragging(
+        _ scrollView: UIScrollView,
+        withVelocity velocity: CGPoint,
+        targetContentOffset: UnsafeMutablePointer<CGPoint>
+    ) {}
 }
