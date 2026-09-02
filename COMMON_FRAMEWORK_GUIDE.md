@@ -745,7 +745,7 @@ final class ItemView: BaseViewModelableView<ItemViewModel> {
 
 ### `BaseViewModelableCell<T: ViewModel>`
 
-For collection/table view cells, always use `viewModel` `didSet` to update content — `mainView` is built once in `init` and the `viewModel` property is `nil` at that point:
+For collection/table view cells, bind content in `updateContent()` — `mainView` is built once in `init` and the `viewModel` property is `nil` at that point. Assigning `viewModel` schedules `updateContent()`, and if the model is `@Observable` any later change to a property read inside re-runs it as well:
 
 ```swift
 // Protocol — defines what the cell reads
@@ -755,18 +755,10 @@ protocol ListItemCellViewModel: ViewModel {
     var accentColor: UIColor { get }
 }
 
-// Cell — layout in mainView, content in viewModel didSet
+// Cell — layout in mainView, content in updateContent()
 final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
     private lazy var titleLabel = UILabel().font(.boldSystemFont(ofSize: 15)).textColor(.label)
     private lazy var subtitleLabel = UILabel().font(.systemFont(ofSize: 12)).textColor(.secondaryLabel)
-
-    override var viewModel: ListItemCellViewModel? {
-        didSet {
-            guard let vm = viewModel else { return }
-            titleLabel.text(vm.title)
-            subtitleLabel.text(vm.subtitle)
-        }
-    }
 
     @UIViewBuilder override var mainView: UIView {
         VStack(spacing: 2) { titleLabel; subtitleLabel }
@@ -777,12 +769,18 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
         super.setupCell()
         backgroundColor(.clear)
     }
+
+    override func updateContent() {
+        guard let viewModel else { return }
+        titleLabel.text(viewModel.title)
+        subtitleLabel.text(viewModel.subtitle)
+    }
 }
 ```
 
-> **Critical**: Never reference `viewModel` inside `mainView` — it is `nil` when the view builder runs. All model-driven updates go in `viewModel didSet`.
+> **Critical**: Never reference `viewModel` inside `mainView` — it is `nil` when the view builder runs. All model-driven updates go in `updateContent()`.
 
-Prefer `override func updateContent()` when the cell's model is `@Observable`: assignment and later model changes both re-run it (see *Observation-driven updates* below). `viewModel didSet` remains correct for plain value models.
+`override var viewModel { didSet { … } }` still works for plain value models and runs synchronously on assignment; prefer `updateContent()` for new code so the cell has one render path. Work that must happen exactly once per assignment (e.g. issuing an image load) belongs behind a guard on the bound value, because `updateContent()` may run more than once — see `ImageDemoCell` in the DemoApp.
 
 ### Lifecycle hooks
 
@@ -849,7 +847,40 @@ Rules:
 - Keep geometry out of it: constraint constants still need a layout pass (`animateConstraintChanges`, or `.flushUpdates` on iOS 26).
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
-- The DemoApp's **Observation** module shows all three hooks on one screen.
+- Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`.
+- **State vs events.** Text, flags, counts and collections are state and become observable. One-shot effects (a snackbar, an error toast, "submitted") stay as view-protocol calls — they are not state.
+- **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
+- **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and let the controller compare it with the revision it last rendered before calling `reloadData()`. This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view.
+- Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
+- A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
+
+Migration recipe (what the DemoApp modules went through):
+
+```swift
+import Observation                                   // UIKit does not re-export it
+
+@Observable @MainActor                               // @MainActor VM ⇒ @MainActor wireframe factory
+final class FooViewModel: FooViewModelProtocol {     // the protocol is @MainActor too
+    private(set) var statusText = ""                 // state: tracked
+    private(set) var isLoading = false
+    private(set) var revision: Int = .zero           // collections: revision, not the array
+    @ObservationIgnored private var items: [Item] = [] { didSet { revision += 1 } }
+    @ObservationIgnored weak var view: FooViewProtocol?          // events only
+    @ObservationIgnored private lazy var validator = …            // lazy/weak/closures: ignored
+}
+
+final class FooViewController: BaseViewModelableViewController<FooViewModelProtocol> {
+    private var renderedRevision: Int = .zero
+    override func updateContent() {
+        super.updateContent()
+        statusLabel.text(viewModel.statusText)
+        setActivityIndicator(visible: viewModel.isLoading)
+        if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
+    }
+}
+```
+
+Every DemoApp module is written this way; the **Observation** module additionally shows the view-model-side `onUpdateProperties()` variant.
 
 ### System notification observers
 

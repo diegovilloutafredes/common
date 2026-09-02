@@ -268,12 +268,11 @@ extension FooListViewModel: CollectionViewable {
 final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
     private lazy var titleLabel = UILabel().font(.appFont(style: .bold, size: 15)).textColor(.label)
 
-    // ALL model-driven content goes here — never reference viewModel in mainView (it's nil at build time)
-    override var viewModel: FooCellViewModelProtocol? {
-        didSet {
-            guard let vm = viewModel else { return }
-            titleLabel.text(vm.title)
-        }
+    // ALL model-driven content goes here — never reference viewModel in mainView (it's nil at build time).
+    // Runs after every viewModel assignment and, for @Observable models, after any tracked change.
+    override func updateContent() {
+        guard let viewModel else { return }
+        titleLabel.text(viewModel.title)
     }
 
     @UIViewBuilder override var mainView: UIView {
@@ -342,6 +341,7 @@ init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupVie
 - Data binding in `setupView()`, not `mainView`
 - Lifecycle events via hooks (`onViewIsAppearing`, `onViewWillDisappear`), not method overrides
 - Observable state: read it in `onUpdateProperties()` (ViewModel) or `updateContent()` (view/cell/VC); the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
+- Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on `weak var view`, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; events (snackbar, error) stay view-protocol calls; `setActivityIndicator(visible: isLoading)` for spinners.
 
 ---
 
@@ -434,7 +434,7 @@ UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on:
 
 3. **`alignment: .center` collapses `UIView` spacers**: Plain `UIView` has no intrinsic width — center alignment makes it zero-width and invisible. Use `.fill` + `textAlignment(.center)`.
 
-4. **`viewModel` is nil in `mainView`**: In cells, all model-driven content goes in `viewModel didSet` — the view builder runs before `viewModel` is set.
+4. **`viewModel` is nil in `mainView`**: In cells, all model-driven content goes in `updateContent()` (or a `viewModel didSet` for plain value models) — the view builder runs before `viewModel` is set. Work that must run once per assignment (an image load) goes behind a guard on the bound value; `updateContent()` may run more than once.
 
 5. **`BaseCollectionViewableViewController` not `BaseViewModelableViewController`** for screens with `VList`/`HList`. The collection base provides all dataSource/delegate boilerplate at zero cost.
 
