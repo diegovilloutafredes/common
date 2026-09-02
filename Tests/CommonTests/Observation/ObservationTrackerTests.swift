@@ -52,6 +52,31 @@ final class ObservationTrackerTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 100_000_000)
     }
 
+    /// A main-thread mutation must invalidate before the mutating statement returns, like
+    /// UIKit's native tracking does — no async hop in the common case.
+    func test_manualMode_mainThreadMutation_invalidatesSynchronously() {
+        ObservationMode.override = .manual
+        let model = ObservedCounter()
+        var invalidated = false
+
+        ObservationTracker.run { _ = model.value } onInvalidate: { invalidated = true }
+        model.value = 1
+        XCTAssertTrue(invalidated)
+    }
+
+    func test_manualMode_backgroundMutation_invalidatesOnTheMainActor() async {
+        ObservationMode.override = .manual
+        let model = ObservedCounter()
+        let invalidated = expectation(description: "onInvalidate on main")
+
+        ObservationTracker.run { _ = model.value } onInvalidate: {
+            XCTAssertTrue(Thread.isMainThread)
+            invalidated.fulfill()
+        }
+        DispatchQueue.global().async { model.value = 1 }
+        await fulfillment(of: [invalidated], timeout: callbackDeliveryTimeout)
+    }
+
     func test_manualMode_untrackedPropertyDoesNotInvalidate() async {
         ObservationMode.override = .manual
         let model = ObservedCounter()
