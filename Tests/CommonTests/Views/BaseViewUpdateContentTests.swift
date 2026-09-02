@@ -33,6 +33,30 @@ final class BaseViewUpdateContentTests: XCTestCase {
         }
     }
 
+    /// Writes model state into a label so a change affects intrinsic size; counts the
+    /// view's own layout passes.
+    private final class TextView: BaseView {
+        let model: ObservedCounter
+        private(set) var layoutPasses: Int = .zero
+        let label = UILabel()
+
+        init(model: ObservedCounter) {
+            self.model = model
+            super.init()
+        }
+
+        @UIViewBuilder override var mainView: UIView {
+            VStack(alignment: .leading) { label }
+        }
+
+        override func updateContent() { label.text = "\(model.value)" }
+
+        override func layoutSubviews() {
+            layoutPasses += 1
+            super.layoutSubviews()
+        }
+    }
+
     private var window: UIWindow!
 
     override func setUp() {
@@ -132,6 +156,46 @@ final class BaseViewUpdateContentTests: XCTestCase {
         view.layoutIfNeeded()
         XCTAssertEqual(view.updates, 2, "the hook still runs on every explicit layout pass")
         XCTAssertEqual(view.rendered, 3)
+    }
+
+    /// Improvement 2: in manual mode the hook is invalidation-driven. A layout pass caused
+    /// by something else (rotation, scrolling) must not re-run it.
+    func test_manualMode_unrelatedLayoutPassDoesNotRerunHook() {
+        ObservationMode.override = .manual
+        let view = makeDetached(ObservedCounter())
+        view.layoutIfNeeded()
+        XCTAssertEqual(view.updates, 1)
+
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        XCTAssertEqual(view.updates, 1, "no invalidation, no re-run")
+
+        view.setNeedsContentUpdate()
+        view.layoutIfNeeded()
+        XCTAssertEqual(view.updates, 2)
+    }
+
+    /// Improvement 1: the manual hook runs before the view's own layout, so a size-affecting
+    /// change is resolved in the same pass — one `layoutIfNeeded()` leaves the label at its
+    /// new width with nothing pending.
+    func test_manualMode_contentChangeIsLaidOutInTheSamePass() {
+        ObservationMode.override = .manual
+        let model = ObservedCounter()
+        let view = TextView(model: model)
+        view.frame = window.bounds
+        view.layoutIfNeeded()
+        let narrow = view.label.frame.width
+        XCTAssertGreaterThan(narrow, .zero)
+        let passesBefore = view.layoutPasses
+
+        model.value = 1_000_000
+        XCTAssertTrue(view.layer.needsLayout(), "main-thread mutation invalidates synchronously")
+        view.layoutIfNeeded()
+
+        XCTAssertEqual(view.label.frame.width, view.label.intrinsicContentSize.width, accuracy: 0.5)
+        XCTAssertGreaterThan(view.label.frame.width, narrow)
+        XCTAssertFalse(view.layer.needsLayout(), "no second pass may be pending")
+        XCTAssertEqual(view.layoutPasses, passesBefore + 1, "exactly one pass for one change")
     }
 
     func test_setNeedsContentUpdate_manualMode_schedulesLayout() {

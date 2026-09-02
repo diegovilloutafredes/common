@@ -103,6 +103,20 @@ final class BaseCellUpdateContentTests: XCTestCase {
         XCTAssertEqual(cell.rendered, 2, "a stale invalidation must never render the old model")
     }
 
+    /// Improvement 2: cell scroll/resize layouts must not re-run the hook without an invalidation.
+    func test_cell_manualMode_unrelatedLayoutPassDoesNotRerunHook() {
+        ObservationMode.override = .manual
+        let cell = CounterCell(frame: .zero)
+        size(cell)
+        cell.viewModel = ObservedCounter()
+        cell.layoutIfNeeded()
+        let after = cell.updates
+
+        cell.setNeedsLayout()
+        cell.layoutIfNeeded()
+        XCTAssertEqual(cell.updates, after, "no invalidation, no re-run")
+    }
+
     func test_cell_nativeMode_assigningViewModelRerunsHookOnNextPropertiesPass() throws {
         guard #available(iOS 26.0, *) else { throw XCTSkip("native path needs iOS 26") }
         ObservationMode.override = .native

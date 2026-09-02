@@ -42,8 +42,21 @@ open class BaseViewController: UIViewController, UIViewBuildable {
         if #available(iOS 26.0, *), ObservationMode.current == .native {
             setNeedsUpdateProperties()
         } else {
+            needsContentUpdate = true
             view.setNeedsLayout()
         }
+    }
+
+    /// Manual/unavailable-mode bookkeeping: `true` until the first pass, then only after an
+    /// invalidation, so unrelated layout passes skip the hook.
+    private var needsContentUpdate = true
+
+    fileprivate func runContentUpdateIfNeeded() {
+        let mode = ObservationMode.current
+        guard mode != .native else { return }
+        guard mode == .unavailable || needsContentUpdate else { return }
+        needsContentUpdate = false
+        ObservationTracker.run { updateContent() } onInvalidate: { [weak self] in self?.setNeedsContentUpdate() }
     }
 
     @available(iOS 26.0, *)
@@ -74,8 +87,7 @@ extension BaseViewController {
 
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        guard ObservationMode.current != .native else { return }
-        ObservationTracker.run { updateContent() } onInvalidate: { [weak self] in self?.view.setNeedsLayout() }
+        runContentUpdateIfNeeded()
     }
 
     open override func viewWillAppear(_ animated: Bool) {

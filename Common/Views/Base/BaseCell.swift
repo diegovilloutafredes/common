@@ -50,9 +50,14 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
         if #available(iOS 26.0, *), ObservationMode.current == .native {
             setNeedsUpdateProperties()
         } else {
+            needsContentUpdate = true
             setNeedsLayout()
         }
     }
+
+    /// Manual/unavailable-mode bookkeeping: `true` until the first pass, then only after an
+    /// invalidation, so unrelated layout passes (scrolling, rotation) skip the hook.
+    private var needsContentUpdate = true
 
     @available(iOS 26.0, *)
     open override func updateProperties() {
@@ -62,8 +67,15 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
     }
 
     open override func layoutSubviews() {
+        runContentUpdateIfNeeded()   // before layout, mirroring UIKit's updateProperties() ordering
         super.layoutSubviews()
-        guard ObservationMode.current != .native else { return }
-        ObservationTracker.run { updateContent() } onInvalidate: { [weak self] in self?.setNeedsLayout() }
+    }
+
+    private func runContentUpdateIfNeeded() {
+        let mode = ObservationMode.current
+        guard mode != .native else { return }
+        guard mode == .unavailable || needsContentUpdate else { return }
+        needsContentUpdate = false
+        ObservationTracker.run { updateContent() } onInvalidate: { [weak self] in self?.setNeedsContentUpdate() }
     }
 }

@@ -109,6 +109,23 @@ final class BaseViewControllerUpdateContentTests: XCTestCase {
         XCTAssertEqual(viewModel.rendered, 3)
     }
 
+    /// Improvement 2: in manual mode the hook is invalidation-driven, not per layout pass.
+    func test_manualMode_unrelatedLayoutPassDoesNotRerunHook() {
+        ObservationMode.override = .manual
+        let viewModel = CounterViewModel(model: ObservedCounter())
+        let vc = makeLoaded(viewModel)
+        vc.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 1)
+
+        vc.view.setNeedsLayout()
+        vc.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 1, "no invalidation, no re-run")
+
+        vc.setNeedsContentUpdate()
+        vc.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 2)
+    }
+
     func test_setNeedsContentUpdate_manualMode_schedulesLayout() {
         ObservationMode.override = .manual
         let vc = makeLoaded(CounterViewModel(model: ObservedCounter()))
