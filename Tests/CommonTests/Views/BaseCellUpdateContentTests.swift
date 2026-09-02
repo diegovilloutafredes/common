@@ -165,6 +165,24 @@ final class BaseCellUpdateContentTests: XCTestCase {
         XCTAssertEqual(cell.rendered, 7, "native tracking is armed by the synchronous bind")
     }
 
+    /// Dequeued cells are configured BEFORE they are added to the collection view, so the
+    /// synchronous bind must not depend on the cell being in a window — in every mode.
+    func test_cell_nativeMode_detachedCell_bindsSynchronously() throws {
+        guard #available(iOS 26.0, *) else { throw XCTSkip("native path needs iOS 26") }
+        ObservationMode.override = .native
+        let cell = CounterCell(frame: .zero)
+        size(cell)                      // detached: no window
+        let model = ObservedCounter()
+        model.value = 8
+        cell.viewModel = model
+        XCTAssertEqual(cell.rendered, 8, "a detached cell must still be bound on assignment")
+
+        host(cell)
+        model.value = 9
+        cell.updatePropertiesIfNeeded()
+        XCTAssertEqual(cell.rendered, 9, "tracking must be armed once the cell is on screen")
+    }
+
     func test_reusableView_assigningViewModel_manualMode_bindsSynchronously() {
         ObservationMode.override = .manual
         let header = CounterHeader(frame: .zero)
