@@ -35,6 +35,8 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
     }
     .backgroundColor(.secondarySystemGroupedBackground)
 
+    private var renderedRevision: Int = .zero
+
     @UIViewBuilder
     override var mainView: UIView {
         VStack(spacing: 0) {
@@ -71,6 +73,13 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
         navigationItem.rightBarButtonItems = [clearCacheButton, preloadButton]
     }
 
+    override func updateContent() {
+        super.updateContent()
+        guard renderedRevision != viewModel.revision else { return }
+        renderedRevision = viewModel.revision
+        list.reloadData()
+    }
+
     @objc private func clearCacheTapped() {
         Task { @MainActor in
             await viewModel.clearCache()
@@ -80,10 +89,4 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
     @objc private func preloadTapped() {
         viewModel.preloadBatch()
     }
-}
-
-// MARK: - CollectionViewReloadable
-
-extension ImageLoadingViewController: CollectionViewReloadable {
-    func reloadData() { list.reloadData() }
 }

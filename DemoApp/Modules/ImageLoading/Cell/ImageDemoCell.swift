@@ -64,27 +64,10 @@ final class ImageDemoCell: BaseViewModelableCell<ImageDemoCellViewModel> {
         .textColor(.secondaryLabel)
         .numberOfLines(2)
 
-    override var viewModel: ImageDemoCellViewModel? {
-        didSet {
-            guard let vm = viewModel else {
-                thumbView.cancelImageLoad()
-                thumbView.image = nil
-                return
-            }
-            titleLabel.text(vm.title)
-            subtitleLabel.text(vm.subtitle)
-
-            if let badge = vm.badge {
-                badgeLabel.text("  \(badge)  ")
-                badgeLabel.backgroundColor(vm.badgeColor)
-                badgeLabel.isHidden = false
-            } else {
-                badgeLabel.isHidden = true
-            }
-
-            thumbView.loadImage(from: vm.imageURL, options: vm.options)
-        }
-    }
+    /// The URL currently loading/shown. `updateContent()` may run more than once per
+    /// assignment, and `loadImage` cancels-and-restarts on every call — so only re-issue
+    /// the load when the bound URL actually changed.
+    private var loadedURL: URL?
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -107,5 +90,33 @@ final class ImageDemoCell: BaseViewModelableCell<ImageDemoCellViewModel> {
     override func setupCell() {
         super.setupCell()
         backgroundColor(.clear)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        loadedURL = nil
+    }
+
+    override func updateContent() {
+        guard let viewModel else {
+            thumbView.cancelImageLoad()
+            thumbView.image = nil
+            loadedURL = nil
+            return
+        }
+        titleLabel.text(viewModel.title)
+        subtitleLabel.text(viewModel.subtitle)
+
+        if let badge = viewModel.badge {
+            badgeLabel.text("  \(badge)  ")
+            badgeLabel.backgroundColor(viewModel.badgeColor)
+            badgeLabel.isHidden = false
+        } else {
+            badgeLabel.isHidden = true
+        }
+
+        guard loadedURL != viewModel.imageURL else { return }
+        loadedURL = viewModel.imageURL
+        thumbView.loadImage(from: viewModel.imageURL, options: viewModel.options)
     }
 }

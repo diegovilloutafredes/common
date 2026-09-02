@@ -1,4 +1,5 @@
 import Common
+import Observation
 import UIKit
 
 // MARK: - ImageDemoSection
@@ -10,24 +11,28 @@ struct ImageDemoSection {
 
 // MARK: - ImageLoadingViewModelProtocol
 
+@MainActor
 protocol ImageLoadingViewModelProtocol: ViewModel, CollectionViewable {
     var title: String { get }
+    /// Bumped when the sections are rebuilt (after a cache clear); the controller reloads
+    /// when it differs from the revision it last rendered.
+    var revision: Int { get }
     func clearCache() async
     func preloadBatch()
-    func reload()
 }
 
 // MARK: - ImageLoadingViewModel
 
+@Observable
 @MainActor
 final class ImageLoadingViewModel {
     let title = "Image Loading"
+    private(set) var revision: Int = .zero
 
-    weak var view: CollectionViewReloadable?
+    @ObservationIgnored weak var view: ScreenSizeMeasurable?
+    @ObservationIgnored private var sections: [ImageDemoSection] = ImageLoadingViewModel.makeSections()
 
-    private lazy var sections: [ImageDemoSection] = makeSections()
-
-    private func makeSections() -> [ImageDemoSection] {
+    private static func makeSections() -> [ImageDemoSection] {
         let placeholder = UIImage(systemName: "photo")?
             .withTintColor(.tertiaryLabel, renderingMode: .alwaysOriginal)
         let failureImage = UIImage(systemName: "exclamationmark.triangle.fill")?
@@ -184,17 +189,13 @@ final class ImageLoadingViewModel {
 extension ImageLoadingViewModel: ImageLoadingViewModelProtocol {
     func clearCache() async {
         await ImageLoader.shared.cache.clearAll()
-        sections = makeSections()
-        reload()
+        sections = Self.makeSections()
+        revision += 1
     }
 
     func preloadBatch() {
         let urls = sections[5].items.map(\.imageURL)
         Task { await ImageLoader.shared.preload(urls: urls) }
-    }
-
-    func reload() {
-        view?.reloadData()
     }
 }
 
@@ -228,10 +229,4 @@ extension ImageLoadingViewModel: CollectionViewable {
     func onMinimumLineSpacingFor(section: Int) -> Double { 4 }
 
     func onInsetFor(section: Int) -> Inset { (top: 4, left: 0, bottom: 8, right: 0) }
-}
-
-// MARK: - CollectionViewReloadable
-
-protocol CollectionViewReloadable: AnyObject, ScreenSizeMeasurable {
-    func reloadData()
 }

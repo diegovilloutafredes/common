@@ -8,7 +8,7 @@ import UIKit
 
 // MARK: - StorageWireframe
 enum StorageWireframe {
-    static func createModule() -> UIViewController {
+    @MainActor static func createModule() -> UIViewController {
         let viewModel = StorageViewModelImpl()
         return StorageViewController(viewModel: viewModel)
     }

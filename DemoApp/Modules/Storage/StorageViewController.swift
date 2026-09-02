@@ -7,10 +7,14 @@ import Common
 import UIKit
 
 // MARK: - StorageViewController
+/// The buttons only call the view model; every status label is rendered from the
+/// observable `stored` / `directSecret` snapshots in `updateContent()`.
 final class StorageViewController: BaseViewModelableViewController<StorageViewModelProtocol> {
     private lazy var statusLabels: [StorageType: UILabel] = Dictionary(
         uniqueKeysWithValues: StorageType.allCases.map { ($0, makeStatusLabel()) }
     )
+
+    private lazy var directStatusLabel = makeStatusLabel()
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -35,8 +39,29 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
-        StorageType.allCases.forEach { refreshLabel(for: $0) }
-        refreshDirectLabel()
+    }
+
+    override func updateContent() {
+        super.updateContent()
+        let stored = viewModel.stored
+        StorageType.allCases.forEach { type in
+            render(statusLabels[type], item: stored[type])
+        }
+        if let secret = viewModel.directSecret {
+            directStatusLabel.text("Stored: \"\(secret)\"").textColor(.systemGreen)
+        } else {
+            directStatusLabel.text("Empty — nothing stored").textColor(.secondaryLabel)
+        }
+    }
+
+    private func render(_ label: UILabel?, item: StorageItem?) {
+        if let item {
+            label?.text("Stored: \"\(item.value)\" at \(item.timestamp.toString(with: "HH:mm:ss"))")
+                .textColor(.systemGreen)
+        } else {
+            label?.text("Empty — nothing stored")
+                .textColor(.secondaryLabel)
+        }
     }
 
     private func sectionCard(for type: StorageType) -> UIView {
@@ -70,11 +95,9 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
             HStack(distribution: .fillEqually, spacing: 8) {
                 makeButton(title: "Save", color: type.color) { [weak self] in
                     _ = self?.viewModel.save(type: type)
-                    self?.refreshLabel(for: type)
                     Snackbar.show(.init(message: "Saved to \(type.title)"))
                 }
                 makeButton(title: "Read", color: .systemOrange) { [weak self] in
-                    self?.refreshLabel(for: type)
                     let value = self?.viewModel.read(type: type)
                     Snackbar.show(.init(message: value != nil
                         ? "Read: \"\(value!.value)\""
@@ -82,7 +105,6 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
                 }
                 makeButton(title: "Delete", color: .systemRed) { [weak self] in
                     self?.viewModel.delete(type: type)
-                    self?.refreshLabel(for: type)
                     Snackbar.show(.init(message: "Deleted from \(type.title)"))
                 }
             }
@@ -92,8 +114,6 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         .backgroundColor(.secondarySystemBackground)
         .round(radius: 12)
     }
-
-    private lazy var directStatusLabel = makeStatusLabel()
 
     private func directKeychainCard() -> UIView {
         VStack(
@@ -121,19 +141,16 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
                 makeButton(title: "Save", color: .systemTeal) { [weak self] in
                     guard let self else { return }
                     let secret = viewModel.saveDirectSecret()
-                    refreshDirectLabel()
                     Snackbar.show(.init(message: "Saved \"\(secret)\""))
                 }
                 makeButton(title: "Read", color: .systemOrange) { [weak self] in
                     guard let self else { return }
-                    refreshDirectLabel()
                     let value = viewModel.readDirectSecret()
                     Snackbar.show(.init(message: value.map { "Read: \"\($0)\"" } ?? "Nothing stored"))
                 }
                 makeButton(title: "Delete", color: .systemRed) { [weak self] in
                     guard let self else { return }
                     viewModel.deleteDirectSecret()
-                    refreshDirectLabel()
                     Snackbar.show(.init(message: "Deleted from Keychain"))
                 }
             }
@@ -142,24 +159,6 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         }
         .backgroundColor(.secondarySystemBackground)
         .round(radius: 12)
-    }
-
-    private func refreshDirectLabel() {
-        if let secret = viewModel.readDirectSecret() {
-            directStatusLabel.text("Stored: \"\(secret)\"").textColor(.systemGreen)
-        } else {
-            directStatusLabel.text("Empty — nothing stored").textColor(.secondaryLabel)
-        }
-    }
-
-    private func refreshLabel(for type: StorageType) {
-        if let item = viewModel.read(type: type) {
-            statusLabels[type]?.text("Stored: \"\(item.value)\" at \(item.timestamp.toString(with: "HH:mm:ss"))")
-                .textColor(.systemGreen)
-        } else {
-            statusLabels[type]?.text("Empty — nothing stored")
-                .textColor(.secondaryLabel)
-        }
     }
 
     private func makeStatusLabel() -> UILabel {
