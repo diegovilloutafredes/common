@@ -7,8 +7,10 @@
 /// A base view that is driven by a View Model and supports view lifecycle events.
 open class BaseViewModelableView<ViewModelType>: ViewModelableView, ViewLifecycleable {
     
-    /// The view model associated with this view.
-    open var viewModel: ViewModelType
+    /// The view model associated with this view. Assigning it schedules `updateContent()`.
+    open var viewModel: ViewModelType {
+        didSet { setNeedsContentUpdate() }
+    }
 
     /// Initializes a new view with the given view model.
     /// - Parameter viewModel: The view model to inject.
