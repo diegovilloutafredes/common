@@ -434,7 +434,7 @@ UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on:
 
 3. **`alignment: .center` collapses `UIView` spacers**: Plain `UIView` has no intrinsic width — center alignment makes it zero-width and invisible. Use `.fill` + `textAlignment(.center)`.
 
-4. **`viewModel` is nil in `mainView`**: In cells, all model-driven content goes in `updateContent()` (or a `viewModel didSet` for plain value models) — the view builder runs before `viewModel` is set. Work that must run once per assignment (an image load) goes behind a guard on the bound value; `updateContent()` may run more than once.
+4. **`viewModel` is nil in `mainView`**: In cells, all model-driven content goes in `updateContent()` (or a `viewModel didSet` for plain value models) — the view builder runs before `viewModel` is set. Assignment binds synchronously (self-sizing cells measure right after configuration); later observable changes come on the next pass. Work that must run once per assignment (an image load) goes behind a guard on the bound value; `updateContent()` may run more than once.
 
 5. **`BaseCollectionViewableViewController` not `BaseViewModelableViewController`** for screens with `VList`/`HList`. The collection base provides all dataSource/delegate boilerplate at zero cost.
 

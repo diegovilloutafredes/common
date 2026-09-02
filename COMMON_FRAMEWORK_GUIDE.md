@@ -745,7 +745,7 @@ final class ItemView: BaseViewModelableView<ItemViewModel> {
 
 ### `BaseViewModelableCell<T: ViewModel>`
 
-For collection/table view cells, bind content in `updateContent()` — `mainView` is built once in `init` and the `viewModel` property is `nil` at that point. Assigning `viewModel` schedules `updateContent()`, and if the model is `@Observable` any later change to a property read inside re-runs it as well:
+For collection/table view cells, bind content in `updateContent()` — `mainView` is built once in `init` and the `viewModel` property is `nil` at that point. Assigning `viewModel` runs `updateContent()` **synchronously** (self-sizing cells are measured right after configuration, so the content must already be there), and if the model is `@Observable` any later change to a property read inside re-runs it on the next pass:
 
 ```swift
 // Protocol — defines what the cell reads
@@ -814,7 +814,7 @@ Read `@Observable` state in **one** hook and let the framework re-run it. No `di
 |---|---|---|
 | ViewModel (`ViewLifecycleable`) | `onUpdateProperties()` | first pass, then any tracked change |
 | `BaseViewController` subclass | `updateContent()` | same |
-| `BaseView`, `BaseCell`, `BaseReusableView` subclasses | `updateContent()` | same; view-model-able variants also re-run on `viewModel` assignment |
+| `BaseView`, `BaseCell`, `BaseReusableView` subclasses | `updateContent()` | same; view-model-able variants bind synchronously on `viewModel` assignment (`updateContentIfNeeded()`) |
 | Anywhere | `setNeedsContentUpdate()` | forces a re-run on the next pass |
 
 ```swift
@@ -853,6 +853,7 @@ Rules:
 - **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and let the controller compare it with the revision it last rendered before calling `reloadData()`. This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view.
 - Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
 - A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
+- Self-sizing cells (`estimatedItemSize = .automaticSize`, `preferredLayoutAttributesFitting`) are measured before any update or layout pass. That is why `viewModel` assignment binds synchronously; if you bind from anywhere else before a measurement, call `updateContentIfNeeded()` first.
 
 Migration recipe (what the DemoApp modules went through):
 
