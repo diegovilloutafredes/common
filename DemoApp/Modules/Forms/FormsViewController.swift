@@ -153,6 +153,23 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
         setupAsKeyboardDismissable()
     }
 
+    /// Renders the validator's observable state: submit gating plus one error label and
+    /// border per field. Re-runs after every `validate(field:value:)` and `submit`.
+    override func updateContent() {
+        super.updateContent()
+        guard let state = viewModel.validation else { return }
+        submitButton.isEnabled(state.isValid)
+        for field in [FormsViewModel.Field.name, .email, .password, .confirmPassword] {
+            if let message = state.fields[field]?.message {
+                errorLabel(for: field).text(message).isHidden(false)
+                textField(for: field).borderColor(.systemRed)
+            } else {
+                errorLabel(for: field).isHidden(true)
+                textField(for: field).borderColor(.systemGray3)
+            }
+        }
+    }
+
     private func onSubmit() {
         view.endEditing(true)
         viewModel.submit(
@@ -194,20 +211,6 @@ extension FormsViewController {
 
 // MARK: - FormsViewProtocol
 extension FormsViewController: FormsViewProtocol {
-    func updateValidationStatus(isValid: Bool) {
-        submitButton.isEnabled(isValid)
-    }
-
-    func showFieldError(field: FormsViewModel.Field, message: String) {
-        errorLabel(for: field).text(message).isHidden(false)
-        textField(for: field).borderColor(.systemRed)
-    }
-
-    func clearFieldError(field: FormsViewModel.Field) {
-        errorLabel(for: field).isHidden(true)
-        textField(for: field).borderColor(.systemGray3)
-    }
-
     func showSubmissionSuccess(message: String) {
         Snackbar.show(.init(message: message))
     }

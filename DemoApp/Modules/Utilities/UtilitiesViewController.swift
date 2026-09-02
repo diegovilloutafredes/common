@@ -4,10 +4,24 @@
 //
 
 import Common
+import Observation
 import UIKit
+
+// MARK: - UtilitiesState
+/// Controller-owned observable state: the screen has no view-model state of its own, but its
+/// toggles still benefit from a single render path in `updateContent()`.
+@Observable
+@MainActor
+final class UtilitiesState {
+    var isSpinning = false
+    var logCount: Int = .zero
+    var isBarExpanded = false
+}
 
 // MARK: - UtilitiesViewController
 final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesViewModelProtocol> {
+    private let state = UtilitiesState()
+    private var isSpinnerRunning = false
 
     // MARK: - Debouncer demo
     private lazy var debouncedOutputLabel: UILabel = UILabel()
@@ -153,7 +167,6 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
     private var alphaIsHidden = false
     private var isBouncing = false
     private var colorIsAlternate = false
-    private var isBarExpanded = false
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -295,15 +308,33 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
         setupConstraintAnimation()
     }
 
-    private var logCount = 0
+    /// Spinner, logger status and the expand/collapse title all derive from `state`.
+    /// The animation blocks below stay imperative: they animate views, not state.
+    override func updateContent() {
+        super.updateContent()
+        renderSpinner(state.isSpinning)
+        if state.logCount > .zero {
+            loggerStatusLabel.text("Emitted frame #\(state.logCount) — check the Xcode console")
+                .textColor(.systemGreen)
+        } else {
+            loggerStatusLabel.text("No logs emitted yet").textColor(.secondaryLabel)
+        }
+        expandCollapseButton.configuration?.title = state.isBarExpanded ? "Collapse" : "Expand"
+    }
+
+    private func renderSpinner(_ spinning: Bool) {
+        spinnerToggleButton.configuration?.title = spinning ? "Stop Spinner" : "Start Spinner"
+        spinnerToggleButton.configuration?.baseBackgroundColor = spinning ? .systemRed : .systemBlue
+        guard spinning != isSpinnerRunning else { return }
+        isSpinnerRunning = spinning
+        spinning ? spinner.startAnimating() : spinner.stopAnimating()
+    }
 
     private func emitLogFrame() {
-        logCount += 1
+        state.logCount += 1
         Logger.isRuntimeForceEnabled(true)
         Logger.shouldLog(true)
-        Logger.log(["screen": "Utilities", "event": "logger-demo", "count": logCount])
-        loggerStatusLabel.text("Emitted frame #\(logCount) — check the Xcode console")
-            .textColor(.systemGreen)
+        Logger.log(["screen": "Utilities", "event": "logger-demo", "count": state.logCount])
     }
 
     private func setupConstraintAnimation() {
@@ -314,19 +345,8 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
         barWidthConstraint = c
     }
 
-    private var isSpinning = false
-
     private func toggleSpinner() {
-        isSpinning.toggle()
-        if isSpinning {
-            spinner.startAnimating()
-            spinnerToggleButton.configuration?.title = "Stop Spinner"
-            spinnerToggleButton.configuration?.baseBackgroundColor = .systemRed
-        } else {
-            spinner.stopAnimating()
-            spinnerToggleButton.configuration?.title = "Start Spinner"
-            spinnerToggleButton.configuration?.baseBackgroundColor = .systemBlue
-        }
+        state.isSpinning.toggle()
     }
 
     private func toggleAlpha() {
@@ -375,11 +395,10 @@ final class UtilitiesViewController: BaseViewModelableViewController<UtilitiesVi
     }
 
     private func toggleBarWidth() {
-        isBarExpanded.toggle()
+        state.isBarExpanded.toggle()
         // outer margins (16×2) + card padding (12×2) = 56 total horizontal inset
         let expandedWidth = view.bounds.width - 56
-        barWidthConstraint?.constant = isBarExpanded ? expandedWidth : 80
-        expandCollapseButton.configuration?.title = isBarExpanded ? "Collapse" : "Expand"
+        barWidthConstraint?.constant = state.isBarExpanded ? expandedWidth : 80
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: []) {
             self.view.layoutIfNeeded()
         }

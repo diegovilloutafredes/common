@@ -4,12 +4,11 @@
 //
 
 import Common
+import Observation
 
 // MARK: - FormsViewProtocol
+/// Only the one-shot submission toast remains an event; validation is observable state.
 protocol FormsViewProtocol: AnyObject {
-    func updateValidationStatus(isValid: Bool)
-    func showFieldError(field: FormsViewModel.Field, message: String)
-    func clearFieldError(field: FormsViewModel.Field)
     func showSubmissionSuccess(message: String)
 }
 
@@ -17,11 +16,14 @@ protocol FormsViewProtocol: AnyObject {
 @MainActor
 protocol FormsViewModelProtocol: ViewModel {
     var title: String { get }
+    /// `nil` until the first keystroke; then the validator's latest state.
+    var validation: FieldsValidator<FormsViewModel.Field>.State? { get }
     func validate(field: FormsViewModel.Field, value: String)
     func submit(name: String, email: String, password: String)
 }
 
 // MARK: - FormsViewModel
+@Observable
 @MainActor
 final class FormsViewModel {
     enum Field: String {
@@ -32,11 +34,13 @@ final class FormsViewModel {
     }
 
     let title = "Forms & TextFields"
-    weak var view: FormsViewProtocol?
+    private(set) var validation: FieldsValidator<Field>.State?
+
+    @ObservationIgnored weak var view: FormsViewProtocol?
 
     // Validation is fully delegated to Common's FieldsValidator — no values, rules, or
-    // touched-state are tracked by hand here.
-    private lazy var validator = FieldsValidator<Field>(
+    // touched-state are tracked by hand here. Its onChange just publishes the new state.
+    @ObservationIgnored private lazy var validator = FieldsValidator<Field>(
         rules: [
             .name: [.notEmpty, .minLength(2)],
             .email: [.notEmpty, .email],
@@ -52,17 +56,7 @@ final class FormsViewModel {
             default:                           rule.defaultMessage
             }
         },
-        onChange: { [weak self] state in
-            guard let self else { return }
-            self.view?.updateValidationStatus(isValid: state.isValid)
-            state.fields.forEach { field, fieldState in
-                if let message = fieldState.message {
-                    self.view?.showFieldError(field: field, message: message)
-                } else {
-                    self.view?.clearFieldError(field: field)
-                }
-            }
-        }
+        onChange: { [weak self] state in self?.validation = state }
     )
 }
 
