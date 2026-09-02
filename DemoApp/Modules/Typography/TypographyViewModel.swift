@@ -4,9 +4,11 @@
 //
 
 import Common
+import Observation
 import UIKit
 
 // MARK: - TypographyViewModelProtocol
+@MainActor
 protocol TypographyViewModelProtocol: ViewModel {
     var title: String { get }
     var families: [(family: AppFontFamily, name: String)] { get }
@@ -16,9 +18,10 @@ protocol TypographyViewModelProtocol: ViewModel {
 }
 
 // MARK: - TypographyViewModel
+@Observable
+@MainActor
 final class TypographyViewModel {
     let title = "Typography"
-    weak var view: TypographyViewProtocol?
 
     let families: [(family: AppFontFamily, name: String)] = [
         (.montserrat, "Montserrat"),
@@ -35,7 +38,7 @@ final class TypographyViewModel {
 // MARK: - TypographyViewModelProtocol
 extension TypographyViewModel: TypographyViewModelProtocol {
     func select(family: AppFontFamily) {
+        guard selectedFamily != family else { return }
         selectedFamily = family
-        view?.updateSelectedFamily()
     }
 }

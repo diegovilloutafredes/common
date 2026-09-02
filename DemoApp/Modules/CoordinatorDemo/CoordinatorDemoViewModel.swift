@@ -5,6 +5,7 @@
 
 import Common
 import Foundation
+import Observation
 
 // MARK: - CoordinatorEvent
 
@@ -13,13 +14,6 @@ struct CoordinatorEvent {
     let message: String
     let delta: Int
     let time: Date = .init()
-}
-
-// MARK: - CoordinatorDemoViewProtocol
-
-protocol CoordinatorDemoViewProtocol: AnyObject {
-    func updateStats(children: Int, navStack: Int, eventCount: Int)
-    func prependEvent(_ event: CoordinatorEvent)
 }
 
 // MARK: - CoordinatorDemoViewModelDelegate
@@ -33,7 +27,13 @@ protocol CoordinatorDemoViewModelDelegate: AnyObject {
 
 // MARK: - CoordinatorDemoViewModelProtocol
 
+@MainActor
 protocol CoordinatorDemoViewModelProtocol: ViewModel {
+    var children: Int { get }
+    var navStack: Int { get }
+    var eventCount: Int { get }
+    /// Newest first.
+    var events: [CoordinatorEvent] { get }
     func launchChild()
     func launchDeepFlow()
     func presentSheet()
@@ -42,11 +42,17 @@ protocol CoordinatorDemoViewModelProtocol: ViewModel {
 
 // MARK: - CoordinatorDemoViewModel
 
+/// The coordinator writes stats and events into this observable model; the controller
+/// renders them in `updateContent()`. No view protocol is needed.
+@Observable
+@MainActor
 final class CoordinatorDemoViewModel: CoordinatorDemoViewModelProtocol {
-    weak var view: CoordinatorDemoViewProtocol?
-    private weak var delegate: CoordinatorDemoViewModelDelegate?
+    private(set) var children: Int = .zero
+    private(set) var navStack: Int = .zero
+    private(set) var eventCount: Int = .zero
+    private(set) var events: [CoordinatorEvent] = []
 
-    private var eventCount = 0
+    @ObservationIgnored private weak var delegate: CoordinatorDemoViewModelDelegate?
 
     init(delegate: CoordinatorDemoViewModelDelegate) {
         self.delegate = delegate
@@ -58,12 +64,14 @@ final class CoordinatorDemoViewModel: CoordinatorDemoViewModelProtocol {
     func requestStatsRefresh() { delegate?.didRequestStatsRefresh() }
 
     func logAndRefresh(_ event: CoordinatorEvent, children: Int, navStack: Int) {
+        events.insert(event, at: .zero)
         eventCount += 1
-        view?.prependEvent(event)
-        view?.updateStats(children: children, navStack: navStack, eventCount: eventCount)
+        refreshStats(children: children, navStack: navStack)
     }
 
     func refreshStats(children: Int, navStack: Int) {
-        view?.updateStats(children: children, navStack: navStack, eventCount: eventCount)
+        // Observation fires on every assignment, so only write what actually changed.
+        if self.children != children { self.children = children }
+        if self.navStack != navStack { self.navStack = navStack }
     }
 }

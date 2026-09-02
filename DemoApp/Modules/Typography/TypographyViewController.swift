@@ -6,11 +6,6 @@
 import Common
 import UIKit
 
-// MARK: - TypographyViewProtocol
-protocol TypographyViewProtocol: AnyObject {
-    func updateSelectedFamily()
-}
-
 // MARK: - TypographyViewController
 final class TypographyViewController: BaseViewModelableViewController<TypographyViewModelProtocol> {
 
@@ -47,6 +42,10 @@ final class TypographyViewController: BaseViewModelableViewController<Typography
         .textColor(.secondaryLabel)
 
     private lazy var stylesContainer = VStack(spacing: 0)
+
+    /// The family the preview and chips currently show. The rebuild below is expensive
+    /// (rows are recreated), so it only runs when the observed selection actually changed.
+    private var renderedFamily: AppFontFamily?
 
     // MARK: - PaddingLabel demo
     private lazy var paddingBadgeRow = HStack(alignment: .center, spacing: 8) {
@@ -99,24 +98,22 @@ final class TypographyViewController: BaseViewModelableViewController<Typography
         viewModel.families.enumerated().forEach { index, item in
             familyChipsStack.addArrangedSubview(makeChip(for: item.family, name: item.name, index: index))
         }
-        reloadPreview()
-        updateChipSelection()
     }
-}
 
-// MARK: - TypographyViewProtocol
-extension TypographyViewController: TypographyViewProtocol {
-    func updateSelectedFamily() {
-        reloadPreview()
-        updateChipSelection()
+    override func updateContent() {
+        super.updateContent()
+        let family = viewModel.selectedFamily   // tracked
+        guard renderedFamily != family else { return }
+        renderedFamily = family
+        reloadPreview(for: family)
+        updateChipSelection(for: family)
     }
 }
 
 // MARK: - Private
 private extension TypographyViewController {
 
-    func reloadPreview() {
-        let family = viewModel.selectedFamily
+    func reloadPreview(for family: AppFontFamily) {
         previewTitleLabel
             .font(.appFont(family, style: .bold, size: 26))
             .text(viewModel.families.first(where: { $0.family == family })?.name ?? "")
@@ -197,8 +194,8 @@ private extension TypographyViewController {
         }
     }
 
-    func updateChipSelection() {
-        let selectedIndex = viewModel.families.firstIndex(where: { $0.family == viewModel.selectedFamily }) ?? 0
+    func updateChipSelection(for family: AppFontFamily) {
+        let selectedIndex = viewModel.families.firstIndex(where: { $0.family == family }) ?? 0
         familyChipsStack.arrangedSubviews
             .compactMap { $0 as? UIButton }
             .forEach { button in

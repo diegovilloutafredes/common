@@ -20,6 +20,9 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
 
     private lazy var eventStack = VStack(alignment: .fill, spacing: 8) {}
 
+    /// How many events are already in `eventStack`; `updateContent()` prepends only the new ones.
+    private var renderedEventCount: Int = .zero
+
     // MARK: - Buttons
 
     private lazy var launchChildButton = UIButton(
@@ -101,7 +104,48 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
         }
     }
 
+    override func updateContent() {
+        super.updateContent()
+        childrenValueLabel.text("\(viewModel.children)")
+        navStackValueLabel.text("\(viewModel.navStack)")
+        eventsValueLabel.text("\(viewModel.eventCount)")
+        prependNewEvents()
+    }
+
     // MARK: - Helpers
+
+    /// `events` is newest-first; the rows not yet rendered are the first
+    /// `events.count - renderedEventCount`. Insert them oldest-first so the newest ends on top.
+    private func prependNewEvents() {
+        let events = viewModel.events
+        let newCount = events.count - renderedEventCount
+        guard newCount > .zero else { return }
+        events.prefix(newCount).reversed().forEach { eventStack.insertArrangedSubview(makeEventRow($0), at: .zero) }
+        renderedEventCount = events.count
+        mainScrollView.setContentOffset(.zero, animated: false)
+    }
+
+    private func makeEventRow(_ event: CoordinatorEvent) -> UIView {
+        let timeLabel = UILabel(event.time.toString(with: "HH:mm:ss"))
+            .font(.monospacedSystemFont(ofSize: 11, weight: .regular))
+            .textColor(.tertiaryLabel)
+
+        let messageLabel = UILabel("\(event.icon) \(event.message)")
+            .font(.systemFont(ofSize: 13))
+            .textColor(.label)
+            .numberOfLines(0)
+
+        return VStack(
+            alignment: .fill,
+            margins: .init(horizontal: 12, vertical: 8),
+            spacing: 2
+        ) {
+            messageLabel
+            timeLabel
+        }
+        .backgroundColor(.secondarySystemBackground)
+        .setAsRoundedView(radius: 8)
+    }
 
     private func makeStatValueLabel(id: String) -> UILabel {
         UILabel("0")
@@ -120,41 +164,5 @@ final class CoordinatorDemoViewController: BaseViewModelableViewController<Coord
         }
         .backgroundColor(.secondarySystemBackground)
         .setAsRoundedView(radius: 10)
-    }
-}
-
-// MARK: - CoordinatorDemoViewProtocol
-
-extension CoordinatorDemoViewController: CoordinatorDemoViewProtocol {
-
-    func updateStats(children: Int, navStack: Int, eventCount: Int) {
-        childrenValueLabel.text("\(children)")
-        navStackValueLabel.text("\(navStack)")
-        eventsValueLabel.text("\(eventCount)")
-    }
-
-    func prependEvent(_ event: CoordinatorEvent) {
-        let timeLabel = UILabel(event.time.toString(with: "HH:mm:ss"))
-            .font(.monospacedSystemFont(ofSize: 11, weight: .regular))
-            .textColor(.tertiaryLabel)
-
-        let messageLabel = UILabel("\(event.icon) \(event.message)")
-            .font(.systemFont(ofSize: 13))
-            .textColor(.label)
-            .numberOfLines(0)
-
-        let row = VStack(
-            alignment: .fill,
-            margins: .init(horizontal: 12, vertical: 8),
-            spacing: 2
-        ) {
-            messageLabel
-            timeLabel
-        }
-        .backgroundColor(.secondarySystemBackground)
-        .setAsRoundedView(radius: 8)
-
-        eventStack.insertArrangedSubview(row, at: 0)
-        mainScrollView.setContentOffset(.zero, animated: false)
     }
 }

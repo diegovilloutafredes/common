@@ -10,18 +10,6 @@ typealias OnboardingViewProtocol = ScreenSizeMeasurable & NavigationBarVisibilit
 
 // MARK: - OnboardingViewController
 final class OnboardingViewController: BaseCollectionViewableViewController<OnboardingViewModelProtocol> {
-    enum OnboardingPage: Int {
-        case first = 0
-        case second
-        case third
-
-        var buttonTitle: String {
-            switch self {
-            case .third: "Comenzar"
-            default: "Siguiente"
-            }
-        }
-    }
 
     private lazy var list = HList(
         dataSource: self,
@@ -42,8 +30,11 @@ final class OnboardingViewController: BaseCollectionViewableViewController<Onboa
         .setConstraints { $0.set(height: 32) }
 
     private lazy var actionButton = UIButton()
-        .onTap { [weak self] in self?.onActionButtonPressed() }
+        .onTap { [weak self] in self?.viewModel.advance() }
         .setRatio(327/60)
+
+    /// Guards the animated bar-item swap so it only runs when the observed state flips.
+    private var renderedShowsSkip: Bool?
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -56,53 +47,55 @@ final class OnboardingViewController: BaseCollectionViewableViewController<Onboa
 
     override func setupView() {
         super.setupView()
-        pageControl.numberOfPages(viewModel.getNumberOfItems(in: .zero))
-        currentPage = .zero
+        pageControl.numberOfPages(viewModel.pageCount)
     }
 
-    private var currentPage = 0 {
-        didSet {
-            pageControl.currentPage = currentPage
+    /// Every `viewModel` read here is tracked: swiping (via `set(currentPage:)`) and the
+    /// button (via `advance()`) both land here, with no `didSet` in between.
+    override func updateContent() {
+        super.updateContent()
+        let page = viewModel.currentPage
+        pageControl.currentPage = page
 
-            actionButton.configuration = .filled()
-                .with {
-                    $0.attributedTitle = .init(
-                        currentStep?.buttonTitle ?? .empty,
-                        attributes: .init()
-                            .with { $0.font = .appFont(style: .bold, size: 14) }
-                    )
-                    $0.baseBackgroundColor = .black
-                    $0.baseForegroundColor = .white
-                    $0.cornerStyle = .capsule
-                }
+        actionButton.configuration = .filled()
+            .with {
+                $0.attributedTitle = .init(
+                    viewModel.buttonTitle,
+                    attributes: .init()
+                        .with { $0.font = .appFont(style: .bold, size: 14) }
+                )
+                $0.baseBackgroundColor = .black
+                $0.baseForegroundColor = .white
+                $0.cornerStyle = .capsule
+            }
 
-            on(step: currentStep)
-        }
+        scrollToPageIfNeeded(page)
+        renderSkipItem(viewModel.showsSkip)
     }
-
-    private var currentStep: OnboardingPage? { .init(rawValue: currentPage) }
-    private var lastPageIndex: Int { viewModel.getNumberOfItems(in: .zero) - 1 }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageWidth = scrollView.frame.width
         guard pageWidth > 0 else { return }
-        currentPage = Int(round(scrollView.contentOffset.x / pageWidth))
+        viewModel.set(currentPage: Int(round(scrollView.contentOffset.x / pageWidth)))
     }
 }
 
 // MARK: - Convenience
 extension OnboardingViewController {
-    private func onActionButtonPressed() {
-        guard currentPage < lastPageIndex else { viewModel.onRequested(.begin); return }
-        currentPage += 1
-        list.setContentOffset(.init(x: list.frame.width * Double(currentPage), y: .zero), animated: false)
+    /// A page change that came from the button (not from a swipe) leaves the pager behind;
+    /// bring it to the observed page. Swipes already have the pager on that page.
+    private func scrollToPageIfNeeded(_ page: Int) {
+        let pageWidth = list.frame.width
+        guard pageWidth > 0 else { return }
+        let visiblePage = Int(round(list.contentOffset.x / pageWidth))
+        guard visiblePage != page else { return }
+        list.setContentOffset(.init(x: pageWidth * Double(page), y: .zero), animated: false)
     }
 
-    private func on(step: OnboardingPage? = nil) {
-        switch step {
-        case .third:
-            navigationItem.setRightBarButtonItems(nil, animated: true)
-        default:
+    private func renderSkipItem(_ showsSkip: Bool) {
+        guard renderedShowsSkip != showsSkip else { return }
+        renderedShowsSkip = showsSkip
+        if showsSkip {
             navigationItem.setRightBarButton(
                 .init(
                     title: "Saltar",
@@ -110,8 +103,9 @@ extension OnboardingViewController {
                 ),
                 animated: true
             )
-
             setupNavigationBar()
+        } else {
+            navigationItem.setRightBarButtonItems(nil, animated: true)
         }
     }
 
