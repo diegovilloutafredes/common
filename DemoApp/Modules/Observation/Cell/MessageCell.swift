@@ -10,6 +10,7 @@ import UIKit
 /// No `viewModel didSet` here: assignment schedules `updateContent()`, and a later
 /// `isRead` change on the bound model re-runs it.
 final class MessageCell: BaseViewModelableCell<MessageItem> {
+    /// Estimated height only: rows self-size to their preview text (see `preferredLayoutAttributesFitting`).
     static let height: Double = 56
 
     private lazy var unreadDot = UIView()
@@ -23,6 +24,7 @@ final class MessageCell: BaseViewModelableCell<MessageItem> {
     private lazy var previewLabel = UILabel()
         .font(.systemFont(ofSize: 13))
         .textColor(.secondaryLabel)
+        .numberOfLines(0)
 
     @UIViewBuilder override var mainView: UIView {
         HStack(alignment: .center, margins: .init(horizontal: 16, vertical: 8), spacing: 12) {
@@ -32,6 +34,18 @@ final class MessageCell: BaseViewModelableCell<MessageItem> {
                 previewLabel
             }
         }
+    }
+
+    /// Self-sizing: measured right after `viewModel` is assigned, which is why assignment
+    /// binds synchronously — a deferred bind would measure empty labels.
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        let attributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+        attributes.frame.size = contentView.systemLayoutSizeFitting(
+            CGSize(width: layoutAttributes.size.width, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        return attributes
     }
 
     override func updateContent() {

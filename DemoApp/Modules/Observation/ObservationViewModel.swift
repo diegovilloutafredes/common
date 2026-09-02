@@ -17,6 +17,9 @@ protocol ObservationViewModelProtocol: CollectionViewable, ViewModel, ViewLifecy
 
 // MARK: - ObservationViewProtocol
 protocol ObservationViewProtocol: ScreenSizeMeasurable {
+    /// The message list's width: self-sizing rows must be estimated at the list's width,
+    /// not the screen's — items wider than the collection view are dropped by the layout.
+    var messageListWidth: Double { get }
     func render(count: Int, unread: Int, mode: String)
 }
 
@@ -29,7 +32,7 @@ final class ObservationViewModel {
         .init(sender: "Ana", preview: "Release notes for 1.7.0 are ready"),
         .init(sender: "Bruno", preview: "Can you review the Observation PR?"),
         .init(sender: "Camila", preview: "Lunch at 1?", isRead: true),
-        .init(sender: "Diego", preview: "updateContent() replaced my didSet"),
+        .init(sender: "Diego", preview: "updateContent() replaced my didSet — and this row self-sizes to a longer preview, measured with its content already bound"),
     ]
     weak var view: ObservationViewProtocol?
 }
@@ -59,7 +62,7 @@ extension ObservationViewModel: CollectionViewable {
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { MessageCell.reuseIdentifier }
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { messages[index] }
     func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) {
-        (view?.screenWidth ?? 375, MessageCell.height)
+        (view?.messageListWidth ?? 343, MessageCell.height)   // estimate; rows self-size vertically
     }
     func onItemSelected(in section: Int, at index: Int) { messages[index].isRead.toggle() }
 }

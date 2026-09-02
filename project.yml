@@ -171,7 +171,7 @@ targets:
   DemoApp:
     type: application
     platform: iOS
-    deploymentTarget: "26.0"
+    deploymentTarget: "18.0"
     sources:
       - path: DemoApp
         excludes:
@@ -197,7 +197,7 @@ targets:
         SWIFT_EMIT_LOC_STRINGS: YES
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1"
-        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+        IPHONEOS_DEPLOYMENT_TARGET: "18.0"
 
   CommonTests:
     type: bundle.unit-test
@@ -220,7 +220,7 @@ targets:
   HostedTests:
     type: bundle.unit-test
     platform: iOS
-    deploymentTarget: "26.0"
+    deploymentTarget: "18.0"
     sources:
       - Tests/HostedTests
     dependencies:

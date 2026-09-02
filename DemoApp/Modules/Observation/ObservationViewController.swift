@@ -45,10 +45,10 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
     .onTap { [weak self] in self?.viewModel.markAllRead() }
     .setConstraints { $0.set(height: 44) }
 
-    private lazy var list = VList(dataSource: self, delegate: self)
+    private lazy var list = VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }
         .register(MessageCell.self)
         .backgroundColor(.clear)
-        .setConstraints { $0.set(height: MessageCell.height * 4) }
+        .setConstraints { $0.set(height: MessageCell.height * 4 + 40) }
 
     @UIViewBuilder override var mainView: UIView {
         UIScrollView {
@@ -74,7 +74,7 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
                 }
                 demoSection(
                     title: "BaseViewModelableCell.updateContent()",
-                    description: "Cells bind in updateContent() instead of viewModel didSet. Assignment and later model changes both re-run it — no reloadData."
+                    description: "Cells bind in updateContent() instead of viewModel didSet. Assignment binds synchronously (these rows self-size), later model changes re-run it — no reloadData."
                 ) {
                     VStack(spacing: 12) {
                         markAllReadButton
@@ -109,6 +109,9 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
 
 // MARK: - ObservationViewProtocol
 extension ObservationViewController: ObservationViewProtocol {
+    /// Card margins (16) + section margins (12) on each side until the list has laid out.
+    var messageListWidth: Double { list.bounds.width > .zero ? list.bounds.width : screenWidth - 56 }
+
     func render(count: Int, unread: Int, mode: String) {
         countLabel.text("Count: \(count)")
         resetButton.isEnabled(count > .zero)

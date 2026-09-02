@@ -29,6 +29,17 @@ final class ObservationUITests: UITestCase {
         XCTAssertTrue(app.staticTexts["Count: 0"].waitForExistence(timeout: uiTimeout))
     }
 
+    /// Rows self-size: the long preview must be measured with its text already bound (it
+    /// wraps to several lines), otherwise the row is clipped to the single-line estimate.
+    func test_messageRows_selfSizeToTheirBoundContent() {
+        let short = app.staticTexts["Can you review the Observation PR?"]
+        let long = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'updateContent() replaced'")).firstMatch
+        XCTAssertTrue(short.waitForExistence(timeout: uiTimeout))
+        scrollUntilVisible(long)
+        XCTAssertTrue(long.waitForExistence(timeout: uiTimeout))
+        XCTAssertGreaterThan(long.frame.height, short.frame.height * 1.8, "the wrapped preview must get its full height")
+    }
+
     /// "Mark all read" flips isRead on every message model. The BaseView badge and the
     /// visible cells refresh through updateContent() with no reloadData.
     func test_markAllRead_refreshesBadgeAndCells() {
