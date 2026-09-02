@@ -35,6 +35,7 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
         .font(.boldSystemFont(ofSize: 14))
         .textAlignment(.center)
         .textColor(.white)
+        .setAsRoundedView()
         .setConstraints { $0.set(width: 36); $0.set(height: 36) }
 
     private lazy var titleLabel = UILabel()
@@ -46,15 +47,6 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
         .font(.systemFont(ofSize: 12))
         .textColor(.secondaryLabel)
         .numberOfLines(1)
-
-    override var viewModel: ListItemCellViewModel? {
-        didSet {
-            guard let vm = viewModel else { return }
-            badge.text("\(vm.number)").backgroundColor(vm.accentColor).setAsRoundedView()
-            titleLabel.text(vm.title)
-            subtitleLabel.text(vm.subtitle)
-        }
-    }
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -76,5 +68,12 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
     override func setupCell() {
         super.setupCell()
         backgroundColor(.clear)
+    }
+
+    override func updateContent() {
+        guard let viewModel else { return }
+        badge.text("\(viewModel.number)").backgroundColor(viewModel.accentColor)
+        titleLabel.text(viewModel.title)
+        subtitleLabel.text(viewModel.subtitle)
     }
 }

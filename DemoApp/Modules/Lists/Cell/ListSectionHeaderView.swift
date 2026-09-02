@@ -25,10 +25,6 @@ final class ListSectionHeaderView: BaseViewModelableReusableView<ListSectionHead
         .textColor(.secondaryLabel)
         .text("")
 
-    override var viewModel: ListSectionHeaderViewModel? {
-        didSet { titleLabel.text(viewModel?.title ?? "") }
-    }
-
     @UIViewBuilder
     override var mainView: UIView {
         HStack(
@@ -40,5 +36,9 @@ final class ListSectionHeaderView: BaseViewModelableReusableView<ListSectionHead
         }
         .backgroundColor(.systemGroupedBackground)
         .setConstraints { $0.snap(to: $1) }
+    }
+
+    override func updateContent() {
+        titleLabel.text(viewModel?.title ?? "")
     }
 }

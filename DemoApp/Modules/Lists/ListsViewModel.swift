@@ -4,23 +4,31 @@
 //
 
 import Common
+import Observation
 import UIKit
 
 // MARK: - ListsViewModelProtocol
 @MainActor
 protocol ListsViewModelProtocol: ViewModel, CollectionViewable {
     var title: String { get }
-    func refresh(completion: @escaping Action)
+    /// Bumped whenever the item collection changes; the controller reloads when it differs
+    /// from the revision it last rendered.
+    var revision: Int { get }
+    var isRefreshing: Bool { get }
+    func refresh()
 }
 
 // MARK: - ListsViewModel
+@Observable
 @MainActor
 final class ListsViewModel {
     let title = "Lists & Cells"
-    weak var view: ScreenSizeMeasurable?
+    private(set) var revision: Int = .zero
+    private(set) var isRefreshing = false
 
-    private var items: [ListItemCellViewModelImpl] = []
-    private var nextNumber = 1
+    @ObservationIgnored weak var view: ScreenSizeMeasurable?
+    @ObservationIgnored private var items: [ListItemCellViewModelImpl] = []
+    @ObservationIgnored private var nextNumber = 1
 
     private static let accentColors: [UIColor] = [
         .systemBlue, .systemGreen, .systemPurple,
@@ -39,7 +47,7 @@ final class ListsViewModel {
             ListItemCellViewModelImpl(
                 number: n,
                 title: "List Item \(n)",
-                subtitle: "BaseViewModelableCell — viewModel didSet pattern",
+                subtitle: "BaseViewModelableCell — updateContent() binding",
                 accentColor: ListsViewModel.accentColors[(n - 1) % ListsViewModel.accentColors.count]
             )
         }
@@ -107,14 +115,19 @@ extension ListsViewModel: CollectionViewable {
 
 // MARK: - ListsViewModelProtocol
 extension ListsViewModel: ListsViewModelProtocol {
-    func refresh(completion: @escaping Action) {
+    /// Pull-to-refresh: the controller observes `isRefreshing` and `revision`; there is no
+    /// completion closure to thread back.
+    func refresh() {
+        guard !isRefreshing else { return }
+        isRefreshing = true
         Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(1.2))
             guard let self else { return }
             let fresh = makeItems(from: nextNumber, count: 6)
             items.insert(contentsOf: fresh, at: 0)
             nextNumber += 6
-            completion()
+            revision += 1
+            isRefreshing = false
         }
     }
 }

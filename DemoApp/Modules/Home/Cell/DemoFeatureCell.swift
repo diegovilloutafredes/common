@@ -42,14 +42,6 @@ final class DemoFeatureCell: BaseViewModelableCell<DemoFeatureCellViewModel> {
         .font(.systemFont(ofSize: 18))
         .textColor(.tertiaryLabel)
 
-    override var viewModel: DemoFeatureCellViewModel? {
-        didSet {
-            guard let viewModel else { return }
-            titleLabel.text(viewModel.title)
-            subtitleLabel.text(viewModel.subtitle)
-        }
-    }
-
     @UIViewBuilder
     override var mainView: UIView {
         VStack(margins: .init(top: 6, left: 16, bottom: 6, right: 16)) {
@@ -80,5 +72,13 @@ final class DemoFeatureCell: BaseViewModelableCell<DemoFeatureCellViewModel> {
     override func setupCell() {
         super.setupCell()
         backgroundColor(.clear)
+    }
+
+    // Content binding: runs after every `viewModel` assignment (and, for observable
+    // models, after any tracked change). No `didSet` needed.
+    override func updateContent() {
+        guard let viewModel else { return }
+        titleLabel.text(viewModel.title)
+        subtitleLabel.text(viewModel.subtitle)
     }
 }
