@@ -633,7 +633,7 @@ make major                # Tag and release a major version
 
 ## Demo App
 
-The project includes a `DemoApp` target that showcases the library across 16 modules: Alerts, Auth (Face ID / Touch ID / Sign in with Apple), Camera, Components, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Networking, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
+The project includes a `DemoApp` target that showcases the library across 17 modules: Alerts, Auth (Face ID / Touch ID / Sign in with Apple), Camera, Components, Coordinator, Declarative UI, Extensions, Forms & TextFields, Home, Image Loading, Lists & Cells, Networking, Observation, Onboarding, Storage, Typography, and Utilities. Build and run the `DemoApp` scheme in Xcode to explore.
 
 ---
 

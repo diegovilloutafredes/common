@@ -782,6 +782,8 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
 
 > **Critical**: Never reference `viewModel` inside `mainView` — it is `nil` when the view builder runs. All model-driven updates go in `viewModel didSet`.
 
+Prefer `override func updateContent()` when the cell's model is `@Observable`: assignment and later model changes both re-run it (see *Observation-driven updates* below). `viewModel didSet` remains correct for plain value models.
+
 ### Lifecycle hooks
 
 Use closures instead of overriding lifecycle methods — all lifecycle logic stays in `setupView()`:
@@ -793,6 +795,7 @@ Use closures instead of overriding lifecycle methods — all lifecycle logic sta
 | `onViewIsAppearing { vc in ... }` | First appearance — safe for layout-dependent setup |
 | `onViewWillDisappear { vc in ... }` | Before the view disappears |
 | `onLayoutSubviews { vc in ... }` | Each layout pass |
+| `onUpdateProperties()` (on the ViewModel via `ViewLifecycleable`) | Every content-update pass; re-runs when `@Observable` state read inside it changes |
 
 ```swift
 override func setupView() {
@@ -804,6 +807,49 @@ override func setupView() {
     }
 }
 ```
+
+### Observation-driven updates
+
+Read `@Observable` state in **one** hook and let the framework re-run it. No `didSet`, no `setNeedsLayout`, no rebuild closures.
+
+| Where | Hook | Trigger |
+|---|---|---|
+| ViewModel (`ViewLifecycleable`) | `onUpdateProperties()` | first pass, then any tracked change |
+| `BaseViewController` subclass | `updateContent()` | same |
+| `BaseView`, `BaseCell`, `BaseReusableView` subclasses | `updateContent()` | same; view-model-able variants also re-run on `viewModel` assignment |
+| Anywhere | `setNeedsContentUpdate()` | forces a re-run on the next pass |
+
+```swift
+@Observable final class ProfileModel { var name = ""; var canSave = false }
+
+extension ProfileViewModel: ViewLifecycleable {
+    func onUpdateProperties() {
+        view?.render(name: model.name, canSave: model.canSave)   // tracked reads
+    }
+}
+
+final class ProfileCell: BaseViewModelableCell<ProfileModel> {
+    override func updateContent() {
+        guard let viewModel else { return }
+        nameLabel.text(viewModel.name)          // re-runs when name changes
+    }
+}
+```
+
+**Mechanism per OS** (`ObservationMode.current`):
+
+| Runtime | Mode | How |
+|---|---|---|
+| iOS 26+ | `.native` | UIKit's `updateProperties()` — runs before layout; text/color changes cost no layout pass |
+| iOS 17–18 | `.manual` | Common wraps the hook in `withObservationTracking` from `layoutSubviews` / `viewWillLayoutSubviews` and re-arms on the next pass; no Info.plist key needed |
+| iOS 16 | `.unavailable` | the hook runs on every layout pass, untracked |
+
+Rules:
+- Read state and write views inside the hook only. Mutate models anywhere on the main actor.
+- Keep geometry out of it: constraint constants still need a layout pass (`animateConstraintChanges`, or `.flushUpdates` on iOS 26).
+- The hook may run more than once per change; make it idempotent.
+- Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
+- The DemoApp's **Observation** module shows all three hooks on one screen.
 
 ### System notification observers
 
@@ -849,11 +895,12 @@ titleView(UIImageView(image: .logo).setRatio(80/24))
 1. `init(viewModel:)` — ViewModel injected
 2. `loadView()` — `mainView` assigned as root view
 3. `viewDidLoad()` → `setupView()` — configure background, nav bar, bind data
-4. `viewWillLayoutSubviews()` / `viewDidLayoutSubviews()`
-5. `viewWillAppear(_:)` — swipe-to-go-back gesture re-enabled
-6. `viewIsAppearing(_:)` — view in hierarchy, size/traits are final
-7. `viewDidAppear(_:)`
-8. `viewWillDisappear(_:)`
+4. `updateProperties()` → `updateContent()` / `onUpdateProperties()` (iOS 26; on 17–18 the hook runs from step 5 instead)
+5. `viewWillLayoutSubviews()` / `viewDidLayoutSubviews()`
+6. `viewWillAppear(_:)` — swipe-to-go-back gesture re-enabled
+7. `viewIsAppearing(_:)` — view in hierarchy, size/traits are final
+8. `viewDidAppear(_:)`
+9. `viewWillDisappear(_:)`
 
 ### Lazy property pattern
 

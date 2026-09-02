@@ -341,6 +341,7 @@ init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupVie
 - `mainView`: purely declarative — no side effects, no network calls, no data reads
 - Data binding in `setupView()`, not `mainView`
 - Lifecycle events via hooks (`onViewIsAppearing`, `onViewWillDisappear`), not method overrides
+- Observable state: read it in `onUpdateProperties()` (ViewModel) or `updateContent()` (view/cell/VC); the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
 
 ---
 
@@ -444,6 +445,8 @@ UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on:
 8. **`NavigationBarSetupable` has no default implementation** — an empty conformance does not compile; the demo VCs don't adopt it. Add it to a view protocol only when the VC implements `setupNavigationBar()`.
 
 9. **Logger**: a dictionary literal `Logger.log(["k": v])` prints in call-site order — never pass `caller:` explicitly (it falls back to the deprecated unordered overload). `Logger.forceEnable()` is Debug-source-only and absent from the SPM binary: consumers opt in with `Logger.isRuntimeForceEnabled(true)` **then** `<Type>.shouldLog(true)`, in that order.
+
+10. **`updateContent()` is not `updateProperties()`**: never override UIKit's `updateProperties()` in a Common subclass — the base classes own it and forward to `updateContent()`. Trigger with `setNeedsContentUpdate()`.
 
 ---
 
