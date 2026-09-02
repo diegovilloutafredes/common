@@ -71,4 +71,8 @@ final class AppCoordinator: BaseCoordinator, HomeCoordinatorProtocol {
     func showComponents() {
         push(ComponentsWireframe.createModule { [weak self] in self?.pop() })
     }
+
+    func showObservation() {
+        push(ObservationWireframe.createModule())
+    }
 }

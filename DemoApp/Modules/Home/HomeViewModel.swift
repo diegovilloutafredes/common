@@ -92,6 +92,11 @@ final class HomeViewModel {
             subtitle: "GradientView, PillUILabel, ProgressAnimationView",
             action: { [weak self] in self?.coordinator?.showComponents() }
         ),
+        .init(
+            title: "Observation",
+            subtitle: "@Observable models, updateContent(), onUpdateProperties()",
+            action: { [weak self] in self?.coordinator?.showObservation() }
+        ),
     ]
 
     weak var view: HomeViewProtocol?

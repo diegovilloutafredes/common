@@ -6,14 +6,14 @@ import XCTest
 
 final class DemoAppUITests: UITestCase {
 
-    /// All 15 home rows, in HomeViewModel's order — the single source of truth
+    /// All 16 home rows, in HomeViewModel's order — the single source of truth
     /// for module-existence assertions. A renamed or removed row must break
     /// HERE, loudly, not silently shrink coverage.
     static let allModules = [
         "Declarative UI", "Networking", "Storage", "Alerts & Feedback",
         "Auth", "Extensions", "Onboarding", "Forms & TextFields",
         "Lists & Cells", "Utilities", "Camera", "Coordinator", "Image Loading",
-        "Typography", "Components"
+        "Typography", "Components", "Observation"
     ]
 
     // MARK: - Navigation
