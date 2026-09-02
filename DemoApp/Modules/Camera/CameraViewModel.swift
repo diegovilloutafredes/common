@@ -51,6 +51,7 @@ final class CameraViewModelImpl: CameraViewModelProtocol {
         case .authorized: "Camera access: authorized"
         case .denied: "Camera access: denied — enable it in Settings"
         case .notDetermined: "Camera access: not requested yet — Start will ask"
+        @unknown default: "Camera access: unknown"
         }
     }
 

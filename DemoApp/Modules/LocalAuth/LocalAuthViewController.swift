@@ -55,8 +55,6 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
         .numberOfLines(0)
         .textAlignment(.center)
 
-    private var isShowingLoading = false
-
     @UIViewBuilder
     override var mainView: UIView {
         VStack(
@@ -99,7 +97,8 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
     override func updateContent() {
         super.updateContent()
         renderAuthResult(viewModel.authResult)
-        setLoading(viewModel.isAuthenticating)
+        setActivityIndicator(visible: viewModel.isAuthenticating)
+        authenticateButton.isEnabled(!viewModel.isAuthenticating)
         if let message = viewModel.appleResultMessage {
             appleResultLabel.text(message).textColor(.secondaryLabel)
         } else {
@@ -118,12 +117,5 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
         let color: UIColor = success ? .systemGreen : .systemRed
         resultLabel.text(success ? "Authentication Successful" : "Authentication Failed").textColor(color)
         authIcon.image(.init(systemName: success ? "checkmark.circle.fill" : "xmark.circle.fill")).tintColor(color)
-    }
-
-    private func setLoading(_ loading: Bool) {
-        guard loading != isShowingLoading else { return }
-        isShowingLoading = loading
-        loading ? startActivityIndicator() : stopActivityIndicator()
-        authenticateButton.isEnabled(!loading)
     }
 }

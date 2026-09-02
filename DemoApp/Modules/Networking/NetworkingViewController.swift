@@ -126,7 +126,6 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
     .setConstraints { $0.set(height: 44) }
 
     private var renderedRevision: Int = .zero
-    private var isShowingLoading = false
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -171,17 +170,11 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
     override func updateContent() {
         super.updateContent()
         statusLabel.text(viewModel.statusText)
-        setLoading(viewModel.isLoading)
+        setActivityIndicator(visible: viewModel.isLoading)   // idempotent: safe on every pass
         if renderedRevision != viewModel.revision {
             renderedRevision = viewModel.revision
             list.reloadData()
         }
-    }
-
-    private func setLoading(_ loading: Bool) {
-        guard loading != isShowingLoading else { return }
-        isShowingLoading = loading
-        loading ? startActivityIndicator() : stopActivityIndicator()
     }
 }
 

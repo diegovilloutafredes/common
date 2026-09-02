@@ -203,3 +203,26 @@ extension ActivityIndicatorable where Self: UIViewController {
         }
     }
 }
+
+// MARK: - State-driven toggle (where Self: UIViewController)
+extension ActivityIndicatorable where Self: UIViewController {
+
+    /// Whether an activity indicator installed by `startActivityIndicator` is currently
+    /// present — as a navigation-bar item or as the centered subview fallback.
+    public var isShowingActivityIndicator: Bool {
+        let inBar = navigationItem.rightBarButtonItems?.contains { $0.customView is UIActivityIndicatorView } ?? false
+        let inView = isViewLoaded && view.subviews.contains { $0 is UIActivityIndicatorView }
+        return inBar || inView
+    }
+
+    /// The state-driven counterpart of `startActivityIndicator` / `stopActivityIndicator`.
+    ///
+    /// Safe to call on every pass of `updateContent()`: it only starts or stops when
+    /// `visible` differs from what is already installed, so an `isLoading` flag can be
+    /// mirrored directly without bookkeeping in the controller.
+    /// - Parameter visible: `true` to show the indicator, `false` to remove it.
+    public func setActivityIndicator(visible: Bool) {
+        guard visible != isShowingActivityIndicator else { return }
+        visible ? startActivityIndicator() : stopActivityIndicator()
+    }
+}
