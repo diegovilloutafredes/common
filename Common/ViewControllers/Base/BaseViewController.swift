@@ -25,6 +25,33 @@ open class BaseViewController: UIViewController, UIViewBuildable {
     /// Configures the view.
     /// Default implementation sets the background color.
     open func setupView() { backgroundColor() }
+
+    /// Pushes state into views. Override to read your model here.
+    ///
+    /// On iOS 26 UIKit calls this from `updateProperties()` and re-runs it when any
+    /// `@Observable` property read inside changes. On iOS 17–18 Common calls it from
+    /// `viewWillLayoutSubviews()` under `withObservationTracking` with the same effect.
+    /// Do not call it directly; call `setNeedsContentUpdate()`.
+    open func updateContent() {}
+
+    /// Schedules `updateContent()` for the next update pass.
+    /// A no-op before the view loads: the first update pass runs the hook anyway, and
+    /// touching `view` here would force `loadView()` early.
+    public func setNeedsContentUpdate() {
+        guard isViewLoaded else { return }
+        if #available(iOS 26.0, *), ObservationMode.current == .native {
+            setNeedsUpdateProperties()
+        } else {
+            view.setNeedsLayout()
+        }
+    }
+
+    @available(iOS 26.0, *)
+    open override func updateProperties() {
+        super.updateProperties()
+        guard ObservationMode.current == .native else { return }
+        updateContent()
+    }
 }
 
 // MARK: - Default preferredStatusBarStyle
@@ -43,6 +70,12 @@ extension BaseViewController {
         super.viewDidLoad()
         Logger.log(["From": Self.self])
         setupView()
+    }
+
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        guard ObservationMode.current != .native else { return }
+        ObservationTracker.run { updateContent() } onInvalidate: { [weak self] in self?.view.setNeedsLayout() }
     }
 
     open override func viewWillAppear(_ animated: Bool) {

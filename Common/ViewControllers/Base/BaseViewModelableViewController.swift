@@ -14,7 +14,10 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
 
     /// The view model associated with this view controller.
     open var viewModel: ViewModelType {
-        didSet { cacheViewModelRoles() }
+        didSet {
+            cacheViewModelRoles()
+            setNeedsContentUpdate()
+        }
     }
 
     private var _asViewLifecycleable: ViewLifecycleable?
@@ -52,6 +55,11 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         _asViewLifecycleable?.onViewDidLayoutSubviews()
+    }
+
+    open override func updateContent() {
+        super.updateContent()
+        _asViewLifecycleable?.onUpdateProperties()
     }
 
     open override func viewWillAppear(_ animated: Bool) {

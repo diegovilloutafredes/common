@@ -21,7 +21,12 @@ public protocol ViewLifecycleable: AnyObject {
     
     /// Notifies the object that its view has finished laying out subviews.
     func onViewDidLayoutSubviews()
-    
+
+    /// Called on every content-update pass. Read observable state here and push it into
+    /// the view. On iOS 26 this is UIKit's `updateProperties()`; on iOS 17–18 Common re-runs
+    /// it when any `@Observable` property read inside changes. See `ObservationMode`.
+    func onUpdateProperties()
+
     /// Notifies the object that its view has appeared.
     func onViewDidAppear()
     
@@ -39,6 +44,7 @@ extension ViewLifecycleable {
     public func onViewIsAppearing() {}
     public func onViewWillLayoutSubviews() {}
     public func onViewDidLayoutSubviews() {}
+    public func onUpdateProperties() {}
     public func onViewDidAppear() {}
     public func onViewWillDisappear() {}
     public func onViewDidDisappear() {}
