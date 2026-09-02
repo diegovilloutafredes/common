@@ -841,7 +841,7 @@ final class ProfileCell: BaseViewModelableCell<ProfileModel> {
 | Runtime | Mode | How |
 |---|---|---|
 | iOS 26+ | `.native` | UIKit's `updateProperties()` — runs before layout; text/color changes cost no layout pass |
-| iOS 17–18 | `.manual` | Common wraps the hook in `withObservationTracking` from `layoutSubviews` / `viewWillLayoutSubviews` and re-arms on the next pass; no Info.plist key needed |
+| iOS 17–18 | `.manual` | Common wraps the hook in `withObservationTracking` from `layoutSubviews` / `viewWillLayoutSubviews` and re-arms on the next pass; no Info.plist key needed. On iOS 18 with `UIObservationTrackingEnabled` set, UIKit also tracks the same reads: both invalidate (UIKit synchronously, Common on the next main-actor hop), which can cost a second layout pass per change but stays correct because the hook is idempotent |
 | iOS 16 | `.unavailable` | the hook runs on every layout pass, untracked |
 
 Rules:
