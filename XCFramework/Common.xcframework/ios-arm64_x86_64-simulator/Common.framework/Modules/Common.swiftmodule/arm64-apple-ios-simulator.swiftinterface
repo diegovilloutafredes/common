@@ -19,6 +19,7 @@ import CryptoKit
 import ImageIO
 @_exported import LocalAuthentication
 @_exported import ObjectiveC
+import Observation
 import PDFKit
 @_exported import QuartzCore
 import SafariServices
@@ -200,6 +201,12 @@ extension Common.ActivityIndicatorable where Self : UIKit.UIViewController {
   @_Concurrency.MainActor public func startActivityIndicator()
   @_Concurrency.MainActor public func startActivityIndicator(with color: UIKit.UIColor)
   @_Concurrency.MainActor public func stopActivityIndicator()
+}
+extension Common.ActivityIndicatorable where Self : UIKit.UIViewController {
+  @_Concurrency.MainActor public var isShowingActivityIndicator: Swift.Bool {
+    get
+  }
+  @_Concurrency.MainActor public func setActivityIndicator(visible: Swift.Bool)
 }
 public enum AlertViewType : Swift.Sendable {
   case emptyAlert
@@ -508,6 +515,12 @@ extension UIKit.UIViewController : Common.BackgroundColorable {
     @objc get
   }
   @_Concurrency.MainActor @preconcurrency open func setupCell()
+  @_Concurrency.MainActor @preconcurrency open func updateContent()
+  @_Concurrency.MainActor @preconcurrency public func setNeedsContentUpdate()
+  @_Concurrency.MainActor @preconcurrency public func updateContentIfNeeded()
+  @available(iOS 26.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func updateProperties()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func layoutSubviews()
   @objc deinit
 }
 open class BaseClient {
@@ -606,6 +619,12 @@ extension Common.BaseCoordinator : Common.Presentable {
     @objc get
   }
   @_Concurrency.MainActor @preconcurrency open func setupView()
+  @_Concurrency.MainActor @preconcurrency open func updateContent()
+  @_Concurrency.MainActor @preconcurrency public func setNeedsContentUpdate()
+  @_Concurrency.MainActor @preconcurrency public func updateContentIfNeeded()
+  @available(iOS 26.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func updateProperties()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func layoutSubviews()
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseTextField : UIKit.UITextField {
@@ -631,6 +650,12 @@ extension Common.BaseCoordinator : Common.Presentable {
     @objc get
   }
   @_Concurrency.MainActor @preconcurrency open func setupView()
+  @_Concurrency.MainActor @preconcurrency open func updateContent()
+  @_Concurrency.MainActor @preconcurrency public func setNeedsContentUpdate()
+  @_Concurrency.MainActor @preconcurrency public func updateContentIfNeeded()
+  @available(iOS 26.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func updateProperties()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func layoutSubviews()
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewController : UIKit.UIViewController, Common.UIViewBuildable {
@@ -639,6 +664,10 @@ extension Common.BaseCoordinator : Common.Presentable {
   }
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func loadView()
   @_Concurrency.MainActor @preconcurrency open func setupView()
+  @_Concurrency.MainActor @preconcurrency open func updateContent()
+  @_Concurrency.MainActor @preconcurrency public func setNeedsContentUpdate()
+  @available(iOS 26.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func updateProperties()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
   @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
   @objc deinit
@@ -655,6 +684,7 @@ extension Common.BaseViewController {
 }
 extension Common.BaseViewController {
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewIsAppearing(_ animated: Swift.Bool)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
@@ -665,17 +695,26 @@ extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
   @_Concurrency.MainActor @preconcurrency @objc dynamic public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIKit.UIGestureRecognizer) -> Swift.Bool
 }
 @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewModelableCell<ViewModelType> : Common.ViewModelableCell {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType?
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType? {
+    get
+    set
+  }
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
   @objc deinit
 }
 @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class BaseViewModelableReusableView<ViewModelType> : Common.ViewModelableReusableView {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType?
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType? {
+    get
+    set
+  }
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
   @objc deinit
 }
 @_Concurrency.MainActor @preconcurrency open class BaseViewModelableView<ViewModelType> : Common.ViewModelableView, Common.ViewLifecycleable {
-  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType
+  @_Concurrency.MainActor @preconcurrency open var viewModel: ViewModelType {
+    get
+    set
+  }
   @_Concurrency.MainActor @preconcurrency required public init(viewModel: ViewModelType)
   @objc deinit
 }
@@ -690,6 +729,7 @@ extension Common.BaseViewController : UIKit.UIGestureRecognizerDelegate {
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillLayoutSubviews()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLayoutSubviews()
+  @_Concurrency.MainActor @preconcurrency override open func updateContent()
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewIsAppearing(_ animated: Swift.Bool)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
@@ -2066,6 +2106,19 @@ public enum NotificationAuthorizationManager {
 public enum NotificationRegisterManager {
   public static func registerForRemoteNotifications()
   public static func unregisterForRemoteNotifications()
+}
+public enum ObservationMode : Swift.Sendable {
+  case native
+  case manual
+  case unavailable
+  @_Concurrency.MainActor public static var current: Common.ObservationMode {
+    get
+  }
+  public static func == (a: Common.ObservationMode, b: Common.ObservationMode) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
 }
 extension Swift.Optional {
   public var isNil: Swift.Bool {
@@ -4022,6 +4075,7 @@ extension Common.ValueWithable {
   @_Concurrency.MainActor func onViewIsAppearing()
   @_Concurrency.MainActor func onViewWillLayoutSubviews()
   @_Concurrency.MainActor func onViewDidLayoutSubviews()
+  @_Concurrency.MainActor func onUpdateProperties()
   @_Concurrency.MainActor func onViewDidAppear()
   @_Concurrency.MainActor func onViewWillDisappear()
   @_Concurrency.MainActor func onViewDidDisappear()
@@ -4032,6 +4086,7 @@ extension Common.ViewLifecycleable {
   @_Concurrency.MainActor public func onViewIsAppearing()
   @_Concurrency.MainActor public func onViewWillLayoutSubviews()
   @_Concurrency.MainActor public func onViewDidLayoutSubviews()
+  @_Concurrency.MainActor public func onUpdateProperties()
   @_Concurrency.MainActor public func onViewDidAppear()
   @_Concurrency.MainActor public func onViewWillDisappear()
   @_Concurrency.MainActor public func onViewDidDisappear()
@@ -4108,6 +4163,8 @@ extension Common.LocationAuthorizationManager.AuthorizationType : Swift.Equatabl
 extension Common.LocationAuthorizationManager.AuthorizationType : Swift.Hashable {}
 extension ObjectiveC.NSObject.AppLifecycleEvent : Swift.Equatable {}
 extension ObjectiveC.NSObject.AppLifecycleEvent : Swift.Hashable {}
+extension Common.ObservationMode : Swift.Equatable {}
+extension Common.ObservationMode : Swift.Hashable {}
 extension Common.PresentType : Swift.Equatable {}
 extension Common.PresentType : Swift.Hashable {}
 extension Common.Snackbar.ViewModel : Common.ViewModel {}
