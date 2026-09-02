@@ -3,7 +3,7 @@ name: common-framework
 description: Use when building, reviewing, refactoring, or debugging code that uses the Common iOS framework or its DSL/types — VStack/HStack, UIViewBuilder, coordinators, wireframes, VList, BaseClient/AsyncBaseClient, FieldsValidator, KeyValueStore — including in consumer apps (UniPay, Riivi, ordename, bioidentity).
 ---
 
-<!-- synced-with: COMMON_FRAMEWORK_GUIDE.md @ d47ae9b (2026-09-02).
+<!-- synced-with: COMMON_FRAMEWORK_GUIDE.md @ 8c693fc (2026-09-02).
      If the guide changed since that commit, re-diff this skill against it. -->
 
 # Common Framework — Quick Reference
