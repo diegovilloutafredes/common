@@ -49,7 +49,9 @@ final class BaseCellUpdateContentTests: XCTestCase {
     private func size(_ view: UIView) { view.frame = window.bounds }
     private func host(_ view: UIView) { size(view); window.addSubview(view) }
 
-    func test_cell_assigningViewModel_manualMode_schedulesLayoutAndHookReadsNewModel() {
+    /// Assignment binds synchronously: self-sizing cells are measured right after
+    /// configuration, before any layout or update pass, so the content must already be there.
+    func test_cell_assigningViewModel_manualMode_bindsSynchronously() {
         ObservationMode.override = .manual
         let cell = CounterCell(frame: .zero)
         size(cell)
@@ -59,10 +61,37 @@ final class BaseCellUpdateContentTests: XCTestCase {
         let model = ObservedCounter()
         model.value = 4
         cell.viewModel = model
-        XCTAssertTrue(cell.layer.needsLayout(), "viewModel assignment must invalidate content")
+        XCTAssertEqual(cell.rendered, 4, "content must be bound before the cell is measured")
 
         cell.layoutIfNeeded()
         XCTAssertEqual(cell.rendered, 4)
+    }
+
+    func test_cell_assigningViewModel_unavailableMode_bindsSynchronously() {
+        ObservationMode.override = .unavailable
+        let cell = CounterCell(frame: .zero)
+        size(cell)
+        let model = ObservedCounter()
+        model.value = 5
+        cell.viewModel = model
+        XCTAssertEqual(cell.rendered, 5)
+    }
+
+    /// After a synchronous bind the tracking is armed: a later change still re-runs the hook.
+    func test_cell_manualMode_changeAfterSynchronousBindStillReruns() async {
+        ObservationMode.override = .manual
+        let model = ObservedCounter()
+        let cell = CounterCell(frame: .zero)
+        size(cell)
+        cell.viewModel = model
+        XCTAssertEqual(cell.rendered, .zero)
+        cell.layoutIfNeeded()
+
+        model.value = 11
+        let scheduled = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in cell.layer.needsLayout() }, object: nil)
+        await fulfillment(of: [scheduled], timeout: callbackDeliveryTimeout)
+        cell.layoutIfNeeded()
+        XCTAssertEqual(cell.rendered, 11)
     }
 
     func test_cell_manualMode_observedChangeOnCurrentModelSchedulesLayout() async {
@@ -117,7 +146,7 @@ final class BaseCellUpdateContentTests: XCTestCase {
         XCTAssertEqual(cell.updates, after, "no invalidation, no re-run")
     }
 
-    func test_cell_nativeMode_assigningViewModelRerunsHookOnNextPropertiesPass() throws {
+    func test_cell_nativeMode_assigningViewModelBindsSynchronously() throws {
         guard #available(iOS 26.0, *) else { throw XCTSkip("native path needs iOS 26") }
         ObservationMode.override = .native
         let cell = CounterCell(frame: .zero)
@@ -128,26 +157,31 @@ final class BaseCellUpdateContentTests: XCTestCase {
         let model = ObservedCounter()
         model.value = 6
         cell.viewModel = model
-        cell.updatePropertiesIfNeeded()
+        XCTAssertEqual(cell.rendered, 6, "content must be bound before the cell is measured")
         XCTAssertEqual(cell.updates, before + 1)
-        XCTAssertEqual(cell.rendered, 6)
+
+        model.value = 7
+        cell.updatePropertiesIfNeeded()
+        XCTAssertEqual(cell.rendered, 7, "native tracking is armed by the synchronous bind")
     }
 
-    func test_reusableView_assigningViewModel_manualMode_schedulesLayout() {
+    func test_reusableView_assigningViewModel_manualMode_bindsSynchronously() {
         ObservationMode.override = .manual
         let header = CounterHeader(frame: .zero)
         size(header)
         header.layoutIfNeeded()
+        let before = header.updates
         header.viewModel = ObservedCounter()
-        XCTAssertTrue(header.layer.needsLayout())
+        XCTAssertEqual(header.updates, before + 1)
     }
 
-    func test_viewModelableView_assigningViewModel_manualMode_schedulesLayout() {
+    func test_viewModelableView_assigningViewModel_manualMode_bindsSynchronously() {
         ObservationMode.override = .manual
         let view = CounterView(viewModel: ObservedCounter())
         size(view)
         view.layoutIfNeeded()
+        let before = view.updates
         view.viewModel = ObservedCounter()
-        XCTAssertTrue(view.layer.needsLayout())
+        XCTAssertEqual(view.updates, before + 1)
     }
 }

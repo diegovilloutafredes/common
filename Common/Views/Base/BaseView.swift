@@ -66,6 +66,20 @@ open class BaseView: UIView, UIViewBuildable {
         }
     }
 
+    /// Runs a pending `updateContent()` now instead of waiting for the next update pass.
+    ///
+    /// The view-model-able subclasses call this right after `viewModel` is assigned: self-sizing
+    /// cells are measured immediately after configuration, before any layout or properties pass,
+    /// so the content has to be bound synchronously. Tracking is armed by that run, and later
+    /// observable changes are still delivered on the next pass.
+    public func updateContentIfNeeded() {
+        if #available(iOS 26.0, *), ObservationMode.current == .native {
+            updatePropertiesIfNeeded()
+        } else {
+            runContentUpdateIfNeeded()
+        }
+    }
+
     /// Manual/unavailable-mode bookkeeping: `true` until the first pass, then only after an
     /// invalidation, so unrelated layout passes (scrolling, rotation) skip the hook.
     private var needsContentUpdate = true
