@@ -854,6 +854,7 @@ Rules:
 - Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
 - A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
 - Self-sizing cells (`estimatedItemSize = .automaticSize`, `preferredLayoutAttributesFitting`) are measured before any update or layout pass. That is why `viewModel` assignment binds synchronously; if you bind from anywhere else before a measurement, call `updateContentIfNeeded()` first.
+- Self-sizing rows are estimated at the width `onSizeForItem` returns. Return the **list's** width, not `screenWidth`: an inset list (card margins) rejects items wider than itself and renders nothing. The DemoApp's Observation module exposes the list width through its view protocol for this reason.
 
 Migration recipe (what the DemoApp modules went through):
 

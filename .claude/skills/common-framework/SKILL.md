@@ -341,6 +341,7 @@ init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupVie
 - Data binding in `setupView()`, not `mainView`
 - Lifecycle events via hooks (`onViewIsAppearing`, `onViewWillDisappear`), not method overrides
 - Observable state: read it in `onUpdateProperties()` (ViewModel) or `updateContent()` (view/cell/VC); the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
+- Self-sizing rows (`estimatedItemSize = .automaticSize` + `preferredLayoutAttributesFitting`): `onSizeForItem` must return the list's width, not `screenWidth` — wider items are dropped and the list renders empty. Content is bound synchronously on `viewModel` assignment so measurement sees it.
 - Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on `weak var view`, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; events (snackbar, error) stay view-protocol calls; `setActivityIndicator(visible: isLoading)` for spinners.
 
 ---
