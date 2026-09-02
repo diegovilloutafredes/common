@@ -5,26 +5,37 @@
 
 import Common
 import LocalAuthentication
+import Observation
 import UIKit
 
 // MARK: - LocalAuthViewModelProtocol
+@MainActor
 protocol LocalAuthViewModelProtocol: ViewModel {
     var title: String { get }
     var authTypeDescription: String { get }
     var authIconName: String { get }
     var canAuthenticate: Bool { get }
+    /// `nil` until the first attempt, then the last outcome.
+    var authResult: Bool? { get }
+    var isAuthenticating: Bool { get }
+    var appleResultMessage: String? { get }
     func authenticate()
     func performAppleLogin(from context: UIViewController)
 }
 
 // MARK: - LocalAuthViewModelImpl
+@Observable
+@MainActor
 final class LocalAuthViewModelImpl: LocalAuthViewModelProtocol {
     let title = "Auth"
+    private(set) var authResult: Bool?
+    private(set) var isAuthenticating = false
+    private(set) var appleResultMessage: String?
+
     private let manager = LocalAuthenticationManager()
     // Kept in a property: the manager is the authorization controller's
     // delegate and must outlive the sign-in flow.
     private let appleLogin = AppleLoginManager()
-    weak var view: LocalAuthViewProtocol?
 
     var authTypeDescription: String {
         manager.localAuthenticationType.asString
@@ -48,26 +59,28 @@ final class LocalAuthViewModelImpl: LocalAuthViewModelProtocol {
     var canAuthenticate: Bool { manager.canAuthenticate }
 
     func authenticate() {
-        view?.showLoading()
+        isAuthenticating = true
         manager.authenticate { [weak self] success in
-            Task { @MainActor in
-                self?.view?.hideLoading()
-                self?.view?.updateResult(success: success)
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                isAuthenticating = false
+                authResult = success
             }
         }
     }
 
     func performAppleLogin(from context: UIViewController) {
-        view?.updateAppleResult("Starting Sign in with Apple…")
+        appleResultMessage = "Starting Sign in with Apple…"
         appleLogin.performLogin(from: context) { [weak self] result in
-            Task { @MainActor in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 switch result {
                 case .success(let (credential, _)):
-                    self?.view?.updateAppleResult("Signed in as \(credential.asAppleUser.id)")
+                    appleResultMessage = "Signed in as \(credential.asAppleUser.id)"
                 case .failure(let error):
                     // Expected without a Sign in with Apple entitlement — the
                     // demo surfaces the real outcome instead of pretending.
-                    self?.view?.updateAppleResult("Apple sign-in failed: \(error.localizedDescription)")
+                    appleResultMessage = "Apple sign-in failed: \(error.localizedDescription)"
                 }
             }
         }

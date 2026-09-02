@@ -5,12 +5,17 @@
 
 import Common
 import Foundation
+import Observation
 
 // MARK: - CameraViewModelProtocol
+@MainActor
 protocol CameraViewModelProtocol: ViewModel {
     var title: String { get }
     var authStatusDescription: String { get }
     var isRunning: Bool { get }
+    /// Throttled frame counter (one update per ~30 frames) so the label stays readable and
+    /// the content hook is not re-run 60 times a second.
+    var displayedFrameCount: Int { get }
     func toggleSession(on previewView: PreviewView)
     func stopSession()
     func set(zoomFactor: Double)
@@ -18,22 +23,25 @@ protocol CameraViewModelProtocol: ViewModel {
 }
 
 // MARK: - CameraViewModelImpl
+@Observable
+@MainActor
 final class CameraViewModelImpl: CameraViewModelProtocol {
     let title = "Camera"
     private(set) var isRunning = false
-    weak var view: CameraViewProtocol?
+    private(set) var displayedFrameCount: Int = .zero
 
-    private var frameCount = 0
+    /// Raw counter — ignored so every frame does not invalidate the screen.
+    @ObservationIgnored private var frameCount = 0
 
     /// The manager is created lazily so the screen can open — and UI tests can
     /// assert it — without touching the capture stack or permission state.
-    private lazy var camera = CameraManager(
+    @ObservationIgnored private lazy var camera = CameraManager(
         onSampleBufferHandler: { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 frameCount += 1
-                // One update per ~30 frames keeps the label readable.
-                if frameCount % 30 == 1 { view?.didUpdateFrameCount(frameCount) }
+                // Throttle BEFORE the observable write: observation fires on every assignment.
+                if frameCount % 30 == 1 { displayedFrameCount = frameCount }
             }
         }
     )
@@ -54,7 +62,6 @@ final class CameraViewModelImpl: CameraViewModelProtocol {
         guard isRunning else { return }
         camera.finish()
         isRunning = false
-        view?.didUpdateSessionState()
     }
 
     func set(zoomFactor: Double) { camera.set(zoomFactor: zoomFactor) }
@@ -66,10 +73,12 @@ final class CameraViewModelImpl: CameraViewModelProtocol {
 private extension CameraViewModelImpl {
     func start(on previewView: PreviewView) {
         frameCount = 0
+        displayedFrameCount = .zero
         camera.begin(previewView) { [weak self] status in
-            guard let self else { return }
-            isRunning = status == .authorized
-            view?.didUpdateSessionState()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                isRunning = status == .authorized
+            }
         }
     }
 }

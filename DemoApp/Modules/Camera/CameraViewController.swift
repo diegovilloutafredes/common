@@ -6,12 +6,6 @@
 import Common
 import UIKit
 
-// MARK: - CameraViewProtocol
-protocol CameraViewProtocol: AnyObject {
-    func didUpdateSessionState()
-    func didUpdateFrameCount(_ count: Int)
-}
-
 // MARK: - CameraViewController
 final class CameraViewController: BaseViewModelableViewController<CameraViewModelProtocol> {
 
@@ -25,14 +19,12 @@ final class CameraViewController: BaseViewModelableViewController<CameraViewMode
         .setConstraints { $0.set(height: 260) }
 
     private lazy var authStatusLabel = UILabel()
-        .text(viewModel.authStatusDescription)
         .font(.systemFont(ofSize: 13))
         .textColor(.secondaryLabel)
         .numberOfLines(0)
         .textAlignment(.center)
 
     private lazy var frameLabel = UILabel()
-        .text("No frames yet — the Simulator has no capture device, so the preview stays empty there. On a device, frames stream after Start.")
         .font(.systemFont(ofSize: 12))
         .textColor(.tertiaryLabel)
         .numberOfLines(0)
@@ -108,17 +100,16 @@ final class CameraViewController: BaseViewModelableViewController<CameraViewMode
         super.viewWillDisappear(animated)
         viewModel.stopSession()
     }
-}
 
-// MARK: - CameraViewProtocol
-extension CameraViewController: CameraViewProtocol {
-    func didUpdateSessionState() {
+    override func updateContent() {
+        super.updateContent()
+        let isRunning = viewModel.isRunning
         authStatusLabel.text(viewModel.authStatusDescription)
-        startStopButton.configuration?.title = viewModel.isRunning ? "Stop Camera" : "Start Camera"
-        startStopButton.configuration?.baseBackgroundColor = viewModel.isRunning ? .systemRed : .systemBlue
-    }
-
-    func didUpdateFrameCount(_ count: Int) {
-        frameLabel.text("Streaming — ~\(count) frames received")
+        startStopButton.configuration?.title = isRunning ? "Stop Camera" : "Start Camera"
+        startStopButton.configuration?.baseBackgroundColor = isRunning ? .systemRed : .systemBlue
+        let frames = viewModel.displayedFrameCount
+        frameLabel.text(frames > .zero
+            ? "Streaming — ~\(frames) frames received"
+            : "No frames yet — the Simulator has no capture device, so the preview stays empty there. On a device, frames stream after Start.")
     }
 }

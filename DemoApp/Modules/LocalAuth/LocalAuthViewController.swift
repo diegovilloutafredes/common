@@ -6,15 +6,9 @@
 import Common
 import UIKit
 
-// MARK: - LocalAuthViewProtocol
-protocol LocalAuthViewProtocol: AnyObject {
-    func updateResult(success: Bool)
-    func updateAppleResult(_ message: String)
-    func showLoading()
-    func hideLoading()
-}
-
 // MARK: - LocalAuthViewController
+/// No view protocol: the view model is `@Observable` and this controller renders it in
+/// `updateContent()`.
 final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthViewModelProtocol> {
     private lazy var authIcon = UIImageView(image: .init(systemName: viewModel.authIconName))
         .tintColor(.systemBlue)
@@ -32,9 +26,7 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
         .textAlignment(.center)
 
     private lazy var resultLabel = UILabel()
-        .text("Tap to authenticate")
         .font(.systemFont(ofSize: 16))
-        .textColor(.tertiaryLabel)
         .textAlignment(.center)
 
     private lazy var authenticateButton = UIButton(
@@ -59,11 +51,11 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
         .setConstraints { $0.set(height: 50); $0.setWidth(to: $1.widthAnchor, multiplier: 0.8) }
 
     private lazy var appleResultLabel = UILabel()
-        .text("Sign in with Apple — needs the entitlement on a real app; the demo reports the flow outcome either way")
         .font(.systemFont(ofSize: 12))
-        .textColor(.tertiaryLabel)
         .numberOfLines(0)
         .textAlignment(.center)
+
+    private var isShowingLoading = false
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -103,29 +95,35 @@ final class LocalAuthViewController: BaseViewModelableViewController<LocalAuthVi
             ? "Biometric authentication is available"
             : "Biometric authentication is not available")
     }
-}
 
-// MARK: - LocalAuthViewProtocol
-extension LocalAuthViewController: LocalAuthViewProtocol {
-    func updateAppleResult(_ message: String) {
-        appleResultLabel.text(message).textColor(.secondaryLabel)
+    override func updateContent() {
+        super.updateContent()
+        renderAuthResult(viewModel.authResult)
+        setLoading(viewModel.isAuthenticating)
+        if let message = viewModel.appleResultMessage {
+            appleResultLabel.text(message).textColor(.secondaryLabel)
+        } else {
+            appleResultLabel
+                .text("Sign in with Apple — needs the entitlement on a real app; the demo reports the flow outcome either way")
+                .textColor(.tertiaryLabel)
+        }
     }
 
-    func updateResult(success: Bool) {
-        let text = success ? "Authentication Successful" : "Authentication Failed"
+    private func renderAuthResult(_ result: Bool?) {
+        guard let success = result else {
+            resultLabel.text("Tap to authenticate").textColor(.tertiaryLabel)
+            authIcon.image(.init(systemName: viewModel.authIconName)).tintColor(.systemBlue)
+            return
+        }
         let color: UIColor = success ? .systemGreen : .systemRed
-        let icon = success ? "checkmark.circle.fill" : "xmark.circle.fill"
-        resultLabel.text(text).textColor(color)
-        authIcon.image(.init(systemName: icon)).tintColor(color)
+        resultLabel.text(success ? "Authentication Successful" : "Authentication Failed").textColor(color)
+        authIcon.image(.init(systemName: success ? "checkmark.circle.fill" : "xmark.circle.fill")).tintColor(color)
     }
 
-    func showLoading() {
-        startActivityIndicator()
-        authenticateButton.isEnabled(false)
-    }
-
-    func hideLoading() {
-        stopActivityIndicator()
-        authenticateButton.isEnabled(true)
+    private func setLoading(_ loading: Bool) {
+        guard loading != isShowingLoading else { return }
+        isShowingLoading = loading
+        loading ? startActivityIndicator() : stopActivityIndicator()
+        authenticateButton.isEnabled(!loading)
     }
 }

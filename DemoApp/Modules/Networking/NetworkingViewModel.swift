@@ -4,15 +4,21 @@
 //
 
 import Common
+import Observation
 
 // MARK: - NetworkingMode
 enum NetworkingMode { case callback, async }
 
 // MARK: - NetworkingViewModelProtocol
+@MainActor
 protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
     var title: String { get }
     var statusText: String { get }
     var mode: NetworkingMode { get }
+    var isLoading: Bool { get }
+    /// Bumped whenever `posts` changes; the controller reloads its list when it differs
+    /// from the revision it last rendered.
+    var revision: Int { get }
     func loadPosts()
     func createPost()
     func uploadImage(_ imageData: Data)
@@ -20,18 +26,28 @@ protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
 }
 
 // MARK: - NetworkingViewModel
+@Observable
+@MainActor
 final class NetworkingViewModel {
     let title = "Networking"
     private(set) var statusText = "Tap Fetch to load posts from JSONPlaceholder API"
     private(set) var mode: NetworkingMode = .callback
+    private(set) var isLoading = false
+    private(set) var revision: Int = .zero
 
-    private var posts: [Post] = []
-    weak var view: NetworkingViewProtocol?
+    /// Ignored on purpose: the collection is exposed through `revision`, so the data-source
+    /// callbacks (which UIKit tracks from the collection view's own layout on iOS 26) do
+    /// not register a second dependency on every element access.
+    @ObservationIgnored private var posts: [Post] = [] {
+        didSet { revision += 1 }
+    }
+    @ObservationIgnored weak var view: NetworkingViewProtocol?
 }
 
 // MARK: - NetworkingViewModelProtocol
 extension NetworkingViewModel: NetworkingViewModelProtocol {
     func setMode(_ mode: NetworkingMode) {
+        guard self.mode != mode else { return }
         self.mode = mode
     }
 
@@ -40,8 +56,6 @@ extension NetworkingViewModel: NetworkingViewModelProtocol {
         // making the callback vs async/await methods observable on repeated taps.
         posts = []
         statusText = "Loading via \(mode == .callback ? "callback" : "async/await")…"
-        view?.didUpdatePosts()
-        view?.didUpdateStatus()
 
         switch mode {
         case .callback: loadPostsCallback()
@@ -51,39 +65,35 @@ extension NetworkingViewModel: NetworkingViewModelProtocol {
 
     func createPost() {
         statusText = "POSTing a new post…"
-        view?.didUpdateStatus()
-        view?.didStartLoading()
+        isLoading = true
         let newPost = NewPost(userId: 1, title: "Hello from Common", body: "JSON body sent via PostEndpoint.create")
         createPost(newPost) { [weak self] result in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                view?.didStopLoading()
+                isLoading = false
                 switch result {
                 case .success(let created):
                     statusText = "Created post #\(created.id) via POST (JSON body)"
                 case .failure:
                     statusText = "POST failed — offline? JSONPlaceholder echoes created posts when reachable"
                 }
-                view?.didUpdateStatus()
             }
         }
     }
 
     func uploadImage(_ imageData: Data) {
         statusText = "Uploading \(imageData.count) bytes as multipart…"
-        view?.didUpdateStatus()
-        view?.didStartLoading()
+        isLoading = true
         uploadImage(imageData) { [weak self] result in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                view?.didStopLoading()
+                isLoading = false
                 switch result {
                 case .success(let echo):
                     statusText = "Multipart upload echoed by \(echo.url)"
                 case .failure:
                     statusText = "Upload failed — offline? httpbin.org echoes the multipart body when reachable"
                 }
-                view?.didUpdateStatus()
             }
         }
     }
@@ -97,46 +107,38 @@ private extension NetworkingViewModel {
     ]
 
     func loadPostsCallback() {
-        view?.didStartLoading()
+        isLoading = true
         fetchPosts { [weak self] result in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                view?.didStopLoading()
+                isLoading = false
                 switch result {
                 case .success(let fetched):
                     posts = fetched
                     statusText = "Fetched \(fetched.count) posts via callback"
-                    view?.didUpdatePosts()
-                    view?.didUpdateStatus()
                 case .failure(let error):
                     if posts.isEmpty { posts = Self.mockPosts }
                     statusText = "API error — showing mock data"
                     view?.didFailWithError(error.localizedDescription)
-                    view?.didUpdatePosts()
-                    view?.didUpdateStatus()
                 }
             }
         }
     }
 
     func loadPostsAsync() {
-        view?.didStartLoading()
+        isLoading = true
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
                 let fetched = try await fetchPostsAsync()
                 posts = fetched
                 statusText = "Fetched \(fetched.count) posts via async/await"
-                view?.didStopLoading()
-                view?.didUpdatePosts()
-                view?.didUpdateStatus()
+                isLoading = false
             } catch {
                 if posts.isEmpty { posts = Self.mockPosts }
                 statusText = "API error — showing mock data"
-                view?.didStopLoading()
+                isLoading = false
                 view?.didFailWithError(error.localizedDescription)
-                view?.didUpdatePosts()
-                view?.didUpdateStatus()
             }
         }
     }
