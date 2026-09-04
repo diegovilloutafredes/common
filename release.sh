@@ -48,8 +48,11 @@ make build_xcframework
 echo "Stamping the plugin manifests with ${NEW_VERSION#v}..."
 sed -i '' "s/\"version\": \"[^\"]*\"/\"version\": \"${NEW_VERSION#v}\"/" .claude-plugin/plugin.json .claude-plugin/marketplace.json
 
-echo "Committing XCFramework and plugin manifests..."
-git add -f XCFramework/Common.xcframework .claude-plugin
+echo "Stamping the README skill snippet with $NEW_VERSION..."
+sed -i '' "s/^V=v[0-9.]*; D=/V=$NEW_VERSION; D=/" README.md
+
+echo "Committing XCFramework, plugin manifests and README..."
+git add -f XCFramework/Common.xcframework .claude-plugin README.md
 git commit -m "Add xcframework for $NEW_VERSION"
 
 git tag -a "$NEW_VERSION" -m "$NEW_VERSION"
