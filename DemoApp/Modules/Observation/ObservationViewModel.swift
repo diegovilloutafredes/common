@@ -13,6 +13,7 @@ protocol ObservationViewModelProtocol: CollectionViewable, ViewModel, ViewLifecy
     func increment()
     func reset()
     func markAllRead()
+    func saveDraft()
 }
 
 // MARK: - ObservationViewProtocol
@@ -20,7 +21,9 @@ protocol ObservationViewProtocol: ScreenSizeMeasurable {
     /// The message list's width: self-sizing rows must be estimated at the list's width,
     /// not the screen's — items wider than the collection view are dropped by the layout.
     var messageListWidth: Double { get }
-    func render(count: Int, unread: Int, mode: String)
+    func render(count: Int, unread: Int, mode: String, saves: Int)
+    /// One-shot confirmation. An event, not state: it must not be re-shown by a hook re-run.
+    func showDraftSaved()
 }
 
 // MARK: - ObservationViewModel
@@ -28,6 +31,7 @@ protocol ObservationViewProtocol: ScreenSizeMeasurable {
 final class ObservationViewModel {
     let title = "Observation"
     let counter = CounterModel()
+    let draft = DraftModel()
     let messages: [MessageItem] = [
         .init(sender: "Ana", preview: "Release notes for 1.7.0 are ready"),
         .init(sender: "Bruno", preview: "Can you review the Observation PR?"),
@@ -42,6 +46,12 @@ extension ObservationViewModel: ObservationViewModelProtocol {
     func increment() { counter.count += 1 }
     func reset() { counter.count = .zero }
     func markAllRead() { messages.forEach { $0.isRead = true } }
+
+    /// State and event from one action: the count is observed, the confirmation is called.
+    func saveDraft() {
+        draft.saves += 1
+        view?.showDraftSaved()
+    }
 }
 
 // MARK: - ViewLifecycleable
@@ -51,7 +61,8 @@ extension ObservationViewModel: ViewLifecycleable {
         view?.render(
             count: counter.count,
             unread: messages.filter { !$0.isRead }.count,
-            mode: "\(ObservationMode.current)"
+            mode: "\(ObservationMode.current)",
+            saves: draft.saves
         )
     }
 }

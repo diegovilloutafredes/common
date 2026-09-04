@@ -174,7 +174,7 @@ Missing faces and unregistered families fall back to the system font at the matc
 
 ### MVVM-C module wiring
 
-Each feature is a self-contained module: a **Wireframe** factory wires the ViewModel and ViewController together, while the **Coordinator** owns navigation. The ViewController never knows about navigation; it only fires typed actions back through a closure.
+Each feature is a self-contained module: a **Wireframe** factory wires the ViewModel and ViewController together, while the **Coordinator** owns navigation. The ViewController never knows about navigation; it only fires typed actions back through a closure. State lives on an `@Observable` ViewModel and the ViewController renders it in one `updateContent()` hook that the framework re-runs on change — the weak view reference is for one-shot events only.
 
 ```swift
 // 1. Action enum — what the module can request from the coordinator
@@ -208,11 +208,20 @@ final class AppCoordinator: BaseCoordinator {
     }
 }
 
-// 4. ViewModel — communicates down to the VC via a weak view reference
+// 4. ViewModel — @Observable state the VC renders; the weak view reference is for events only
+import Observation   // UIKit does not re-export it
+
+@MainActor
+protocol ProfileViewModelProtocol: ViewModel, ViewLifecycleable {
+    var name: String { get }
+}
+
+@Observable @MainActor
 final class ProfileViewModel {
-    private weak var delegate: BaseModuleDelegate?
+    private(set) var name = ""
+    @ObservationIgnored private weak var delegate: BaseModuleDelegate?
+    @ObservationIgnored weak var view: ProfileViewProtocol?
     private let onAction: Handler<ProfileAction>
-    weak var view: ProfileViewProtocol?
 
     init(delegate: BaseModuleDelegate, onAction: @escaping Handler<ProfileAction>) {
         self.delegate = delegate
@@ -225,6 +234,14 @@ extension ProfileViewModel: ProfileViewModelProtocol {}
 extension ProfileViewModel: ViewLifecycleable {
     func onViewDidLoad() {
         view?.addBackButton { self.delegate?.onGoBackRequested() }
+    }
+}
+
+// 5. ViewController — one render point, re-run whenever a tracked read changes
+final class ProfileViewController: BaseViewModelableViewController<ProfileViewModelProtocol> {
+    override func updateContent() {
+        super.updateContent()
+        nameLabel.text(viewModel.name)
     }
 }
 ```

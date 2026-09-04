@@ -53,4 +53,27 @@ final class ObservationUITests: UITestCase {
         XCTAssertTrue(app.staticTexts["0 unread"].waitForExistence(timeout: uiTimeout))
         XCTAssertFalse(app.staticTexts["3 unread"].exists)
     }
+
+    /// One tap does both: the count is state read in the hook, the confirmation is a
+    /// one-shot event delivered through the view protocol.
+    func test_saveDraft_rendersStateInTheHookAndFiresTheEventOnce() {
+        let button = app.buttons["Save draft"]
+        scrollUntilVisible(button)
+        XCTAssertTrue(app.staticTexts["Saves: 0"].exists)
+
+        button.tap()
+
+        XCTAssertTrue(app.staticTexts["Saves: 1"].waitForExistence(timeout: uiTimeout))
+        let snackbar = app.staticTexts["Draft saved"]
+        XCTAssertTrue(snackbar.waitForExistence(timeout: uiTimeout))
+
+        // Once-ness: after the snackbar dismisses, a hook re-run (Increment mutates observed
+        // state) must not bring it back — the event is not stored anywhere the hook reads.
+        XCTAssertTrue(snackbar.waitForNonExistence(timeout: uiTimeout))
+        let increment = app.buttons["Increment"]
+        scrollUntilVisible(increment)
+        increment.tap()
+        XCTAssertTrue(app.staticTexts["Count: 1"].waitForExistence(timeout: uiTimeout))
+        XCTAssertFalse(snackbar.exists)
+    }
 }

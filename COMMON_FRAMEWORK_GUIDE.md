@@ -882,7 +882,7 @@ final class FooViewController: BaseViewModelableViewController<FooViewModelProto
 }
 ```
 
-Every DemoApp module is written this way; the **Observation** module additionally shows the view-model-side `onUpdateProperties()` variant.
+Every DemoApp module is written this way; the **Observation** module additionally shows the view-model-side `onUpdateProperties()` variant and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a one-shot snackbar through the view protocol.
 
 ### System notification observers
 
@@ -986,7 +986,7 @@ Each screen is wired using a stateless `enum` wireframe with a static factory me
 ```
 ModuleName/
 ├── ModuleNameViewController.swift   — UI (mainView + setupView)
-├── ModuleNameViewModel.swift        — Business logic + delegate
+├── ModuleNameViewModel.swift        — Observable state + business logic + delegate
 └── ModuleNameWireframe.swift        — Factory that wires VC + VM
 ```
 
@@ -1005,15 +1005,20 @@ enum ProfileWireframe {
 - **Enum** (not struct/class) — purely a namespace, no state
 - **`createModule`** is the single factory entry point
 - The coordinator passes itself as `delegate`
-- `.with { viewModel.view = $0 }` establishes the ViewModel-to-ViewController back-reference after init
+- `.with { viewModel.view = $0 }` establishes the ViewModel-to-ViewController back-reference after init — used for **events** (snackbars, errors, `addBackButton`) and measurements; **state** flows the other way, read by the controller from the `@Observable` ViewModel in `updateContent()` (§5 *Observation-driven updates*)
 
 ### ViewModel pattern
 
 ```swift
-@MainActor
-final class ProfileViewModel {
-    weak var delegate: BaseModuleDelegate?
-    weak var view: ProfileViewController?
+import Observation
+
+protocol ProfileViewProtocol: BackButtonAddable {}               // events only
+
+@Observable @MainActor
+final class ProfileViewModel: ViewModel {
+    private(set) var name = ""                                   // state: tracked, rendered by the controller
+    @ObservationIgnored weak var delegate: BaseModuleDelegate?
+    @ObservationIgnored weak var view: ProfileViewProtocol?      // events only
 
     init(delegate: BaseModuleDelegate) {
         self.delegate = delegate
@@ -1022,8 +1027,21 @@ final class ProfileViewModel {
     func onBackTapped() {
         delegate?.onGoBackRequested()
     }
+
+    func load() { name = "Ada" }                                 // mutate state; the controller re-renders
+}
+
+final class ProfileViewController: BaseViewModelableViewController<ProfileViewModel> {
+    override func updateContent() {
+        super.updateContent()
+        nameLabel.text(viewModel.name)                           // tracked read
+    }
 }
 ```
+
+- State (text, flags, counts, a collection `revision`) lives on the `@Observable` ViewModel and is read in `updateContent()` — no `didSet`, no `set(title:)`-style view calls
+- `weak` references and `lazy` properties are `@ObservationIgnored`; `let` constants are never tracked
+- The view protocol carries one-shot events and measurements the ViewModel needs from the view (list width) — not state
 
 ### `BaseModuleDelegate`
 
@@ -2742,6 +2760,7 @@ func alertView(
 - [ ] `@UIViewBuilder override var mainView: UIView` with `VStack`/`HStack` layout
 - [ ] `override func setupView()` calls `super.setupView()` first
 - [ ] Lifecycle logic uses `onViewIsAppearing`, `onViewWillDisappear` hooks — not overrides
+- [ ] ViewModel is `@Observable`; the controller renders its state in `updateContent()` (`super.updateContent()` first); the view protocol carries events only (§5 *Observation-driven updates*)
 - [ ] All closures capture `[weak self]` and immediately `guard let self else { return }`
 - [ ] Network calls go through a `UseCase` — the ViewModel, view controller, or coordinator conforms (the DemoApp conforms the ViewModel) and calls the method directly
 - [ ] Navigation fired via callback to coordinator (`onRequested(.action)`)

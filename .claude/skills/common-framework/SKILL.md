@@ -32,14 +32,15 @@ This skill gives an AI everything needed to correctly use the **Common iOS frame
 ```
 Coordinator  → owns navigation, starts child coordinators, conforms to UseCase protocols
 Wireframe    → enum factory: createModule(...) -> UIViewController  (no state, no logic)
-ViewModel    → weak delegate (coordinator) + weak view (VC), conforms to ViewLifecycleable
-ViewController → BaseViewModelableViewController subclass, builds UI via @UIViewBuilder mainView
+ViewModel    → @Observable @MainActor; tracked state + weak delegate (coordinator) + weak view (VC, events only), conforms to ViewLifecycleable
+ViewController → BaseViewModelableViewController subclass, builds UI via @UIViewBuilder mainView, renders VM state in updateContent()
 View / Cell  → BaseView / BaseViewModelableCell, same mainView pattern
 ```
 
 Communication directions (strict):
 - VC → ViewModel: direct method calls
-- ViewModel → VC: via `weak var view: ViewProtocol?`
+- ViewModel → VC, state: `@Observable` properties on the VM; the VC reads them in `updateContent()` and the framework re-runs it on change (guide §5 *Observation-driven updates*)
+- ViewModel → VC, events and measurements: via `weak var view: ViewProtocol?` (snackbars, errors, `addBackButton`, list width) — never state
 - ViewModel → Coordinator: via `weak var delegate` or `onAction` closure
 - Coordinator navigates: `push`, `pop`, `set`, `present` — VCs never navigate directly
 
@@ -59,18 +60,26 @@ enum FooWireframe {
 }
 
 // FooViewModel.swift — @MainActor: ViewLifecycleable, CollectionViewable and FieldsValidator are main-actor bound
-protocol FooViewModelProtocol: ViewModel, ViewLifecycleable {}
+import Observation                                   // UIKit does not re-export it
 
 @MainActor
+protocol FooViewModelProtocol: ViewModel, ViewLifecycleable {
+    var statusText: String { get }                   // state the VC renders
+}
+
+@Observable @MainActor
 final class FooViewModel {
-    private weak var delegate: BaseModuleDelegate?
-    private let onAction: Handler<FooAction>
-    weak var view: FooViewProtocol?
+    private(set) var statusText = ""                 // tracked: any change re-runs the VC's updateContent()
+    @ObservationIgnored private weak var delegate: BaseModuleDelegate?
+    @ObservationIgnored weak var view: FooViewProtocol?   // events only, never state
+    private let onAction: Handler<FooAction>         // `let` is never tracked
 
     init(delegate: BaseModuleDelegate, onAction: @escaping Handler<FooAction>) {
         self.delegate = delegate
         self.onAction = onAction
     }
+
+    func refresh() { statusText = "Updated" }         // mutate state; no view call needed
 }
 
 extension FooViewModel: FooViewModelProtocol {}
@@ -82,8 +91,9 @@ extension FooViewModel: ViewLifecycleable {
     func onViewWillDisappear() {}
 }
 
-// FooViewController.swift — view protocol = only capabilities the base VC already provides
+// FooViewController.swift — view protocol = events + capabilities the base VC already provides
 // (BackButtonAddable, ActivityIndicatorable, ScreenSizeMeasurable, KeyboardDismissable …).
+// State (text, flags, counts) does NOT go here — the VC reads it from the VM in updateContent().
 // NavigationBarSetupable has NO default implementation — adopt it only if you implement setupNavigationBar().
 protocol FooViewProtocol: BackButtonAddable {}
 
@@ -103,6 +113,12 @@ final class FooViewController: BaseViewModelableViewController<FooViewModelProto
         super.setupView()
         backgroundColor(.white)
         set(title: "Foo")
+    }
+
+    // Single render point: runs after viewDidLoad and again whenever a tracked read changes. Keep it idempotent.
+    override func updateContent() {
+        super.updateContent()
+        titleLabel.text(viewModel.statusText)
     }
     // No initializer here: init(viewModel:) is inherited from the base class.
     // Declaring init?(coder:) (or any init) removes that inheritance and fails to compile.
@@ -235,7 +251,10 @@ extension FooStorage: SingleRawValueKeyValueObjectStorage {
 // The list screen's ViewModel MUST conform to CollectionViewable (item counts,
 // cell view models, sizes) — the base VC reaches it at runtime; a VM without it
 // compiles fine and renders an empty list.
-protocol FooListViewModelProtocol: CollectionViewable, ViewModel, ViewLifecycleable {}
+@MainActor
+protocol FooListViewModelProtocol: CollectionViewable, ViewModel, ViewLifecycleable {
+    var revision: Int { get }                    // bumps when items change; the VC reloads on it
+}
 
 // BaseCollectionViewableViewController — NOT BaseViewModelableViewController — for screens with VList/HList
 final class FooListViewController: BaseCollectionViewableViewController<FooListViewModelProtocol> {
@@ -245,14 +264,21 @@ final class FooListViewController: BaseCollectionViewableViewController<FooListV
         .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
 
     @UIViewBuilder override var mainView: UIView { list }
+
+    private var renderedRevision: Int = .zero
+    override func updateContent() {
+        super.updateContent()
+        if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
+    }
 }
 
 // FooListViewModel.swift — the cell contract the base VC calls at runtime.
 // CollectionViewable = CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable.
-@MainActor
+@Observable @MainActor
 final class FooListViewModel {
-    weak var view: FooListViewProtocol?          // FooListViewProtocol: ScreenSizeMeasurable → screenWidth for sizes
-    private var items: [FooCellViewModel] = []
+    @ObservationIgnored weak var view: FooListViewProtocol?   // FooListViewProtocol: ScreenSizeMeasurable → screenWidth for sizes
+    private(set) var revision: Int = .zero                    // tracked: the VC reloads when this moves
+    @ObservationIgnored private var items: [FooCellViewModel] = [] { didSet { revision += 1 } }   // the array itself is NOT tracked
 }
 extension FooListViewModel: CollectionViewable {
     func getNumberOfSections() -> Int { 1 }                                                   // defaulted (1)
@@ -473,6 +499,7 @@ When writing code that lives in `Common/` itself (full detail: guide §19):
 - [ ] All subviews declared as `private lazy var`
 - [ ] All closures use `[weak self]` + `guard let self else { return }`
 - [ ] Lifecycle logic via `onViewIsAppearing`, `onViewWillDisappear` hooks — not overrides
+- [ ] ViewModel is `@Observable`; the VC renders its state in `updateContent()` (`super` first); the view protocol carries events only
 - [ ] Networking via UseCase conformance on the ViewModel, VC, or Coordinator (the demo conforms the ViewModel)
 - [ ] Navigation fired via `onRequested`/`onAction` callback — never directly
 - [ ] Forms validate with `FieldsValidator` — never hand-rolled per-field checks

@@ -45,6 +45,19 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
     .onTap { [weak self] in self?.viewModel.markAllRead() }
     .setConstraints { $0.set(height: 44) }
 
+    private lazy var savesLabel = UILabel("Saves: 0")
+        .font(.monospacedSystemFont(ofSize: 20, weight: .bold))
+        .textColor(.label)
+        .textAlignment(.center)
+
+    private lazy var saveDraftButton = UIButton(configuration: .filled().with {
+        $0.title = "Save draft"
+        $0.baseBackgroundColor = .systemIndigo
+        $0.cornerStyle = .capsule
+    })
+    .onTap { [weak self] in self?.viewModel.saveDraft() }
+    .setConstraints { $0.set(height: 44) }
+
     private lazy var list = VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }
         .register(MessageCell.self)
         .backgroundColor(.clear)
@@ -81,6 +94,15 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
                         list
                     }
                 }
+                demoSection(
+                    title: "State vs events",
+                    description: "One tap does both. The saves count is state: the hook reads it and may render it many times. The confirmation is an event: it fires once through the view protocol, never from the hook."
+                ) {
+                    VStack(spacing: 12) {
+                        savesLabel
+                        saveDraftButton
+                    }
+                }
             }
             .setConstraints {
                 $0.snap(to: $1)
@@ -112,9 +134,14 @@ extension ObservationViewController: ObservationViewProtocol {
     /// Card margins (16) + section margins (12) on each side until the list has laid out.
     var messageListWidth: Double { list.bounds.width > .zero ? list.bounds.width : screenWidth - 56 }
 
-    func render(count: Int, unread: Int, mode: String) {
+    func render(count: Int, unread: Int, mode: String, saves: Int) {
         countLabel.text("Count: \(count)")
         resetButton.isEnabled(count > .zero)
         modeLabel.text("ObservationMode.current = .\(mode) · \(unread) unread")
+        savesLabel.text("Saves: \(saves)")
+    }
+
+    func showDraftSaved() {
+        Snackbar.show(.init(message: "Draft saved"))
     }
 }
