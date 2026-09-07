@@ -46,14 +46,7 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
     open func updateContent() {}
 
     /// Schedules `updateContent()` for the next update pass.
-    public func setNeedsContentUpdate() {
-        if #available(iOS 26.0, *), ObservationMode.current == .native {
-            setNeedsUpdateProperties()
-        } else {
-            needsContentUpdate = true
-            setNeedsLayout()
-        }
-    }
+    public func setNeedsContentUpdate() { scheduleContentUpdate() }
 
     /// Runs a pending `updateContent()` now instead of waiting for the next update pass.
     ///
@@ -61,17 +54,10 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
     /// cells are measured immediately after configuration, before any layout or properties pass,
     /// so the content has to be bound synchronously. Tracking is armed by that run, and later
     /// observable changes are still delivered on the next pass.
-    public func updateContentIfNeeded() {
-        if #available(iOS 26.0, *), ObservationMode.current == .native {
-            updatePropertiesIfNeeded()
-        } else {
-            runContentUpdateIfNeeded()
-        }
-    }
+    public func updateContentIfNeeded() { flushContentUpdateIfNeeded() }
 
-    /// Manual/unavailable-mode bookkeeping: `true` until the first pass, then only after an
-    /// invalidation, so unrelated layout passes (scrolling, rotation) skip the hook.
-    private var needsContentUpdate = true
+    /// See `ContentUpdatable.needsContentUpdate`.
+    var needsContentUpdate = true
 
     @available(iOS 26.0, *)
     open override func updateProperties() {
@@ -84,12 +70,7 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
         runContentUpdateIfNeeded()   // before layout, mirroring UIKit's updateProperties() ordering
         super.layoutSubviews()
     }
-
-    private func runContentUpdateIfNeeded() {
-        let mode = ObservationMode.current
-        guard mode != .native else { return }
-        guard mode == .unavailable || needsContentUpdate else { return }
-        needsContentUpdate = false
-        ObservationTracker.run { updateContent() } onInvalidate: { [weak self] in self?.setNeedsContentUpdate() }
-    }
 }
+
+// MARK: - ContentUpdatable
+extension BaseCell: ContentUpdatable {}
