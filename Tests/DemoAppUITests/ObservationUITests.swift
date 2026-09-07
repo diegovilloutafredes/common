@@ -76,4 +76,37 @@ final class ObservationUITests: UITestCase {
         XCTAssertTrue(app.staticTexts["Count: 1"].waitForExistence(timeout: uiTimeout))
         XCTAssertFalse(snackbar.exists)
     }
+
+    /// Membership changes go through the tracked revision: adding a row reloads the list and
+    /// re-renders the badge, removing it takes both back. Row taps (item mutations) never reload.
+    func test_addAndRemoveMessage_reloadThroughRevision() {
+        let add = app.buttons["Add message"]
+        scrollUntilVisible(add)
+        add.tap()
+        XCTAssertTrue(app.staticTexts["Message #5"].waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(app.staticTexts["4 unread"].waitForExistence(timeout: uiTimeout))
+
+        app.buttons["Remove last"].tap()
+        XCTAssertTrue(app.staticTexts["Message #5"].waitForNonExistence(timeout: uiTimeout))
+        XCTAssertTrue(app.staticTexts["3 unread"].waitForExistence(timeout: uiTimeout))
+    }
+
+    /// The bar's width constraint constant is written in the hook from a tracked Bool; the tap
+    /// mutates inside an animation block, so the frame must settle at the new constant.
+    func test_toggleWidth_drivesConstraintFromObservedState() {
+        let button = app.buttons["Toggle width"]
+        scrollUntilVisible(button)
+        let bar = app.otherElements["observation.bar"]
+        XCTAssertTrue(bar.waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(app.staticTexts["bar.width = 80"].exists)
+        XCTAssertEqual(bar.frame.width, 80, accuracy: 1)
+
+        button.tap()
+        XCTAssertTrue(app.staticTexts["bar.width = 240"].waitForExistence(timeout: uiTimeout))
+        wait(for: [expectation(for: NSPredicate { _, _ in abs(bar.frame.width - 240) < 1 }, evaluatedWith: nil)], timeout: uiTimeout)
+
+        button.tap()
+        XCTAssertTrue(app.staticTexts["bar.width = 80"].waitForExistence(timeout: uiTimeout))
+        wait(for: [expectation(for: NSPredicate { _, _ in abs(bar.frame.width - 80) < 1 }, evaluatedWith: nil)], timeout: uiTimeout)
+    }
 }

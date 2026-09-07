@@ -844,7 +844,7 @@ final class ProfileCell: BaseViewModelableCell<ProfileModel> {
 
 Rules:
 - Read state and write views inside the hook only. Mutate models anywhere on the main actor.
-- Keep geometry out of it: constraint constants still need a layout pass (`animateConstraintChanges`, or `.flushUpdates` on iOS 26).
+- Constraint constants may be written in the hook; the layout pass that follows applies them. To animate one, mutate the state inside the animation block: `animateConstraints { viewModel.toggle() }` on iOS 17–18 (its `layoutIfNeeded()` runs the hook inside the block) or `UIView.animate(withDuration:delay:options: .flushUpdates) { viewModel.toggle() }` on iOS 26. Geometry *derived* from layout (a list's content height) only exists after layout — sync it in `viewDidLayoutSubviews()` (or after `super.layoutSubviews()` in a view), not in the hook.
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
 - Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`.
@@ -882,7 +882,7 @@ final class FooViewController: BaseViewModelableViewController<FooViewModelProto
 }
 ```
 
-Every DemoApp module is written this way; the **Observation** module additionally shows the view-model-side `onUpdateProperties()` variant and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a one-shot snackbar through the view protocol.
+Every DemoApp module is written this way; the **Observation** module additionally shows the view-model-side `onUpdateProperties()` variant, a *Collections behind a revision* card (adding or removing a row reloads through the tracked `revision`, while a row tap re-runs only that cell), a *Constraints from state* card (a width constant written in the hook, animated per the rule above) and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a one-shot snackbar through the view protocol.
 
 ### System notification observers
 
