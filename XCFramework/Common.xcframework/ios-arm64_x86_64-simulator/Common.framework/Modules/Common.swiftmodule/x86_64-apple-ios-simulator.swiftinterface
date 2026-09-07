@@ -1137,16 +1137,23 @@ public typealias Size = (width: Swift.Double, height: Swift.Double)
   @_Concurrency.MainActor func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor func onSizeForHeaderItem(in section: Swift.Int, availableSize: Common.Size) -> Common.Size
   @_Concurrency.MainActor func onSizeForFooterItem(in section: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor func onSizeForFooterItem(in section: Swift.Int, availableSize: Common.Size) -> Common.Size
   @_Concurrency.MainActor func onSizeForItem(in section: Swift.Int, at index: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor func onSizeForItem(in section: Swift.Int, at index: Swift.Int, availableSize: Common.Size) -> Common.Size
   @_Concurrency.MainActor func onInsetFor(section: Swift.Int) -> Common.Inset
 }
 extension Common.CollectionViewSizeable {
   @_Concurrency.MainActor public func onMinimumInteritemSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor public func onMinimumLineSpacingFor(section: Swift.Int) -> Swift.Double
   @_Concurrency.MainActor public func onSizeForHeaderItem(in section: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor public func onSizeForHeaderItem(in section: Swift.Int, availableSize: Common.Size) -> Common.Size
   @_Concurrency.MainActor public func onSizeForFooterItem(in section: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor public func onSizeForFooterItem(in section: Swift.Int, availableSize: Common.Size) -> Common.Size
   @_Concurrency.MainActor public func onInsetFor(section: Swift.Int) -> Common.Inset
+  @_Concurrency.MainActor public func onSizeForItem(in section: Swift.Int, at index: Swift.Int) -> Common.Size
+  @_Concurrency.MainActor public func onSizeForItem(in section: Swift.Int, at index: Swift.Int, availableSize: Common.Size) -> Common.Size
 }
 public protocol ContentReloadable {
   func reloadContent()
@@ -4068,6 +4075,15 @@ public protocol ValueWithable {
 extension Common.ValueWithable {
   @discardableResult
   public func with(_ closure: (_ instance: inout Self) -> Swift.Void) -> Self
+}
+public struct ViewEvent<Payload> {
+  public let id: Foundation.UUID
+  public let payload: Payload
+  public init(_ payload: Payload)
+}
+public struct ViewEventCursor {
+  public init()
+  public mutating func consume<Payload>(_ event: Common.ViewEvent<Payload>?, _ handle: (Payload) -> Swift.Void)
 }
 @_Concurrency.MainActor public protocol ViewLifecycleable : AnyObject {
   @_Concurrency.MainActor func onViewDidLoad()

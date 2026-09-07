@@ -13670,6 +13670,13 @@
           },
           {
             "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
             "name": "Withable",
             "printedName": "Withable",
             "children": [
@@ -13759,13 +13766,6 @@
             "printedName": "Sendable",
             "usr": "s:s8SendableP",
             "mangledName": "$ss8SendableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "SendableMetatype",
-            "printedName": "SendableMetatype",
-            "usr": "s:s16SendableMetatypeP",
-            "mangledName": "$ss16SendableMetatypeP"
           },
           {
             "kind": "Conformance",
@@ -15649,6 +15649,20 @@
           },
           {
             "kind": "Conformance",
+            "name": "ViewModelHolder",
+            "printedName": "ViewModelHolder",
+            "usr": "s:6Common15ViewModelHolderP",
+            "mangledName": "$s6Common15ViewModelHolderP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ViewModelInitializable",
+            "printedName": "ViewModelInitializable",
+            "usr": "s:6Common22ViewModelInitializableP",
+            "mangledName": "$s6Common22ViewModelInitializableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "ViewModelSettable",
             "printedName": "ViewModelSettable",
             "usr": "s:6Common17ViewModelSettableP",
@@ -15660,13 +15674,6 @@
             "printedName": "ViewLifecycleable",
             "usr": "s:6Common17ViewLifecycleableP",
             "mangledName": "$s6Common17ViewLifecycleableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "ViewModelHolder",
-            "printedName": "ViewModelHolder",
-            "usr": "s:6Common15ViewModelHolderP",
-            "mangledName": "$s6Common15ViewModelHolderP"
           },
           {
             "kind": "Conformance",
@@ -15688,13 +15695,6 @@
             ],
             "usr": "s:6Common13ViewModelableP",
             "mangledName": "$s6Common13ViewModelableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "ViewModelInitializable",
-            "printedName": "ViewModelInitializable",
-            "usr": "s:6Common22ViewModelInitializableP",
-            "mangledName": "$s6Common22ViewModelInitializableP"
           },
           {
             "kind": "Conformance",
@@ -21933,6 +21933,70 @@
           },
           {
             "kind": "Function",
+            "name": "onSizeForHeaderItem",
+            "printedName": "onSizeForHeaderItem(in:availableSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeableP19onSizeForHeaderItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
+            "mangledName": "$s6Common22CollectionViewSizeableP19onSizeForHeaderItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "protocolReq": true,
+            "declAttributes": [
+              "Custom",
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "onSizeForFooterItem",
             "printedName": "onSizeForFooterItem(in:)",
             "children": [
@@ -21965,6 +22029,70 @@
             "declKind": "Func",
             "usr": "s:6Common22CollectionViewSizeableP19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
             "mangledName": "$s6Common22CollectionViewSizeableP19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "protocolReq": true,
+            "declAttributes": [
+              "Custom",
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSizeForFooterItem",
+            "printedName": "onSizeForFooterItem(in:availableSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeableP19onSizeForFooterItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
+            "mangledName": "$s6Common22CollectionViewSizeableP19onSizeForFooterItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
             "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
@@ -22016,6 +22144,76 @@
             "declKind": "Func",
             "usr": "s:6Common22CollectionViewSizeableP13onSizeForItem2in2atSd5width_Sd6heighttSi_SitF",
             "mangledName": "$s6Common22CollectionViewSizeableP13onSizeForItem2in2atSd5width_Sd6heighttSi_SitF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "protocolReq": true,
+            "declAttributes": [
+              "Custom",
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSizeForItem",
+            "printedName": "onSizeForItem(in:at:availableSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeableP13onSizeForItem2in2at09availableF0Sd5width_Sd6heighttSi_SiSdAH_SdAIttF",
+            "mangledName": "$s6Common22CollectionViewSizeableP13onSizeForItem2in2at09availableF0Sd5width_Sd6heighttSi_SiSdAH_SdAIttF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
             "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
@@ -22192,6 +22390,69 @@
           },
           {
             "kind": "Function",
+            "name": "onSizeForHeaderItem",
+            "printedName": "onSizeForHeaderItem(in:availableSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeablePAAE19onSizeForHeaderItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
+            "mangledName": "$s6Common22CollectionViewSizeablePAAE19onSizeForHeaderItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "declAttributes": [
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "onSizeForFooterItem",
             "printedName": "onSizeForFooterItem(in:)",
             "children": [
@@ -22224,6 +22485,69 @@
             "declKind": "Func",
             "usr": "s:6Common22CollectionViewSizeablePAAE19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
             "mangledName": "$s6Common22CollectionViewSizeablePAAE19onSizeForFooterItem2inSd5width_Sd6heighttSi_tF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "declAttributes": [
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSizeForFooterItem",
+            "printedName": "onSizeForFooterItem(in:availableSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeablePAAE19onSizeForFooterItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
+            "mangledName": "$s6Common22CollectionViewSizeablePAAE19onSizeForFooterItem2in09availableF0Sd5width_Sd6heighttSi_SdAG_SdAHttF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
             "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
@@ -22280,6 +22604,125 @@
             "declKind": "Func",
             "usr": "s:6Common22CollectionViewSizeablePAAE10onInsetFor7sectionSd3top_Sd4leftSd6bottomSd5righttSi_tF",
             "mangledName": "$s6Common22CollectionViewSizeablePAAE10onInsetFor7sectionSd3top_Sd4leftSd6bottomSd5righttSi_tF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "declAttributes": [
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSizeForItem",
+            "printedName": "onSizeForItem(in:at:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeablePAAE13onSizeForItem2in2atSd5width_Sd6heighttSi_SitF",
+            "mangledName": "$s6Common22CollectionViewSizeablePAAE13onSizeForItem2in2atSd5width_Sd6heighttSi_SitF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
+            "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
+            "declAttributes": [
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSizeForItem",
+            "printedName": "onSizeForItem(in:at:availableSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(width: Swift.Double, height: Swift.Double)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common22CollectionViewSizeablePAAE13onSizeForItem2in2at09availableF0Sd5width_Sd6heighttSi_SiSdAH_SdAIttF",
+            "mangledName": "$s6Common22CollectionViewSizeablePAAE13onSizeForItem2in2at09availableF0Sd5width_Sd6heighttSi_SiSdAH_SdAIttF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.CollectionViewSizeable>",
             "sugared_genericSig": "<Self where Self : Common.CollectionViewSizeable>",
@@ -22372,6 +22815,16 @@
             "usr": "s:s8CopyableP",
             "mangledName": "$ss8CopyableP"
           }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
         ]
       },
       {
@@ -56333,6 +56786,305 @@
             "printedName": "Copyable",
             "usr": "s:s8CopyableP",
             "mangledName": "$ss8CopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "ViewEvent",
+        "printedName": "ViewEvent",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "id",
+            "printedName": "id",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common9ViewEventV2id10Foundation4UUIDVvp",
+            "mangledName": "$s6Common9ViewEventV2id10Foundation4UUIDVvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UUID",
+                    "printedName": "Foundation.UUID",
+                    "usr": "s:10Foundation4UUIDV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common9ViewEventV2id10Foundation4UUIDVvg",
+                "mangledName": "$s6Common9ViewEventV2id10Foundation4UUIDVvg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0>",
+                "sugared_genericSig": "<Payload>",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "payload",
+            "printedName": "payload",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "GenericTypeParam",
+                "printedName": "τ_0_0"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common9ViewEventV7payloadxvp",
+            "mangledName": "$s6Common9ViewEventV7payloadxvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common9ViewEventV7payloadxvg",
+                "mangledName": "$s6Common9ViewEventV7payloadxvg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0>",
+                "sugared_genericSig": "<Payload>",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "ViewEvent",
+                "printedName": "Common.ViewEvent<τ_0_0>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "usr": "s:6Common9ViewEventV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "GenericTypeParam",
+                "printedName": "τ_0_0"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:6Common9ViewEventVyACyxGxcfc",
+            "mangledName": "$s6Common9ViewEventVyACyxGxcfc",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<Payload>",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:6Common9ViewEventV",
+        "mangledName": "$s6Common9ViewEventV",
+        "moduleName": "Common",
+        "genericSig": "<τ_0_0>",
+        "sugared_genericSig": "<Payload>",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "ViewEventCursor",
+        "printedName": "ViewEventCursor",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "ViewEventCursor",
+                "printedName": "Common.ViewEventCursor",
+                "usr": "s:6Common15ViewEventCursorV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:6Common15ViewEventCursorVACycfc",
+            "mangledName": "$s6Common15ViewEventCursorVACycfc",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "consume",
+            "printedName": "consume(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Common.ViewEvent<τ_0_0>?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ViewEvent",
+                    "printedName": "Common.ViewEvent<τ_0_0>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_0_0"
+                      }
+                    ],
+                    "usr": "s:6Common9ViewEventV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(τ_0_0) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "typeAttributes": [
+                  "noescape"
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15ViewEventCursorV7consumeyyAA0bC0VyxGSg_yxXEtlF",
+            "mangledName": "$s6Common15ViewEventCursorV7consumeyyAA0bC0VyxGSg_yxXEtlF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<Payload>",
+            "declAttributes": [
+              "Mutating",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "Mutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:6Common15ViewEventCursorV",
+        "mangledName": "$s6Common15ViewEventCursorV",
+        "moduleName": "Common",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
           }
         ]
       },
@@ -100053,7 +100805,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
-      "offset": 3024,
+      "offset": 2549,
       "length": 4,
       "value": "true"
     },
@@ -100109,7 +100861,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2749,
+      "offset": 2274,
       "length": 4,
       "value": "true"
     },
@@ -100130,7 +100882,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseView.swift",
       "kind": "BooleanLiteral",
-      "offset": 3202,
+      "offset": 2727,
       "length": 4,
       "value": "true"
     },
