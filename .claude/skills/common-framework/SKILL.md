@@ -329,7 +329,7 @@ final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
 }
 ```
 
-**Section headers / footers:** register with `.register(View.self, kind: .header/.footer)`; the ViewModel answers three hooks per kind — `on{Header,Footer}ItemReuseIdentifierRequested(in:) -> String`, `on{Header,Footer}ItemDataSourceRequested(in:) -> ViewModel?`, `onSizeFor{Header,Footer}Item(in:) -> Size` (`(width:height:)` tuple). Size defaults to zero = not rendered; a non-zero size without a registered reuse identifier makes UIKit throw. Views subclass `BaseViewModelableReusableView<T>`. Guide §5.
+**Section headers / footers:** register with `.register(View.self, kind: .header/.footer)`; the ViewModel answers three hooks per kind — `on{Header,Footer}ItemReuseIdentifierRequested(in:) -> String`, `on{Header,Footer}ItemDataSourceRequested(in:) -> ViewModel?`, `onSizeFor{Header,Footer}Item(in:availableSize:) -> Size` (`(width:height:)` tuple; return `availableSize.width` for full-width bars). Size defaults to zero = not rendered; a non-zero size without a registered reuse identifier makes UIKit throw. Views subclass `BaseViewModelableReusableView<T>` and bind in `updateContent()` exactly like cells. Guide §5.
 
 ---
 
@@ -392,6 +392,9 @@ init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupVie
 - Self-sizing rows (`estimatedItemSize = .automaticSize` + `preferredLayoutAttributesFitting`): `onSizeForItem` must return `availableSize.width` (the list's own width), never `screenWidth` — wider items are dropped and the list renders empty. Content is bound synchronously on `viewModel` assignment so measurement sees it.
 - Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a covered VC consumes on return); `setActivityIndicator(visible: isLoading)` for spinners.
 - `onUpdateProperties()` (ViewModel-side hook) is an escape hatch for code written before the contract — it needs a view to push into. New modules render in the VC's `updateContent()` only.
+- `ViewLifecycleable` (ViewModel side, all defaulted): `onViewDidLoad`, `onViewWillAppear`, `onViewIsAppearing`, `onViewDidAppear`, `onViewWillLayoutSubviews`, `onViewDidLayoutSubviews`, `onViewWillDisappear`, `onViewDidDisappear`, `onUpdateProperties`. Load data in `onViewWillAppear()` / `onViewIsAppearing()`; the base VC calls them.
+- Self-sizing rows: `VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }` — the trailing closure configures the flow layout; `onSizeForItem` then returns `(availableSize.width, estimatedHeight)`.
+- Pull-to-refresh under the contract: `list.refreshControl = UIRefreshControl().onValueChanged { [weak self] in self?.viewModel.refresh() }`; the VM tracks `isRefreshing` and bumps `revision`; the VC mirrors `if !viewModel.isRefreshing { list.refreshControl?.endRefreshing() }` in `updateContent()`.
 
 ---
 
@@ -471,7 +474,7 @@ UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on:
 - Rules: `.notEmpty`, `.minLength/.maxLength(n)`, `.containsLetter/Lowercase/Uppercase/Number`, `.contains(CharacterSet)`, `.email`, `.rut`, `.matches(Field)`, `.differs(from: Field)`
 - Touched-state is built in — a field shows no errors until its first `set`; call `touchAll()` on a submit attempt
 - `state.isValid` ignores touched-state → drive the submit button with it; `set(nil, on:)` is treated as `""`
-- Where it lives: the demo keeps the validator in the `@MainActor` ViewModel and drives the VC through its view protocol (`showFieldError(field:message:)` / `clearFieldError(field:)` / `updateValidationStatus(isValid:)`); keeping it in the VC as above also works
+- Where it lives: the demo keeps the validator in the `@MainActor` ViewModel (`@ObservationIgnored private lazy var`) and its `onChange` writes the `FieldsValidator<Field>.State` into an observed property (`private(set) var validation: State?`); the VC renders errors and submit gating from it in `updateContent()`. `State` = `isValid: Bool` + `fields: [Field: FieldState]`; `FieldState` = `isValid`, `isTouched`, `errors`, `message: String?`. The validator does not store values — keep the ones you need (name, email) in the ViewModel. `Field` is a nested non-private enum on the ViewModel so the VC can name it. Keeping the validator in the VC as above also works
 - `.matches`/`.differs` compare against `""` for unset fields — pair `.matches` with `.notEmpty`
 
 ---

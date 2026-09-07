@@ -724,7 +724,7 @@ func onFooterItemDataSourceRequested(in section: Int) -> ViewModel? { section ==
 func onSizeForFooterItem(in section: Int, availableSize: Size) -> Size { section == lastSection ? (availableSize.width, 32) : (.zero, .zero) }
 ```
 
-Supplementary views subclass `BaseViewModelableReusableView<T>` and bind in `viewModel didSet`, exactly like cells. `Size` and `Inset` are labeled tuples (`(width:height:)`, `(top:left:bottom:right:)`).
+Supplementary views subclass `BaseViewModelableReusableView<T>` and bind in `updateContent()`, exactly like cells (the same view may be registered for both kinds). `Size` and `Inset` are labeled tuples (`(width:height:)`, `(top:left:bottom:right:)`).
 
 ### `BaseViewModelableView<T: ViewModel>`
 
@@ -1601,18 +1601,19 @@ private lazy var list = HList(
 
 Cells subclass `BaseViewModelableCell<T>` and use `@UIViewBuilder` for layout. Always call `.register(CellType.self)` before use — and `.register(View.self, kind: .header)` / `.footer` for supplementary views (see §5, "Section headers and footers").
 
-**Pull-to-refresh** with `UIRefreshControl.onValueChanged`:
+**Pull-to-refresh** with `UIRefreshControl.onValueChanged`. The gesture calls an intent; the ViewModel tracks `isRefreshing` and bumps `revision` when the items change; the controller mirrors both in `updateContent()` (this is what the DemoApp's Lists module does):
 
 ```swift
 override func setupView() {
     super.setupView()
     list.refreshControl = UIRefreshControl()
-        .onValueChanged { [weak self] in
-            self?.viewModel.refresh { [weak self] in
-                self?.list.refreshControl?.endRefreshing()
-                self?.list.reloadData()
-            }
-        }
+        .onValueChanged { [weak self] in self?.viewModel.refresh() }
+}
+
+override func updateContent() {
+    super.updateContent()
+    if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
+    if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true { list.refreshControl?.endRefreshing() }
 }
 ```
 
@@ -1808,6 +1809,8 @@ UITextField()
 Every rule has a non-empty `defaultMessage`; the `message` resolver overrides per `(Field, Rule)`. A resolver returning `""` enforces validity but **suppresses display** of that rule.
 
 ### State
+
+`onChange` receives a `FieldsValidator<Field>.State` (nominal type, storable as `private(set) var validation: FieldsValidator<Field>.State?` on a ViewModel). The validator holds no field values; keep the ones you need for submission (name, email) in the ViewModel.
 
 - `state.isValid` — `Bool`, every field satisfies every rule (ignores touched-state → use for the submit button).
 - `state.fields[field]` — `FieldState` with `isValid`, `isTouched`, `errors: [Failure]`, and `message: String?` (non-empty messages joined by `"\n"`, or `nil`).
@@ -2380,7 +2383,7 @@ Capabilities every `BaseViewController` already has (from the base class and ext
 | `SafariWebViewRequestable` | Present an in-app Safari view |
 | `AppSettingsRequestable` | Deep-link to the app's Settings page |
 | `KeyboardDismissable` | `dismissKeyboard()` (pair with `setupAsKeyboardDismissable()`) |
-| `ActivityIndicatorable` | `startActivityIndicator()` / `stopActivityIndicator()` |
+| `ActivityIndicatorable` | `startActivityIndicator()` / `stopActivityIndicator()`; `setActivityIndicator(visible:)` is the idempotent form for `updateContent()` |
 | `Vibrator` | `vibrate()` haptic |
 
 ---
