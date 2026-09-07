@@ -8,7 +8,6 @@ import Observation
 // MARK: - ViewModel
 @MainActor
 protocol OnboardingViewModelProtocol: CollectionViewable, ViewLifecycleable {
-    var onRequested: Handler<OnboardingViewModel.OnRequested> { get }
     var currentPage: Int { get }
     var pageCount: Int { get }
     var isLastPage: Bool { get }
@@ -17,27 +16,30 @@ protocol OnboardingViewModelProtocol: CollectionViewable, ViewLifecycleable {
     var showsSkip: Bool { get }
     /// Called by the pager as the user scrolls; same-value writes are ignored.
     func set(currentPage: Int)
-    /// The primary button: next page, or `.begin` on the last one.
+    /// The primary button: next page, or the `.begin` result on the last one.
     func advance()
+    /// The "Saltar" bar item: abandons the flow.
+    func skip()
 }
 
 // MARK: - OnboardingViewModel
 @Observable
 @MainActor
 final class OnboardingViewModel {
-    enum OnRequested {
-        case skip
-        case begin
-    }
+    /// Navigation the coordinator answers.
+    enum Requested { case skip }
+    /// Results the coordinator reacts to.
+    enum Performed { case begin }
 
-    @ObservationIgnored internal let onRequested: Handler<OnRequested>
-    @ObservationIgnored weak var view: OnboardingViewProtocol?
+    @ObservationIgnored private let onRequested: Handler<Requested>
+    @ObservationIgnored private let onPerformed: Handler<Performed>
     @ObservationIgnored private let dataSource: [OnboardingCellViewModel] = (0...2).map { OnboardingStep(rawValue: $0) ?? .first }
 
     private(set) var currentPage: Int = .zero
 
-    init(onRequested: @escaping Handler<OnRequested>) {
+    init(onRequested: @escaping Handler<Requested>, onPerformed: @escaping Handler<Performed>) {
         self.onRequested = onRequested
+        self.onPerformed = onPerformed
     }
 
     var pageCount: Int { dataSource.count }
@@ -55,9 +57,11 @@ extension OnboardingViewModel: OnboardingViewModelProtocol {
     }
 
     func advance() {
-        guard !isLastPage else { onRequested(.begin); return }
+        guard !isLastPage else { onPerformed(.begin); return }
         currentPage += 1
     }
+
+    func skip() { onRequested(.skip) }
 }
 
 // MARK: - CollectionViewable
@@ -65,5 +69,6 @@ extension OnboardingViewModel: CollectionViewable {
     func getNumberOfItems(in section: Int) -> Int { dataSource.count }
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { dataSource[index] }
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { OnboardingCell.reuseIdentifier }
-    func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) { (view?.screenWidth ?? .zero, (view?.screenHeight ?? .zero) * 0.75) }
+    /// Paged full-size cards: each item fills the list it is handed.
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size { availableSize }
 }

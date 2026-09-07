@@ -16,15 +16,6 @@ struct CoordinatorEvent {
     let time: Date = .init()
 }
 
-// MARK: - CoordinatorDemoViewModelDelegate
-
-protocol CoordinatorDemoViewModelDelegate: AnyObject {
-    func didRequestLaunchChild()
-    func didRequestLaunchDeepFlow()
-    func didRequestPresentSheet()
-    func didRequestStatsRefresh()
-}
-
 // MARK: - CoordinatorDemoViewModelProtocol
 
 @MainActor
@@ -42,26 +33,30 @@ protocol CoordinatorDemoViewModelProtocol: ViewModel {
 
 // MARK: - CoordinatorDemoViewModel
 
-/// The coordinator writes stats and events into this observable model; the controller
-/// renders them in `updateContent()`. No view protocol is needed.
+/// The coordinator writes stats and events into this observable model (an input, like any
+/// other data source); the controller renders them in `updateContent()`. Requests go out
+/// through `onRequested`; nothing here points back at the controller or the coordinator.
 @Observable
 @MainActor
 final class CoordinatorDemoViewModel: CoordinatorDemoViewModelProtocol {
+    /// Flows and modals the coordinator starts, plus a stats refresh only it can answer.
+    enum Requested { case launchChild, launchDeepFlow, presentSheet, refreshStats }
+
     private(set) var children: Int = .zero
     private(set) var navStack: Int = .zero
     private(set) var eventCount: Int = .zero
     private(set) var events: [CoordinatorEvent] = []
 
-    @ObservationIgnored private weak var delegate: CoordinatorDemoViewModelDelegate?
+    @ObservationIgnored private let onRequested: Handler<Requested>
 
-    init(delegate: CoordinatorDemoViewModelDelegate) {
-        self.delegate = delegate
+    init(onRequested: @escaping Handler<Requested>) {
+        self.onRequested = onRequested
     }
 
-    func launchChild() { delegate?.didRequestLaunchChild() }
-    func launchDeepFlow() { delegate?.didRequestLaunchDeepFlow() }
-    func presentSheet() { delegate?.didRequestPresentSheet() }
-    func requestStatsRefresh() { delegate?.didRequestStatsRefresh() }
+    func launchChild() { onRequested(.launchChild) }
+    func launchDeepFlow() { onRequested(.launchDeepFlow) }
+    func presentSheet() { onRequested(.presentSheet) }
+    func requestStatsRefresh() { onRequested(.refreshStats) }
 
     func logAndRefresh(_ event: CoordinatorEvent, children: Int, navStack: Int) {
         events.insert(event, at: .zero)

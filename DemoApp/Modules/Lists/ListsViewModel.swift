@@ -15,6 +15,8 @@ protocol ListsViewModelProtocol: ViewModel, CollectionViewable {
     /// from the revision it last rendered.
     var revision: Int { get }
     var isRefreshing: Bool { get }
+    /// Row taps; the controller consumes the slot with a `ViewEventCursor`.
+    var event: ViewEvent<ListsViewModel.Event>? { get }
     func refresh()
 }
 
@@ -22,11 +24,13 @@ protocol ListsViewModelProtocol: ViewModel, CollectionViewable {
 @Observable
 @MainActor
 final class ListsViewModel {
+    enum Event { case tapped(title: String) }
+
     let title = "Lists & Cells"
     private(set) var revision: Int = .zero
     private(set) var isRefreshing = false
+    private(set) var event: ViewEvent<Event>?
 
-    @ObservationIgnored weak var view: ScreenSizeMeasurable?
     @ObservationIgnored private var items: [ListItemCellViewModelImpl] = []
     @ObservationIgnored private var nextNumber = 1
 
@@ -80,12 +84,12 @@ extension ListsViewModel: CollectionViewable {
         return ListSectionHeaderViewModelImpl(title: sectionTitle)
     }
 
-    func onSizeForItem(in section: Int, at index: Int) -> Size {
-        (view?.screenWidth ?? 375, 68)
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size {
+        (availableSize.width, 68)
     }
 
-    func onSizeForHeaderItem(in section: Int) -> Size {
-        (view?.screenWidth ?? 375, 36)
+    func onSizeForHeaderItem(in section: Int, availableSize: Size) -> Size {
+        (availableSize.width, 36)
     }
 
     // Footer supplementary — only under the last section; section 0 keeps the
@@ -99,8 +103,8 @@ extension ListsViewModel: CollectionViewable {
         return ListSectionHeaderViewModelImpl(title: "END OF LIST — FOOTER SUPPLEMENTARY")
     }
 
-    func onSizeForFooterItem(in section: Int) -> Size {
-        section == 1 ? (view?.screenWidth ?? 375, 32) : (.zero, .zero)
+    func onSizeForFooterItem(in section: Int, availableSize: Size) -> Size {
+        section == 1 ? (availableSize.width, 32) : (.zero, .zero)
     }
 
     func onMinimumLineSpacingFor(section: Int) -> Double { 4 }
@@ -109,7 +113,7 @@ extension ListsViewModel: CollectionViewable {
 
     func onItemSelected(in section: Int, at index: Int) {
         let item = section == 0 ? recentItems[index] : items[index]
-        Snackbar.show(.init(message: "Tapped: \(item.title)"))
+        event = .init(.tapped(title: item.title))
     }
 }
 

@@ -30,12 +30,23 @@ final class ChildFlowCoordinator: BaseCoordinator {
     }
 
     override func start() {
-        let vc = ChildFlowViewController(depth: depth, maxDepth: maxDepth)
-        vc.onComplete = { [weak self] in self?.finish() }
-        vc.onGoDeeper = { [weak self] in self?.launchGrandchild() }
         // Note: no cancel wiring — swipe-back/back-button cancellation is
         // detected automatically by BaseCoordinator's removal tracking.
-        vc.onAbortAll = { [weak self] in self?.onAbortAll() }
+        let vc = ChildFlowViewController(
+            depth: depth,
+            maxDepth: maxDepth,
+            onRequested: { [weak self] request in
+                switch request {
+                case .goDeeper: self?.launchGrandchild()
+                case .abortAll: self?.onAbortAll()
+                }
+            },
+            onPerformed: { [weak self] result in
+                switch result {
+                case .complete: self?.finish()
+                }
+            }
+        )
         push(vc)
         onEvent(CoordinatorEvent(icon: "🚀", message: "Depth \(depth) coordinator started", delta: +1))
     }

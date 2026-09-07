@@ -55,7 +55,7 @@ final class ObservationUITests: UITestCase {
     }
 
     /// One tap does both: the count is state read in the hook, the confirmation is a
-    /// one-shot event delivered through the view protocol.
+    /// `ViewEvent` the same hook consumes once through its cursor.
     func test_saveDraft_rendersStateInTheHookAndFiresTheEventOnce() {
         let button = app.buttons["Save draft"]
         scrollUntilVisible(button)
@@ -68,13 +68,19 @@ final class ObservationUITests: UITestCase {
         XCTAssertTrue(snackbar.waitForExistence(timeout: uiTimeout))
 
         // Once-ness: after the snackbar dismisses, a hook re-run (Increment mutates observed
-        // state) must not bring it back — the event is not stored anywhere the hook reads.
+        // state) must not bring it back — the cursor already consumed that event's id.
         XCTAssertTrue(snackbar.waitForNonExistence(timeout: uiTimeout))
         let increment = app.buttons["Increment"]
         scrollUntilVisible(increment)
         increment.tap()
         XCTAssertTrue(app.staticTexts["Count: 1"].waitForExistence(timeout: uiTimeout))
         XCTAssertFalse(snackbar.exists)
+
+        // A second firing is a new event: it shows again.
+        scrollUntilVisible(button)
+        button.tap()
+        XCTAssertTrue(app.staticTexts["Saves: 2"].waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(snackbar.waitForExistence(timeout: uiTimeout))
     }
 
     /// Membership changes go through the tracked revision: adding a row reloads the list and

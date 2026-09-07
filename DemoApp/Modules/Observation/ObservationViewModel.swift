@@ -17,6 +17,8 @@ protocol ObservationViewModelProtocol: CollectionViewable, ViewModel, ViewLifecy
     var messages: [MessageItem] { get }
     /// Drives a constraint constant in the controller's hook (the *Constraints from state* card).
     var isBarExpanded: Bool { get }
+    /// One-shot confirmations. The controller consumes the slot with a `ViewEventCursor`.
+    var event: ViewEvent<ObservationViewModel.Event>? { get }
     func increment()
     func reset()
     func markAllRead()
@@ -26,21 +28,11 @@ protocol ObservationViewModelProtocol: CollectionViewable, ViewModel, ViewLifecy
     func saveDraft()
 }
 
-// MARK: - ObservationViewProtocol
-protocol ObservationViewProtocol: ScreenSizeMeasurable {
-    /// The message list's width: self-sizing rows must be estimated at the list's width,
-    /// not the screen's — items wider than the collection view are dropped by the layout.
-    var messageListWidth: Double { get }
-    /// Variant card only: the view-model-side hook pushes what it read. This is the one place
-    /// state crosses the view protocol; every other card is rendered by the controller's `updateContent()`.
-    func renderMode(_ mode: String, unread: Int)
-    /// One-shot confirmation. An event, not state: it must not be re-shown by a hook re-run.
-    func showDraftSaved()
-}
-
 // MARK: - ObservationViewModel
 @Observable @MainActor
 final class ObservationViewModel {
+    enum Event { case draftSaved }
+
     let title = "Observation"
     private(set) var count: Int = .zero
     private(set) var saves: Int = .zero
@@ -54,7 +46,7 @@ final class ObservationViewModel {
         .init(sender: "Camila", preview: "Lunch at 1?", isRead: true),
         .init(sender: "Diego", preview: "updateContent() replaced my didSet — and this row self-sizes to a longer preview, measured with its content already bound"),
     ] { didSet { revision += 1 } }
-    @ObservationIgnored weak var view: ObservationViewProtocol?
+    private(set) var event: ViewEvent<Event>?
 }
 
 // MARK: - ObservationViewModelProtocol
@@ -69,29 +61,25 @@ extension ObservationViewModel: ObservationViewModelProtocol {
     }
     func toggleBar() { isBarExpanded.toggle() }
 
-    /// State and event from one action: the count is observed, the confirmation is called.
+    /// State and event from one action: the count is observed, the confirmation is a fresh
+    /// `ViewEvent` — same render pass, consumed once by the controller's cursor.
     func saveDraft() {
         saves += 1
-        view?.showDraftSaved()
+        event = .init(.draftSaved)
     }
 }
 
 // MARK: - ViewLifecycleable
-extension ObservationViewModel: ViewLifecycleable {
-    /// The view-model-side variant. Runs in the same pass as the controller's `updateContent()`,
-    /// so any tracked read in either re-runs both; the `isRead` reads here track every row.
-    func onUpdateProperties() {
-        view?.renderMode("\(ObservationMode.current)", unread: messages.filter { !$0.isRead }.count)
-    }
-}
+extension ObservationViewModel: ViewLifecycleable {}
 
 // MARK: - CollectionViewable
 extension ObservationViewModel: CollectionViewable {
     func getNumberOfItems(in section: Int) -> Int { messages.count }
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { MessageCell.reuseIdentifier }
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { messages[index] }
-    func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) {
-        (view?.messageListWidth ?? 343, MessageCell.height)   // estimate; rows self-size vertically
+    /// Self-sizing rows are estimated at the list's own width — handed in, never read from a view.
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size {
+        (availableSize.width, MessageCell.height)   // estimate; rows self-size vertically
     }
     func onItemSelected(in section: Int, at index: Int) { messages[index].isRead.toggle() }
 }

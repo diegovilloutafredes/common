@@ -9,16 +9,21 @@ import UIKit
 // MARK: - ChildFlowViewController
 
 final class ChildFlowViewController: BaseViewController {
-    var onComplete: (() -> Void)?
-    var onGoDeeper: (() -> Void)?
-    var onAbortAll: (() -> Void)?
+    /// Navigation the owning coordinator answers.
+    enum Requested { case goDeeper, abortAll }
+    /// The flow's result.
+    enum Performed { case complete }
 
     private let depth: Int
     private let maxDepth: Int
+    private let onRequested: Handler<Requested>
+    private let onPerformed: Handler<Performed>
 
-    init(depth: Int, maxDepth: Int) {
+    init(depth: Int, maxDepth: Int, onRequested: @escaping Handler<Requested>, onPerformed: @escaping Handler<Performed>) {
         self.depth = depth
         self.maxDepth = maxDepth
+        self.onRequested = onRequested
+        self.onPerformed = onPerformed
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -51,7 +56,7 @@ final class ChildFlowViewController: BaseViewController {
             $0.imagePadding = 6
         }
     )
-    .onTap { [weak self] in self?.onComplete?() }
+    .onTap { [weak self] in self?.onPerformed(.complete) }
     .setConstraints { $0.set(height: 48) }
 
     private lazy var goDeeperButton = UIButton(
@@ -62,7 +67,7 @@ final class ChildFlowViewController: BaseViewController {
             $0.imagePadding = 6
         }
     )
-    .onTap { [weak self] in self?.onGoDeeper?() }
+    .onTap { [weak self] in self?.onRequested(.goDeeper) }
     .setConstraints { $0.set(height: 48) }
     .isHidden(depth >= maxDepth)
 
@@ -75,7 +80,7 @@ final class ChildFlowViewController: BaseViewController {
             $0.imagePadding = 6
         }
     )
-    .onTap { [weak self] in self?.onAbortAll?() }
+    .onTap { [weak self] in self?.onRequested(.abortAll) }
     .setConstraints { $0.set(height: 48) }
 
     // MARK: - Main View

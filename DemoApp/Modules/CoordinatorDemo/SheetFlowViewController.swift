@@ -12,12 +12,15 @@ import UIKit
 /// Simple screen — closure-wired, no ViewModel/Wireframe ceremony.
 final class SheetFlowViewController: BaseViewController {
 
-    private let onDismissRequested: Action
-    private let onSwapRequested: Action?
+    /// Both answered by the presenting coordinator.
+    enum Requested { case dismiss, swap }
 
-    init(onDismissRequested: @escaping Action, onSwapRequested: Action? = nil) {
-        self.onDismissRequested = onDismissRequested
-        self.onSwapRequested = onSwapRequested
+    private let canSwap: Bool
+    private let onRequested: Handler<Requested>
+
+    init(canSwap: Bool = false, onRequested: @escaping Handler<Requested>) {
+        self.canSwap = canSwap
+        self.onRequested = onRequested
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -31,13 +34,14 @@ final class SheetFlowViewController: BaseViewController {
             $0.imagePadding = 6
         }
     )
-    .onTap { [weak self] in self?.onDismissRequested() }
+    .onTap { [weak self] in self?.onRequested(.dismiss) }
     .setConstraints { $0.set(height: 48) }
 
-    // Only the first sheet offers the swap — the replacement sheet has no
-    // onSwapRequested, and ArrayBuilder drops the nil button from layout.
-    private lazy var swapButton: UIButton? = onSwapRequested.map { onSwap in
-        UIButton(
+    // Only the first sheet offers the swap — the replacement sheet cannot swap,
+    // and ArrayBuilder drops the nil button from layout.
+    private lazy var swapButton: UIButton? = {
+        guard canSwap else { return nil }
+        return UIButton(
             configuration: .bordered().with {
                 $0.title = "Swap Sheet — present(.dismissingCurrent)"
                 $0.cornerStyle = .capsule
@@ -45,9 +49,9 @@ final class SheetFlowViewController: BaseViewController {
                 $0.imagePadding = 6
             }
         )
-        .onTap(onSwap)
+        .onTap { [weak self] in self?.onRequested(.swap) }
         .setConstraints { $0.set(height: 48) }
-    }
+    }()
 
     @UIViewBuilder override var mainView: UIView {
         VStack(

@@ -6,18 +6,14 @@
 import Common
 import Observation
 
-// MARK: - FormsViewProtocol
-/// Only the one-shot submission toast remains an event; validation is observable state.
-protocol FormsViewProtocol: AnyObject {
-    func showSubmissionSuccess(message: String)
-}
-
 // MARK: - FormsViewModelProtocol
 @MainActor
 protocol FormsViewModelProtocol: ViewModel {
     var title: String { get }
     /// `nil` until the first keystroke; then the validator's latest state.
     var validation: FieldsValidator<FormsViewModel.Field>.State? { get }
+    /// The one-shot submission confirmation; validation itself is state.
+    var event: ViewEvent<FormsViewModel.Event>? { get }
     func validate(field: FormsViewModel.Field, value: String)
     func submit(name: String, email: String, password: String)
 }
@@ -33,10 +29,11 @@ final class FormsViewModel {
         case confirmPassword
     }
 
+    enum Event { case submitted(message: String) }
+
     let title = "Forms & TextFields"
     private(set) var validation: FieldsValidator<Field>.State?
-
-    @ObservationIgnored weak var view: FormsViewProtocol?
+    private(set) var event: ViewEvent<Event>?
 
     // Validation is fully delegated to Common's FieldsValidator — no values, rules, or
     // touched-state are tracked by hand here. Its onChange just publishes the new state.
@@ -68,6 +65,6 @@ extension FormsViewModel: FormsViewModelProtocol {
 
     func submit(name: String, email: String, password: String) {
         validator.touchAll()
-        view?.showSubmissionSuccess(message: "Form submitted: \(name) (\(email))")
+        event = .init(.submitted(message: "Form submitted: \(name) (\(email))"))
     }
 }

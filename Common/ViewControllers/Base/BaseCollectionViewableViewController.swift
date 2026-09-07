@@ -134,7 +134,8 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        let size = asCollectionViewable?.onSizeForHeaderItem(in: section) ?? (.zero, .zero)
+        let available = availableSize(in: collectionView, layout: collectionViewLayout, section: section)
+        let size = asCollectionViewable?.onSizeForHeaderItem(in: section, availableSize: available) ?? (.zero, .zero)
         return .init(width: size.width, height: size.height)
     }
 
@@ -143,7 +144,8 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
-        let size = asCollectionViewable?.onSizeForFooterItem(in: section) ?? (.zero, .zero)
+        let available = availableSize(in: collectionView, layout: collectionViewLayout, section: section)
+        let size = asCollectionViewable?.onSizeForFooterItem(in: section, availableSize: available) ?? (.zero, .zero)
         return .init(width: size.width, height: size.height)
     }
 
@@ -152,8 +154,21 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let size = asCollectionViewable?.onSizeForItem(in: indexPath.section, at: indexPath.item) ?? (.zero, .zero)
+        let available = availableSize(in: collectionView, layout: collectionViewLayout, section: indexPath.section)
+        let size = asCollectionViewable?.onSizeForItem(in: indexPath.section, at: indexPath.item, availableSize: available) ?? (.zero, .zero)
         return .init(width: size.width, height: size.height)
+    }
+
+    /// The size an item, header or footer in `section` may occupy: the bounds inset by the adjusted content inset
+    /// and by the section inset this controller reports, clamped at zero. Computed inside the
+    /// sizing callback, where the collection view is already laid out.
+    private func availableSize(in collectionView: UICollectionView, layout: UICollectionViewLayout, section: Int) -> Size {
+        let sectionInset = self.collectionView(collectionView, layout: layout, insetForSectionAt: section)
+        let contentInset = collectionView.adjustedContentInset
+        // Plain subtraction: `CGRect.inset(by:)` standardizes an over-inset rect into a positive size.
+        let width = collectionView.bounds.width - contentInset.left - contentInset.right - sectionInset.left - sectionInset.right
+        let height = collectionView.bounds.height - contentInset.top - contentInset.bottom - sectionInset.top - sectionInset.bottom
+        return (max(width, .zero), max(height, .zero))
     }
 
     // MARK: - UIScrollViewDelegate stubs

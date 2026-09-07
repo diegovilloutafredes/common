@@ -174,74 +174,75 @@ Missing faces and unregistered families fall back to the system font at the matc
 
 ### MVVM-C module wiring
 
-Each feature is a self-contained module: a **Wireframe** factory wires the ViewModel and ViewController together, while the **Coordinator** owns navigation. The ViewController never knows about navigation; it only fires typed actions back through a closure. State lives on an `@Observable` ViewModel and the ViewController renders it in one `updateContent()` hook that the framework re-runs on change — the weak view reference is for one-shot events only.
+Each feature is a self-contained module: a **Wireframe** factory wires the ViewModel and ViewController together, while the **Coordinator** owns navigation. Data flows one way: the ViewModel holds `@Observable` state and fires typed outputs through constructor-injected closures; it never references its controller or its coordinator. The ViewController renders the state in one `updateContent()` hook that the framework re-runs on change, and consumes one-shot effects there through a `ViewEvent` slot.
 
 ```swift
-// 1. Action enum — what the module can request from the coordinator
-enum ProfileAction {
-    case editProfile
-    case showFollowers
-}
-
-// 2. Wireframe — creates and wires the module
-enum ProfileWireframe {
-    static func createModule(
-        with delegate: BaseModuleDelegate,
-        onAction: @escaping Handler<ProfileAction>
-    ) -> UIViewController {
-        let vm = ProfileViewModel(delegate: delegate, onAction: onAction)
-        return ProfileViewController(viewModel: vm)
-            .with { vm.view = $0 }   // wires VM → VC reference
-    }
-}
-
-// 3. Coordinator — owns navigation
-final class AppCoordinator: BaseCoordinator {
-    override func start() {
-        let vc = ProfileWireframe.createModule(with: self) { [weak self] action in
-            switch action {
-            case .editProfile:  self?.push(EditProfileWireframe.createModule(with: self!) { _ in })
-            case .showFollowers: self?.present(.overCurrent, viewController: FollowersWireframe.createModule(with: self!) { _ in })
-            }
-        }
-        set(vc)
-    }
-}
-
-// 4. ViewModel — @Observable state the VC renders; the weak view reference is for events only
+// 1. ViewModel — observable state, intents, outputs; no view, delegate or coordinator reference
 import Observation   // UIKit does not re-export it
 
 @MainActor
 protocol ProfileViewModelProtocol: ViewModel, ViewLifecycleable {
     var name: String { get }
+    var event: ViewEvent<ProfileViewModel.Event>? { get }
+    func goBack()
+    func editProfile()
 }
 
 @Observable @MainActor
 final class ProfileViewModel {
+    enum Requested { case goBack, editProfile, showFollowers }   // navigation the coordinator answers
+    enum Event { case saved }                                     // modal effects the controller presents
+
     private(set) var name = ""
-    @ObservationIgnored private weak var delegate: BaseModuleDelegate?
-    @ObservationIgnored weak var view: ProfileViewProtocol?
-    private let onAction: Handler<ProfileAction>
+    private(set) var event: ViewEvent<Event>?
+    @ObservationIgnored private let onRequested: Handler<Requested>
 
-    init(delegate: BaseModuleDelegate, onAction: @escaping Handler<ProfileAction>) {
-        self.delegate = delegate
-        self.onAction = onAction
+    init(onRequested: @escaping Handler<Requested>) {
+        self.onRequested = onRequested
     }
 }
 
-extension ProfileViewModel: ProfileViewModelProtocol {}
+extension ProfileViewModel: ProfileViewModelProtocol {
+    func goBack() { onRequested(.goBack) }
+    func editProfile() { onRequested(.editProfile) }
+    func save() { event = .init(.saved) }        // fires once; the controller consumes it once
+}
+extension ProfileViewModel: ViewLifecycleable {}
 
-extension ProfileViewModel: ViewLifecycleable {
-    func onViewDidLoad() {
-        view?.addBackButton { self.delegate?.onGoBackRequested() }
+// 2. Wireframe — creates the module; takes only the closures the module has
+enum ProfileWireframe {
+    @MainActor static func createModule(onRequested: @escaping Handler<ProfileViewModel.Requested>) -> UIViewController {
+        ProfileViewController(viewModel: ProfileViewModel(onRequested: onRequested))
     }
 }
 
-// 5. ViewController — one render point, re-run whenever a tracked read changes
+// 3. Coordinator — navigation only
+final class AppCoordinator: BaseCoordinator {
+    override func start() {
+        set(ProfileWireframe.createModule { [weak self] request in
+            guard let self else { return }
+            switch request {
+            case .goBack:        pop()
+            case .editProfile:   push(EditProfileWireframe.createModule())
+            case .showFollowers: present(.overCurrent, viewController: FollowersWireframe.createModule())
+            }
+        })
+    }
+}
+
+// 4. ViewController — one render point, re-run whenever a tracked read changes
 final class ProfileViewController: BaseViewModelableViewController<ProfileViewModelProtocol> {
+    private var eventCursor = ViewEventCursor()
+
+    override func setupView() {
+        super.setupView()
+        addBackButton { [weak self] in self?.viewModel.goBack() }
+    }
+
     override func updateContent() {
         super.updateContent()
         nameLabel.text(viewModel.name)
+        eventCursor.consume(viewModel.event) { _ in Snackbar.show(.init(message: "Saved")) }
     }
 }
 ```
@@ -330,13 +331,12 @@ final class UserClient: AsyncBaseClient {
     }
 }
 
-// 3. Call from a ViewModel
+// 3. Call from a @MainActor ViewModel — results land in observed state, failures fire a ViewEvent
 func loadUser() async {
     do {
-        let user = try await UserClient().fetchUser(id: currentUserId)
-        await MainActor.run { view?.display(user: user) }
+        user = try await UserClient().fetchUser(id: currentUserId)         // rendered by updateContent()
     } catch let error as NetworkError {
-        await MainActor.run { view?.showError(error.localizedDescription) }
+        event = .init(.failed(message: error.localizedDescription))       // consumed once by the controller
     }
 }
 ```
@@ -457,17 +457,23 @@ final class TokenStorageTests: XCTestCase {
 `LocalAuthenticationManager` wraps `LAContext` with a clean callback API, adapts automatically to Face ID, Touch ID, Optic ID, or passcode, and evaluates against `.deviceOwnerAuthentication` (biometrics + passcode fallback).
 
 ```swift
+@Observable @MainActor
 final class LockScreenViewModel {
-    private let auth = LocalAuthenticationManager(reason: "Verify your identity to continue.")
+    enum Performed { case unlocked }
+    enum Event { case passcodeEntry, failed }
+
+    private(set) var event: ViewEvent<Event>?
+    @ObservationIgnored private let onPerformed: Handler<Performed>
+    @ObservationIgnored private let auth = LocalAuthenticationManager(reason: "Verify your identity to continue.")
 
     func unlock() {
         guard auth.canAuthenticate else {
-            view?.showPasscodeEntry()
+            event = .init(.passcodeEntry)
             return
         }
         auth.authenticate { [weak self] success in
             // already dispatched to main thread
-            success ? self?.view?.unlockApp() : self?.view?.showError()
+            success ? self?.onPerformed(.unlocked) : self?.event = .init(.failed)
         }
     }
 

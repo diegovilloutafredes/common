@@ -684,12 +684,11 @@ The base class accesses the ViewModel via `viewModel as? CollectionViewable` at 
 
 Override `bottomInsetForLastCollectionSection()` when the screen sits above a tab bar (default returns `.zero`).
 
-**The cell contract.** `CollectionViewable` is `CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`; the base VC forwards every `UICollectionView` callback to these hooks, so the ViewModel — not the VC — answers them. Four are required; the rest have defaults:
+**The cell contract.** `CollectionViewable` is `CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`; the base VC forwards every `UICollectionView` callback to these hooks, so the ViewModel — not the VC — answers them. Three are required, one of the two sizing hooks must be implemented, and the rest have defaults:
 
 ```swift
 @MainActor
 final class ProductsViewModel {
-    weak var view: ProductsViewProtocol?        // ProductsViewProtocol: ScreenSizeMeasurable → screenWidth
     private var products: [ProductCellViewModel] = []
 }
 
@@ -698,16 +697,16 @@ extension ProductsViewModel: CollectionViewable {
     func getNumberOfItems(in section: Int) -> Int { products.count }                         // required
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { ProductCell.reuseIdentifier } // required
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { products[index] }     // required — assigned to cell.viewModel
-    func onSizeForItem(in section: Int, at index: Int) -> Size { (view?.screenWidth ?? 375, 68) } // required — (width, height)
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size { (availableSize.width, 68) } // implement this one
     func onItemSelected(in section: Int, at index: Int) { select(products[index]) }         // default no-op
     func onInsetFor(section: Int) -> Inset { (top: 4, left: 0, bottom: 8, right: 0) }        // default zero
     func onMinimumLineSpacingFor(section: Int) -> Double { 4 }                               // default zero (also onMinimumInteritemSpacingFor)
 }
 ```
 
-Width comes from the view through `ScreenSizeMeasurable` (every `UIViewController` conforms) — add it to the view protocol. Cells self-register their reuse identifier (`static var reuseIdentifier` on every `UICollectionReusableView` = the type name). Never hand-roll `UICollectionViewDataSource` in the VC: the base class already owns it.
+**Sizing.** The base controller hands the ViewModel `availableSize`: the list's bounds inset by its adjusted content inset and by this section's inset (including `bottomInsetForLastCollectionSection()`), clamped at zero. Full-width rows return `availableSize.width`; a paged `HList` returns `availableSize` whole; no ViewModel reads `screenWidth` through a view reference. The legacy `onSizeForItem(in:at:)` still exists: the `availableSize` hook forwards to it by default and it defaults to `(.zero, .zero)`, so a ViewModel implements **exactly one** — implementing neither (or mistyping a label so neither matches) renders an empty list with no error, the same failure mode as a ViewModel that does not conform to `CollectionViewable` at all. Cells self-register their reuse identifier (`static var reuseIdentifier` on every `UICollectionReusableView` = the type name). Never hand-roll `UICollectionViewDataSource` in the VC: the base class already owns it.
 
-**Section headers and footers.** Register the supplementary view with `.register(_:kind:)` and have the ViewModel answer the three hooks per kind — reuse identifier, view model, size. The size defaults to `(.zero, .zero)`, which means "no header/footer in this section"; a non-zero size **requires** a matching reuse identifier, or UIKit throws on dequeue.
+**Section headers and footers.** Register the supplementary view with `.register(_:kind:)` and have the ViewModel answer the three hooks per kind — reuse identifier, view model, size (the size hooks take `availableSize` like items do). The size defaults to `(.zero, .zero)`, which means "no header/footer in this section"; a non-zero size **requires** a matching reuse identifier, or UIKit throws on dequeue.
 
 ```swift
 private lazy var list = VList(dataSource: self, delegate: self)
@@ -718,11 +717,11 @@ private lazy var list = VList(dataSource: self, delegate: self)
 // ViewModel (CollectionViewable) — header in every section, footer under the last one only
 func onHeaderItemReuseIdentifierRequested(in section: Int) -> String { SectionHeaderView.reuseIdentifier }
 func onHeaderItemDataSourceRequested(in section: Int) -> ViewModel? { sections[section].headerViewModel }
-func onSizeForHeaderItem(in section: Int) -> Size { (screenWidth, 36) }
+func onSizeForHeaderItem(in section: Int, availableSize: Size) -> Size { (availableSize.width, 36) }
 
 func onFooterItemReuseIdentifierRequested(in section: Int) -> String { SectionFooterView.reuseIdentifier }
 func onFooterItemDataSourceRequested(in section: Int) -> ViewModel? { section == lastSection ? footerViewModel : nil }
-func onSizeForFooterItem(in section: Int) -> Size { section == lastSection ? (screenWidth, 32) : (.zero, .zero) }
+func onSizeForFooterItem(in section: Int, availableSize: Size) -> Size { section == lastSection ? (availableSize.width, 32) : (.zero, .zero) }
 ```
 
 Supplementary views subclass `BaseViewModelableReusableView<T>` and bind in `viewModel didSet`, exactly like cells. `Size` and `Inset` are labeled tuples (`(width:height:)`, `(top:left:bottom:right:)`).
@@ -812,17 +811,26 @@ Read `@Observable` state in **one** hook and let the framework re-run it. No `di
 
 | Where | Hook | Trigger |
 |---|---|---|
-| ViewModel (`ViewLifecycleable`) | `onUpdateProperties()` | first pass, then any tracked change |
-| `BaseViewController` subclass | `updateContent()` | same |
+| `BaseViewController` subclass | `updateContent()` | first pass, then any tracked change |
 | `BaseView`, `BaseCell`, `BaseReusableView` subclasses | `updateContent()` | same; view-model-able variants bind synchronously on `viewModel` assignment (`updateContentIfNeeded()`) |
 | Anywhere | `setNeedsContentUpdate()` | forces a re-run on the next pass |
+| ViewModel (`ViewLifecycleable`) | `onUpdateProperties()` | same pass as the controller's hook — an escape hatch, see below |
 
 ```swift
-@Observable final class ProfileModel { var name = ""; var canSave = false }
+@Observable @MainActor final class ProfileViewModel: ViewModel {
+    private(set) var name = ""
+    private(set) var canSave = false
+    private(set) var event: ViewEvent<Event>?     // one-shot effects are state too
+    enum Event { case saved }
+}
 
-extension ProfileViewModel: ViewLifecycleable {
-    func onUpdateProperties() {
-        view?.render(name: model.name, canSave: model.canSave)   // tracked reads
+final class ProfileViewController: BaseViewModelableViewController<ProfileViewModel> {
+    private var eventCursor = ViewEventCursor()
+    override func updateContent() {
+        super.updateContent()
+        nameLabel.text(viewModel.name)            // tracked reads
+        saveButton.isEnabled(viewModel.canSave)
+        eventCursor.consume(viewModel.event) { _ in Snackbar.show(.init(message: "Saved")) }   // once per firing
     }
 }
 
@@ -848,13 +856,14 @@ Rules:
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
 - Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`.
-- **State vs events.** Text, flags, counts and collections are state and become observable. One-shot effects (a snackbar, an error toast, "submitted") stay as view-protocol calls — they are not state.
+- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`), and a covered controller consumes a pending event when it returns on screen, not underneath the child. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
+- **`onUpdateProperties()` is an escape hatch.** The ViewModel-side hook runs in the same pass and tracks the same way, but it needs somewhere to push into — a view reference the module contract no longer has. Keep it for code written against earlier releases; new modules render in the controller's `updateContent()` only.
 - **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
 - **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and let the controller compare it with the revision it last rendered before calling `reloadData()`. This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view.
 - Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
 - A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
 - Self-sizing cells (`estimatedItemSize = .automaticSize`, `preferredLayoutAttributesFitting`) are measured before any update or layout pass. That is why `viewModel` assignment binds synchronously; if you bind from anywhere else before a measurement, call `updateContentIfNeeded()` first.
-- Self-sizing rows are estimated at the width `onSizeForItem` returns. Return the **list's** width, not `screenWidth`: an inset list (card margins) rejects items wider than itself and renders nothing. The DemoApp's Observation module exposes the list width through its view protocol for this reason.
+- Self-sizing rows are estimated at the width `onSizeForItem` returns. Return `availableSize.width` — the list's own width, handed in by the base controller — never `screenWidth`: an inset list (card margins) rejects items wider than itself and renders nothing.
 
 Migration recipe (what the DemoApp modules went through):
 
@@ -867,22 +876,25 @@ final class FooViewModel: FooViewModelProtocol {     // the protocol is @MainAct
     private(set) var isLoading = false
     private(set) var revision: Int = .zero           // collections: revision, not the array
     @ObservationIgnored private var items: [Item] = [] { didSet { revision += 1 } }
-    @ObservationIgnored weak var view: FooViewProtocol?          // events only
-    @ObservationIgnored private lazy var validator = …            // lazy/weak/closures: ignored
+    private(set) var event: ViewEvent<Event>?                    // one-shot effects: a fresh value per firing
+    @ObservationIgnored private let onRequested: Handler<Requested>   // lazy/closures: ignored
+    @ObservationIgnored private lazy var validator = …
 }
 
 final class FooViewController: BaseViewModelableViewController<FooViewModelProtocol> {
     private var renderedRevision: Int = .zero
+    private var eventCursor = ViewEventCursor()
     override func updateContent() {
         super.updateContent()
         statusLabel.text(viewModel.statusText)
         setActivityIndicator(visible: viewModel.isLoading)
         if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
+        eventCursor.consume(viewModel.event) { [weak self] in self?.handle($0) }
     }
 }
 ```
 
-Every DemoApp module is written this way; the **Observation** module additionally shows the view-model-side `onUpdateProperties()` variant, a *Collections behind a revision* card (adding or removing a row reloads through the tracked `revision`, while a row tap re-runs only that cell), a *Constraints from state* card (a width constant written in the hook, animated per the rule above) and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a one-shot snackbar through the view protocol.
+Every DemoApp module is written this way; the **Observation** module additionally shows a *Collections behind a revision* card (adding or removing a row reloads through the tracked `revision`, while a row tap re-runs only that cell), a *Constraints from state* card (a width constant written in the hook, animated per the rule above) and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a `ViewEvent` the same hook consumes once through its cursor.
 
 ### System notification observers
 
@@ -985,109 +997,120 @@ Each screen is wired using a stateless `enum` wireframe with a static factory me
 
 ```
 ModuleName/
-├── ModuleNameViewController.swift   — UI (mainView + setupView)
-├── ModuleNameViewModel.swift        — Observable state + business logic + delegate
+├── ModuleNameViewController.swift   — UI (mainView + setupView + updateContent)
+├── ModuleNameViewModel.swift        — Observable state + intents + use cases + output closures
 └── ModuleNameWireframe.swift        — Factory that wires VC + VM
 ```
+
+### The module contract
+
+Data flows one way. Nothing on the ViewModel points back at its controller or its coordinator.
+
+| Direction | Mechanism |
+|---|---|
+| Controller → ViewModel | Method calls (intents: `viewModel.save()`, `viewModel.goBack()`) and the `ViewLifecycleable` hooks |
+| ViewModel → Controller, state | `@Observable` properties, read in `updateContent()`; the framework re-runs it on change (§5 *Observation-driven updates*) |
+| ViewModel → Controller, one-shot effects | A `ViewEvent` slot — still observed state, consumed once by the controller's `ViewEventCursor` (§5) |
+| ViewModel → Coordinator | Two constructor-injected closures: `onRequested` (navigation to answer) and `onPerformed` (results to react to) |
+| Coordinator → ViewModel | Constructor arguments, or writes into it as a data source (a coordinator may keep a `weak` ViewModel to feed it) |
+
+No `weak var view`, no `weak var delegate`. Measurements the ViewModel used to read through a view protocol (a list's width) are handed in by the framework instead (`availableSize`, §5).
 
 ### Wireframe implementation
 
 ```swift
 enum ProfileWireframe {
-    @MainActor static func createModule(with delegate: BaseModuleDelegate) -> UIViewController {
-        let viewModel = ProfileViewModel(delegate: delegate)
-        return ProfileViewController(viewModel: viewModel)
-            .with { viewModel.view = $0 }
+    @MainActor static func createModule(
+        onRequested: @escaping Handler<ProfileViewModel.Requested>,
+        onPerformed: @escaping Handler<ProfileViewModel.Performed>
+    ) -> UIViewController {
+        ProfileViewController(viewModel: ProfileViewModel(onRequested: onRequested, onPerformed: onPerformed))
     }
 }
 ```
 
 - **Enum** (not struct/class) — purely a namespace, no state
-- **`createModule`** is the single factory entry point
-- The coordinator passes itself as `delegate`
-- `.with { viewModel.view = $0 }` establishes the ViewModel-to-ViewController back-reference after init — used for **events** (snackbars, errors, `addBackButton`) and measurements; **state** flows the other way, read by the controller from the `@Observable` ViewModel in `updateContent()` (§5 *Observation-driven updates*)
+- **`createModule`** is the single factory entry point; it takes only the output closures the module has (most screens only request; a screen with no outputs takes nothing)
+- No back-reference is wired after init
 
 ### ViewModel pattern
 
 ```swift
 import Observation
 
-protocol ProfileViewProtocol: BackButtonAddable {}               // events only
-
 @Observable @MainActor
 final class ProfileViewModel: ViewModel {
+    /// Navigation the coordinator answers.
+    enum Requested { case goBack, editProfile }
+    /// Results the coordinator reacts to.
+    enum Performed { case loggedOut }
+    /// Modal effects over this screen; the controller presents them.
+    enum Event { case saved, failed(message: String) }
+
     private(set) var name = ""                                   // state: tracked, rendered by the controller
-    @ObservationIgnored weak var delegate: BaseModuleDelegate?
-    @ObservationIgnored weak var view: ProfileViewProtocol?      // events only
+    private(set) var event: ViewEvent<Event>?                    // one-shot effects: tracked, consumed once
+    @ObservationIgnored private let onRequested: Handler<Requested>
+    @ObservationIgnored private let onPerformed: Handler<Performed>
 
-    init(delegate: BaseModuleDelegate) {
-        self.delegate = delegate
+    init(onRequested: @escaping Handler<Requested>, onPerformed: @escaping Handler<Performed>) {
+        self.onRequested = onRequested
+        self.onPerformed = onPerformed
     }
 
-    func onBackTapped() {
-        delegate?.onGoBackRequested()
-    }
-
+    func goBack() { onRequested(.goBack) }                       // the controller's back button calls this
+    func editProfile() { onRequested(.editProfile) }
     func load() { name = "Ada" }                                 // mutate state; the controller re-renders
+    func save() { event = .init(.saved) }                        // fire an effect; the controller presents it once
+    func logout() { onPerformed(.loggedOut) }
 }
 
 final class ProfileViewController: BaseViewModelableViewController<ProfileViewModel> {
+    private var eventCursor = ViewEventCursor()
+
+    override func setupView() {
+        super.setupView()
+        addBackButton { [weak self] in self?.viewModel.goBack() }
+    }
+
     override func updateContent() {
         super.updateContent()
         nameLabel.text(viewModel.name)                           // tracked read
+        eventCursor.consume(viewModel.event) { event in          // once per firing
+            switch event {
+            case .saved: Snackbar.show(.init(message: "Saved"))
+            case .failed(let message): Snackbar.show(.init(message: message))
+            }
+        }
     }
 }
 ```
 
 - State (text, flags, counts, a collection `revision`) lives on the `@Observable` ViewModel and is read in `updateContent()` — no `didSet`, no `set(title:)`-style view calls
-- `weak` references and `lazy` properties are `@ObservationIgnored`; `let` constants are never tracked
-- The view protocol carries one-shot events and measurements the ViewModel needs from the view (list width) — not state
+- Closures and `lazy` properties are `@ObservationIgnored`; `let` constants are never tracked
+- The controller reaches the output closures only through intents (`viewModel.goBack()`), never directly
+- `Requested` / `Performed` / `Event` are nested in the ViewModel; declare only the ones the module has
 
-### `BaseModuleDelegate`
+### Requested, Performed, Event — which is which
 
-A typealias composing four protocols that coordinators implement:
+| Kind | Fires | Handled by | Examples |
+|---|---|---|---|
+| `Requested` | many times | coordinator, with navigation | go back, open detail, present a sheet built by a wireframe, start a child flow |
+| `Performed` | once per unit of work | coordinator, reacting to a result | logged in, onboarding completed, payment sent |
+| `Event` | as often as it happens | controller, presenting over the current screen | alert, snackbar, toast, action sheet, "submitted" |
 
-```swift
-public typealias BaseModuleDelegate = ActivityControllerRequestable
-    & AlertRequestable
-    & DismissRequestable
-    & GoBackRequestable
-```
+The line between `Event` and `Requested`: a modal effect **over this screen** is an event the controller presents; anything that **starts a module or flow** is a request the coordinator answers. The same pair exists one level up — `BaseCoordinator` takes `onPerformed` and fires it from `finish()` — so module → coordinator and child → parent read alike.
 
-| Protocol | Method | Purpose |
-|----------|--------|---------|
-| `GoBackRequestable` | `onGoBackRequested()` | Pop the current screen |
-| `DismissRequestable` | `onDismissRequested()` | Dismiss modal |
-| `AlertRequestable` | `onPresentAlertRequested(...)` | Show an alert |
-| `ActivityControllerRequestable` | `onPresentActivityControllerRequested(with:)` | Show share sheet |
+### Screens without a ViewModel
 
-### Extended delegates
+Static screens skip the ViewModel and the wireframe: a `BaseViewController` subclass takes the same closures in its `init` and the coordinator wires them directly.
 
 ```swift
-protocol ProfileModuleDelegate: BaseModuleDelegate {
-    func onEditProfileRequested()
-    func onLogoutRequested()
-}
-```
+final class SheetFlowViewController: BaseViewController {
+    enum Requested { case dismiss, swap }
+    private let onRequested: Handler<Requested>
 
-### OnRequested / OnPerformed pattern
-
-An alternative, closure-based approach used throughout this codebase. ViewControllers communicate intent via typed enums passed as constructor closures:
-
-```swift
-final class LoginViewController: BaseViewController {
-    enum OnRequested { case register, recoverPassword }
-    enum OnPerformed { case login(isWhiteListed: Bool, transactionId: String) }
-
-    private let onRequested: Handler<OnRequested>
-    private let onPerformed: Handler<OnPerformed>
-
-    init(
-        onRequested: @escaping Handler<OnRequested>,
-        onPerformed: @escaping Handler<OnPerformed>
-    ) {
+    init(onRequested: @escaping Handler<Requested>) {
         self.onRequested = onRequested
-        self.onPerformed = onPerformed
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -1096,16 +1119,20 @@ final class LoginViewController: BaseViewController {
 }
 ```
 
-- **OnRequested** — user wants to navigate somewhere (coordinator decides where)
-- **OnPerformed** — user completed an action (coordinator reacts to the result)
+Use the full VC + VM + wireframe set when there is real view-model state to hold; don't add empty ceremony for a static screen. Never add closures to a `BaseViewModelableViewController` subclass: it would force a stubbed `required init(viewModel:)`. Closures belong on the ViewModel.
+
+### `BaseModuleDelegate` (legacy)
+
+Earlier releases wired navigation through `weak var delegate: BaseModuleDelegate?` (`GoBackRequestable`, `DismissRequestable`, `AlertRequestable`, `ActivityControllerRequestable`), which `BaseCoordinator` still implements with default behavior (`onGoBackRequested()` → `pop()`, `onDismissRequested()` → `dismiss()`). The typealias and the conformance stay for compatibility; new modules use `onRequested` instead, and the DemoApp no longer uses the delegate anywhere.
 
 ### Do's and Don'ts
 
 - **Do** use an `enum` for wireframes — stateless factories only.
-- **Do** use `weak` references for `delegate` and `view` in view models.
-- **Do** mark `init?(coder:)` as `@available(*, unavailable)` on every ViewController.
+- **Do** keep the ViewModel free of `view`, `delegate` and coordinator references.
+- **Do** mark `init?(coder:)` as `@available(*, unavailable)` on `BaseViewController` subclasses that declare an `init`.
 - **Don't** put business logic in the wireframe — it only wires dependencies.
-- **Don't** let view controllers navigate directly — they call delegate methods or fire callbacks.
+- **Don't** let view controllers navigate directly — they call a ViewModel intent that fires `onRequested`.
+- **Don't** declare an initializer in a `BaseViewModelableViewController` subclass — `init(viewModel:)` is inherited.
 
 ---
 
@@ -1130,8 +1157,13 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
 ```swift
 class AppCoordinator: BaseCoordinator {
     override func start() {
-        let vc = HomeWireframe.createModule(with: self)
-        push(vc)
+        push(HomeWireframe.createModule { [weak self] request in
+            guard let self else { return }
+            switch request {
+            case .settings: push(SettingsWireframe.createModule())
+            case .checkout: addChildAndStart(CheckoutCoordinator(navigationController: navigationController))
+            }
+        })
     }
 }
 
@@ -1260,34 +1292,44 @@ onViewWillDisappear { [weak self] _ in
 
 > Popping past several child coordinators at once (`pop(.to(_:))`, `pop(.toRoot)`) cancels **each** of them.
 
-### Coordinator protocol isolation
+### Modules never see the coordinator
 
-ViewModels and Wireframes should depend on a coordinator *protocol*, not the concrete coordinator class. This keeps modules independently testable and prevents import cycles:
+A ViewModel or wireframe never depends on a coordinator — not the class, not a protocol for it. The module declares what it can ask for (`Requested`) and what it reports (`Performed`), and the coordinator that builds it supplies the closures. Modules stay independently testable (capture the closures in a test) and there are no import cycles:
 
 ```swift
-// Define the protocol in the module
-@MainActor
-protocol CheckoutCoordinatorProtocol: AnyObject {
-    func showConfirmation(order: Order)
-    func showError(_ error: Error)
+// The module declares its outputs
+@Observable @MainActor
+final class CheckoutViewModel: ViewModel {
+    enum Requested { case showConfirmation(Order) }
+    enum Performed { case failed(Error) }
+    …
 }
 
-// Wireframe takes the protocol, not AppCoordinator
 enum CheckoutWireframe {
-    @MainActor static func createModule(coordinator: CheckoutCoordinatorProtocol) -> UIViewController {
-        let vm = CheckoutViewModel(coordinator: coordinator)
-        return CheckoutViewController(viewModel: vm)
-            .with { vm.view = $0 }
+    @MainActor static func createModule(
+        onRequested: @escaping Handler<CheckoutViewModel.Requested>,
+        onPerformed: @escaping Handler<CheckoutViewModel.Performed>
+    ) -> UIViewController {
+        CheckoutViewController(viewModel: CheckoutViewModel(onRequested: onRequested, onPerformed: onPerformed))
     }
 }
 
-// The concrete coordinator conforms
-final class CheckoutCoordinator: BaseCoordinator, CheckoutCoordinatorProtocol {
+// The coordinator answers
+final class CheckoutCoordinator: BaseCoordinator {
     override func start() {
-        push(CheckoutWireframe.createModule(coordinator: self))
+        push(CheckoutWireframe.createModule(
+            onRequested: { [weak self] request in
+                switch request {
+                case .showConfirmation(let order): self?.push(ConfirmationWireframe.createModule(order: order))
+                }
+            },
+            onPerformed: { [weak self] result in
+                switch result {
+                case .failed: self?.cancel()
+                }
+            }
+        ))
     }
-    func showConfirmation(order: Order) { push(ConfirmationWireframe.createModule(order: order)) }
-    func showError(_ error: Error) { presentAlertView(type: .customAlert(title: "Error", message: error.localizedDescription), acceptAction: nil, cancelAction: nil) }
 }
 ```
 
@@ -1392,13 +1434,19 @@ private var splashViewController: UIViewController {
 }
 ```
 
-### Coordinators conforming to UseCases
+### Where use cases live
 
-Coordinators can conform to business logic protocols directly:
+Use-case protocols are conformed by the **ViewModel**. A network result is state of a screen, so it lands in that screen's observable ViewModel and the controller renders it; the coordinator never has to reach into a controller it does not own to deliver it, and the logic is testable without a navigation controller.
 
 ```swift
-extension AppCoordinator: LogoutUseCase {}
-extension AppCoordinator: HandlePendingDataUseCase {}
+extension CheckoutViewModel: FetchCartUseCase {}
+extension CheckoutViewModel: SubmitOrderUseCase {}
+```
+
+A coordinator conforms only for an app-level flow no screen owns — logout, session refresh, deep-link resolution on the root coordinator — and even there a small flow object is preferable. View controllers never conform.
+
+```swift
+extension AppCoordinator: LogoutUseCase {}   // app-level, no screen owns it
 ```
 
 ### Sheet presentation
@@ -1414,20 +1462,17 @@ extension AppCoordinator: HandlePendingDataUseCase {}
 
 Common detent sizes: `0.45` (small), `0.75` (medium), `0.8` (large), `0.9625` (near-fullscreen).
 
-### Default delegate behavior
+### Default delegate behavior (legacy)
 
-`BaseCoordinator` provides default implementations:
-- `onGoBackRequested()` → calls `pop()`
-- `onDismissRequested()` → calls `dismiss()`
-
-Override in subclasses for custom behavior.
+`BaseCoordinator` still conforms to `BaseModuleDelegate` for modules written against earlier releases: `onGoBackRequested()` → `pop()`, `onDismissRequested()` → `dismiss()`. New modules fire `onRequested(.goBack)` and the coordinator pops (§6).
 
 ### Do's and Don'ts
 
 - **Do** always clean up child coordinators via `removeChild` when their flow ends.
 - **Do** use computed vars for VC properties — avoids stale state.
-- **Don't** present or push directly from a ViewController — route through the coordinator.
+- **Don't** present or push directly from a ViewController — route through the coordinator. The exception is a modal effect over the current screen (alert, snackbar): that is a `ViewEvent` the controller presents itself (§6).
 - **Don't** hold strong references to child coordinators outside `childCoordinators`.
+- **Don't** conform coordinators to use cases for screen work — the screen's ViewModel owns it (*Where use cases live*).
 
 ---
 
@@ -1747,7 +1792,7 @@ UITextField()
 
 `set(nil, on:)` is treated as the empty string `""` (it does not drop the field). Each `set` fires `onChange` **exactly once**.
 
-**Where it lives.** The DemoApp keeps the validator in the `@MainActor` ViewModel and drives the VC through its view protocol (`showFieldError(field:message:)`, `clearFieldError(field:)`, `updateValidationStatus(isValid:)`), so the VC holds no validation state; the VC-resident form above is the compact alternative. Either way the validator must be created on the main actor.
+**Where it lives.** The DemoApp keeps the validator in the `@MainActor` ViewModel: its `onChange` writes the latest `State` into an observed property and the controller renders errors and submit gating from it in `updateContent()`, so the VC holds no validation state; the VC-resident form above is the compact alternative. Either way the validator must be created on the main actor.
 
 ### Available rules
 
@@ -1867,13 +1912,12 @@ Call sites use `async`/`await` directly:
 
 ```swift
 func onViewWillAppear() {
-    Task { [weak self] in
+    Task { @MainActor [weak self] in
         guard let self else { return }
         do {
-            let posts = try await PostClient().fetchPosts()
-            view?.reload(with: posts)
+            posts = try await PostClient().fetchPosts()              // observed state (behind a `revision`)
         } catch {
-            view?.showError(error)
+            event = .init(.failed(message: error.localizedDescription))   // ViewEvent, consumed once by the controller
         }
     }
 }
@@ -2313,11 +2357,19 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 | `SingleRawValueKeyValueObjectStorage` | Single-item key-value storage |
 | `ContentReloadable` | Views that can reload their content |
 | `ViewLifecycleable` | View lifecycle event hooks |
+| `CollectionViewable` | The list contract a ViewModel answers (`CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`); sizes take `availableSize` |
 
-### View-protocol vocabulary
+### Module output types
 
-Compose these into your `FooViewProtocol` instead of redeclaring the methods —
-the conformances come free from `BaseViewController`/extensions:
+| Type | Purpose |
+|------|---------|
+| `Handler<T>` | `(T) -> Void`; the type of `onRequested` / `onPerformed` closures |
+| `ViewEvent<Payload>` | A one-shot effect as observed state: `UUID` identity + payload; assign a fresh value to fire (§5, §6) |
+| `ViewEventCursor` | Controller-side `consume(_:_:)` that acts once per `ViewEvent` id inside `updateContent()` |
+
+### Controller capability vocabulary
+
+Capabilities every `BaseViewController` already has (from the base class and extensions) — call them from the controller; never redeclare them on a protocol the ViewModel talks to:
 
 | Protocol | Grants |
 |----------|--------|
@@ -2760,10 +2812,12 @@ func alertView(
 - [ ] `@UIViewBuilder override var mainView: UIView` with `VStack`/`HStack` layout
 - [ ] `override func setupView()` calls `super.setupView()` first
 - [ ] Lifecycle logic uses `onViewIsAppearing`, `onViewWillDisappear` hooks — not overrides
-- [ ] ViewModel is `@Observable`; the controller renders its state in `updateContent()` (`super.updateContent()` first); the view protocol carries events only (§5 *Observation-driven updates*)
+- [ ] ViewModel is `@Observable`; the controller renders its state in `updateContent()` (`super.updateContent()` first); one-shot effects are a `ViewEvent` slot consumed by the controller's `ViewEventCursor` (§5 *Observation-driven updates*)
+- [ ] ViewModel holds no `view`, `delegate` or coordinator reference; its outputs are `onRequested` / `onPerformed` closures over nested `Requested` / `Performed` enums (§6)
+- [ ] Lists size through `onSizeForItem(in:at:availableSize:)` — no `screenWidth` reads
 - [ ] All closures capture `[weak self]` and immediately `guard let self else { return }`
-- [ ] Network calls go through a `UseCase` — the ViewModel, view controller, or coordinator conforms (the DemoApp conforms the ViewModel) and calls the method directly
-- [ ] Navigation fired via callback to coordinator (`onRequested(.action)`)
+- [ ] Network calls go through a `UseCase` the ViewModel conforms to (§7 *Where use cases live*)
+- [ ] Navigation fired through a ViewModel intent → `onRequested(.action)`; the coordinator answers. Modal effects over the screen (alert, snackbar) are `ViewEvent`s the controller presents
 
 ---
 
@@ -2776,4 +2830,4 @@ func alertView(
 - [ ] `final class MyClient: BaseClient` (empty body)
 - [ ] `extension MyClient: MyClientProtocol` — style (a): `request(from: #function, router, result:)` on `BaseClient`; or style (b): direct `HTTPService.request(router, result:)` (see §10 Do's and Don'ts)
 - [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation
-- [ ] Conform the relevant ViewController or Coordinator to `MyUseCase`
+- [ ] Conform the screen's ViewModel to `MyUseCase` (a coordinator only for an app-level flow no screen owns; never a view controller)

@@ -9,9 +9,7 @@ import UIKit
 // MARK: - ComponentsWireframe
 enum ComponentsWireframe {
     @MainActor
-    static func createModule(onGoBack: @escaping Action) -> UIViewController {
-        let viewModel = ComponentsViewModel(onGoBack: onGoBack)
-        return ComponentsViewController(viewModel: viewModel)
-            .with { viewModel.view = $0 }
+    static func createModule(onRequested: @escaping Handler<ComponentsViewModel.Requested>) -> UIViewController {
+        ComponentsViewController(viewModel: ComponentsViewModel(onRequested: onRequested))
     }
 }

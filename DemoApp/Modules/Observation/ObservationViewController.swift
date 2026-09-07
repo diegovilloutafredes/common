@@ -68,6 +68,9 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
     /// so the reload is gated on the revision it read.
     private var renderedRevision: Int = .zero
 
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
+
     @UIViewBuilder override var mainView: UIView {
         UIScrollView {
             VStack(margins: .init(top: 24, left: Layout.cardMargin, bottom: 32, right: Layout.cardMargin), spacing: 16) {
@@ -77,17 +80,12 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
                 ) {
                     VStack(spacing: 12) {
                         countLabel
+                        modeLabel
                         HStack(distribution: .fillEqually, spacing: 8) {
                             incrementButton
                             resetButton
                         }
                     }
-                }
-                demoSection(
-                    title: "ViewModel.onUpdateProperties()",
-                    description: "The variant. The view model reads tracked state in its own hook and pushes it through the view protocol. It runs in the same pass as updateContent(), so a tap on a row below re-runs it too."
-                ) {
-                    modeLabel
                 }
                 demoSection(
                     title: "BaseView.updateContent()",
@@ -125,7 +123,7 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
                 }
                 demoSection(
                     title: "State vs events",
-                    description: "One tap does both. The saves count is state: the hook reads it and may render it many times. The confirmation is an event: it fires once through the view protocol, never from the hook."
+                    description: "One tap does both. The saves count is state: the hook reads it and may render it many times. The confirmation is a ViewEvent: the same hook consumes it through a cursor, once per firing, with no view protocol."
                 ) {
                     VStack(spacing: 12) {
                         savesLabel
@@ -145,6 +143,7 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
         super.setupView()
         backgroundColor(.systemBackground)
         set(title: viewModel.title)
+        modeLabel.text("ObservationMode.current = .\(ObservationMode.current)")
         listHeight.isActive = true
         barWidth.isActive = true
     }
@@ -163,6 +162,11 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
             renderedRevision = viewModel.revision
             list.reloadData()
             badge.setNeedsContentUpdate()   // the badge's rows changed; its own tracking only covers isRead
+        }
+        eventCursor.consume(viewModel.event) { event in
+            switch event {
+            case .draftSaved: Snackbar.show(.init(message: "Draft saved"))
+            }
         }
     }
 
@@ -202,19 +206,5 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
         }
         .backgroundColor(.secondarySystemBackground)
         .round(radius: 12)
-    }
-}
-
-// MARK: - ObservationViewProtocol
-extension ObservationViewController: ObservationViewProtocol {
-    /// Card and section margins on each side until the list has laid out.
-    var messageListWidth: Double { list.bounds.width > .zero ? list.bounds.width : screenWidth - 2 * (Layout.cardMargin + Layout.sectionMargin) }
-
-    func renderMode(_ mode: String, unread: Int) {
-        modeLabel.text("ObservationMode.current = .\(mode) · \(unread) unread")
-    }
-
-    func showDraftSaved() {
-        Snackbar.show(.init(message: "Draft saved"))
     }
 }

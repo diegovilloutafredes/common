@@ -17,6 +17,8 @@ final class ListsViewController: BaseCollectionViewableViewController<ListsViewM
     /// The revision last pushed into the collection view. `updateContent()` re-runs for any
     /// tracked change (e.g. `isRefreshing`), so the reload is gated on the revision it read.
     private var renderedRevision: Int = .zero
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -39,6 +41,11 @@ final class ListsViewController: BaseCollectionViewableViewController<ListsViewM
         }
         if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true {
             list.refreshControl?.endRefreshing()
+        }
+        eventCursor.consume(viewModel.event) { event in
+            switch event {
+            case .tapped(let title): Snackbar.show(.init(message: "Tapped: \(title)"))
+            }
         }
     }
 }

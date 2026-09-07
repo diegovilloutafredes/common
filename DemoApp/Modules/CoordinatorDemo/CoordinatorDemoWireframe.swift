@@ -12,9 +12,9 @@ enum CoordinatorDemoWireframe {
     /// coordinator keeps a weak reference to the latter and writes stats/events
     /// into it; the controller observes them.
     @MainActor static func createModule(
-        with delegate: CoordinatorDemoViewModelDelegate
+        onRequested: @escaping Handler<CoordinatorDemoViewModel.Requested>
     ) -> (viewController: UIViewController, viewModel: CoordinatorDemoViewModel) {
-        let viewModel = CoordinatorDemoViewModel(delegate: delegate)
+        let viewModel = CoordinatorDemoViewModel(onRequested: onRequested)
         let viewController = CoordinatorDemoViewController(viewModel: viewModel)
         return (viewController, viewModel)
     }

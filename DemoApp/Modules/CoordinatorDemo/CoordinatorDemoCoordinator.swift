@@ -14,7 +14,15 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
     private var activeCount = 0
 
     override func start() {
-        let module = CoordinatorDemoWireframe.createModule(with: self)
+        let module = CoordinatorDemoWireframe.createModule { [weak self] request in
+            guard let self else { return }
+            switch request {
+            case .launchChild: launchFlow(maxDepth: 1)
+            case .launchDeepFlow: launchFlow(maxDepth: 3)
+            case .presentSheet: presentSheet()
+            case .refreshStats: viewModel?.refreshStats(children: activeCount, navStack: navStackCount)
+            }
+        }
         viewModel = module.viewModel
         moduleViewController = module.viewController
         push(module.viewController)
@@ -52,14 +60,16 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
     /// UISheetPresentationController chainables; dismissal routes back through
     /// the coordinator's dismiss().
     private func presentSheet() {
-        let sheet = SheetFlowViewController(
-            onDismissRequested: { [weak self] in
-                guard let self else { return }
+        let sheet = SheetFlowViewController(canSwap: true) { [weak self] request in
+            guard let self else { return }
+            switch request {
+            case .dismiss:
                 dismiss()
                 emit(CoordinatorEvent(icon: "📥", message: "Sheet dismissed via coordinator dismiss()", delta: 0))
-            },
-            onSwapRequested: { [weak self] in self?.swapSheet() }
-        )
+            case .swap:
+                swapSheet()
+            }
+        }
         sheet.sheetPresentationController?
             .detents([.medium()])
             .prefersGrabberVisible(true)
@@ -71,8 +81,8 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
     /// Replaces the presented sheet in one call: present(.dismissingCurrent)
     /// dismisses whatever is on top, then presents the new controller.
     private func swapSheet() {
-        let replacement = SheetFlowViewController { [weak self] in
-            guard let self else { return }
+        let replacement = SheetFlowViewController { [weak self] request in
+            guard let self, case .dismiss = request else { return }
             dismiss()
             emit(CoordinatorEvent(icon: "📥", message: "Replacement sheet dismissed", delta: 0))
         }
@@ -82,16 +92,5 @@ final class CoordinatorDemoCoordinator: BaseCoordinator {
             .preferredCornerRadius(16)
         present(.dismissingCurrent, viewController: replacement)
         emit(CoordinatorEvent(icon: "🔁", message: "Sheet swapped via present(.dismissingCurrent)", delta: 0))
-    }
-}
-
-// MARK: - CoordinatorDemoViewModelDelegate
-
-extension CoordinatorDemoCoordinator: CoordinatorDemoViewModelDelegate {
-    func didRequestLaunchChild() { launchFlow(maxDepth: 1) }
-    func didRequestLaunchDeepFlow() { launchFlow(maxDepth: 3) }
-    func didRequestPresentSheet() { presentSheet() }
-    func didRequestStatsRefresh() {
-        viewModel?.refreshStats(children: activeCount, navStack: navStackCount)
     }
 }

@@ -111,11 +111,11 @@ final class ComponentsViewController: BaseViewModelableViewController<Components
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
+        // BackButtonAddable demo: replace the system back button with Common's. The tap is a
+        // view-model intent; the coordinator answers the request by popping.
+        addBackButton { [weak self] in self?.viewModel.goBack() }
     }
 }
-
-// MARK: - ComponentsViewProtocol
-extension ComponentsViewController: ComponentsViewProtocol {}
 
 // MARK: - Private
 private extension ComponentsViewController {

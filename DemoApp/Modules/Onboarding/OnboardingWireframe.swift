@@ -7,9 +7,10 @@ import UIKit
 
 // MARK: - OnboardingWireframe
 enum OnboardingWireframe {
-    @MainActor static func createModule(with onRequested: @escaping Handler<OnboardingViewModel.OnRequested>) -> UIViewController {
-        let viewModel = OnboardingViewModel(onRequested: onRequested)
-        return OnboardingViewController(viewModel: viewModel)
-            .with { viewModel.view = $0 }
+    @MainActor static func createModule(
+        onRequested: @escaping Handler<OnboardingViewModel.Requested>,
+        onPerformed: @escaping Handler<OnboardingViewModel.Performed>
+    ) -> UIViewController {
+        OnboardingViewController(viewModel: OnboardingViewModel(onRequested: onRequested, onPerformed: onPerformed))
     }
 }

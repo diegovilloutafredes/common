@@ -153,10 +153,18 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
         setupAsKeyboardDismissable()
     }
 
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
+
     /// Renders the validator's observable state: submit gating plus one error label and
     /// border per field. Re-runs after every `validate(field:value:)` and `submit`.
     override func updateContent() {
         super.updateContent()
+        eventCursor.consume(viewModel.event) { event in
+            switch event {
+            case .submitted(let message): Snackbar.show(.init(message: message))
+            }
+        }
         guard let state = viewModel.validation else { return }
         submitButton.isEnabled(state.isValid)
         for field in [FormsViewModel.Field.name, .email, .password, .confirmPassword] {
@@ -209,13 +217,9 @@ extension FormsViewController {
     }
 }
 
-// MARK: - FormsViewProtocol
-extension FormsViewController: FormsViewProtocol {
-    func showSubmissionSuccess(message: String) {
-        Snackbar.show(.init(message: message))
-    }
-
-    private func errorLabel(for field: FormsViewModel.Field) -> UILabel {
+// MARK: - Private
+private extension FormsViewController {
+    func errorLabel(for field: FormsViewModel.Field) -> UILabel {
         switch field {
         case .name: nameErrorLabel
         case .email: emailErrorLabel
@@ -224,7 +228,7 @@ extension FormsViewController: FormsViewProtocol {
         }
     }
 
-    private func textField(for field: FormsViewModel.Field) -> UITextField {
+    func textField(for field: FormsViewModel.Field) -> UITextField {
         switch field {
         case .name: nameField
         case .email: emailField

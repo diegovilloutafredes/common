@@ -78,19 +78,19 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
 
     // MARK: - Custom Modal Alerts
     private lazy var basicCustomAlertButton = makeButton(title: "Basic Alert (icon + confirm)", color: .systemIndigo) { [weak self] in
-        self?.viewModel.onShowCustomAlertRequested(style: .basic)
+        self?.viewModel.showCustomAlert(style: .basic)
     }
 
     private lazy var cancelCustomAlertButton = makeButton(title: "Alert with Cancel Button", color: .systemPink) { [weak self] in
-        self?.viewModel.onShowCustomAlertRequested(style: .withCancel)
+        self?.viewModel.showCustomAlert(style: .withCancel)
     }
 
     private lazy var mandatoryCustomAlertButton = makeButton(title: "Mandatory (no background tap)", color: .brown) { [weak self] in
-        self?.viewModel.onShowCustomAlertRequested(style: .noDismissOnBackground)
+        self?.viewModel.showCustomAlert(style: .noDismissOnBackground)
     }
 
     private lazy var customContentAlertButton = makeButton(title: "Custom Content View", color: .systemTeal) { [weak self] in
-        self?.viewModel.onShowCustomAlertRequested(style: .customContent)
+        self?.viewModel.showCustomAlert(style: .customContent)
     }
 
     @UIViewBuilder
@@ -126,7 +126,7 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
                 sectionCard(
                     title: "Custom Modal Alerts",
                     icon: "rectangle.center.inset.filled",
-                    description: "CustomAlertViewController accepts any UIView as content — from the standard AlertView to fully bespoke layouts. Routed through the coordinator."
+                    description: "CustomAlertViewController accepts any UIView as content — from the standard AlertView to fully bespoke layouts. A modal effect over this screen: the view model fires a ViewEvent and the controller presents it from updateContent()."
                 ) {
                     VStack(spacing: 10) {
                         basicCustomAlertButton
@@ -146,6 +146,18 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
         super.setupView()
         title = viewModel.title
         view.backgroundColor(.systemBackground)
+    }
+
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
+
+    override func updateContent() {
+        super.updateContent()
+        eventCursor.consume(viewModel.event) { [weak self] event in
+            switch event {
+            case .showCustomAlert(let style): self?.showCustomAlert(style: style)
+            }
+        }
     }
 
     private func sectionCard(
@@ -183,5 +195,96 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
         )
         .onTap(action)
         .setConstraints { $0.set(height: 46) }
+    }
+}
+
+// MARK: - Custom alerts
+private extension AlertsViewController {
+    func showCustomAlert(style: CustomAlertStyle) {
+        switch style {
+        case .basic:
+            presentCustomAlert(
+                AlertView(viewModel: AlertViewModelPayload(
+                    icon: UIImage(systemName: "bell.fill"),
+                    title: "Notification",
+                    attributedMessage: NSAttributedString(string: "This uses AlertView with an icon and a single confirm button. Tap the background or press Got it to dismiss."),
+                    actionButtonTitle: "Got it",
+                    onActionButtonPressedHandler: { [weak self] in self?.dismiss(animated: true) }
+                )),
+                onBackgroundTap: { [weak self] in self?.dismiss(animated: true) }
+            )
+
+        case .withCancel:
+            presentCustomAlert(
+                AlertView(viewModel: AlertViewModelPayload(
+                    icon: UIImage(systemName: "trash.fill"),
+                    title: "Delete Item?",
+                    attributedMessage: NSAttributedString(string: "This action cannot be undone. The item will be permanently removed."),
+                    actionButtonTitle: "Delete",
+                    cancelButtonTitle: "Cancel",
+                    onActionButtonPressedHandler: { [weak self] in
+                        self?.dismiss(animated: true)
+                        Snackbar.show(.init(message: "Item deleted"))
+                    },
+                    onCancelButtonPressedHandler: { [weak self] in self?.dismiss(animated: true) }
+                )),
+                onBackgroundTap: { [weak self] in self?.dismiss(animated: true) }
+            )
+
+        case .noDismissOnBackground:
+            presentCustomAlert(
+                AlertView(viewModel: AlertViewModelPayload(
+                    title: "Mandatory Action",
+                    attributedMessage: NSAttributedString(string: "Tapping outside this alert does nothing. You must press the button below to dismiss."),
+                    actionButtonTitle: "I Understand",
+                    onActionButtonPressedHandler: { [weak self] in self?.dismiss(animated: true) },
+                    shouldHandleBackgroundClick: false
+                )),
+                onBackgroundTap: nil
+            )
+
+        case .customContent:
+            presentCustomAlert(makeSuccessCard(), onBackgroundTap: { [weak self] in self?.dismiss(animated: true) })
+        }
+    }
+
+    func presentCustomAlert(_ content: UIView, onBackgroundTap handler: CompletionHandler) {
+        let vc = CustomAlertWireframe.createModule(content, onDismissRequested: handler)
+        present(vc, animated: true)
+    }
+
+    func makeSuccessCard() -> UIView {
+        VStack(
+            margins: .init(top: 32, left: 24, bottom: 28, right: 24),
+            spacing: 16
+        ) {
+            VStack(alignment: .center) {
+                UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
+                    .tintColor(.systemGreen)
+                    .contentMode(.scaleAspectFit)
+                    .setConstraints { $0.set(width: 64); $0.set(height: 64) }
+            }
+            UILabel()
+                .text("Payment Sent!")
+                .font(.boldSystemFont(ofSize: 22))
+                .textAlignment(.center)
+                .textColor(.label)
+            UILabel()
+                .text("Your transfer of $150.00 was processed successfully.")
+                .font(.systemFont(ofSize: 15))
+                .textAlignment(.center)
+                .textColor(.secondaryLabel)
+                .numberOfLines(0)
+            UIButton(configuration: .filled()
+                .with {
+                    $0.title = "Done"
+                    $0.baseBackgroundColor = .systemGreen
+                    $0.cornerStyle = .capsule
+                }
+            )
+            .onTap { [weak self] in self?.dismiss(animated: true) }
+            .setConstraints { $0.set(height: 46) }
+        }
+        .backgroundColor(.systemBackground)
     }
 }

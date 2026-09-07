@@ -30,19 +30,22 @@ This skill gives an AI everything needed to correctly use the **Common iOS frame
 ## Architecture Mental Model
 
 ```
-Coordinator  → owns navigation, starts child coordinators, conforms to UseCase protocols
-Wireframe    → enum factory: createModule(...) -> UIViewController  (no state, no logic)
-ViewModel    → @Observable @MainActor; tracked state + weak delegate (coordinator) + weak view (VC, events only), conforms to ViewLifecycleable
-ViewController → BaseViewModelableViewController subclass, builds UI via @UIViewBuilder mainView, renders VM state in updateContent()
+Coordinator  → navigation only: builds modules through wireframes, answers `onRequested`, reacts to `onPerformed`, starts child coordinators
+Wireframe    → enum factory: createModule(onRequested:onPerformed:) -> UIViewController  (no state, no logic, no back-reference wiring)
+ViewModel    → @Observable @MainActor; tracked state + intents + UseCase conformances + `onRequested`/`onPerformed` closures; NO view, delegate or coordinator reference
+ViewController → BaseViewModelableViewController subclass, builds UI via @UIViewBuilder mainView, renders VM state in updateContent(), consumes ViewEvents there
 View / Cell  → BaseView / BaseViewModelableCell, same mainView pattern
 ```
 
-Communication directions (strict):
-- VC → ViewModel: direct method calls
+Communication directions (strict, one way):
+- VC → ViewModel: method calls (intents) and the `ViewLifecycleable` hooks
 - ViewModel → VC, state: `@Observable` properties on the VM; the VC reads them in `updateContent()` and the framework re-runs it on change (guide §5 *Observation-driven updates*)
-- ViewModel → VC, events and measurements: via `weak var view: ViewProtocol?` (snackbars, errors, `addBackButton`, list width) — never state
-- ViewModel → Coordinator: via `weak var delegate` or `onAction` closure
-- Coordinator navigates: `push`, `pop`, `set`, `present` — VCs never navigate directly
+- ViewModel → VC, one-shot effects (snackbar, alert, "submitted"): a `ViewEvent<Event>?` slot on the VM, consumed once by the VC's `ViewEventCursor` inside `updateContent()` — still observed state, no view protocol
+- ViewModel → Coordinator: `onRequested` (navigation to answer, fires many times) and `onPerformed` (results, once per unit of work) — constructor-injected closures over enums nested in the VM; declare only the channels the module has
+- Coordinator navigates: `push`, `pop`, `set`, `present` — VCs never navigate directly; the VC reaches the closures only through VM intents (`viewModel.goBack()`)
+- Measurements (list width) are handed in by the framework (`availableSize`), never read from a view
+- Events vs requests: a modal effect **over this screen** (alert, snackbar, toast) is a `ViewEvent` the VC presents; anything that **starts a module or flow** (push, sheet built by a wireframe, child coordinator) is `onRequested`
+- Use cases conform on the ViewModel. A coordinator conforms only for an app-level flow no screen owns (logout); VCs never
 
 ---
 
@@ -51,11 +54,10 @@ Communication directions (strict):
 ### New Screen (VC + VM + Wireframe)
 
 ```swift
-// FooWireframe.swift — always enum, never struct/class
+// FooWireframe.swift — always enum, never struct/class; takes only the output closures the module has
 enum FooWireframe {
-    @MainActor static func createModule(with delegate: BaseModuleDelegate, onAction: @escaping Handler<FooAction>) -> UIViewController {
-        let vm = FooViewModel(delegate: delegate, onAction: onAction)
-        return FooViewController(viewModel: vm).with { vm.view = $0 }
+    @MainActor static func createModule(onRequested: @escaping Handler<FooViewModel.Requested>) -> UIViewController {
+        FooViewController(viewModel: FooViewModel(onRequested: onRequested))
     }
 }
 
@@ -65,43 +67,44 @@ import Observation                                   // UIKit does not re-export
 @MainActor
 protocol FooViewModelProtocol: ViewModel, ViewLifecycleable {
     var statusText: String { get }                   // state the VC renders
+    var event: ViewEvent<FooViewModel.Event>? { get } // one-shot effects the VC consumes
+    func goBack()
+    func refresh()
 }
 
 @Observable @MainActor
 final class FooViewModel {
+    enum Requested { case goBack }                   // navigation the coordinator answers
+    enum Event { case refreshed }                    // modal effects over this screen
+
     private(set) var statusText = ""                 // tracked: any change re-runs the VC's updateContent()
-    @ObservationIgnored private weak var delegate: BaseModuleDelegate?
-    @ObservationIgnored weak var view: FooViewProtocol?   // events only, never state
-    private let onAction: Handler<FooAction>         // `let` is never tracked
+    private(set) var event: ViewEvent<Event>?        // tracked: a fresh value per firing
+    @ObservationIgnored private let onRequested: Handler<Requested>   // closures are never tracked
 
-    init(delegate: BaseModuleDelegate, onAction: @escaping Handler<FooAction>) {
-        self.delegate = delegate
-        self.onAction = onAction
+    init(onRequested: @escaping Handler<Requested>) {
+        self.onRequested = onRequested
     }
-
-    func refresh() { statusText = "Updated" }         // mutate state; no view call needed
 }
 
-extension FooViewModel: FooViewModelProtocol {}
-extension FooViewModel: ViewLifecycleable {
-    func onViewDidLoad() {
-        view?.addBackButton { [weak self] in self?.delegate?.onGoBackRequested() }
+extension FooViewModel: FooViewModelProtocol {
+    func goBack() { onRequested(.goBack) }           // the VC's back button calls this intent
+    func refresh() {
+        statusText = "Updated"                       // mutate state; no view call needed
+        event = .init(.refreshed)                    // fire an effect; consumed once by the VC
     }
-    func onViewWillAppear() {}
-    func onViewWillDisappear() {}
 }
+extension FooViewModel: ViewLifecycleable {}         // only the hooks you need; all have defaults
 
-// FooViewController.swift — view protocol = events + capabilities the base VC already provides
-// (BackButtonAddable, ActivityIndicatorable, ScreenSizeMeasurable, KeyboardDismissable …).
-// State (text, flags, counts) does NOT go here — the VC reads it from the VM in updateContent().
-// NavigationBarSetupable has NO default implementation — adopt it only if you implement setupNavigationBar().
-protocol FooViewProtocol: BackButtonAddable {}
-
+// FooViewController.swift — no view protocol: the VC pulls state from the VM and consumes its events.
+// NO view, delegate or coordinator reference lives on the VM.
 final class FooViewController: BaseViewModelableViewController<FooViewModelProtocol> {
     private lazy var titleLabel = UILabel("Title")
         .font(.appFont(style: .bold, size: 24))
         .textColor(.black)
         .numberOfLines()
+
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
 
     @UIViewBuilder override var mainView: UIView {
         VStack(margins: .init(top: 16, left: 16, bottom: 16, right: 16), spacing: 16) {
@@ -113,20 +116,28 @@ final class FooViewController: BaseViewModelableViewController<FooViewModelProto
         super.setupView()
         backgroundColor(.white)
         set(title: "Foo")
+        addBackButton { [weak self] in self?.viewModel.goBack() }   // VC → VM intent → onRequested
     }
 
     // Single render point: runs after viewDidLoad and again whenever a tracked read changes. Keep it idempotent.
     override func updateContent() {
         super.updateContent()
         titleLabel.text(viewModel.statusText)
+        eventCursor.consume(viewModel.event) { event in
+            switch event {
+            case .refreshed: Snackbar.show(.init(message: "Refreshed"))
+            }
+        }
     }
     // No initializer here: init(viewModel:) is inherited from the base class.
     // Declaring init?(coder:) (or any init) removes that inheritance and fails to compile.
+    // Never add closures to this subclass — they belong on the ViewModel.
 }
-extension FooViewController: FooViewProtocol {}
 ```
 
-> **Scale the pattern to the screen.** The full VC + VM + Wireframe + view-protocol set above is the template for stateful screens. In production, simple screens commonly skip the Wireframe and the separate ViewModel: a `BaseViewController` subclass takes `OnRequested`/`OnPerformed` closures in its `init` and the coordinator wires them directly. Use the full set when there's real view-model state to hold; don't add empty ceremony for a static screen.
+> **Scale the pattern to the screen.** The full VC + VM + Wireframe set above is the template for stateful screens. Simple static screens skip the Wireframe and the ViewModel: a `BaseViewController` subclass takes the same `onRequested` / `onPerformed` closures (over nested `Requested` / `Performed` enums) in its `init` and the coordinator wires them directly. Use the full set when there's real view-model state to hold; don't add empty ceremony for a static screen.
+>
+> **`Requested` vs `Performed` vs `Event`.** `Requested` = navigation the coordinator answers (go back, open detail, present a wireframe-built sheet, start a child flow), fires many times. `Performed` = a result the coordinator reacts to (logged in, onboarding completed), once per unit of work — the same word `BaseCoordinator` uses for `finish()`. `Event` = a modal effect over this screen the VC presents (alert, snackbar, toast). Declare only the ones the module has.
 
 ### Coordinator
 
@@ -134,20 +145,28 @@ extension FooViewController: FooViewProtocol {}
 final class AppCoordinator: BaseCoordinator {
     override func start() { push(fooViewController) }
 
-    // Computed var — fresh instance on each navigation, no stale state
+    // Computed var — fresh instance on each navigation, no stale state.
+    // The coordinator never hands itself to a module: it supplies the closures and answers them.
     private var fooViewController: UIViewController {
-        FooWireframe.createModule(with: self) { [weak self] action in
-            guard let self else { return }
-            switch action {
-            case .next:
-                push(BarWireframe.createModule(with: self))
-            case .child:
-                addChildAndStart(ChildCoordinator(
-                    navigationController: navigationController,
-                    onPerformed: { [weak self] _ in self?.pop() }
-                ))
+        FooWireframe.createModule(
+            onRequested: { [weak self] request in
+                guard let self else { return }
+                switch request {
+                case .goBack: pop()
+                case .next: push(BarWireframe.createModule())
+                case .child:
+                    addChildAndStart(ChildCoordinator(
+                        navigationController: navigationController,
+                        onPerformed: { [weak self] _ in self?.pop() }
+                    ))
+                }
+            },
+            onPerformed: { [weak self] result in
+                switch result {
+                case .done: self?.finish()
+                }
             }
-        }
+        )
     }
 }
 ```
@@ -225,7 +244,8 @@ extension FetchFooUseCase {
 }
 // Callback variant pairs with the callback client:
 // extension FetchFooUseCase { func fetchFoo(onResult: @escaping NetworkResultHandler<[Foo]>) { CallbackFooClient().list(result: onResult) } }
-// Conform coordinator or VC: extension MyCoordinator: FetchFooUseCase {}
+// Conform the screen's ViewModel: extension FooViewModel: FetchFooUseCase {}
+// (a coordinator conforms only for an app-level flow no screen owns, e.g. logout; a VC never does)
 ```
 
 ### Storage
@@ -276,7 +296,6 @@ final class FooListViewController: BaseCollectionViewableViewController<FooListV
 // CollectionViewable = CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable.
 @Observable @MainActor
 final class FooListViewModel {
-    @ObservationIgnored weak var view: FooListViewProtocol?   // FooListViewProtocol: ScreenSizeMeasurable → screenWidth for sizes
     private(set) var revision: Int = .zero                    // tracked: the VC reloads when this moves
     @ObservationIgnored private var items: [FooCellViewModel] = [] { didSet { revision += 1 } }   // the array itself is NOT tracked
 }
@@ -285,8 +304,11 @@ extension FooListViewModel: CollectionViewable {
     func getNumberOfItems(in section: Int) -> Int { items.count }                             // REQUIRED
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { FooCell.reuseIdentifier } // REQUIRED
     func onCellForItem(in section: Int, at index: Int) -> ViewModel? { items[index] }         // REQUIRED — bound via cell.viewModel
-    func onSizeForItem(in section: Int, at index: Int) -> Size { (view?.screenWidth ?? 375, 68) } // REQUIRED — (width, height) tuple
-    func onItemSelected(in section: Int, at index: Int) { /* tap → delegate/snackbar */ }     // defaulted no-op
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size { (availableSize.width, 68) } // implement THIS one — (width, height) tuple
+    // availableSize = list bounds minus adjusted content inset minus this section's inset, handed in by the base VC.
+    // The legacy onSizeForItem(in:at:) still exists (defaults to zero; the availableSize hook forwards to it):
+    // implement exactly one — neither, or a mistyped label, renders an empty list silently.
+    func onItemSelected(in section: Int, at index: Int) { /* tap → intent / ViewEvent */ }    // defaulted no-op
     // Also defaulted: onInsetFor(section:), onMinimumLineSpacingFor(section:), onMinimumInteritemSpacingFor(section:),
     // and the header/footer trio below. Never hand-roll UICollectionViewDataSource in the VC.
 }
@@ -367,8 +389,9 @@ init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupVie
 - Data binding in `setupView()`, not `mainView`
 - Lifecycle events via hooks (`onViewIsAppearing`, `onViewWillDisappear`), not method overrides
 - Observable state: read it in `onUpdateProperties()` (ViewModel) or `updateContent()` (view/cell/VC); the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
-- Self-sizing rows (`estimatedItemSize = .automaticSize` + `preferredLayoutAttributesFitting`): `onSizeForItem` must return the list's width, not `screenWidth` — wider items are dropped and the list renders empty. Content is bound synchronously on `viewModel` assignment so measurement sees it.
-- Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on `weak var view`, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; events (snackbar, error) stay view-protocol calls; `setActivityIndicator(visible: isLoading)` for spinners.
+- Self-sizing rows (`estimatedItemSize = .automaticSize` + `preferredLayoutAttributesFitting`): `onSizeForItem` must return `availableSize.width` (the list's own width), never `screenWidth` — wider items are dropped and the list renders empty. Content is bound synchronously on `viewModel` assignment so measurement sees it.
+- Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a covered VC consumes on return); `setActivityIndicator(visible: isLoading)` for spinners.
+- `onUpdateProperties()` (ViewModel-side hook) is an escape hatch for code written before the contract — it needs a view to push into. New modules render in the VC's `updateContent()` only.
 
 ---
 
@@ -499,9 +522,11 @@ When writing code that lives in `Common/` itself (full detail: guide §19):
 - [ ] All subviews declared as `private lazy var`
 - [ ] All closures use `[weak self]` + `guard let self else { return }`
 - [ ] Lifecycle logic via `onViewIsAppearing`, `onViewWillDisappear` hooks — not overrides
-- [ ] ViewModel is `@Observable`; the VC renders its state in `updateContent()` (`super` first); the view protocol carries events only
-- [ ] Networking via UseCase conformance on the ViewModel, VC, or Coordinator (the demo conforms the ViewModel)
-- [ ] Navigation fired via `onRequested`/`onAction` callback — never directly
+- [ ] ViewModel is `@Observable`; the VC renders its state in `updateContent()` (`super` first); one-shot effects are a `ViewEvent` slot consumed by the VC's `ViewEventCursor`
+- [ ] ViewModel holds no `view`, `delegate` or coordinator reference; outputs are `onRequested` / `onPerformed` closures over nested `Requested` / `Performed` enums — declare only the ones the module has
+- [ ] Lists size through `onSizeForItem(in:at:availableSize:)` — no `screenWidth` reads
+- [ ] Networking via UseCase conformance on the ViewModel (never a VC; a coordinator only for app-level flows)
+- [ ] Navigation fired through a VM intent → `onRequested(.x)`; modal effects over the screen (alert, snackbar) are `ViewEvent`s the VC presents
 - [ ] Forms validate with `FieldsValidator` — never hand-rolled per-field checks
 
 ## New API Domain Checklist (Appendix C)
@@ -513,4 +538,4 @@ When writing code that lives in `Common/` itself (full detail: guide §19):
 - [ ] `final class MyClient: BaseClient {}` (empty body)
 - [ ] `extension MyClient: MyClientProtocol` — `request(from: #function, ...)` calls
 - [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation
-- [ ] Conform the relevant ViewController or Coordinator to `MyUseCase`
+- [ ] Conform the screen's ViewModel to `MyUseCase`

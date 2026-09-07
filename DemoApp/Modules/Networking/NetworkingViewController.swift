@@ -6,12 +6,6 @@
 import Common
 import UIKit
 
-// MARK: - NetworkingViewProtocol
-/// Only one-shot events remain here; everything else is observable state on the view model.
-protocol NetworkingViewProtocol: ScreenSizeMeasurable {
-    func didFailWithError(_ message: String)
-}
-
 // MARK: - PostCellViewModel
 protocol PostCellViewModel: ViewModel {
     var title: String { get }
@@ -126,6 +120,8 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
     .setConstraints { $0.set(height: 44) }
 
     private var renderedRevision: Int = .zero
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
 
     @UIViewBuilder
     override var mainView: UIView {
@@ -175,12 +171,10 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
             renderedRevision = viewModel.revision
             list.reloadData()
         }
-    }
-}
-
-// MARK: - NetworkingViewProtocol
-extension NetworkingViewController: NetworkingViewProtocol {
-    func didFailWithError(_ message: String) {
-        Snackbar.show(.init(message: "Error: \(message)"))
+        eventCursor.consume(viewModel.event) { event in
+            switch event {
+            case .failed(let message): Snackbar.show(.init(message: "Error: \(message)"))
+            }
+        }
     }
 }

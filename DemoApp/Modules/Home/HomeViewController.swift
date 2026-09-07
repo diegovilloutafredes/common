@@ -6,9 +6,6 @@
 import Common
 import UIKit
 
-// MARK: - HomeViewProtocol
-typealias HomeViewProtocol = ScreenSizeMeasurable
-
 // MARK: - HomeViewController
 final class HomeViewController: BaseCollectionViewableViewController<HomeViewModelProtocol> {
     private lazy var list = VList(dataSource: self, delegate: self)

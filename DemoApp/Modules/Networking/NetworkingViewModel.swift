@@ -19,6 +19,8 @@ protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
     /// Bumped whenever `posts` changes; the controller reloads its list when it differs
     /// from the revision it last rendered.
     var revision: Int { get }
+    /// One-shot failures; the controller consumes the slot with a `ViewEventCursor`.
+    var event: ViewEvent<NetworkingViewModel.Event>? { get }
     func loadPosts()
     func createPost()
     func uploadImage(_ imageData: Data)
@@ -29,6 +31,8 @@ protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
 @Observable
 @MainActor
 final class NetworkingViewModel {
+    enum Event { case failed(message: String) }
+
     let title = "Networking"
     private(set) var statusText = "Tap Fetch to load posts from JSONPlaceholder API"
     private(set) var mode: NetworkingMode = .callback
@@ -41,7 +45,7 @@ final class NetworkingViewModel {
     @ObservationIgnored private var posts: [Post] = [] {
         didSet { revision += 1 }
     }
-    @ObservationIgnored weak var view: NetworkingViewProtocol?
+    private(set) var event: ViewEvent<Event>?
 }
 
 // MARK: - NetworkingViewModelProtocol
@@ -119,7 +123,7 @@ private extension NetworkingViewModel {
                 case .failure(let error):
                     if posts.isEmpty { posts = Self.mockPosts }
                     statusText = "API error — showing mock data"
-                    view?.didFailWithError(error.localizedDescription)
+                    event = .init(.failed(message: error.localizedDescription))
                 }
             }
         }
@@ -138,7 +142,7 @@ private extension NetworkingViewModel {
                 if posts.isEmpty { posts = Self.mockPosts }
                 statusText = "API error — showing mock data"
                 isLoading = false
-                view?.didFailWithError(error.localizedDescription)
+                event = .init(.failed(message: error.localizedDescription))
             }
         }
     }
@@ -161,7 +165,7 @@ extension NetworkingViewModel: CollectionViewable {
 
     func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { PostCell.reuseIdentifier }
 
-    func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) {
-        (view?.screenWidth ?? 375, 90)
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size {
+        (availableSize.width, 90)
     }
 }

@@ -5,9 +5,6 @@
 import Common
 import UIKit
 
-// MARK: - View
-typealias OnboardingViewProtocol = ScreenSizeMeasurable & NavigationBarVisibilityTogglable
-
 // MARK: - OnboardingViewController
 final class OnboardingViewController: BaseCollectionViewableViewController<OnboardingViewModelProtocol> {
 
@@ -99,7 +96,7 @@ extension OnboardingViewController {
             navigationItem.setRightBarButton(
                 .init(
                     title: "Saltar",
-                    primaryAction: .init { [weak self] _ in self?.viewModel.onRequested(.skip) }
+                    primaryAction: .init { [weak self] _ in self?.viewModel.skip() }
                 ),
                 animated: true
             )
@@ -123,6 +120,6 @@ extension OnboardingViewController {
 import SwiftUI
 @available(iOS 17.0, *)
 #Preview {
-    OnboardingWireframe.createModule { _ in }
+    OnboardingWireframe.createModule(onRequested: { _ in }, onPerformed: { _ in })
 }
 #endif

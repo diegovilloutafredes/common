@@ -5,34 +5,27 @@
 
 import Common
 
-// MARK: - ComponentsViewProtocol
-protocol ComponentsViewProtocol: BackButtonAddable {}
-
 // MARK: - ComponentsViewModelProtocol
-protocol ComponentsViewModelProtocol: ViewModel, ViewLifecycleable {
+protocol ComponentsViewModelProtocol: ViewModel {
     var title: String { get }
+    /// The controller's back button calls this; the coordinator answers the request by popping.
+    func goBack()
 }
 
 // MARK: - ComponentsViewModel
 @MainActor
 final class ComponentsViewModel {
-    let title = "Components"
-    weak var view: ComponentsViewProtocol?
-    private let onGoBack: Action
+    enum Requested { case goBack }
 
-    init(onGoBack: @escaping Action) {
-        self.onGoBack = onGoBack
+    let title = "Components"
+    private let onRequested: Handler<Requested>
+
+    init(onRequested: @escaping Handler<Requested>) {
+        self.onRequested = onRequested
     }
 }
 
 // MARK: - ComponentsViewModelProtocol
-extension ComponentsViewModel: ComponentsViewModelProtocol {}
-
-// MARK: - ViewLifecycleable
-extension ComponentsViewModel: ViewLifecycleable {
-    func onViewDidLoad() {
-        // BackButtonAddable demo: replace the system back button with Common's,
-        // routing the pop through the coordinator instead of popping from the VC.
-        view?.addBackButton { [weak self] in self?.onGoBack() }
-    }
+extension ComponentsViewModel: ComponentsViewModelProtocol {
+    func goBack() { onRequested(.goBack) }
 }

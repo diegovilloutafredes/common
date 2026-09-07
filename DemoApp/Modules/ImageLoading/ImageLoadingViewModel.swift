@@ -29,7 +29,6 @@ final class ImageLoadingViewModel {
     let title = "Image Loading"
     private(set) var revision: Int = .zero
 
-    @ObservationIgnored weak var view: ScreenSizeMeasurable?
     @ObservationIgnored private var sections: [ImageDemoSection] = ImageLoadingViewModel.makeSections()
 
     private static func makeSections() -> [ImageDemoSection] {
@@ -222,9 +221,9 @@ extension ImageLoadingViewModel: CollectionViewable {
         ListSectionHeaderViewModelImpl(title: sections[section].header)
     }
 
-    func onSizeForItem(in section: Int, at index: Int) -> (width: Double, height: Double) { (view?.screenWidth ?? 375, 92) }
+    func onSizeForItem(in section: Int, at index: Int, availableSize: Size) -> Size { (availableSize.width, 92) }
 
-    func onSizeForHeaderItem(in section: Int) -> (width: Double, height: Double) { (view?.screenWidth ?? 375, 36) }
+    func onSizeForHeaderItem(in section: Int, availableSize: Size) -> Size { (availableSize.width, 36) }
 
     func onMinimumLineSpacingFor(section: Int) -> Double { 4 }
 

@@ -73,12 +73,24 @@ protocol StorageViewModelProtocol: ViewModel {
     /// What each backend currently holds (absent = empty). Refreshed by every operation.
     var stored: [StorageType: StorageItem] { get }
     var directSecret: String? { get }
-    func save(type: StorageType) -> StorageItem
-    func read(type: StorageType) -> StorageItem?
+    /// The outcome of the last operation; the controller consumes the slot with a `ViewEventCursor`.
+    var event: ViewEvent<StorageEvent>? { get }
+    func save(type: StorageType)
+    func read(type: StorageType)
     func delete(type: StorageType)
-    func saveDirectSecret() -> String
-    func readDirectSecret() -> String?
+    func saveDirectSecret()
+    func readDirectSecret()
     func deleteDirectSecret()
+}
+
+// MARK: - StorageEvent
+enum StorageEvent {
+    case saved(StorageType)
+    case read(StorageType, StorageItem?)
+    case deleted(StorageType)
+    case directSaved(String)
+    case directRead(String?)
+    case directDeleted
 }
 
 // MARK: - DemoItemStorage
@@ -101,6 +113,7 @@ final class StorageViewModelImpl: StorageViewModelProtocol {
     let title = "Storage"
     private(set) var stored: [StorageType: StorageItem] = [:]
     private(set) var directSecret: String?
+    private(set) var event: ViewEvent<StorageEvent>?
 
     // The in-memory backend is a live object, not a rebuildable value — hold one
     // instance so save/read hit the same store. This is InMemoryKeyValueStorage's
@@ -123,8 +136,7 @@ final class StorageViewModelImpl: StorageViewModelProtocol {
         }
     }
 
-    @discardableResult
-    func save(type: StorageType) -> StorageItem {
+    func save(type: StorageType) {
         let item = StorageItem(value: type.exampleValue, timestamp: .now)
         if let storage = storage(for: type) {
             storage.add(item: item)
@@ -132,12 +144,12 @@ final class StorageViewModelImpl: StorageViewModelProtocol {
             inMemoryStore.add(item: (inMemoryKey, item))
         }
         refresh(type: type)
-        return item
+        event = .init(.saved(type))
     }
 
-    func read(type: StorageType) -> StorageItem? {
+    func read(type: StorageType) {
         refresh(type: type)
-        return stored[type]
+        event = .init(.read(type, stored[type]))
     }
 
     func delete(type: StorageType) {
@@ -147,6 +159,7 @@ final class StorageViewModelImpl: StorageViewModelProtocol {
             inMemoryStore.remove(using: inMemoryKey)
         }
         refresh(type: type)
+        event = .init(.deleted(type))
     }
 
     /// Re-reads one backend into the observable snapshot.
@@ -158,21 +171,22 @@ final class StorageViewModelImpl: StorageViewModelProtocol {
 
 // MARK: - Direct KeychainWrapper (low-level API)
 extension StorageViewModelImpl {
-    func saveDirectSecret() -> String {
+    func saveDirectSecret() {
         let secret = String.random(length: 12)
         KeychainWrapper.standard.set(secret, forKey: directKey)
         refreshDirect()
-        return secret
+        event = .init(.directSaved(secret))
     }
 
-    func readDirectSecret() -> String? {
+    func readDirectSecret() {
         refreshDirect()
-        return directSecret
+        event = .init(.directRead(directSecret))
     }
 
     func deleteDirectSecret() {
         KeychainWrapper.standard.removeObject(forKey: directKey)
         refreshDirect()
+        event = .init(.directDeleted)
     }
 
     private func refreshDirect() {

@@ -41,6 +41,9 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         view.backgroundColor(.systemBackground)
     }
 
+    /// Acts on each `viewModel.event` once, however many times the hook re-runs.
+    private var eventCursor = ViewEventCursor()
+
     override func updateContent() {
         super.updateContent()
         let stored = viewModel.stored
@@ -51,6 +54,21 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
             directStatusLabel.text("Stored: \"\(secret)\"").textColor(.systemGreen)
         } else {
             directStatusLabel.text("Empty — nothing stored").textColor(.secondaryLabel)
+        }
+        eventCursor.consume(viewModel.event) { event in
+            Snackbar.show(.init(message: Self.message(for: event)))
+        }
+    }
+
+    /// Wording for each outcome lives with the presentation, not the view model.
+    private static func message(for event: StorageEvent) -> String {
+        switch event {
+        case .saved(let type): "Saved to \(type.title)"
+        case .read(let type, let item): item.map { "Read: \"\($0.value)\"" } ?? "Nothing stored in \(type.title)"
+        case .deleted(let type): "Deleted from \(type.title)"
+        case .directSaved(let secret): "Saved \"\(secret)\""
+        case .directRead(let value): value.map { "Read: \"\($0)\"" } ?? "Nothing stored"
+        case .directDeleted: "Deleted from Keychain"
         }
     }
 
@@ -93,20 +111,9 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
                 .numberOfLines(0)
 
             HStack(distribution: .fillEqually, spacing: 8) {
-                makeButton(title: "Save", color: type.color) { [weak self] in
-                    _ = self?.viewModel.save(type: type)
-                    Snackbar.show(.init(message: "Saved to \(type.title)"))
-                }
-                makeButton(title: "Read", color: .systemOrange) { [weak self] in
-                    let value = self?.viewModel.read(type: type)
-                    Snackbar.show(.init(message: value != nil
-                        ? "Read: \"\(value!.value)\""
-                        : "Nothing stored in \(type.title)"))
-                }
-                makeButton(title: "Delete", color: .systemRed) { [weak self] in
-                    self?.viewModel.delete(type: type)
-                    Snackbar.show(.init(message: "Deleted from \(type.title)"))
-                }
+                makeButton(title: "Save", color: type.color) { [weak self] in self?.viewModel.save(type: type) }
+                makeButton(title: "Read", color: .systemOrange) { [weak self] in self?.viewModel.read(type: type) }
+                makeButton(title: "Delete", color: .systemRed) { [weak self] in self?.viewModel.delete(type: type) }
             }
 
             statusLabels[type]!
@@ -138,21 +145,9 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
                 .numberOfLines(0)
 
             HStack(distribution: .fillEqually, spacing: 8) {
-                makeButton(title: "Save", color: .systemTeal) { [weak self] in
-                    guard let self else { return }
-                    let secret = viewModel.saveDirectSecret()
-                    Snackbar.show(.init(message: "Saved \"\(secret)\""))
-                }
-                makeButton(title: "Read", color: .systemOrange) { [weak self] in
-                    guard let self else { return }
-                    let value = viewModel.readDirectSecret()
-                    Snackbar.show(.init(message: value.map { "Read: \"\($0)\"" } ?? "Nothing stored"))
-                }
-                makeButton(title: "Delete", color: .systemRed) { [weak self] in
-                    guard let self else { return }
-                    viewModel.deleteDirectSecret()
-                    Snackbar.show(.init(message: "Deleted from Keychain"))
-                }
+                makeButton(title: "Save", color: .systemTeal) { [weak self] in self?.viewModel.saveDirectSecret() }
+                makeButton(title: "Read", color: .systemOrange) { [weak self] in self?.viewModel.readDirectSecret() }
+                makeButton(title: "Delete", color: .systemRed) { [weak self] in self?.viewModel.deleteDirectSecret() }
             }
 
             directStatusLabel
