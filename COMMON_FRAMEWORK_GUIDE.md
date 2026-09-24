@@ -1858,7 +1858,7 @@ extension ProductRouter: Endpoint {
     var headers: HTTPHeaders {
         // Resolve the auth token inline from an app-level Storage type. Common provides
         // `HTTPHeaders` + `.authorization(bearerToken:)`, but NOT a token-resolution protocol —
-        // the token lives in your app (see §10/Storage). This mirrors production (UniPay).
+        // the token lives in your app (see §10/Storage).
         guard let token = AuthStorage().get()?.accessToken else { return .init() }
         return .init([.authorization(bearerToken: token)])
     }
@@ -2078,7 +2078,7 @@ extension UploadParameters {
 
 - **Do** define routes as enum cases conforming to `Endpoint`.
 - **Do** use the UseCase pattern for reusable, testable networking logic.
-- **Two valid client styles:** (a) subclass `BaseClient` and call `request(from: #function, ...)` — adds in-flight dedup keyed by `#function`; or (b) call `HTTPService.request(router, urlSession:, result:)` directly from the client method. Production (UniPay) predominantly uses (b); the DemoApp uses (a). Pick one per client; both are supported.
+- **Two valid client styles:** (a) subclass `BaseClient` and call `request(from: #function, ...)` — adds in-flight dedup keyed by `#function`; or (b) call `HTTPService.request(router, urlSession:, result:)` directly from the client method. The DemoApp uses (a). Pick one per client; both are supported.
 - **Don't** encode parameters manually — `Endpoint` handles encoding based on HTTP method.
 
 ---

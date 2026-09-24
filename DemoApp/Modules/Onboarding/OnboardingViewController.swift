@@ -95,7 +95,7 @@ extension OnboardingViewController {
         if showsSkip {
             navigationItem.setRightBarButton(
                 .init(
-                    title: "Saltar",
+                    title: "Skip",
                     primaryAction: .init { [weak self] _ in self?.viewModel.skip() }
                 ),
                 animated: true

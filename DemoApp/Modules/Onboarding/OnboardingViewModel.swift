@@ -12,13 +12,13 @@ protocol OnboardingViewModelProtocol: CollectionViewable, ViewLifecycleable {
     var pageCount: Int { get }
     var isLastPage: Bool { get }
     var buttonTitle: String { get }
-    /// The "Saltar" bar item is shown on every page but the last.
+    /// The "Skip" bar item is shown on every page but the last.
     var showsSkip: Bool { get }
     /// Called by the pager as the user scrolls; same-value writes are ignored.
     func set(currentPage: Int)
     /// The primary button: next page, or the `.begin` result on the last one.
     func advance()
-    /// The "Saltar" bar item: abandons the flow.
+    /// The "Skip" bar item: abandons the flow.
     func skip()
 }
 
@@ -44,7 +44,7 @@ final class OnboardingViewModel {
 
     var pageCount: Int { dataSource.count }
     var isLastPage: Bool { currentPage >= pageCount - 1 }
-    var buttonTitle: String { isLastPage ? "Comenzar" : "Siguiente" }
+    var buttonTitle: String { isLastPage ? "Get started" : "Next" }
     var showsSkip: Bool { !isLastPage }
 }
 

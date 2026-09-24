@@ -12,25 +12,25 @@ enum OnboardingStep: Int, OnboardingCellViewModel {
 
     var title: String {
         switch self {
-        case .first: "Con \(Bundle.main.displayName) pagar es fácil y seguro"
-        case .second: "El código se actualiza cada 60 segundos"
-        case .third: "Solo debes compartir tu código en las cajas para autorizar tus compras"
+        case .first: "Welcome to \(Bundle.main.displayName)"
+        case .second: "State flows one way"
+        case .third: "Explore the modules"
         }
     }
 
     var subtitle: String {
         switch self {
-        case .first: "Sólo necesitas tu código para autorizar tu compra en sólo segundos"
-        case .second: "Cada código es único, sólo tú lo conoces, y es válido por una única vez"
-        case .third: "Para aceptar tu compra, entrega o digita tu código en caja"
+        case .first: "Every screen in this app is built with Common's declarative UIKit DSL"
+        case .second: "View models publish observable state, and each screen renders it in updateContent()"
+        case .third: "Each module demonstrates one part of the framework, from networking to forms"
         }
     }
 
     var image: UIImage? {
         switch self {
-        case .first: .init(systemName: "cart.fill")
-        case .second: .init(systemName: "clock.badge.checkmark.fill")
-        case .third: .init(systemName: "qrcode.viewfinder")
+        case .first: .init(systemName: "square.stack.3d.up.fill")
+        case .second: .init(systemName: "arrow.triangle.branch")
+        case .third: .init(systemName: "square.grid.2x2.fill")
         }
     }
 }
