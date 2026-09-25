@@ -48,7 +48,7 @@ The repo ships an agent skill (`.claude/skills/common-framework/`, with the full
 Updates arrive with `/plugin marketplace update` when a new version is tagged. Teams can commit `extraKnownMarketplaces` + `enabledPlugins` in `.claude/settings.json` so every clone gets it. Without plugins, copy the two files into your repo at the tag you use:
 
 ```bash
-V=v1.8.1; D=.claude/skills/common-framework; mkdir -p $D/references
+V=v1.8.2; D=.claude/skills/common-framework; mkdir -p $D/references
 curl -fsSL https://raw.githubusercontent.com/diegovilloutafredes/common/$V/.claude/skills/common-framework/SKILL.md -o $D/SKILL.md
 curl -fsSL https://raw.githubusercontent.com/diegovilloutafredes/common/$V/COMMON_FRAMEWORK_GUIDE.md -o $D/references/COMMON_FRAMEWORK_GUIDE.md
 ```
