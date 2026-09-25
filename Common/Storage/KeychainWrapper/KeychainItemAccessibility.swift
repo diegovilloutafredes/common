@@ -14,7 +14,9 @@ public enum KeychainItemAccessibility {
     /// The data in the keychain item can only be accessed after the first unlock, and only on this device.
     case afterFirstUnlockThisDeviceOnly
     
-    /// The data in the keychain item can always be accessed regardless of whether the device is locked.
+    /// Stored as `afterFirstUnlock`: the Keychain's always-accessible class is deprecated, and
+    /// after-first-unlock is its designated replacement. The item is readable once the device has
+    /// been unlocked after a restart, including while it is locked again.
     case always
 
     /// The data in the keychain can only be accessed when the device is unlocked. Only available if a passcode is set on the device.
@@ -25,10 +27,9 @@ public enum KeychainItemAccessibility {
     @available(iOS 8, *)
     case whenPasscodeSetThisDeviceOnly
 
-    /// The data in the keychain item can always be accessed regardless of whether the device is locked.
-    ///
-    /// This is not recommended for application use. Items with this attribute do not migrate to a new device.
-    /// Thus, after restoring from a backup of a different device, these items will not be present.
+    /// Stored as `afterFirstUnlockThisDeviceOnly`: the Keychain's always-accessible class is deprecated,
+    /// and after-first-unlock is its designated replacement. The item is readable once the device has
+    /// been unlocked after a restart, and does not migrate to a new device.
     case alwaysThisDeviceOnly
     
     /// The data in the keychain item can be accessed only while the device is unlocked by the user.
@@ -44,22 +45,24 @@ public enum KeychainItemAccessibility {
     /// Thus, after restoring from a backup of a different device, these items will not be present.
     case whenUnlockedThisDeviceOnly
 
+    /// Maps an attribute back to its option. Only the canonical options are candidates: `.always` and
+    /// `.alwaysThisDeviceOnly` share their attributes, so the answer is the same on every call.
     static func accessibilityForAttributeValue(_ keychainAttrValue: CFString) -> KeychainItemAccessibility? {
-        for (key, value) in keychainItemAccessibilityLookup where value == keychainAttrValue { return key }
-        return nil
+        let canonical: [KeychainItemAccessibility] = [
+            .afterFirstUnlock, .afterFirstUnlockThisDeviceOnly, .whenPasscodeSetThisDeviceOnly, .whenUnlocked, .whenUnlockedThisDeviceOnly
+        ]
+        return canonical.first { $0.keychainAttrValue == keychainAttrValue }
     }
 }
 
-private let keychainItemAccessibilityLookup: [KeychainItemAccessibility: CFString] = {
-    [
-        .afterFirstUnlock: kSecAttrAccessibleAfterFirstUnlock,
-        .afterFirstUnlockThisDeviceOnly: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-        .whenPasscodeSetThisDeviceOnly: kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
-        .whenUnlocked: kSecAttrAccessibleWhenUnlocked,
-        .whenUnlockedThisDeviceOnly: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-    ]
-}()
-
 extension KeychainItemAccessibility: KeychainAttrRepresentable {
-    public var keychainAttrValue: CFString { keychainItemAccessibilityLookup[self]! }
+    public var keychainAttrValue: CFString {
+        switch self {
+        case .afterFirstUnlock, .always: kSecAttrAccessibleAfterFirstUnlock
+        case .afterFirstUnlockThisDeviceOnly, .alwaysThisDeviceOnly: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        case .whenPasscodeSetThisDeviceOnly: kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
+        case .whenUnlocked: kSecAttrAccessibleWhenUnlocked
+        case .whenUnlockedThisDeviceOnly: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        }
+    }
 }

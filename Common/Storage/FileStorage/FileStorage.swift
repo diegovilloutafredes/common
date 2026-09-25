@@ -17,8 +17,14 @@ public struct FileStorage: KeyValueStorage {
 
     /// The shared instance of `FileStorage`.
     public static var shared = FileStorage()
-    
-    private init() {}
+
+    /// Where items are stored; nil means the app's Documents directory.
+    private let directory: URL?
+
+    private init() { directory = nil }
+
+    /// Stores items in `directory` instead of Documents, so tests never touch the host's Documents.
+    init(directory: URL) { self.directory = directory }
 }
 
 extension FileStorage {
@@ -31,7 +37,7 @@ extension FileStorage {
             let fileURL = fileURL(using: item.key)
         else { return }
         ensureDirectoryExists(for: fileURL)
-        try? data.write(to: fileURL)
+        try? data.write(to: fileURL, options: .atomic)
     }
 
     /// Adds a `KeyStorable` item to storage.
@@ -66,7 +72,7 @@ extension FileStorage {
         }
         do {
             ensureDirectoryExists(for: url)
-            try data.write(to: url)
+            try data.write(to: url, options: .atomic)
             return .success(())
         } catch {
             return .failure(.fileIOError(error))
@@ -104,7 +110,7 @@ extension FileStorage {
 }
 
 extension FileStorage {
-    private func fileURL(using pathComponent: String) -> URL? { URL.documentsDirectory?.appendingPathComponent(pathComponent) }
+    private func fileURL(using pathComponent: String) -> URL? { (directory ?? URL.documentsDirectory)?.appendingPathComponent(pathComponent) }
 
     /// `URL.documentsDirectory` returns the container path whether or not the
     /// directory exists on disk. In environments where it hasn't been created

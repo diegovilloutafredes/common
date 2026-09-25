@@ -67,4 +67,13 @@ extension KeyValueStore: KeyValueStorage {
     
     /// Removes an item from the underlying storage.
     public func remove(using key: String) { keyValueStorage.remove(using: key) }
+
+    /// Adds a key-value pair to the underlying storage, returning its result — including its failures.
+    public func tryAdd(item: KeyValue<Storable>) -> Result<Void, StorageError> { keyValueStorage.tryAdd(item: item) }
+
+    /// Retrieves an item from the underlying storage, returning its result — including its failures.
+    public func tryGet<T: Storable>(using key: String) -> Result<T?, StorageError> { keyValueStorage.tryGet(using: key) }
+
+    /// Removes an item from the underlying storage, returning its result — including its failures.
+    public func tryRemove(using key: String) -> Result<Void, StorageError> { keyValueStorage.tryRemove(using: key) }
 }

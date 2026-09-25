@@ -92,24 +92,75 @@ final class RawValueKeyValueStoreTests: XCTestCase {
     }
 }
 
-// MARK: - FileStorageDirectoryCreationTests
+// MARK: - FileStorageTests
 
-/// FileStorage must survive a missing Documents directory — `Data.write(to:)`
-/// fails (silently, in the fire-and-forget API) when the parent directory
-/// doesn't exist, which is the state of a fresh app container.
-final class FileStorageDirectoryCreationTests: XCTestCase {
+/// FileStorage's own behavior, exercised in a temporary directory: tests must never delete the
+/// host's Documents directory.
+final class FileStorageTests: XCTestCase {
 
-    func test_add_createsDocumentsDirectoryWhenMissing() throws {
-        let documents = try XCTUnwrap(URL.documentsDirectory)
-        // Only remove it when empty-or-absent-of-others: our own key is the sole
-        // thing this suite writes there, and sibling tests recreate on demand.
-        try? FileManager.default.removeItem(at: documents)
-        defer { FileStorage.shared.remove(using: "fs_mkdir_item") }
+    private var directory: URL!
 
-        let stored = Item(value: "created")
-        FileStorage.shared.add(item: ("fs_mkdir_item", stored))
+    override func setUp() {
+        super.setUp()
+        directory = FileManager.default.temporaryDirectory.appendingPathComponent("FileStorageTests-\(UUID().uuidString)")
+    }
 
-        let read: Item? = FileStorage.shared.get(using: "fs_mkdir_item")
-        XCTAssertEqual(read, stored, "add must create the missing Documents directory before writing")
+    override func tearDown() {
+        try? FileManager.default.removeItem(at: directory)
+        directory = nil
+        super.tearDown()
+    }
+
+    /// `Data.write(to:)` fails (silently, in the fire-and-forget API) when the parent directory
+    /// doesn't exist, which is the state of a fresh app container.
+    func test_add_createsTheDirectoryWhenMissing() {
+        XCTAssertFalse(FileManager.default.fileExists(atPath: directory.path), "precondition: the directory is missing")
+        let storage = FileStorage(directory: directory)
+
+        storage.add(item: ("item", Item(value: "created")))
+
+        let read: Item? = storage.get(using: "item")
+        XCTAssertEqual(read, Item(value: "created"), "add must create the missing directory before writing")
+    }
+
+    /// An atomic write goes through a temporary file and a rename, so the stored file is a new one;
+    /// an in-place write would truncate and reuse the old file, and an interrupted write would
+    /// leave it partial.
+    func test_add_overwrite_replacesTheFileAsAWhole() throws {
+        let storage = FileStorage(directory: directory)
+        storage.add(item: ("item", Item(value: "first")))
+        let before = try fileNumber(of: "item")
+
+        storage.add(item: ("item", Item(value: "second")))
+
+        XCTAssertNotEqual(try fileNumber(of: "item"), before, "the overwrite must replace the file, not rewrite it in place")
+        let read: Item? = storage.get(using: "item")
+        XCTAssertEqual(read, Item(value: "second"))
+    }
+
+    func test_tryAdd_overwrite_replacesTheFileAsAWhole() throws {
+        let storage = FileStorage(directory: directory)
+        try storage.tryAdd(item: ("item", Item(value: "first"))).get()
+        let before = try fileNumber(of: "item")
+
+        try storage.tryAdd(item: ("item", Item(value: "second"))).get()
+
+        XCTAssertNotEqual(try fileNumber(of: "item"), before, "the overwrite must replace the file, not rewrite it in place")
+    }
+
+    /// The shared storage keeps its location; this test writes its own key there and removes only it.
+    func test_shared_storesInTheDocumentsDirectory() throws {
+        let documents = try XCTUnwrap(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
+        let key = "fs_default_location_item"
+        defer { FileStorage.shared.remove(using: key) }
+
+        FileStorage.shared.add(item: (key, Item(value: "here")))
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: documents.appendingPathComponent(key).path))
+    }
+
+    private func fileNumber(of key: String) throws -> Int {
+        let attributes = try FileManager.default.attributesOfItem(atPath: directory.appendingPathComponent(key).path)
+        return try XCTUnwrap(attributes[.systemFileNumber] as? Int)
     }
 }
