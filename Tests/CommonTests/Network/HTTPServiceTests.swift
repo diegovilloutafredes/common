@@ -49,6 +49,15 @@ private enum TestEndpoint: URLRequestConvertible {
     }
 }
 
+/// A real `Endpoint` whose environment provides no base URL.
+private struct BaseURLlessEndpoint: Endpoint {
+    var baseURL: URL? { nil }
+    var path: String { "/items" }
+    var headers: HTTPHeaders { [:] }
+    var method: HTTPMethod { .get }
+    var parameters: Encodable? { nil }
+}
+
 // MARK: - HTTPServiceTests
 
 final class HTTPServiceTests: XCTestCase {
@@ -176,6 +185,33 @@ final class HTTPServiceTests: XCTestCase {
         }
     }
 
+    // MARK: - An endpoint without a base URL fails instead of crashing
+
+    func test_asURLRequest_nilBaseURL_throwsInvalidURL() {
+        XCTAssertThrowsError(try BaseURLlessEndpoint().asURLRequest()) { error in
+            guard case NetworkError.invalidURL = error else {
+                return XCTFail("Expected NetworkError.invalidURL, got \(error)")
+            }
+        }
+    }
+
+    func test_request_nilBaseURL_throwsNetworkError_withoutSendingAnything() async {
+        nonisolated(unsafe) var requestSent = false
+        MockURLProtocol.requestHandler = { _ in
+            requestSent = true
+            throw URLError(.unknown)
+        }
+
+        do {
+            let _: TestItem = try await HTTPService.request(BaseURLlessEndpoint())
+            XCTFail("Expected a NetworkError")
+        } catch is NetworkError {
+            XCTAssertFalse(requestSent, "an endpoint without a URL must fail before anything is sent")
+        } catch {
+            XCTFail("Expected a NetworkError, got \(error)")
+        }
+    }
+
     // MARK: - defaultTimeoutInterval is applied to the dispatched URLRequest
 
     func test_request_appliesDefaultTimeoutInterval() async throws {
@@ -199,6 +235,34 @@ final class HTTPServiceTests: XCTestCase {
 
         let _: TestItem = try await HTTPService.request(TestEndpoint.get)
         XCTAssertEqual(capturedTimeout, customTimeout)
+    }
+
+    // MARK: - Async request — cancellation surfaces as CancellationError
+
+    func test_request_cancelledMidFlight_throwsCancellationError() async throws {
+        let requestInFlight = expectation(description: "the request reached the network layer")
+        let responseGate = DispatchSemaphore(value: 0)
+        MockURLProtocol.requestHandler = { request in
+            requestInFlight.fulfill()
+            responseGate.wait()  // released only after the task is cancelled
+            let data = try JSONEncoder().encode(TestItem(id: 1, name: "Widget"))
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, data)
+        }
+
+        let task = Task { () async throws -> TestItem in try await HTTPService.request(TestEndpoint.get) }
+        await fulfillment(of: [requestInFlight], timeout: 5)
+        task.cancel()
+        responseGate.signal()
+
+        do {
+            _ = try await task.value
+            XCTFail("Expected CancellationError")
+        } catch is CancellationError {
+            // pass — the documented contract for a cancelled Task
+        } catch {
+            XCTFail("Expected CancellationError, got \(error)")
+        }
     }
 
     // MARK: - Callback overload — cancellation

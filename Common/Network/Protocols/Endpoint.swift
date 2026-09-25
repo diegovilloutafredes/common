@@ -50,8 +50,10 @@ extension Endpoint {
 
 // MARK: - URLRequestConvertible
 extension Endpoint {
+    /// Builds the request for this endpoint.
+    /// - Throws: `NetworkError.invalidURL` carrying the relative path when `baseURL` is nil.
     public func asURLRequest() throws -> URLRequest {
-        guard let url else { return .init(url: .init(string: .empty)!) }
+        guard let url else { throw NetworkError.invalidURL("\(basePath)\(version)\(path)") }
 
         var urlRequest = URLRequest(url: url)
 

@@ -1919,6 +1919,8 @@ func onViewWillAppear() {
         guard let self else { return }
         do {
             posts = try await PostClient().fetchPosts()              // observed state (behind a `revision`)
+        } catch is CancellationError {
+            return                                                   // a cancelled Task is not a failure to report
         } catch {
             event = .init(.failed(message: error.localizedDescription))   // ViewEvent, consumed once by the controller
         }

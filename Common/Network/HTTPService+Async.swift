@@ -41,6 +41,11 @@ extension HTTPService {
             (data, response) = try await urlSession.data(for: mutableRequest)
         } catch is CancellationError {
             throw CancellationError()
+        } catch where Task.isCancelled {
+            // URLSession reports a cancelled Task as URLError(.cancelled); the documented contract is
+            // CancellationError. Keyed on the Task, not the code: .cancelled also covers session
+            // invalidation and cancelled auth challenges, which are failures, not the caller's cancel.
+            throw CancellationError()
         } catch {
             if shouldLog { Logger.log(["error": error]) }
             throw NetworkError.requestError(error)
