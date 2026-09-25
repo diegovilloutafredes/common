@@ -25,15 +25,19 @@ concurrency:
 jobs:
   test:
     name: Test & Build
-    runs-on: macos-26
+    # runs-on can't read repo files: keep this image's Xcode major in step with .xcode-version.
+    runs-on: xcode-27
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode 26.4
+      - name: Read the Xcode pin
+        run: echo "XCODE_VERSION=$(cat .xcode-version)" >> "$GITHUB_ENV"
+
+      - name: Select pinned Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.4'
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Print Xcode version
         run: xcodebuild -version
@@ -81,7 +85,9 @@ jobs:
       # UIViewBuilder placeholder) are exactly what tag-pinned consumers run via
       # the Release XCFramework, and Debug runs only skip these tests.
       # ENABLE_TESTABILITY=YES grants @testable symbol access — it does not
-      # define DEBUG, so the release branches stay active.
+      # define DEBUG, so the release branches stay active. A renamed test class
+      # runs zero tests and a DEBUG leak into Release skips them all — both exit
+      # 0, so the lane is judged from its result bundle.
       - name: Run Release Gate Tests
         run: |
           xcodebuild test \
@@ -91,6 +97,14 @@ jobs:
             -only-testing:CommonTests/ReleaseGateTests \
             -resultBundlePath ReleaseGateResults.xcresult \
             ENABLE_TESTABILITY=YES
+          xcrun xcresulttool get test-results summary --path ReleaseGateResults.xcresult | python3 -c '
+          import json, sys
+          summary = json.load(sys.stdin)
+          total, skipped, failed = (summary.get(key, 0) for key in ("totalTestCount", "skippedTests", "failedTests"))
+          result = f"{total} run, {skipped} skipped, {failed} failed"
+          if total == 0 or skipped or failed:
+              sys.exit(f"Release gate lane must run at least one test and skip none: {result}")
+          print(f"Release gates: {result}")'
 
       - name: Build DemoApp
         run: |
@@ -126,7 +140,8 @@ jobs:
 
   documentation:
     name: Update Docs
-    runs-on: macos-26
+    # runs-on can't read repo files: keep this image's Xcode major in step with .xcode-version.
+    runs-on: xcode-27
     timeout-minutes: 30
     needs: test
     permissions:
@@ -135,10 +150,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode 26.4
+      - name: Read the Xcode pin
+        run: echo "XCODE_VERSION=$(cat .xcode-version)" >> "$GITHUB_ENV"
+
+      - name: Select pinned Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.4'
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Cache Homebrew downloads
         uses: actions/cache@v4

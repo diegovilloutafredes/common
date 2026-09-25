@@ -19,18 +19,29 @@ concurrency:
 jobs:
   validate:
     name: Test
-    runs-on: macos-26
+    # runs-on can't read repo files: keep this image's Xcode major in step with .xcode-version.
+    runs-on: xcode-27
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode 26.4
+      - name: Read the Xcode pin
+        run: echo "XCODE_VERSION=$(cat .xcode-version)" >> "$GITHUB_ENV"
+
+      - name: Select pinned Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.4'
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Print Xcode version
         run: xcodebuild -version
+
+      # The asset published below is this tag-committed binary: before anything is
+      # published, check that a consumer can import it and that it reports the tag's version.
+      - name: Verify the committed XCFramework imports
+        run: |
+          chmod +x scripts/verify_xcframework.sh
+          scripts/verify_xcframework.sh XCFramework/Common.xcframework "${GITHUB_REF_NAME#v}"
 
       - name: Cache Homebrew downloads
         uses: actions/cache@v4
