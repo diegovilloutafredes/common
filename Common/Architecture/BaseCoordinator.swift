@@ -187,6 +187,13 @@ extension BaseCoordinator: Navigationable {
     /// not it was active before, so a coordinator added via `addChild` alone is
     /// bootstrapped here too.
     ///
+    /// A descendant re-rooting the stack (a child flow's login → `set(home)`) is not
+    /// its ancestors abandoning their flows: an ancestor whose tracked screen is not
+    /// in the new stack stops tracking it, rather than cancelling — and, through its
+    /// cascade, cancelling this coordinator. Such an ancestor no longer cancels itself
+    /// when a screen leaves; it ends through `finish()`, its own `set(_:)`, or its
+    /// parent's cancellation.
+    ///
     /// `set([])` explicitly cancels — an empty-stack replacement is flow abandonment.
     public func set(_ viewControllers: [UIViewController], animated: Bool = false) {
         guard let first = viewControllers.first else {
@@ -196,6 +203,13 @@ extension BaseCoordinator: Navigationable {
         }
         trackedViewController?.stopTrackingRemoval()
         trackedViewController = first
+        var ancestor = parent
+        while let current = ancestor {
+            if let tracked = current.trackedViewController, !viewControllers.contains(where: { $0 === tracked }) {
+                current.stopLifecycleTracking()
+            }
+            ancestor = current.parent
+        }
         navigationController.setViewControllers(viewControllers, animated: animated)
         if !isFinished {
             beginLifecycleTracking(for: first)

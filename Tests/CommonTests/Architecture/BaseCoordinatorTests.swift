@@ -510,6 +510,67 @@ final class BaseCoordinatorTests: XCTestCase {
                       "set([]) should be treated as flow abandonment")
     }
 
+    // MARK: - set() by a descendant re-roots, it does not abandon the ancestors
+
+    func test_set_descendantReroot_keepsAncestorAndCallerActive() {
+        var parentPerformed = false
+        let root = StubCoordinator(navigationController: nav, onPerformed: { _ in parentPerformed = true })
+        root.set([UIViewController()])            // the parent tracks its own root screen
+        let flow = StubCoordinator(navigationController: nav)
+        root.addChildAndStart(flow)
+
+        flow.set([UIViewController()])            // e.g. login → set(home) from the child
+
+        XCTAssertEqual(root.childCoordinators.count, 1,
+                       "the re-root must not cancel the child through its parent's cascade")
+        root.finish()
+        XCTAssertTrue(parentPerformed, "the parent must still be active, so finish() fires onPerformed")
+    }
+
+    func test_set_ancestorTakesStackBackAfterDescendantReroot_cancelsOnlyTheDescendant() {
+        var parentPerformed = false
+        let root = StubCoordinator(navigationController: nav, onPerformed: { _ in parentPerformed = true })
+        root.set([UIViewController()])
+        let flow = StubCoordinator(navigationController: nav)
+        root.addChildAndStart(flow)
+        flow.set([UIViewController()])
+
+        root.set([UIViewController()])            // the child's root leaves the stack
+
+        XCTAssertTrue(root.childCoordinators.isEmpty, "the child tracks the root it set, so its removal cancels it")
+        root.finish()
+        XCTAssertTrue(parentPerformed, "the parent re-rooted its own flow and stays active")
+    }
+
+    func test_set_descendantKeepsAncestorScreen_ancestorStillTracksIt() {
+        let rootScreen = UIViewController()
+        let root = StubCoordinator(navigationController: nav)
+        root.set([rootScreen])
+        let flow = StubCoordinator(navigationController: nav)
+        root.addChildAndStart(flow)
+        let flowScreen = UIViewController()
+        flow.set([flowScreen, rootScreen])        // re-roots, but the parent's screen stays in the stack
+
+        nav.viewControllers = [flowScreen]        // only the parent's screen leaves
+
+        XCTAssertTrue(root.childCoordinators.isEmpty,
+                      "the parent kept tracking its screen, so its removal cancels the parent and cascades to the child")
+    }
+
+    func test_set_emptyArrayByDescendant_stillCancelsTheTrackingAncestor() {
+        var parentPerformed = false
+        let root = StubCoordinator(navigationController: nav, onPerformed: { _ in parentPerformed = true })
+        root.set([UIViewController()])
+        let flow = StubCoordinator(navigationController: nav)
+        root.addChildAndStart(flow)
+
+        flow.set([])                              // flow abandonment, not a re-root
+
+        XCTAssertTrue(root.childCoordinators.isEmpty)
+        root.finish()
+        XCTAssertFalse(parentPerformed, "the parent's screen was abandoned too, so it is cancelled and finish() is a no-op")
+    }
+
     // MARK: - finish() and cancel() are independent override points
 
     func test_finish_doesNotCallCancelOverride() {
