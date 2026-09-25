@@ -609,7 +609,7 @@ someView.widthAnchor.constraint(equalToConstant: 120)
 - **Do** use `setConstraints` — it handles `translatesAutoresizingMaskIntoConstraints` and deferred activation.
 - **Do** use `snap(to: $1.safeAreaLayoutGuide)` for root-level content.
 - **Do** combine all constraints for a view into a **single** `setConstraints { }` call — calling it twice overwrites the first handler (only one handler is stored per view via associated object).
-- **Don't** activate constraints manually via `NSLayoutConstraint.activate` — except inside `UIScrollView.with { }` closures for content layout guide binding (see UIScrollView wrapping in section 2).
+- **Don't** activate constraints manually via `NSLayoutConstraint.activate` — `setConstraints` covers scroll-view content too (see UIScrollView wrapping in section 2).
 - **Don't** confuse `.setRatio()` (1:1 square) with `.setRatio(w/h)` — always be explicit.
 - **Don't** use the default `.fill` distribution in HStack/VStack when arranged subviews have explicit size constraints — it will silently stretch one view to fill remaining space. Use `.equalSpacing` when each child keeps its own size.
 
@@ -644,7 +644,7 @@ final class SimpleViewController: BaseViewController {
 }
 ```
 
-### `BaseViewModelableViewController<T: ViewModel>`
+### `BaseViewModelableViewController<ViewModelType>`
 
 Extends `BaseViewController` with a typed view model injected via `required init(viewModel:)`. Forwards lifecycle to the view model if it conforms to `ViewLifecycleable`.
 
@@ -726,7 +726,7 @@ func onSizeForFooterItem(in section: Int, availableSize: Size) -> Size { section
 
 Supplementary views subclass `BaseViewModelableReusableView<T>` and bind in `updateContent()`, exactly like cells (the same view may be registered for both kinds). `Size` and `Inset` are labeled tuples (`(width:height:)`, `(top:left:bottom:right:)`).
 
-### `BaseViewModelableView<T: ViewModel>`
+### `BaseViewModelableView<ViewModelType>`
 
 For custom views with a view model:
 
@@ -742,7 +742,7 @@ final class ItemView: BaseViewModelableView<ItemViewModel> {
 }
 ```
 
-### `BaseViewModelableCell<T: ViewModel>`
+### `BaseViewModelableCell<ViewModelType>`
 
 For collection/table view cells, bind content in `updateContent()` — `mainView` is built once in `init` and the `viewModel` property is `nil` at that point. Assigning `viewModel` runs `updateContent()` **synchronously** (self-sizing cells are measured right after configuration, so the content must already be there), and if the model is `@Observable` any later change to a property read inside re-runs it on the next pass:
 
@@ -859,7 +859,7 @@ Rules:
 - Constraint constants may be written in the hook; the layout pass that follows applies them. To animate one, mutate the state inside the animation block: `animateConstraints { viewModel.toggle() }` on iOS 17–18 (its `layoutIfNeeded()` runs the hook inside the block) or `UIView.animate(withDuration:delay:options: .flushUpdates) { viewModel.toggle() }` on iOS 26. Geometry *derived* from layout (a list's content height) only exists after layout — sync it in `viewDidLayoutSubviews()` (or after `super.layoutSubviews()` in a view), not in the hook.
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
-- Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`.
+- Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`. In cells, views and reusable views the base implementation is empty, so `super` is optional there.
 - **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) still show. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
 - **`onUpdateProperties()` is an escape hatch.** The ViewModel-side hook runs in the same pass and tracks the same way, but it needs somewhere to push into — a view reference the module contract no longer has. Keep it for code written against earlier releases; new modules render in the controller's `updateContent()` only.
 - **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
@@ -1016,7 +1016,7 @@ Data flows one way. Nothing on the ViewModel points back at its controller or it
 | ViewModel → Controller, state | `@Observable` properties, read in `updateContent()`; the framework re-runs it on change (§5 *Observation-driven updates*) |
 | ViewModel → Controller, one-shot effects | A `ViewEvent` slot — still observed state, consumed once by the controller's `ViewEventCursor` (§5) |
 | ViewModel → Coordinator | Two constructor-injected closures: `onRequested` (navigation to answer) and `onPerformed` (results to react to) |
-| Coordinator → ViewModel | Constructor arguments, or writes into it as a data source (a coordinator may keep a `weak` ViewModel to feed it) |
+| Coordinator → ViewModel | Constructor arguments, or writes into it as a data source: the wireframe then returns `(viewController:, viewModel:)` and the coordinator keeps the ViewModel `weak` (the DemoApp's CoordinatorDemo module). A request that needs a single answer can carry a `reply` closure the coordinator calls once instead |
 
 No `weak var view`, no `weak var delegate`. Measurements the ViewModel used to read through a view protocol (a list's width) are handed in by the framework instead (`availableSize`, §5).
 
@@ -1144,7 +1144,7 @@ Earlier releases wired navigation through `weak var delegate: BaseModuleDelegate
 
 ### `BaseCoordinator`
 
-Manages a `UINavigationController`, child coordinators, and conforms to all navigation protocols.
+Manages a `UINavigationController`, child coordinators, and conforms to all navigation protocols. It is `@MainActor`.
 
 ```swift
 open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
@@ -1198,13 +1198,14 @@ set([vc1, vc2, vc3])
 ```swift
 dismiss(.topMost)    // dismiss topmost presented VC
 dismiss(.fromRoot)   // dismiss from root presenter
+dismiss { [weak self] in self?.showNextStep() }   // .topMost, animated; runs once the dismissal completes
 ```
 
 #### `Presentable`
 
 ```swift
-present(.overCurrent, viewController: vc)
-present(.dismissingCurrent, viewController: vc)
+present(.overCurrent, viewController: vc)         // on top of whatever is presented now
+present(.dismissingCurrent, viewController: vc)   // the default: dismisses what is presented first
 ```
 
 #### `ActivityIndicatorable`
@@ -1251,7 +1252,7 @@ class AppCoordinator: BaseCoordinator {
 
 `BaseCoordinator` distinguishes between two exit paths:
 
-- **`finish()`** — the flow completed successfully. Triggers `onPerformed`, which the parent uses to navigate forward or pop the child's screen.
+- **`finish()`** — the flow completed successfully. Triggers `onPerformed`, which the parent uses to navigate forward or pop the child's screen. `onPerformed` receives the finished coordinator, so a flow that produces a value exposes it as a property the parent reads there (`(child as? SignUpCoordinator)?.name`).
 - **`cancel()`** — the user abandoned the flow (e.g. swipe-back). Does NOT trigger `onPerformed`. The parent observes this implicitly; UIKit already popped the VC.
 
 Override both when the child needs to emit events or clean up:
@@ -1290,7 +1291,7 @@ func presentSettings() {
         onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet
     )
     addChild(flow)                                  // not addChildAndStart: nothing lands on this stack to track
-    flow.start()                                    // the flow sets its first screen into `sheet`
+    flow.start()                                    // the flow's first screen goes into `sheet` (`set`, or a push onto the empty stack)
     sheet.presentationController?.delegate = flow   // set before presenting
     present(.overCurrent, viewController: sheet)    // the default, .dismissingCurrent, closes what's on screen first
 }
@@ -1394,6 +1395,15 @@ final class FlowCoordinator: BaseCoordinator {
     private let depth: Int
     private let maxDepth: Int
     private let onEvent: Handler<FlowEvent>
+
+    // Extra dependencies: declare an initializer that ends in the base one.
+    init(navigationController: UINavigationController, depth: Int, maxDepth: Int,
+         onEvent: @escaping Handler<FlowEvent>, onPerformed: Handler<Coordinator>? = nil) {
+        self.depth = depth
+        self.maxDepth = maxDepth
+        self.onEvent = onEvent
+        super.init(navigationController: navigationController, onPerformed: onPerformed)
+    }
 
     override func start() {
         push(FlowViewController(depth: depth, maxDepth: maxDepth))
@@ -1783,58 +1793,62 @@ Notes:
 ### Setup
 
 ```swift
-private enum Field: Hashable { case name, email, password, confirmPassword }
+@Observable @MainActor
+final class SignUpViewModel {
+    enum Field: Hashable { case name, email, password, confirmPassword }   // not private: the VC names it
+    private(set) var validation: FieldsValidator<Field>.State?             // nil until the first `set`
 
-// Explicit type annotation: the text fields' handlers reference `validator` back, and an
-// inferred `lazy var` type in that cycle is a "circular reference" compile error.
-private lazy var validator: FieldsValidator<Field> = .init(
-    rules: [
-        .name:            [.notEmpty, .minLength(2)],
-        .email:           [.notEmpty, .email],
-        .password:        [.notEmpty, .minLength(6)],
-        .confirmPassword: [.notEmpty, .matches(.password)]   // cross-field
-    ],
-    message: { field, rule in                                // message keyed by BOTH
-        switch (field, rule) {
-        case (.email, .email):             "Enter a valid email address"
-        case (.confirmPassword, .matches): "Passwords must match"
-        default:                           rule.defaultMessage
-        }
-    },
-    onChange: { [weak self] state in
-        guard let self else { return }
-        submitButton.isEnabled(state.isValid)
-        state.fields.forEach { field, fieldState in
-            if let message = fieldState.message { showError(field, message) }
-            else { clearError(field) }
-        }
-    }
-)
+    @ObservationIgnored private lazy var validator = FieldsValidator<Field>(
+        rules: [
+            .name:            [.notEmpty, .minLength(2)],
+            .email:           [.notEmpty, .email],
+            .password:        [.notEmpty, .minLength(6)],
+            .confirmPassword: [.notEmpty, .matches(.password)]   // cross-field
+        ],
+        message: { field, rule in                                // message keyed by BOTH
+            switch (field, rule) {
+            case (.email, .email):             "Enter a valid email address"
+            case (.confirmPassword, .matches): "Passwords must match"
+            default:                           rule.defaultMessage
+            }
+        },
+        onChange: { [weak self] state in self?.validation = state }
+    )
+
+    func set(_ value: String?, on field: Field) { validator.set(value, on: field) }
+}
 ```
 
 ### Feeding values
 
 ```swift
-UITextField()
-    .onEditingChanged { [weak self] in self?.validator.set($0.text, on: .email) }
+// In the view controller: feed each field through the ViewModel, render the state in updateContent().
+private lazy var emailField = UITextField()
+    .onEditingChanged { [weak self] in self?.viewModel.set($0.text, on: .email) }
+
+override func updateContent() {
+    super.updateContent()
+    submitButton.isEnabled(viewModel.validation?.isValid ?? false)
+    emailErrorLabel.text(viewModel.validation?.fields[.email]?.message ?? "")
+}
 ```
 
 `set(nil, on:)` is treated as the empty string `""` (it does not drop the field). Each `set` fires `onChange` **exactly once**.
 
-**Where it lives.** The DemoApp keeps the validator in the `@MainActor` ViewModel: its `onChange` writes the latest `State` into an observed property and the controller renders errors and submit gating from it in `updateContent()`, so the VC holds no validation state; the VC-resident form above is the compact alternative. Either way the validator must be created on the main actor.
+**Where it lives.** In the ViewModel, as above, like the DemoApp's Forms module: `onChange` writes the latest `State` into an observed property and the controller renders errors and submit gating from it in `updateContent()`, so the VC holds no validation state. A compact form can keep the validator in the view controller instead, with `onChange` updating the views directly. Annotate its type there (`private lazy var validator: FieldsValidator<Field> = .init(...)`): the text fields' handlers reference `validator`, and an inferred `lazy var` type in that cycle is a "circular reference" compile error. Either way the validator must be created on the main actor.
 
 ### Available rules
 
 | Rule | Passes when |
 |------|-------------|
-| `.notEmpty` | Value is non-empty |
+| `.notEmpty` | Value is non-empty (whitespace counts: trim before `set` to reject blank input) |
 | `.minLength(n)` / `.maxLength(n)` | `count >= n` / `count <= n` |
 | `.containsLetter` / `.containsLowercase` / `.containsUppercase` / `.containsNumber` | Contains a scalar of that class |
 | `.contains(CharacterSet)` | Contains a scalar from the set |
 | `.email` / `.rut` | Passes `String.isValidEmail` / `String.isRUT` |
 | `.matches(Field)` / `.differs(from: Field)` | Equals / differs from another field's current value (an unset field reads as `""`, so `.matches` alone passes while both are empty — pair it with `.notEmpty`) |
 
-Every rule has a non-empty `defaultMessage`; the `message` resolver overrides per `(Field, Rule)`. A resolver returning `""` enforces validity but **suppresses display** of that rule.
+Every rule has a non-empty `defaultMessage`, in English; the `message` resolver overrides per `(Field, Rule)`. A resolver returning `""` enforces validity but **suppresses display** of that rule.
 
 ### State
 
@@ -1851,7 +1865,7 @@ Every rule has a non-empty `defaultMessage`; the `message` resolver overrides pe
 ### Chain summary
 
 ```
-Router (enum: Endpoint) → Client (BaseClient subclass) → UseCase (protocol + default impl)
+Environment → Router (enum: Endpoint) → Client (AsyncBaseClient or BaseClient subclass) → UseCase (protocol + default impl)
 ```
 
 ### Router (Endpoint)
@@ -1903,7 +1917,7 @@ extension ProductRouter: Endpoint {
 > **Note:** earlier drafts of this guide referenced an `extension Router: ResolveTokensUseCase {}`. **No such protocol exists in Common** — token resolution is done inline in `headers` as shown above, reading from an app-defined storage type.
 
 URL construction: `baseURL + basePath + version + path`  
-Parameter encoding: POST/PUT/PATCH → JSON body (snake_case keys), GET → URL-encoded (snake_case keys)
+Parameter encoding: POST/PUT/PATCH → JSON body (snake_case keys; `Content-Type: application/json` unless `headers` sets one), GET/HEAD/DELETE → query string (snake_case keys). Override `jsonEncoder` (a `JSONEncoder`) or `urlEncodedFormEncoder` (a `URLEncodedFormEncoder`) on the router to change that; `var jsonEncoder: JSONEncoder { JSONEncoder() }` keeps keys as written
 
 ### Client
 
@@ -1932,9 +1946,9 @@ extension ProductClient: ProductClientProtocol {
 For structured concurrency, subclass `AsyncBaseClient` instead of `BaseClient`:
 
 ```swift
-final class PostClient: AsyncBaseClient {
-    func fetchPosts() async throws -> [Post] {
-        try await request(PostEndpoint.posts)
+final class ProductAsyncClient: AsyncBaseClient {
+    func list() async throws -> [Product] {
+        try await request(ProductRouter.list)          // the same router as the callback client above
     }
 }
 ```
@@ -1946,7 +1960,7 @@ func onViewWillAppear() {
     Task { @MainActor [weak self] in
         guard let self else { return }
         do {
-            posts = try await PostClient().fetchPosts()              // observed state (behind a `revision`)
+            products = try await ProductAsyncClient().list()         // observed state (behind a `revision`)
         } catch is CancellationError {
             return                                                   // a cancelled Task is not a failure to report
         } catch {
@@ -1955,8 +1969,9 @@ func onViewWillAppear() {
     }
 }
 
-// App-side copy: NetworkError is not a LocalizedError, so its localizedDescription is a generic
-// system string, and asString is diagnostic text for logs, not for users.
+// App-side copy, defined once per app (a second copy is a redeclaration): NetworkError is not a
+// LocalizedError, so its localizedDescription is a generic system string, and asString is diagnostic
+// text for logs, not for users.
 func userMessage(for error: Error) -> String {
     switch error as? NetworkError {
     case .requestError: "Check your connection and try again."
@@ -2878,8 +2893,7 @@ func alertView(
 - [ ] `enum MyRouter` with one case per endpoint
 - [ ] `extension MyRouter: Endpoint` — implement `baseURL`, `path`, `method`, `headers`, `parameters`. `basePath` and `version` are optional (both default to empty; `url` appends `basePath`, `version` and `path` verbatim, so write the slashes). Parameters are encoded with snake_case keys (a JSON body for POST/PUT/PATCH, the query string for GET/HEAD/DELETE); override `jsonEncoder` or `urlEncodedFormEncoder` on the router to change that
 - [ ] If the endpoint requires auth, resolve the token inline in `headers` from an app-level Storage type (Common has no token-resolution protocol)
-- [ ] `protocol MyClientProtocol: AnyObject` with method signatures using `NetworkResultHandler<T>`
-- [ ] `final class MyClient: BaseClient` (empty body)
-- [ ] `extension MyClient: MyClientProtocol` — style (a): `request(from: #function, router, result:)` on `BaseClient`; or style (b): direct `HTTPService.request(router, result:)` (see §10 Do's and Don'ts)
-- [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation
+- [ ] Client, async (default for new code): `final class MyClient: AsyncBaseClient` with `async throws` methods calling `try await request(router)` — no dedup; a request is abandoned by cancelling the `Task` that awaits it (§10 *Async client*)
+- [ ] Or the callback style: `protocol MyClientProtocol: AnyObject` with method signatures using `NetworkResultHandler<T>`, `final class MyClient: BaseClient` (empty body), and `extension MyClient: MyClientProtocol` — style (a): `request(from: #function, router, result:)` on `BaseClient` (store the client to deduplicate); or style (b): direct `HTTPService.request(router, result:)` (see §10 Do's and Don'ts)
+- [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation, in the client's style
 - [ ] Conform the screen's ViewModel to `MyUseCase` (a coordinator only for an app-level flow no screen owns; never a view controller)

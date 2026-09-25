@@ -189,7 +189,7 @@ final class AppCoordinator: BaseCoordinator {
 ```
 
 **The completion contract (get this right or flows silently break):**
-- The child calls `finish()` when its flow *succeeds* → fires `onPerformed` exactly once.
+- The child calls `finish()` when its flow *succeeds* → fires `onPerformed` exactly once, with the finished coordinator: a flow that produces a value exposes it as a property the parent reads there.
 - `cancel()` fires **automatically** when the child's entry screen leaves the nav stack (back button, swipe-back, any pop) → deliberately does **not** fire `onPerformed`.
 - The parent never invokes the closure itself, and the child never calls `finish()` for abandonment.
 
@@ -206,10 +206,10 @@ extension AppCoordinator {
         let sheet = UINavigationController()
         let flow = FooCoordinator(
             navigationController: sheet,
-            onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet
+            onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet (`dismiss { … }` runs after it's gone)
         )
         addChild(flow)                                  // not addChildAndStart: nothing lands on this stack to track
-        flow.start()                                    // the flow's first screen goes into `sheet`
+        flow.start()                                    // the flow's first screen goes into `sheet` (a push onto the empty stack becomes its root)
         sheet.presentationController?.delegate = flow   // set before presenting
         present(.overCurrent, viewController: sheet)    // the default, .dismissingCurrent, closes what's on screen first
     }
@@ -219,7 +219,7 @@ extension AppCoordinator {
 ### New API Domain (Router → Client → UseCase)
 
 ```swift
-// Environment — define once per app (the Router below references it)
+// Environment — define once per app (the Router below references it); it requires static `current` and `baseURLAsString`
 enum AppEnvironment: Environment {
     case production
     static var current: AppEnvironment { .production }
@@ -292,7 +292,7 @@ extension FetchFooUseCase {
 // (a coordinator conforms only for an app-level flow no screen owns, e.g. logout; a VC never does)
 ```
 
-**Endpoint defaults:** `basePath` and `version` are empty, and `url` appends `basePath`, `version` and `path` to `baseURL` verbatim, so write the slashes yourself. Parameters become a JSON body for POST/PUT/PATCH and the query string for GET/HEAD/DELETE, with snake_case keys; override the endpoint's `jsonEncoder` or `urlEncodedFormEncoder` to change that. Both clients decode responses from snake_case; for another decoder call `HTTPService.request(_:decoder:)` directly.
+**Endpoint defaults:** `basePath` and `version` are empty, and `url` appends `basePath`, `version` and `path` to `baseURL` verbatim, so write the slashes yourself. Parameters become a JSON body for POST/PUT/PATCH (with `Content-Type: application/json` unless `headers` sets one) and the query string for GET/HEAD/DELETE, with snake_case keys; override the endpoint's `jsonEncoder` (a `JSONEncoder`) or `urlEncodedFormEncoder` (a `URLEncodedFormEncoder`) to change that: `var jsonEncoder: JSONEncoder { JSONEncoder() }` keeps keys as written. Both clients decode responses from snake_case (keys without underscores decode as they are); for another decoder call `HTTPService.request(_:decoder:)` directly.
 
 ### Storage
 
@@ -465,7 +465,7 @@ init(viewModel:) → loadView() [mainView wrapped in a container view] → viewD
 - Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a VC covered by a push or full-screen modal consumes on return, but one under a sheet consumes underneath, where its own `present(_:animated:)` fails: use `presentAlertView` or `Snackbar`); never write observed state inside the hook (lost in manual mode: move it to `onViewWillAppear()` or a `Task`); `setActivityIndicator(visible: isLoading)` for spinners.
 - `onUpdateProperties()` (ViewModel-side hook) is legacy: an escape hatch for code written before the contract — it needs a view to push into. New modules render in the VC's `updateContent()` only.
 - `ViewLifecycleable` (ViewModel side, all defaulted): `onViewDidLoad`, `onViewWillAppear`, `onViewIsAppearing`, `onViewDidAppear`, `onViewWillLayoutSubviews`, `onViewDidLayoutSubviews`, `onViewWillDisappear`, `onViewDidDisappear`, `onUpdateProperties` (legacy). Load data in `onViewWillAppear()` / `onViewIsAppearing()`; the base VC calls them.
-- Pull-to-refresh under the contract: `list.refreshControl = UIRefreshControl().onValueChanged { [weak self] in self?.viewModel.refresh() }`; the VM tracks `isRefreshing` and bumps `revision`; the VC mirrors `if !viewModel.isRefreshing { list.refreshControl?.endRefreshing() }` in `updateContent()`.
+- Pull-to-refresh under the contract: `list.refreshControl = UIRefreshControl().onValueChanged { [weak self] in self?.viewModel.refresh() }`; the VM tracks `isRefreshing` and bumps `revision`; the VC mirrors `if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true { list.refreshControl?.endRefreshing() }` in `updateContent()`.
 
 ---
 
@@ -495,8 +495,8 @@ final class FooFeedViewModel {
     }
 }
 
-// App-side copy: NetworkError is not a LocalizedError, so its localizedDescription is a generic system
-// string, and asString is diagnostic text for logs, not for users.
+// App-side copy, defined once per app (a second copy is a redeclaration): NetworkError is not a LocalizedError,
+// so its localizedDescription is a generic system string, and asString is diagnostic text for logs, not for users.
 func userMessage(for error: Error) -> String {
     switch error as? NetworkError {
     case .requestError: "Check your connection and try again."
@@ -694,8 +694,7 @@ When writing code that lives in `Common/` itself (full detail: guide §19):
 - [ ] `enum MyRouter` — one case per endpoint
 - [ ] `extension MyRouter: Endpoint` — `baseURL`, `path`, `method`, `headers`, `parameters`; `basePath` / `version` are optional (see **Endpoint defaults**)
 - [ ] Auth: resolve the token inline in `headers` from an app-level Storage type (no Common token protocol exists)
-- [ ] `protocol MyClientProtocol: AnyObject`
-- [ ] `final class MyClient: BaseClient {}` (empty body)
-- [ ] `extension MyClient: MyClientProtocol` — `request(from: #function, ...)` calls
-- [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation
+- [ ] Client, async (default for new code): `final class MyClient: AsyncBaseClient` with `async throws` methods calling `try await request(router)` (no dedup: cancel the awaiting `Task`)
+- [ ] Or the callback style: `protocol MyClientProtocol: AnyObject`, `final class MyClient: BaseClient {}`, and `extension MyClient: MyClientProtocol` with `request(from: #function, ...)` calls (store the client to deduplicate)
+- [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation, in the client's style
 - [ ] Conform the screen's ViewModel to `MyUseCase`
