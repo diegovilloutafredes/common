@@ -39,7 +39,7 @@ View / Cell  → BaseView / BaseViewModelableCell, same mainView pattern
 
 Communication directions (strict, one way):
 - VC → ViewModel: method calls (intents) and the `ViewLifecycleable` hooks
-- ViewModel → VC, state: `@Observable` properties on the VM; the VC reads them in `updateContent()` and the framework re-runs it on change (guide §5 *Observation-driven updates*)
+- ViewModel → VC, state: `@Observable` properties on the VM; the VC reads them in `updateContent()` and the framework re-runs it on change (guide §5 *Observation-driven updates*). `@Observable` needs **iOS 17 or later**; the contract has no iOS 16 fallback
 - ViewModel → VC, one-shot effects (snackbar, alert, "submitted"): a `ViewEvent<Event>?` slot on the VM, consumed once by the VC's `ViewEventCursor` inside `updateContent()` — still observed state, no view protocol
 - ViewModel → Coordinator: `onRequested` (navigation to answer, fires many times) and `onPerformed` (results, once per unit of work) — constructor-injected closures over enums nested in the VM; declare only the channels the module has
 - Coordinator navigates: `push`, `pop`, `set`, `present` — VCs never navigate directly; the VC reaches the closures only through VM intents (`viewModel.goBack()`)
@@ -68,7 +68,7 @@ enum FooWireframe {
 import Observation                                   // UIKit does not re-export it
 
 @MainActor
-protocol FooViewModelProtocol: ViewModel, ViewLifecycleable {
+protocol FooViewModelProtocol: ViewModel, ViewLifecycleable {   // ViewLifecycleable: implement only the hooks you need
     var statusText: String { get }                   // state the VC renders
     var event: ViewEvent<FooViewModel.Event>? { get } // one-shot effects the VC consumes
     func goBack()
@@ -103,7 +103,6 @@ extension FooViewModel: FooViewModelProtocol {
     }
     func save() { onPerformed(.done) }               // the unit of work is complete
 }
-extension FooViewModel: ViewLifecycleable {}         // only the hooks you need; all have defaults
 
 // FooViewController.swift — no view protocol: the VC pulls state from the VM and consumes its events.
 // NO view, delegate or coordinator reference lives on the VM.
@@ -230,6 +229,7 @@ enum AppEnvironment: Environment {
 
 // Router
 enum FooRouter { case list; case detail(String); case create(Encodable) }
+struct CreateFooParams: Encodable { let value: String }   // encoded snake_case by default
 extension FooRouter: Endpoint {
     var baseURL: URL?   { AppEnvironment.baseURL }
     var basePath: String { "/api" }
@@ -255,7 +255,8 @@ extension FooRouter: Endpoint {
     }
 }
 
-// Client — DEFAULT for new code: AsyncBaseClient (structured concurrency)
+// Client — DEFAULT for new code: AsyncBaseClient (structured concurrency). It doesn't deduplicate:
+// abandon a request by cancelling the Task that awaits it.
 final class FooClient: AsyncBaseClient {
     func list() async throws -> [Foo] { try await request(FooRouter.list) }
     func create(using params: CreateFooParams) async throws -> Foo { try await request(FooRouter.create(params)) }
@@ -269,7 +270,9 @@ protocol FooClientProtocol: AnyObject {
 final class CallbackFooClient: BaseClient {}
 extension CallbackFooClient: FooClientProtocol {
     func list(result: @escaping NetworkResultHandler<[Foo]>) {
-        request(from: #function, FooRouter.list, result: result)   // #function deduplicates in-flight
+        // #function keys the in-flight call: a new call cancels this client's earlier one, whose callback
+        // then never fires. It is per instance: only a stored client deduplicates; one made per call sends every request.
+        request(from: #function, FooRouter.list, result: result)
     }
     func create(using params: CreateFooParams, result: @escaping NetworkResultHandler<Foo>) {
         request(from: #function, FooRouter.create(params), result: result)
@@ -289,6 +292,8 @@ extension FetchFooUseCase {
 // (a coordinator conforms only for an app-level flow no screen owns, e.g. logout; a VC never does)
 ```
 
+**Endpoint defaults:** `basePath` and `version` are empty, and `url` appends `basePath`, `version` and `path` to `baseURL` verbatim, so write the slashes yourself. Parameters become a JSON body for POST/PUT/PATCH and the query string for GET/HEAD/DELETE, with snake_case keys; override the endpoint's `jsonEncoder` or `urlEncodedFormEncoder` to change that. Both clients decode responses from snake_case; for another decoder call `HTTPService.request(_:decoder:)` directly.
+
 ### Storage
 
 ```swift
@@ -303,6 +308,19 @@ extension FooStorage: SingleRawValueKeyValueObjectStorage {
     func add(item: Foo) { add(item: (.foo, item)) }
     func get() -> Foo?   { get(using: .foo) }
     func delete()         { remove(using: .foo) }
+}
+
+// The credentials the Router's headers read
+struct Credentials: Storable { let accessToken: String }
+
+struct AuthStorage {
+    var type: KeyValueStore.StoreType { .secure }
+    enum Keys: String { case credentials }
+}
+extension AuthStorage: SingleRawValueKeyValueObjectStorage {
+    func add(item: Credentials) { add(item: (.credentials, item)) }
+    func get() -> Credentials?   { get(using: .credentials) }
+    func delete()                 { remove(using: .credentials) }
 }
 ```
 
@@ -321,7 +339,7 @@ protocol FooListViewModelProtocol: CollectionViewable, ViewModel, ViewLifecyclea
 final class FooListViewController: BaseCollectionViewableViewController<FooListViewModelProtocol> {
     private lazy var list = VList(dataSource: self, delegate: self)   // dataSource is required — VList() does not compile
         .register(FooCell.self)
-        .register(FooHeaderView.self, kind: .header)                  // optional supplementary views
+        // .register(FooHeaderView.self, kind: .header)               // supplementary views: see Section headers below
         .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
 
     @UIViewBuilder override var mainView: UIView { list }
@@ -354,6 +372,13 @@ extension FooListViewModel: CollectionViewable {
     // and the header/footer trio below. Never hand-roll UICollectionViewDataSource in the VC.
 }
 
+// FooCell.swift — one cell view model per row, built by the list VM from its models.
+protocol FooCellViewModelProtocol: ViewModel { var title: String { get } }
+final class FooCellViewModel: FooCellViewModelProtocol {
+    let title: String
+    init(title: String) { self.title = title }
+}
+
 final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
     private lazy var titleLabel = UILabel().font(.appFont(style: .bold, size: 15)).textColor(.label)
 
@@ -373,6 +398,10 @@ final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
 ```
 
 **Section headers / footers:** register with `.register(View.self, kind: .header/.footer)`; the ViewModel answers three hooks per kind — `on{Header,Footer}ItemReuseIdentifierRequested(in:) -> String`, `on{Header,Footer}ItemDataSourceRequested(in:) -> ViewModel?`, `onSizeFor{Header,Footer}Item(in:availableSize:) -> Size` (`(width:height:)` tuple; return `availableSize.width` for full-width bars). Size defaults to zero = not rendered; a non-zero size without a registered reuse identifier makes UIKit throw. Views subclass `BaseViewModelableReusableView<T>` and bind in `updateContent()` exactly like cells. Guide §5.
+
+**Loading and empty states:** in `updateContent()`, mirror the loading flag with `setActivityIndicator(visible: viewModel.isLoading)` (it acts only on a change, so call it every pass), and show an empty or error state behind the cells with `list.backgroundView = viewModel.isEmpty ? emptyView : nil` (the chainable `.backgroundView(_:)` can't clear it).
+
+**Above a visible tab bar:** override `bottomInsetForLastCollectionSection()` to return the bar's height; the base VC adds it to the last section's bottom inset.
 
 ---
 
@@ -430,29 +459,103 @@ init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupVie
 - `super.setupView()` always first
 - `mainView`: purely declarative — no side effects, no network calls, no data reads
 - Data binding in `setupView()`, not `mainView`
-- Lifecycle events via hooks (`onViewIsAppearing`, `onViewWillDisappear`), not method overrides
-- Observable state: read it in `onUpdateProperties()` (ViewModel) or `updateContent()` (view/cell/VC); the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
-- Self-sizing rows (`estimatedItemSize = .automaticSize` + `preferredLayoutAttributesFitting`): `onSizeForItem` must return `availableSize.width` (the list's own width), never `screenWidth` — wider items are dropped and the list renders empty. Content is bound synchronously on `viewModel` assignment so measurement sees it.
+- Lifecycle work goes through hooks, not UIKit overrides, and both sides use the same names. Logic (loading data, starting a session) goes in the ViewModel's `ViewLifecycleable` methods, listed below. View-only work (bar visibility) uses the closures every view controller has, `onViewWillAppear { vc in … }` and the rest, set in `setupView()` or by the coordinator on the instance it creates.
+- Observable state: read it in `updateContent()` (view/cell/VC), the only render point; the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
+- Self-sizing rows: `VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }` (the trailing closure configures the flow layout), and `onSizeForItem` returns `(availableSize.width, estimatedHeight)`: the list's own width, never `screenWidth`, because wider items are dropped and the list renders empty. A cell binds its content synchronously when its `viewModel` is assigned, so UIKit's measurement sees it.
 - Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a covered VC consumes on return); `setActivityIndicator(visible: isLoading)` for spinners.
-- `onUpdateProperties()` (ViewModel-side hook) is an escape hatch for code written before the contract — it needs a view to push into. New modules render in the VC's `updateContent()` only.
-- `ViewLifecycleable` (ViewModel side, all defaulted): `onViewDidLoad`, `onViewWillAppear`, `onViewIsAppearing`, `onViewDidAppear`, `onViewWillLayoutSubviews`, `onViewDidLayoutSubviews`, `onViewWillDisappear`, `onViewDidDisappear`, `onUpdateProperties`. Load data in `onViewWillAppear()` / `onViewIsAppearing()`; the base VC calls them.
-- Self-sizing rows: `VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }` — the trailing closure configures the flow layout; `onSizeForItem` then returns `(availableSize.width, estimatedHeight)`.
+- `onUpdateProperties()` (ViewModel-side hook) is legacy: an escape hatch for code written before the contract — it needs a view to push into. New modules render in the VC's `updateContent()` only.
+- `ViewLifecycleable` (ViewModel side, all defaulted): `onViewDidLoad`, `onViewWillAppear`, `onViewIsAppearing`, `onViewDidAppear`, `onViewWillLayoutSubviews`, `onViewDidLayoutSubviews`, `onViewWillDisappear`, `onViewDidDisappear`, `onUpdateProperties` (legacy). Load data in `onViewWillAppear()` / `onViewIsAppearing()`; the base VC calls them.
 - Pull-to-refresh under the contract: `list.refreshControl = UIRefreshControl().onValueChanged { [weak self] in self?.viewModel.refresh() }`; the VM tracks `isRefreshing` and bumps `revision`; the VC mirrors `if !viewModel.isRefreshing { list.refreshControl?.endRefreshing() }` in `updateContent()`.
 
 ---
 
 ## Networking Result Handling
 
+The ViewModel turns a request into observed state, and a failure into a `ViewEvent` the VC presents:
+
 ```swift
-fooClient.list { result in
-    switch result {
-    case .success(let items): updateUI(with: items)
-    case .failure(let error): showError(error)
+@Observable @MainActor
+final class FooFeedViewModel {
+    enum Event { case failed(message: String) }
+    private(set) var revision = 0                        // the VC reloads the list when this changes
+    private(set) var event: ViewEvent<Event>?
+    @ObservationIgnored private(set) var foos: [Foo] = [] { didSet { revision += 1 } }
+
+    func load() {
+        Task { [weak self] in
+            do {
+                let foos = try await FooClient().list()
+                self?.foos = foos
+            } catch is CancellationError {
+                return                                   // a cancelled Task is not a failure to report
+            } catch {
+                self?.event = .init(.failed(message: userMessage(for: error)))
+            }
+        }
+    }
+}
+
+// App-side copy: NetworkError is not a LocalizedError, so its localizedDescription is a generic system
+// string, and asString is diagnostic text for logs, not for users.
+func userMessage(for error: Error) -> String {
+    switch error as? NetworkError {
+    case .requestError: "Check your connection and try again."
+    case .responseError(let statusCode, _, _) where statusCode == 401: "Your session has expired."
+    default: "Something went wrong. Please try again."
     }
 }
 ```
 
-No `@unknown default` — `NetworkResultHandler` wraps `Swift.Result` (frozen); the two cases are exhaustive.
+The callback client's `NetworkResultHandler` wraps `Swift.Result` (frozen, so no `@unknown default`): `.success` becomes state and `.failure` becomes the event, as above.
+
+## Interim Conventions (until the framework adds API)
+
+Use these instead of inventing a variant per screen:
+
+```swift
+// 1. Product copy on alert buttons: a custom alert through its payload, since
+//    presentAlertView(type:acceptAction:cancelAction:) titles its buttons with fixed defaults.
+//    The custom alert doesn't dismiss itself: every handler dismisses it.
+extension FooViewController {
+    func presentSaveConfirmation() {
+        presentAlertView(
+            viewModel: AlertViewModelPayload(
+                title: "Save changes?",
+                attributedMessage: .init(string: "You can edit them again later."),
+                actionButtonTitle: "Save",
+                cancelButtonTitle: "Keep editing",
+                onActionButtonPressedHandler: { [weak self] in self?.dismiss(animated: true) { self?.viewModel.save() } },
+                onCancelButtonPressedHandler: { [weak self] in self?.dismiss(animated: true) }
+            ),
+            onDismissRequested: { [weak self] in self?.dismiss(animated: true) }  // background tap
+        )
+    }
+}
+
+// 2. A request that needs an answer carries a `reply` closure as its last associated value;
+//    the coordinator calls it once, e.g. `case .pickDate(let initial, let reply):` … `reply(picked)`.
+@Observable @MainActor
+final class BookingViewModel {
+    enum Requested { case pickDate(initial: Date, reply: Handler<Date>) }
+    private(set) var date = Date()
+    @ObservationIgnored private let onRequested: Handler<Requested>
+
+    init(onRequested: @escaping Handler<Requested>) { self.onRequested = onRequested }
+
+    func chooseDate() { onRequested(.pickDate(initial: date, reply: { [weak self] in self?.date = $0 })) }
+}
+
+// 3. Storage runs on the main thread only (FileStorage has no synchronization). The typed storage above
+//    always builds its store from `type`, so code you unit-test takes a KeyValueStore instead, and tests
+//    pass KeyValueStore(keyValueStorage: InMemoryKeyValueStorage()).
+@MainActor
+final class SessionRepository {
+    private let store: KeyValueStore
+    init(store: KeyValueStore = KeyValueStore(type: .secure)) { self.store = store }
+    var credentials: Credentials? { store.get(using: "credentials") }
+    func save(_ credentials: Credentials) { store.add(item: ("credentials", credentials)) }
+}
+```
 
 ---
 
@@ -486,38 +589,49 @@ UIFont.setPrimaryFamily(.montserrat)
 `FieldsValidator<Field: Hashable>` (`@MainActor`, shipped in Common) — declare rules per field, feed values, react to recomputed state. Never hand-roll validation.
 
 ```swift
-private enum Field: Hashable { case email, password, confirmPassword }
+@Observable @MainActor
+final class SignUpViewModel {
+    enum Field: Hashable { case email, password, confirmPassword }   // not private: the VC names it
+    private(set) var validation: FieldsValidator<Field>.State?        // nil until the first keystroke
+    @ObservationIgnored private var values: [Field: String] = [:]     // the validator stores none
 
-// Explicit type: the fields' closures reference `validator` back — an inferred lazy type is a circular reference.
-private lazy var validator: FieldsValidator<Field> = .init(
-    rules: [
-        .email:           [.notEmpty, .email],
-        .password:        [.notEmpty, .minLength(6)],
-        .confirmPassword: [.notEmpty, .matches(.password)]     // cross-field
-    ],
-    message: { field, rule in
-        switch (field, rule) {
-        case (.confirmPassword, .matches): "Passwords must match"
-        default:                           rule.defaultMessage // return "" to enforce a rule silently
-        }
-    },
-    onChange: { [weak self] state in
-        guard let self else { return }
-        submitButton.isEnabled(state.isValid)
-        state.fields.forEach { field, fieldState in
-            fieldState.message.map { self.showError(field, $0) } ?? self.clearError(field)
-        }
+    @ObservationIgnored private lazy var validator = FieldsValidator<Field>(
+        rules: [
+            .email:           [.notEmpty, .email],
+            .password:        [.notEmpty, .minLength(6)],
+            .confirmPassword: [.notEmpty, .matches(.password)]     // cross-field
+        ],
+        message: { field, rule in
+            switch (field, rule) {
+            case (.confirmPassword, .matches): "Passwords must match"
+            default:                           rule.defaultMessage // return "" to enforce a rule silently
+            }
+        },
+        onChange: { [weak self] state in self?.validation = state }
+    )
+
+    func set(_ value: String?, on field: Field) {
+        values[field] = value
+        validator.set(value, on: field)
     }
-)
 
-// Feed from the DSL:
-UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on: .email) }
+    func submit() {
+        validator.touchAll()                                          // every failing rule becomes displayable
+        guard validator.state.isValid else { return }
+        // submit values[.email] and values[.password]
+    }
+}
+
+// The VC feeds each field through the ViewModel and renders the state in updateContent():
+//   emailField.onEditingChanged { [weak self] in self?.viewModel.set($0.text, on: .email) }
+//   submitButton.isEnabled(viewModel.validation?.isValid ?? false)
+//   emailErrorLabel.text(viewModel.validation?.fields[.email]?.message ?? "")
 ```
 
 - Rules: `.notEmpty`, `.minLength/.maxLength(n)`, `.containsLetter/Lowercase/Uppercase/Number`, `.contains(CharacterSet)`, `.email`, `.rut`, `.matches(Field)`, `.differs(from: Field)`
 - Touched-state is built in — a field shows no errors until its first `set`; call `touchAll()` on a submit attempt
 - `state.isValid` ignores touched-state → drive the submit button with it; `set(nil, on:)` is treated as `""`
-- Where it lives: the demo keeps the validator in the `@MainActor` ViewModel (`@ObservationIgnored private lazy var`) and its `onChange` writes the `FieldsValidator<Field>.State` into an observed property (`private(set) var validation: State?`); the VC renders errors and submit gating from it in `updateContent()`. `State` = `isValid: Bool` + `fields: [Field: FieldState]`; `FieldState` = `isValid`, `isTouched`, `errors`, `message: String?`. The validator does not store values — keep the ones you need (name, email) in the ViewModel. `Field` is a nested non-private enum on the ViewModel so the VC can name it. Keeping the validator in the VC as above also works
+- Where it lives: in the ViewModel, as above (`@ObservationIgnored private lazy var`); its `onChange` publishes the state into an observed property, and the VC renders errors and submit gating from it in `updateContent()`. `State` = `isValid: Bool` + `fields: [Field: FieldState]`; `FieldState` = `isValid`, `isTouched`, `errors`, `message: String?`. The validator stores no values, so the ViewModel keeps the ones it submits. `Field` is nested and non-private so the VC can name it
 - `.matches`/`.differs` compare against `""` for unset fields — pair `.matches` with `.notEmpty`
 
 ---
@@ -530,7 +644,7 @@ UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on:
 
 3. **`alignment: .center` collapses `UIView` spacers**: Plain `UIView` has no intrinsic width — center alignment makes it zero-width and invisible. Use `.fill` + `textAlignment(.center)`.
 
-4. **`viewModel` is nil in `mainView`**: In cells, all model-driven content goes in `updateContent()` (or a `viewModel didSet` for plain value models) — the view builder runs before `viewModel` is set. Assignment binds synchronously (self-sizing cells measure right after configuration); later observable changes come on the next pass. Work that must run once per assignment (an image load) goes behind a guard on the bound value; `updateContent()` may run more than once.
+4. **`viewModel` is nil in `mainView`**: In cells, all model-driven content goes in `updateContent()` (or a `viewModel didSet` for plain value models) — the view builder runs before `viewModel` is set. Assignment binds synchronously; later observable changes come on the next pass. Work that must run once per assignment (an image load) goes behind a guard on the bound value; `updateContent()` may run more than once.
 
 5. **`BaseCollectionViewableViewController` not `BaseViewModelableViewController`** for screens with `VList`/`HList`. The collection base provides all dataSource/delegate boilerplate at zero cost.
 
@@ -538,7 +652,7 @@ UITextField().onEditingChanged { [weak self] in self?.validator.set($0.text, on:
 
 7. **`round(corners:radius:)` does not set `clipsToBounds`** — subviews can overflow. Use `setAsRoundedView(radius:)` when overflow must be hidden (avatars, images, badges).
 
-8. **`NavigationBarSetupable` has no default implementation** — an empty conformance does not compile; the demo VCs don't adopt it. Add it to a view protocol only when the VC implements `setupNavigationBar()`.
+8. **`NavigationBarSetupable` has no default implementation** — an empty conformance does not compile; the demo VCs don't adopt it. Adopt it on a VC only when that VC implements `setupNavigationBar()`.
 
 9. **Logger**: a dictionary literal `Logger.log(["k": v])` prints in call-site order — never pass `caller:` explicitly (it falls back to the deprecated unordered overload). `Logger.forceEnable()` is Debug-source-only and absent from the SPM binary: consumers opt in with `Logger.isRuntimeForceEnabled(true)` **then** `<Type>.shouldLog(true)`, in that order.
 
@@ -567,7 +681,7 @@ When writing code that lives in `Common/` itself (full detail: guide §19):
 - [ ] `override func setupView()` calls `super.setupView()` first
 - [ ] All subviews declared as `private lazy var`
 - [ ] All closures use `[weak self]` + `guard let self else { return }`
-- [ ] Lifecycle logic via `onViewIsAppearing`, `onViewWillDisappear` hooks — not overrides
+- [ ] Lifecycle logic in the ViewModel's `ViewLifecycleable` methods (`onViewIsAppearing()`, `onViewWillDisappear()`) — not VC overrides
 - [ ] ViewModel is `@Observable`; the VC renders its state in `updateContent()` (`super` first); one-shot effects are a `ViewEvent` slot consumed by the VC's `ViewEventCursor`
 - [ ] ViewModel holds no `view`, `delegate` or coordinator reference; outputs are `onRequested` / `onPerformed` closures over nested `Requested` / `Performed` enums — declare only the ones the module has
 - [ ] Lists size through `onSizeForItem(in:at:availableSize:)` — no `screenWidth` reads
