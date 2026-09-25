@@ -8,7 +8,7 @@ A foundational iOS library that lets you build complete, production-ready featur
 
 - iOS 16.0+
 - Swift 5.9+
-- Xcode 16.0+
+- Xcode 27.0+ — the binary ships a Swift module interface produced by the release toolchain, and only the same or a newer compiler can read it
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (for local development)
 
 ## Installation
