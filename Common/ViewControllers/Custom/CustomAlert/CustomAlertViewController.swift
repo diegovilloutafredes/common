@@ -33,7 +33,7 @@ public final class CustomAlertViewController: BaseViewController {
         UIView {
             UIButton()
                 .backgroundColor(backgroundColor)
-                .onTap { self.onDismissRequestedHandler?() }
+                .onTap { [weak self] in self?.onDismissRequestedHandler?() }
                 .setConstraints { $0.snap(to: $1) }
             contentView
                 .cornerRadius(.DefaultValues.AlertView.cornerRadius)

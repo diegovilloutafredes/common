@@ -16,7 +16,7 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
         .setConstraints { $0.setWidth(to: $1.widthAnchor, multiplier: 0.3) }
 
     private lazy var actionButton = ActionButton(shouldApplyDefaultRatio: false)
-        .onTap { self.viewModel.onAction?() }
+        .onTap { [weak self] in self?.viewModel.onAction?() }
         .setAsRoundedView(radius: .DefaultValues.Button.cornerRadius)
         .title(viewModel.actionButtonTitle)
         .setConstraints { $0.set(height: 40) }
@@ -54,7 +54,7 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
                 spacing: .DefaultValues.StackView.spacing
             ) {
                 ActionButton(shouldApplyDefaultRatio: false, theme: DefaultButtonTheme.border)
-                    .onTap { self.viewModel.onCancel?() }
+                    .onTap { [weak self] in self?.viewModel.onCancel?() }
                     .setAsRoundedView(radius: .DefaultValues.Button.cornerRadius)
                     .title(viewModel.cancelButtonTitle)
 

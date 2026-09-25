@@ -97,8 +97,8 @@ extension AlertPresentable {
 
 // MARK: - Convenience
 extension AlertPresentable {
-    private func applyDefaultAlertStyle(to alertController: UIAlertController, alertTitle: String, alertMessage: String) {
-        alertController.view.tintColor = .black
+    func applyDefaultAlertStyle(to alertController: UIAlertController, alertTitle: String, alertMessage: String) {
+        alertController.view.tintColor = .label
 
         let boldFont: UIFont = .boldSystemFont(ofSize: 17)
 
@@ -106,7 +106,7 @@ extension AlertPresentable {
             string: alertTitle,
             attributes: [
                 .font: boldFont,
-                .foregroundColor: UIColor.black
+                .foregroundColor: UIColor.label
             ]
         )
 
@@ -121,7 +121,7 @@ extension AlertPresentable {
             string: alertMessage,
             attributes: [
                 .font: regularFont,
-                .foregroundColor: UIColor.black
+                .foregroundColor: UIColor.label
             ]
         )
 

@@ -33,5 +33,5 @@ extension AlertRequestable where Self: AlertPresentable {
 
 // MARK: - where Self: BaseCoordinator
 extension AlertRequestable where Self: BaseCoordinator {
-    public func onPresentAlertRequested(viewModel: AlertViewModel) { presentAlertView(viewModel: viewModel, onDismissRequested: onDismissRequested) }
+    public func onPresentAlertRequested(viewModel: AlertViewModel) { presentAlertView(viewModel: viewModel, onDismissRequested: { [weak self] in self?.onDismissRequested() }) }
 }
