@@ -1,7 +1,7 @@
 {
   "name": "common-framework",
   "description": "Skill for building UIKit apps on the Common iOS framework (MVVM-C, declarative UI DSL, networking, FieldsValidator, storage) \u2014 quick reference plus the full framework guide.",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "author": {
     "name": "Diego Villouta"
   },

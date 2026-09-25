@@ -9301,7 +9301,8 @@
               "Preconcurrency",
               "Custom",
               "AccessControl",
-              "Override"
+              "Override",
+              "RawDocComment"
             ],
             "init_kind": "Designated"
           },
@@ -12617,7 +12618,8 @@
               "Preconcurrency",
               "Custom",
               "AccessControl",
-              "Override"
+              "Override",
+              "RawDocComment"
             ],
             "init_kind": "Designated"
           },
@@ -15649,10 +15651,24 @@
           },
           {
             "kind": "Conformance",
-            "name": "ViewModelHolder",
-            "printedName": "ViewModelHolder",
-            "usr": "s:6Common15ViewModelHolderP",
-            "mangledName": "$s6Common15ViewModelHolderP"
+            "name": "ViewModelable",
+            "printedName": "ViewModelable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "ViewModelType",
+                "printedName": "ViewModelType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:6Common13ViewModelableP",
+            "mangledName": "$s6Common13ViewModelableP"
           },
           {
             "kind": "Conformance",
@@ -15677,24 +15693,10 @@
           },
           {
             "kind": "Conformance",
-            "name": "ViewModelable",
-            "printedName": "ViewModelable",
-            "children": [
-              {
-                "kind": "TypeWitness",
-                "name": "ViewModelType",
-                "printedName": "ViewModelType",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "GenericTypeParam",
-                    "printedName": "τ_0_0"
-                  }
-                ]
-              }
-            ],
-            "usr": "s:6Common13ViewModelableP",
-            "mangledName": "$s6Common13ViewModelableP"
+            "name": "ViewModelHolder",
+            "printedName": "ViewModelHolder",
+            "usr": "s:6Common15ViewModelHolderP",
+            "mangledName": "$s6Common15ViewModelHolderP"
           },
           {
             "kind": "Conformance",
@@ -25414,7 +25416,8 @@
             "genericSig": "<τ_0_0 where τ_0_0 : Common.Endpoint>",
             "sugared_genericSig": "<Self where Self : Common.Endpoint>",
             "declAttributes": [
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "throwing": true,
@@ -35012,15 +35015,7 @@
             "mangledName": "$s6Common11ImageLoaderC15unownedExecutorScevp",
             "moduleName": "Common",
             "implicit": true,
-            "intro_Macosx": "10.15",
-            "intro_iOS": "13.0",
-            "intro_tvOS": "13.0",
-            "intro_watchOS": "6.0",
             "declAttributes": [
-              "Available",
-              "Available",
-              "Available",
-              "Available",
               "Final",
               "Nonisolated",
               "Semantics"
@@ -37202,6 +37197,154 @@
             "declKind": "Func",
             "usr": "s:6Common13KeyValueStoreV6remove5usingySS_tF",
             "mangledName": "$s6Common13KeyValueStoreV6remove5usingySS_tF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tryAdd",
+            "printedName": "tryAdd(item:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Result",
+                "printedName": "Swift.Result<(), Common.StorageError>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StorageError",
+                    "printedName": "Common.StorageError",
+                    "usr": "s:6Common12StorageErrorO"
+                  }
+                ],
+                "usr": "s:s6ResultO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Tuple",
+                "printedName": "(key: Swift.String, value: any Swift.Decodable & Swift.Encodable)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "any Swift.Decodable & Swift.Encodable"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common13KeyValueStoreV6tryAdd4items6ResultOyytAA12StorageErrorOGSS3key_Se_SEp5valuet_tF",
+            "mangledName": "$s6Common13KeyValueStoreV6tryAdd4items6ResultOyytAA12StorageErrorOGSS3key_Se_SEp5valuet_tF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tryGet",
+            "printedName": "tryGet(using:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Result",
+                "printedName": "Swift.Result<τ_0_0?, Common.StorageError>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "τ_0_0?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_0_0"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StorageError",
+                    "printedName": "Common.StorageError",
+                    "usr": "s:6Common12StorageErrorO"
+                  }
+                ],
+                "usr": "s:s6ResultO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common13KeyValueStoreV6tryGet5usings6ResultOyxSgAA12StorageErrorOGSS_tSeRzSERzlF",
+            "mangledName": "$s6Common13KeyValueStoreV6tryGet5usings6ResultOyxSgAA12StorageErrorOGSS_tSeRzSERzlF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Swift.Decodable, τ_0_0 : Swift.Encodable>",
+            "sugared_genericSig": "<T where T : Swift.Decodable, T : Swift.Encodable>",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tryRemove",
+            "printedName": "tryRemove(using:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Result",
+                "printedName": "Swift.Result<(), Common.StorageError>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StorageError",
+                    "printedName": "Common.StorageError",
+                    "usr": "s:6Common12StorageErrorO"
+                  }
+                ],
+                "usr": "s:s6ResultO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common13KeyValueStoreV9tryRemove5usings6ResultOyytAA12StorageErrorOGSS_tF",
+            "mangledName": "$s6Common13KeyValueStoreV9tryRemove5usings6ResultOyytAA12StorageErrorOGSS_tF",
             "moduleName": "Common",
             "declAttributes": [
               "AccessControl",
@@ -58801,7 +58944,6 @@
           "SynthesizedProtocol",
           "ObjC",
           "SynthesizedProtocol",
-          "Sendable",
           "Dynamic"
         ],
         "enumRawTypeName": "Int",
@@ -60227,6 +60369,13 @@
             "printedName": "AccelerateMutableBuffer",
             "usr": "s:10Accelerate0A13MutableBufferP",
             "mangledName": "$s10Accelerate0A13MutableBufferP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
           },
           {
             "kind": "Conformance",
@@ -67907,7 +68056,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -68625,7 +68773,6 @@
           "Available",
           "SynthesizedProtocol",
           "SynthesizedProtocol",
-          "Sendable",
           "NonSendable"
         ],
         "isExternal": true,
@@ -70066,6 +70213,13 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "_FormatSpecifiable",
             "printedName": "_FormatSpecifiable",
             "children": [
@@ -70696,8 +70850,7 @@
         "usr": "c:@S@CGPoint",
         "moduleName": "CoreFoundation",
         "declAttributes": [
-          "SynthesizedProtocol",
-          "Sendable"
+          "SynthesizedProtocol"
         ],
         "isExternal": true,
         "conformances": [
@@ -71040,11 +71193,17 @@
         "usr": "c:@S@CGRect",
         "moduleName": "CoreFoundation",
         "declAttributes": [
-          "SynthesizedProtocol",
-          "Sendable"
+          "SynthesizedProtocol"
         ],
         "isExternal": true,
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
           {
             "kind": "Conformance",
             "name": "Copyable",
@@ -71222,7 +71381,6 @@
           "SynthesizedProtocol",
           "ObjC",
           "SynthesizedProtocol",
-          "Sendable",
           "Dynamic"
         ],
         "enumRawTypeName": "Int32",
@@ -72982,6 +73140,13 @@
           },
           {
             "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "ContiguousBytes",
             "printedName": "ContiguousBytes",
             "usr": "s:10Foundation15ContiguousBytesP",
@@ -73702,6 +73867,13 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "ReferenceConvertible",
             "printedName": "ReferenceConvertible",
             "children": [
@@ -74330,6 +74502,13 @@
           },
           {
             "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "_FormatSpecifiable",
             "printedName": "_FormatSpecifiable",
             "children": [
@@ -74412,6 +74591,20 @@
             "printedName": "Comparable",
             "usr": "s:SL",
             "mangledName": "$sSL"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ConvertibleFromBytes",
+            "printedName": "ConvertibleFromBytes",
+            "usr": "s:s20ConvertibleFromBytesP",
+            "mangledName": "$ss20ConvertibleFromBytesP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ConvertibleToBytes",
+            "printedName": "ConvertibleToBytes",
+            "usr": "s:s18ConvertibleToBytesP",
+            "mangledName": "$ss18ConvertibleToBytesP"
           },
           {
             "kind": "Conformance",
@@ -75175,6 +75368,13 @@
           },
           {
             "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "_FormatSpecifiable",
             "printedName": "_FormatSpecifiable",
             "children": [
@@ -75257,6 +75457,20 @@
             "printedName": "Comparable",
             "usr": "s:SL",
             "mangledName": "$sSL"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ConvertibleFromBytes",
+            "printedName": "ConvertibleFromBytes",
+            "usr": "s:s20ConvertibleFromBytesP",
+            "mangledName": "$ss20ConvertibleFromBytesP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ConvertibleToBytes",
+            "printedName": "ConvertibleToBytes",
+            "usr": "s:s18ConvertibleToBytesP",
+            "mangledName": "$ss18ConvertibleToBytesP"
           },
           {
             "kind": "Conformance",
@@ -76070,7 +76284,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSURLResponse",
@@ -76288,7 +76501,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -77242,6 +77454,13 @@
           },
           {
             "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "_FormatSpecifiable",
             "printedName": "_FormatSpecifiable",
             "children": [
@@ -77318,6 +77537,20 @@
             "printedName": "Comparable",
             "usr": "s:SL",
             "mangledName": "$sSL"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ConvertibleFromBytes",
+            "printedName": "ConvertibleFromBytes",
+            "usr": "s:s20ConvertibleFromBytesP",
+            "mangledName": "$ss20ConvertibleFromBytesP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ConvertibleToBytes",
+            "printedName": "ConvertibleToBytes",
+            "usr": "s:s18ConvertibleToBytesP",
+            "mangledName": "$ss18ConvertibleToBytesP"
           },
           {
             "kind": "Conformance",
@@ -78200,8 +78433,7 @@
         "declAttributes": [
           "Available",
           "SynthesizedProtocol",
-          "NonSendable",
-          "Sendable"
+          "NonSendable"
         ],
         "isExternal": true,
         "conformances": [
@@ -79465,8 +79697,7 @@
         "moduleName": "Foundation",
         "declAttributes": [
           "SynthesizedProtocol",
-          "NonSendable",
-          "Sendable"
+          "NonSendable"
         ],
         "isExternal": true,
         "conformances": [
@@ -80331,7 +80562,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -83211,6 +83441,13 @@
             ],
             "usr": "s:16CoreTransferable0B0P",
             "mangledName": "$s16CoreTransferable0B0P"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
           },
           {
             "kind": "Conformance",
@@ -88051,7 +88288,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -88984,7 +89220,6 @@
           "SynthesizedProtocol",
           "ObjC",
           "SynthesizedProtocol",
-          "Sendable",
           "NonSendable",
           "Dynamic"
         ],
@@ -89238,8 +89473,7 @@
         "moduleName": "UIKit",
         "declAttributes": [
           "SynthesizedProtocol",
-          "NonSendable",
-          "Sendable"
+          "NonSendable"
         ],
         "isExternal": true,
         "conformances": [
@@ -90521,7 +90755,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -91583,7 +91816,6 @@
           "ObjC",
           "SynthesizedProtocol",
           "NonSendable",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -91760,7 +91992,6 @@
           "SynthesizedProtocol",
           "ObjC",
           "SynthesizedProtocol",
-          "Sendable",
           "NonSendable",
           "Dynamic"
         ],
@@ -92287,17 +92518,17 @@
           },
           {
             "kind": "Conformance",
-            "name": "__DefaultCustomPlaygroundQuickLookable",
-            "printedName": "__DefaultCustomPlaygroundQuickLookable",
-            "usr": "s:s38__DefaultCustomPlaygroundQuickLookableP",
-            "mangledName": "$ss38__DefaultCustomPlaygroundQuickLookableP"
-          },
-          {
-            "kind": "Conformance",
             "name": "SendableMetatype",
             "printedName": "SendableMetatype",
             "usr": "s:s16SendableMetatypeP",
             "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "__DefaultCustomPlaygroundQuickLookable",
+            "printedName": "__DefaultCustomPlaygroundQuickLookable",
+            "usr": "s:s38__DefaultCustomPlaygroundQuickLookableP",
+            "mangledName": "$ss38__DefaultCustomPlaygroundQuickLookableP"
           },
           {
             "kind": "Conformance",
@@ -98581,7 +98812,6 @@
           "SynthesizedProtocol",
           "ObjC",
           "SynthesizedProtocol",
-          "Sendable",
           "Dynamic"
         ],
         "enumRawTypeName": "Int",
@@ -99112,6 +99342,13 @@
             ],
             "usr": "s:16CoreTransferable0B0P",
             "mangledName": "$s16CoreTransferable0B0P"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVAttachmentValueRepresentable",
+            "printedName": "CVAttachmentValueRepresentable",
+            "usr": "s:9CoreVideo30CVAttachmentValueRepresentableP",
+            "mangledName": "$s9CoreVideo30CVAttachmentValueRepresentableP"
           },
           {
             "kind": "Conformance",
@@ -100693,77 +100930,77 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 771,
+      "offset": 787,
       "length": 2,
       "value": "40"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1038,
+      "offset": 1054,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1048,
+      "offset": 1064,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1060,
+      "offset": 1076,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1071,
+      "offset": 1087,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1298,
+      "offset": 1314,
       "length": 2,
       "value": "21"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 1535,
+      "offset": 1551,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1644,
+      "offset": 1660,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2060,
+      "offset": 2076,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2470,
+      "offset": 2502,
       "length": 3,
       "value": "120"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2474,
+      "offset": 2506,
       "length": 2,
       "value": "40"
     },
@@ -100798,14 +101035,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
-      "offset": 876,
+      "offset": 1402,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
-      "offset": 2549,
+      "offset": 3075,
       "length": 4,
       "value": "true"
     },
@@ -100833,14 +101070,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 7851,
+      "offset": 8324,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 8379,
+      "offset": 9146,
       "length": 5,
       "value": "false"
     },
@@ -100854,14 +101091,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
-      "offset": 924,
+      "offset": 1426,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2274,
+      "offset": 2776,
       "length": 4,
       "value": "true"
     },
