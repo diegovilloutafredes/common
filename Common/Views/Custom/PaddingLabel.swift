@@ -21,6 +21,11 @@ import UIKit
 /// inset hack, in multi-line layout: wrapped text stays within the horizontal
 /// insets because ``textRect(forBounds:limitedToNumberOfLines:)`` wraps against
 /// the inset width.
+///
+/// The padding is physical: `left` and `right` stay on those sides in a right-to-left
+/// layout (they are not mirrored to leading and trailing). Auto Layout's first baseline
+/// includes the top padding, so a `firstBaselineAnchor` constraint lines up the text
+/// itself, with the label's frame `padding.top` above it.
 public final class PaddingLabel: UILabel {
 
     /// The insets applied around the text on every edge.

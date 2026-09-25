@@ -855,12 +855,12 @@ final class ProfileCell: BaseViewModelableCell<ProfileModel> {
 | iOS 16 | `.unavailable` | the hook runs on every layout pass, untracked |
 
 Rules:
-- Read state and write views inside the hook only. Mutate models anywhere on the main actor.
+- Read state and write views inside the hook only. Mutate models anywhere on the main actor except inside the hook: in manual mode (iOS 17–18) a write there to state the same pass reads is lost. It lands before the pass arms its observer, so the hook doesn't re-run and the view keeps the value it read before the write. Move such writes to `onViewWillAppear()` or a `Task`. Native mode isn't verified to behave differently, so treat both modes the same.
 - Constraint constants may be written in the hook; the layout pass that follows applies them. To animate one, mutate the state inside the animation block: `animateConstraints { viewModel.toggle() }` on iOS 17–18 (its `layoutIfNeeded()` runs the hook inside the block) or `UIView.animate(withDuration:delay:options: .flushUpdates) { viewModel.toggle() }` on iOS 26. Geometry *derived* from layout (a list's content height) only exists after layout — sync it in `viewDidLayoutSubviews()` (or after `super.layoutSubviews()` in a view), not in the hook.
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
 - Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`.
-- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`), and a covered controller consumes a pending event when it returns on screen, not underneath the child. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
+- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) still show. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
 - **`onUpdateProperties()` is an escape hatch.** The ViewModel-side hook runs in the same pass and tracks the same way, but it needs somewhere to push into — a view reference the module contract no longer has. Keep it for code written against earlier releases; new modules render in the controller's `updateContent()` only.
 - **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
 - **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and let the controller compare it with the revision it last rendered before calling `reloadData()`. This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view.
@@ -1750,7 +1750,7 @@ PaddingLabel(padding: .init(all: 4))
     .setAsRoundedView(radius: 4)
 ```
 
-`padding` defaults to `.zero`, in which case it behaves like a plain `UILabel`.
+`padding` defaults to `.zero`, in which case it behaves like a plain `UILabel`. The padding is physical: `left` and `right` are not mirrored in right-to-left layouts. Its first baseline includes the top padding, so a `firstBaselineAnchor` constraint lines up the text itself, with the label's frame `padding.top` higher than a plain label's.
 
 ### GIFImageView
 
@@ -1925,7 +1925,7 @@ extension ProductClient: ProductClientProtocol {
 }
 ```
 
-`BaseClient.request(from:_:result:)` cancels any in-flight request keyed by the same function identifier before starting a new one. Always pass `#function` as the first argument so duplicate taps don't stack requests.
+`BaseClient.request(from:_:result:)` keys each in-flight request by its `from:` identifier (`#function` by default), per client instance: a new call cancels the earlier request with the same key, whose `result` handler then never fires. Duplicate taps therefore collapse only through a client you store; one created per call starts with an empty table and sends every request. The cancel-and-replace isn't atomic, so make the calls from one thread (the main actor, as UI code does).
 
 ### Async client (`AsyncBaseClient`)
 
@@ -1950,13 +1950,23 @@ func onViewWillAppear() {
         } catch is CancellationError {
             return                                                   // a cancelled Task is not a failure to report
         } catch {
-            event = .init(.failed(message: error.localizedDescription))   // ViewEvent, consumed once by the controller
+            event = .init(.failed(message: userMessage(for: error)))   // ViewEvent, consumed once by the controller
         }
+    }
+}
+
+// App-side copy: NetworkError is not a LocalizedError, so its localizedDescription is a generic
+// system string, and asString is diagnostic text for logs, not for users.
+func userMessage(for error: Error) -> String {
+    switch error as? NetworkError {
+    case .requestError: "Check your connection and try again."
+    case .responseError(let statusCode, _, _) where statusCode == 401: "Your session has expired."
+    default: "Something went wrong. Please try again."
     }
 }
 ```
 
-`AsyncBaseClient` uses the same `Endpoint` router definitions as `BaseClient` — the two are interchangeable at the routing layer. Use `AsyncBaseClient` for new code where structured concurrency is available; use `BaseClient` when integrating with callback-based coordinator flows.
+`AsyncBaseClient` uses the same `Endpoint` router definitions as `BaseClient` — the two are interchangeable at the routing layer, but not in deduplication: `AsyncBaseClient` has none (its `from:` parameter is accepted and unused), so a request is abandoned by cancelling the `Task` that awaits it. Use `AsyncBaseClient` for new code where structured concurrency is available; use `BaseClient` when integrating with callback-based coordinator flows.
 
 ### BaseResponse wrapper
 
@@ -1977,10 +1987,10 @@ extension BaseResponse: ValueWithable {}
 ### Result handler usage
 
 ```swift
-productClient.list { result in
+productClient.list { [weak self] result in
     switch result {
-    case .success(let products): updateUI(with: products)
-    case .failure(let error):    showError(error)
+    case .success(let products): self?.products = products                                      // observed state
+    case .failure(let error):    self?.event = .init(.failed(message: userMessage(for: error)))  // a ViewEvent
     }
 }
 ```
@@ -2108,7 +2118,7 @@ extension UploadParameters {
 
 - **Do** define routes as enum cases conforming to `Endpoint`.
 - **Do** use the UseCase pattern for reusable, testable networking logic.
-- **Two valid client styles:** (a) subclass `BaseClient` and call `request(from: #function, ...)` — adds in-flight dedup keyed by `#function`; or (b) call `HTTPService.request(router, urlSession:, result:)` directly from the client method. The DemoApp uses (a). Pick one per client; both are supported.
+- **Two valid client styles:** (a) subclass `BaseClient` and call `request(from: #function, ...)` — adds in-flight dedup keyed by `#function` per client instance (store the client; a later call cancels the earlier one); or (b) call `HTTPService.request(router, urlSession:, result:)` directly from the client method. The DemoApp uses (a). Pick one per client; both are supported.
 - **Don't** encode parameters manually — `Endpoint` handles encoding based on HTTP method.
 
 ---
@@ -2866,7 +2876,7 @@ func alertView(
 ## Appendix C — New API domain checklist
 
 - [ ] `enum MyRouter` with one case per endpoint
-- [ ] `extension MyRouter: Endpoint` — implement `baseURL`, `basePath`, `version`, `path`, `method`, `headers`, `parameters`
+- [ ] `extension MyRouter: Endpoint` — implement `baseURL`, `path`, `method`, `headers`, `parameters`. `basePath` and `version` are optional (both default to empty; `url` appends `basePath`, `version` and `path` verbatim, so write the slashes). Parameters are encoded with snake_case keys (a JSON body for POST/PUT/PATCH, the query string for GET/HEAD/DELETE); override `jsonEncoder` or `urlEncodedFormEncoder` on the router to change that
 - [ ] If the endpoint requires auth, resolve the token inline in `headers` from an app-level Storage type (Common has no token-resolution protocol)
 - [ ] `protocol MyClientProtocol: AnyObject` with method signatures using `NetworkResultHandler<T>`
 - [ ] `final class MyClient: BaseClient` (empty body)

@@ -124,6 +124,60 @@ final class PaddingLabelTests: XCTestCase {
         return white
     }
 
+    /// Auto Layout's first baseline includes the top padding: aligning a padded label to a plain one
+    /// by first baseline lines up their text, which puts the padded label's frame `padding.top` higher.
+    func test_firstBaseline_includesTopPadding() {
+        let font = UIFont.systemFont(ofSize: 17)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 400))
+        let plain = UILabel()
+        plain.font = font
+        plain.text = "Baseline"
+        let padded = PaddingLabel(padding: .init(top: 20, left: 0, bottom: 0, right: 0))
+        padded.font = font
+        padded.text = "Baseline"
+        [plain, padded].forEach { $0.translatesAutoresizingMaskIntoConstraints = false; container.addSubview($0) }
+        NSLayoutConstraint.activate([
+            plain.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            padded.leadingAnchor.constraint(equalTo: plain.trailingAnchor, constant: 8),
+            plain.topAnchor.constraint(equalTo: container.topAnchor, constant: 100),
+            padded.firstBaselineAnchor.constraint(equalTo: plain.firstBaselineAnchor)
+        ])
+        container.layoutIfNeeded()
+
+        XCTAssertEqual(plain.frame.minY - padded.frame.minY, 20, accuracy: 0.5,
+                       "the padded label's first baseline must sit `padding.top` below its top edge")
+    }
+
+    /// The padding is physical: `left` stays on the left in a right-to-left layout instead of being
+    /// mirrored into a leading inset. Width is the intrinsic width, so the glyphs fill the text rect
+    /// whatever the alignment.
+    func test_padding_isNotMirroredInRightToLeftLayout() {
+        for attribute in [UISemanticContentAttribute.forceLeftToRight, .forceRightToLeft] {
+            let padding = UIEdgeInsets(top: 0, left: 40, bottom: 0, right: 0)
+            let label = PaddingLabel(padding: padding)
+            label.semanticContentAttribute = attribute
+            label.text = "XXXXXXXX"
+            label.font = .systemFont(ofSize: 20, weight: .black)
+            label.textColor = .black
+            label.backgroundColor = .white
+
+            let size = label.intrinsicContentSize
+            label.frame = CGRect(origin: .zero, size: size)
+            let format = UIGraphicsImageRendererFormat()
+            format.scale = 1 // point == pixel, so crop rects need no scale math
+            let rendered = UIGraphicsImageRenderer(size: size, format: format).image { context in
+                label.layer.render(in: context.cgContext)
+            }
+
+            let leftBand = CGRect(x: 0, y: 0, width: padding.left - 4, height: size.height)
+            let rightBand = CGRect(x: size.width - 36, y: 0, width: 36, height: size.height)
+            XCTAssertGreaterThan(averageBrightness(of: rendered, in: leftBand), 0.95,
+                                 "the left padding must stay glyph-free (attribute \(attribute.rawValue))")
+            XCTAssertLessThan(averageBrightness(of: rendered, in: rightBand), 0.85,
+                              "the glyphs must reach the unpadded right edge (attribute \(attribute.rawValue))")
+        }
+    }
+
     /// Horizontal padding must narrow the wrapping width, so the same long text
     /// wraps into more lines and the text rect grows taller. This is the
     /// behavior the `textRect(forBounds:...)` override exists to provide.
