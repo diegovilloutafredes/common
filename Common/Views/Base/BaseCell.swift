@@ -15,9 +15,16 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
     /// By default, returns an empty `UIView`.
     @UIViewBuilder open var mainView: UIView { UIView() }
 
+    /// Installs `mainView` in `contentView` the way `BaseView` does: constraints the root declares
+    /// with `setConstraints` are the ones applied (declare all four edges), and a root that declares
+    /// none is pinned edge to edge.
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.subviews { mainView.setConstraints { $0.snap(to: $1) } }
+        let content = mainView
+        contentView.addSubview(content)
+        // setConstraints handlers fire synchronously during addSubview (via didMoveToSuperview).
+        // If the subclass already set up constraints, TAMIC is false — skip to avoid duplicates.
+        if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: contentView) }
         setupCell()
     }
 
