@@ -71,7 +71,7 @@ UIView {
 
 ### The `mainView` pattern
 
-Both `BaseViewController` and `BaseView` expose a `mainView` property decorated with `@UIViewBuilder`. Override it to declare your view hierarchy. The framework automatically assigns it as the root view in `loadView()` — never set `self.view` directly.
+Both `BaseViewController` and `BaseView` expose a `mainView` property decorated with `@UIViewBuilder`. Override it to declare your view hierarchy. A view controller's `loadView()` installs it inside a plain container view that becomes `self.view`; a `BaseView` adds it as its subview, pinned edge to edge unless `mainView` declares its own constraints. Never set `self.view` directly.
 
 ```swift
 final class MyViewController: BaseViewController {
@@ -622,7 +622,7 @@ someView.widthAnchor.constraint(equalToConstant: 120)
 The minimal base class. All view controllers inherit from it — never use `UIViewController` directly.
 
 - `mainView` property (override with `@UIViewBuilder`)
-- `loadView()` sets `self.view = mainView` automatically
+- `loadView()` installs `mainView` inside a plain container view, which becomes `self.view`: `view !== mainView`, and `$1` in `mainView`'s `setConstraints` is that container
 - `setupView()` called in `viewDidLoad()` — override for post-load configuration; **always call `super.setupView()`**
 - Default status bar style: `.darkContent`
 - Swipe-to-go-back gesture restored automatically
@@ -783,26 +783,30 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
 
 ### Lifecycle hooks
 
-Use closures instead of overriding lifecycle methods — all lifecycle logic stays in `setupView()`:
+Lifecycle work goes through hooks instead of overrides, and the two sides share names:
+- **Logic** (loading data, starting a session) goes in the ViewModel's `ViewLifecycleable` methods, which the base view controller calls: `onViewDidLoad()`, `onViewWillAppear()`, `onViewIsAppearing()`, `onViewDidAppear()`, `onViewWillLayoutSubviews()`, `onViewDidLayoutSubviews()`, `onViewWillDisappear()`, `onViewDidDisappear()`, and the legacy `onUpdateProperties()`.
+- **View-only work** (bar visibility) uses the closures every view controller has. Set them in `setupView()`, or from the coordinator on the instance it creates (§7):
 
-| Hook | When it fires |
+| Closure | When it fires |
 |------|--------------|
-| `onViewWillAppear { vc in ... }` | Before the view appears |
-| `onViewDidAppear { vc in ... }` | After the view appears |
-| `onViewIsAppearing { vc in ... }` | First appearance — safe for layout-dependent setup |
+| `onViewDidLoad { vc in ... }` | Before `setupView()`, so register it from outside (the coordinator); one registered in `setupView()` never fires |
+| `onViewWillAppear { vc in ... }` | Before every appearance |
+| `onViewIsAppearing { vc in ... }` | Every appearance, once the view is in the hierarchy with its final size and traits |
+| `onViewDidAppear { vc in ... }` | After every appearance |
 | `onViewWillDisappear { vc in ... }` | Before the view disappears |
-| `onLayoutSubviews { vc in ... }` | Each layout pass |
-| `onUpdateProperties()` (on the ViewModel via `ViewLifecycleable`) | Every content-update pass; re-runs when `@Observable` state read inside it changes |
+| `onViewDidDisappear { vc in ... }` | After the view disappears |
+
+A closure runs before the ViewModel's method of the same name. For layout passes, the hook is on the view: `view.onLayoutSubviews { view in ... }`.
 
 ```swift
 override func setupView() {
     super.setupView()
     onViewWillAppear { $0.hideNavigationBar(animated: false) }
     onViewWillDisappear { $0.showNavigationBar(animated: false) }
-    onViewIsAppearing { [weak self] _ in guard let self else { return }
-        fetchData()
-    }
 }
+
+// In the ViewModel, not the view controller:
+func onViewIsAppearing() { load() }
 ```
 
 ### Observation-driven updates
@@ -907,20 +911,16 @@ observe(.onSceneDidDisconnect) { [weak self] in guard let self else { return }; 
 
 ### Activity indicators
 
-Always pair with `stopActivityIndicator` — including on failure paths:
+Under the module contract, mirror the ViewModel's loading flag in `updateContent()`. `setActivityIndicator(visible:)` starts or stops only when the flag changes, so it's safe on every pass:
 
 ```swift
-startActivityIndicator()
-stopActivityIndicator()
-
-// With status message
-startActivityIndicator("Loading...", onMessageLabel: { label = $0 })
-
-// With completion callback
-stopActivityIndicator { [weak self] in guard let self else { return }
-    present(viewController: nextScreen)
+override func updateContent() {
+    super.updateContent()
+    setActivityIndicator(visible: viewModel.isLoading)
 }
 ```
+
+Imperative code pairs `startActivityIndicator()` (or `startActivityIndicator(with: color)`) with `stopActivityIndicator()`, including on failure paths. Neither takes a message or a completion closure.
 
 ### Navigation bar
 
@@ -937,15 +937,19 @@ titleView(UIImageView(image: .logo).setRatio(80/24))
 
 ### Lifecycle order
 
-1. `init(viewModel:)` — ViewModel injected
-2. `loadView()` — `mainView` assigned as root view
-3. `viewDidLoad()` → `setupView()` — configure background, nav bar, bind data
-4. `updateProperties()` → `updateContent()` / `onUpdateProperties()` (iOS 26; on 17–18 the hook runs from step 5 instead)
-5. `viewWillLayoutSubviews()` / `viewDidLayoutSubviews()`
-6. `viewWillAppear(_:)` — swipe-to-go-back gesture re-enabled
-7. `viewIsAppearing(_:)` — view in hierarchy, size/traits are final
-8. `viewDidAppear(_:)`
-9. `viewWillDisappear(_:)`
+Observed at runtime for a `BaseViewModelableViewController` pushed in a navigation controller. In every step that has hooks, the view controller's closure (`onViewWillAppear { }` and the rest) runs first, inside `super`, and then the ViewModel's `ViewLifecycleable` method.
+
+1. `init(viewModel:)` — the ViewModel is injected.
+2. `loadView()` — reads `mainView` once and installs it in a plain container view, which becomes `self.view` (`view !== mainView`).
+3. `viewDidLoad()` — the `onViewDidLoad` closure, then `setupView()`, then the ViewModel's `onViewDidLoad()`. An `onViewDidLoad` closure registered inside `setupView()` never fires: that point has passed.
+4. `viewWillAppear(_:)` — the swipe-to-go-back gesture is re-enabled.
+5. `updateContent()`, the first render. In native mode (iOS 26+) it runs from `updateProperties()`, here. In manual mode (iOS 17–18) it runs at the start of the first `viewWillLayoutSubviews()`, step 7. The ViewModel's legacy `onUpdateProperties()` runs inside it, at `super.updateContent()`.
+6. `viewIsAppearing(_:)` — the view is in the hierarchy; size and traits are final.
+7. `viewWillLayoutSubviews()`, then `viewDidLayoutSubviews()`.
+8. `viewDidAppear(_:)`.
+9. When another screen covers it or it is removed: `viewWillDisappear(_:)`, then `viewDidDisappear(_:)`.
+
+Every later appearance (returning from a pushed screen, for example) runs steps 4, 6 and 8 again, so `onViewIsAppearing` fires on each appearance, not only the first. A change to observed state re-runs only `updateContent()`: from `updateProperties()` in native mode, from a layout pass in manual mode.
 
 ### Lazy property pattern
 
@@ -1222,7 +1226,7 @@ presentAlertView(type: .customAlert(title: "Oops", message: "Something failed"),
 
 ### Child coordinators
 
-`addChildAndStart` stores the child and calls `start()`. When the child's view controller is eventually popped off the navigation stack, `BaseCoordinator` removes the child from `childCoordinators` automatically via KVO — no manual `removeChild` call is needed in `onPerformed`. The `onPerformed` closure is for the parent to react to the result (e.g. pop a screen, show the next one):
+`addChildAndStart` stores the child, calls `start()`, and tracks the first screen the child pushes. When that screen leaves the navigation stack (back button, swipe-back, a pop, or a replaced stack), UIKit's view-controller containment callback (`didMove(toParent:)`) cancels the child, which removes it from `childCoordinators`. `finish()` removes it too, so no manual `removeChild` call is needed in `onPerformed`. The `onPerformed` closure is for the parent to react to the result (e.g. pop a screen, show the next one):
 
 ```swift
 class AppCoordinator: BaseCoordinator {
@@ -1349,7 +1353,7 @@ final class CheckoutCoordinator: BaseCoordinator {
             },
             onPerformed: { [weak self] result in
                 switch result {
-                case .failed: self?.cancel()
+                case .failed: self?.finish()   // not cancel(): that leaves this flow's screens on the stack; the parent unwinds them in onPerformed
                 }
             }
         ))
@@ -1492,7 +1496,7 @@ Common detent sizes: `0.45` (small), `0.75` (medium), `0.8` (large), `0.9625` (n
 
 ### Do's and Don'ts
 
-- **Do** always clean up child coordinators via `removeChild` when their flow ends.
+- **Do** end a child flow with `finish()` and let the parent unwind its screens in `onPerformed`. Removal from `childCoordinators` is automatic (on `finish()`, and on `cancel()` when the entry screen leaves the stack), so don't call `removeChild` yourself. A flow presented modally is the exception: wire its interactive dismissal as shown in *Swipe-back and back-button cancellation*.
 - **Do** use computed vars for VC properties — avoids stale state.
 - **Don't** present or push directly from a ViewController — route through the coordinator. The exception is a modal effect over the current screen (alert, snackbar): that is a `ViewEvent` the controller presents itself (§6).
 - **Don't** hold strong references to child coordinators outside `childCoordinators`.
@@ -2017,11 +2021,11 @@ extension CheckoutUseCase {
 }
 ```
 
-Conform the relevant class:
+Conform the screen's ViewModel. A coordinator conforms only for an app-level flow no screen owns, and a view controller never does (§7 *Where use cases live*):
 
 ```swift
-extension CartViewController: CheckoutUseCase {}
-extension AppCoordinator: LogoutUseCase {}
+extension CartViewModel: CheckoutUseCase {}
+extension AppCoordinator: LogoutUseCase {}   // app-level, no screen owns it
 ```
 
 ### Property-backed UseCases
@@ -2421,7 +2425,7 @@ Capabilities every `BaseViewController` already has (from the base class and ext
 - **Always use `[weak self]` + `guard let self else { return }`** in closures to avoid retain cycles.
 - **Set width on scroll content** (`.setWidth(to: $1.widthAnchor)`) to prevent horizontal scroll.
 - **Use `.setRatio()` on images** to maintain aspect ratios.
-- **Mark `init?(coder:)` unavailable** on every ViewController.
+- **Mark `init?(coder:)` unavailable** on a view controller that declares its own initializer (a `BaseViewController` subclass taking closures). A `BaseViewModelableViewController` subclass declares neither: `init(viewModel:)` is inherited, and declaring `init?(coder:)` removes it (Appendix B).
 - **Prefer `.filled()` configuration** for primary action buttons, `.borderless()` for links.
 - **Use `Task { @MainActor in }`** for UI updates from background threads — not `dispatchOnMain` or `DispatchQueue.main.async` (see the main-thread delivery note in section 5).
 - **Use `lazy var`** for subviews that need `self` references.
@@ -2741,14 +2745,17 @@ The framework's conventions — follow them for any code that lives in `Common/`
   per type; protocol conformances as separate `extension Type: Protocol {}`
   blocks at the bottom of the file, each with its own MARK.
 - **Protocol taxonomy**: capabilities end in `-able` (`Navigationable`,
-  `Actionable` — consistency beats grammar); `*Requestable` = upward delegate
-  with `onXRequested` methods; behavior ships as protocol + constrained default
-  implementation (`extension X where Self: Y`).
+  `Actionable` — consistency beats grammar); `*Requestable` = a capability to
+  request something, as `onXRequested` methods with a default implementation
+  (`onAppSettingsRequested()`), adopted by whatever performs the request. It is
+  not how a module reports upward: module outputs are the ViewModel's
+  `onRequested` / `onPerformed` closures (§6). Behavior ships as protocol +
+  constrained default implementation (`extension X where Self: Y`).
 - **Fluent chainables**: `@discardableResult func x(_ value: X) -> Self { with { $0.x = value } }`,
   one file per chainable property (`UILabel+Font.swift`), rooted in `Withable`.
 - **Closure vocabulary**: `Action`, `Handler<T>`, `NetworkResultHandler<T>`,
   `CompletionHandler` — a raw `(T) -> Void` in a public signature is a
-  violation. Name protocol compositions (`BaseModuleDelegate`).
+  violation. Name protocol compositions (the legacy `BaseModuleDelegate` is one).
 - **Semantic sugar**: `.empty` over `""`, `.zero` over `0`, `.init()` shorthand
   where the type is inferable, `.isNotNil` / `.isNotEmpty` over negations.
 - **DocC on every public symbol**; `- Note:` / `- Warning:` / `- Important:`

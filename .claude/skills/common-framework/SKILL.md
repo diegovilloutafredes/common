@@ -452,14 +452,14 @@ final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
 ## Lifecycle Rules
 
 ```
-init(viewModel:) → loadView() [mainView assigned] → viewDidLoad → setupView()
+init(viewModel:) → loadView() [mainView wrapped in a container view] → viewDidLoad → setupView()
 → viewWillAppear → viewIsAppearing → viewDidAppear
 ```
 
 - `super.setupView()` always first
 - `mainView`: purely declarative — no side effects, no network calls, no data reads
 - Data binding in `setupView()`, not `mainView`
-- Lifecycle work goes through hooks, not UIKit overrides, and both sides use the same names. Logic (loading data, starting a session) goes in the ViewModel's `ViewLifecycleable` methods, listed below. View-only work (bar visibility) uses the closures every view controller has, `onViewWillAppear { vc in … }` and the rest, set in `setupView()` or by the coordinator on the instance it creates.
+- Lifecycle work goes through hooks, not UIKit overrides, and both sides use the same names. Logic (loading data, starting a session) goes in the ViewModel's `ViewLifecycleable` methods, listed below. View-only work (bar visibility) uses the closures every view controller has, `onViewWillAppear { vc in … }` and the rest, set in `setupView()` or by the coordinator on the instance it creates (`onViewDidLoad` has already fired by `setupView()`, so only the coordinator can set it).
 - Observable state: read it in `updateContent()` (view/cell/VC), the only render point; the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
 - Self-sizing rows: `VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }` (the trailing closure configures the flow layout), and `onSizeForItem` returns `(availableSize.width, estimatedHeight)`: the list's own width, never `screenWidth`, because wider items are dropped and the list renders empty. A cell binds its content synchronously when its `viewModel` is assigned, so UIKit's measurement sees it.
 - Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a covered VC consumes on return); `setActivityIndicator(visible: isLoading)` for spinners.
@@ -665,7 +665,7 @@ final class SignUpViewModel {
 When writing code that lives in `Common/` itself (full detail: guide §19):
 
 - 3-line filename-only header; one primary symbol per file; `// MARK: - Symbol` per type; conformances as separate MARKed `extension Type: Protocol {}` blocks at file bottom.
-- Capability protocols end `-able`; `*Requestable` = upward delegate (`onXRequested`); behavior via protocol + constrained default implementation.
+- Capability protocols end `-able`; `*Requestable` = a capability to request something (`onXRequested`, default-implemented), not a module output (those are `onRequested` / `onPerformed` closures); behavior via protocol + constrained default implementation.
 - Chainables: `@discardableResult func x(_:) -> Self { with { $0.x = ... } }`, one file per property.
 - Closure typealiases (`Action`, `Handler<T>`, `NetworkResultHandler<T>`) — never raw `(T) -> Void` in public signatures.
 - `.empty`/`.zero`/`.isNotNil`/`.isNotEmpty` over literals and negations; DocC on every public symbol; `final` leaves, `open` bases, `@MainActor` UI types; defaults on nearly every parameter.
