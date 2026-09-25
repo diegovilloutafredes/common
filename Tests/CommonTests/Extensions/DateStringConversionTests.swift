@@ -66,4 +66,34 @@ final class DateStringConversionTests: XCTestCase {
         XCTAssertNotNil(first)
         XCTAssertEqual(first, second)
     }
+
+    func test_outOfRangeFields_returnNil() {
+        XCTAssertNil("2026-13-45".asDate(with: "yyyy-MM-dd"), "an impossible date must not roll over into a real one")
+    }
+
+    // MARK: - A day whose local midnight does not exist
+
+    // America/Santiago moves its clocks from 00:00 to 01:00 on 8 September 2024, so a date-only format
+    // implies a midnight that never happens. The zone is forced so a UTC CI host takes the same path, and
+    // each format is one no other test caches: a cached formatter keeps the zone it was created in.
+
+    func test_dstStartDay_dateOnly_parsesToTheFirstValidInstantOfTheDay() {
+        inSantiagoTime {
+            XCTAssertEqual("240908".asDate(with: "yyMMdd"), Date(timeIntervalSince1970: 1_725_768_000),
+                           "expected 2024-09-08 01:00 in Santiago (04:00 UTC)")
+        }
+    }
+
+    func test_dstStartDay_explicitNonexistentTime_returnsNil() {
+        inSantiagoTime {
+            XCTAssertNil("20240908 00:30".asDate(with: "yyyyMMdd HH:mm"), "an explicitly written time that doesn't exist")
+        }
+    }
+
+    private func inSantiagoTime(_ body: () -> Void) {
+        let original = NSTimeZone.default
+        NSTimeZone.default = TimeZone(identifier: "America/Santiago")!
+        defer { NSTimeZone.default = original }
+        body()
+    }
 }
