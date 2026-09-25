@@ -126,7 +126,7 @@ extension CameraManager {
     /// Stops the camera session.
     public func finish() { sessionQueue.async { self.captureSession.stopRunning() } }
 
-    /// Sets the zoom factor for the camera.
+    /// Sets the zoom factor for the camera, clamped to the device's available range.
     /// - Parameter zoomFactor: The zoom factor to apply.
     public func set(zoomFactor: Double) { captureDevice?.videoZoomFactor(zoomFactor) }
 
