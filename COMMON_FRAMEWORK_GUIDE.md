@@ -2388,7 +2388,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 | `ValueWithable` | Enables `.with { }` on value types (structs) |
 | `Endpoint` | API route definition |
 | `SingleRawValueKeyValueObjectStorage` | Single-item key-value storage |
-| `ContentReloadable` | Views that can reload their content |
+| `ContentReloadable` | Views that can reload their content (legacy: new modules re-render from observed state) |
 | `ViewLifecycleable` | View lifecycle event hooks |
 | `CollectionViewable` | The list contract a ViewModel answers (`CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`); sizes take `availableSize` |
 
@@ -2402,19 +2402,25 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 
 ### Controller capability vocabulary
 
-Capabilities every `BaseViewController` already has (from the base class and extensions) — call them from the controller; never redeclare them on a protocol the ViewModel talks to:
+What a view controller can call, and how it gets it. Call these from the controller; never redeclare them on a protocol the ViewModel talks to. **Built in** means `UIViewController` itself conforms, so every view controller has it:
 
-| Protocol | Grants |
-|----------|--------|
-| `BackButtonAddable` | `addBackButton { }` — nav-bar back with a handler |
-| `NavigationBarSetupable` | `setupNavigationBar()` styling hook |
-| `ScreenSizeMeasurable` | Screen bounds/size helpers |
-| `LargeTitleSettable` | Large-title nav configuration |
-| `SafariWebViewRequestable` | Present an in-app Safari view |
-| `AppSettingsRequestable` | Deep-link to the app's Settings page |
-| `KeyboardDismissable` | `dismissKeyboard()` (pair with `setupAsKeyboardDismissable()`) |
-| `ActivityIndicatorable` | `startActivityIndicator()` / `stopActivityIndicator()`; `setActivityIndicator(visible:)` is the idempotent form for `updateContent()` |
-| `Vibrator` | `vibrate()` haptic |
+| Protocol | Grants | On a view controller |
+|----------|--------|----------------------|
+| `ActivityIndicatorable` | `startActivityIndicator()` / `stopActivityIndicator()`; `setActivityIndicator(visible:)` is the idempotent form for `updateContent()` | Built in |
+| `AlertPresentable` | `presentAlertView(type:…)` / `presentAlertView(viewModel:…)` | Built in |
+| `BackgroundColorable` | `backgroundColor(_:)` | Built in |
+| `KeyboardDismissable` | `dismissKeyboard()` (pair with `setupAsKeyboardDismissable()`) | Built in |
+| `LargeTitleSettable` | `enableLargeTitles()` / `disableLargeTitles()` | Built in |
+| `NavigationBarVisibilityTogglable` | `showNavigationBar(animated:)` / `hideNavigationBar(animated:)` | Built in |
+| `OffsetResetable` | `resetOffsetIfNeeded()` and its scroll/collection variants | Built in |
+| `ScreenSizeMeasurable` | `screenWidth` / `screenHeight` (not for list sizes: use `availableSize`) | Built in |
+| `TitleSettable` | `set(title:)` | Built in |
+| `Vibrator` | `vibrate()` haptic | Built in |
+| `SafariWebViewRequestable` | `onSafariWebViewRequested(url:)` presents an in-app Safari view | Declare the conformance; the default implementation does the rest |
+| `AppSettingsRequestable` | `onAppSettingsRequested()` opens the app's Settings page | Declare the conformance; the default implementation does the rest |
+| `BackButtonAddable` | An `addBackButton(_:handler:)` overload | Not needed: `addBackButton(_:action:)` (`addBackButton { }`) is a method on every view controller |
+| `NavigationBarSetupable` | A `setupNavigationBar()` hook | No default: adopt it only when you implement the hook (an empty conformance doesn't compile) |
+| `CameraSessionHandler` | `beginSession()` / `finishSession()` | No default and no adopter in Common: implement both |
 
 ---
 
