@@ -1268,7 +1268,31 @@ final class CheckoutCoordinator: BaseCoordinator {
 
 ### Swipe-back and back-button cancellation
 
-**Nothing to wire.** A coordinator started with `addChildAndStart` cancels itself when its entry screen leaves the navigation stack — back button, swipe-back, `pop()`, `pop(.to(_:))`, `pop(.toRoot)`, or a stack replacement. `BaseCoordinator` tracks the screen through UIKit's view-controller containment callback, so no ViewController code participates.
+**Nothing to wire on the parent's stack.** A coordinator started with `addChildAndStart` cancels itself when its entry screen leaves the navigation stack — back button, swipe-back, `pop()`, `pop(.to(viewController:))`, `pop(.toRoot)`, or a stack replacement. `BaseCoordinator` tracks the screen through UIKit's view-controller containment callback, so no ViewController code participates.
+
+**A flow presented in its own navigation controller is the exception.** Its screens never land on the parent's stack, and dismissing the presented controller doesn't remove them from their container, so nothing cancels the flow. Wire both endings: the child cancels itself when the sheet is swiped down, and the parent closes the sheet when the child finishes.
+
+```swift
+extension SettingsCoordinator: UIAdaptivePresentationControllerDelegate {
+    // Swipe-down: the sheet is already gone, so abandon the flow. (Not called for a programmatic dismiss.)
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) { cancel() }
+}
+
+// In the parent coordinator:
+func presentSettings() {
+    let sheet = UINavigationController()
+    let flow = SettingsCoordinator(
+        navigationController: sheet,
+        onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet
+    )
+    addChild(flow)                                  // not addChildAndStart: nothing lands on this stack to track
+    flow.start()                                    // the flow sets its first screen into `sheet`
+    sheet.presentationController?.delegate = flow   // set before presenting
+    present(.overCurrent, viewController: sheet)    // the default, .dismissingCurrent, closes what's on screen first
+}
+```
+
+Either ending removes the child from `childCoordinators`.
 
 Override `cancel()` when the flow needs to react to abandonment:
 

@@ -56,8 +56,11 @@ Communication directions (strict, one way):
 ```swift
 // FooWireframe.swift — always enum, never struct/class; takes only the output closures the module has
 enum FooWireframe {
-    @MainActor static func createModule(onRequested: @escaping Handler<FooViewModel.Requested>) -> UIViewController {
-        FooViewController(viewModel: FooViewModel(onRequested: onRequested))
+    @MainActor static func createModule(
+        onRequested: @escaping Handler<FooViewModel.Requested>,
+        onPerformed: @escaping Handler<FooViewModel.Performed>
+    ) -> UIViewController {
+        FooViewController(viewModel: FooViewModel(onRequested: onRequested, onPerformed: onPerformed))
     }
 }
 
@@ -69,29 +72,36 @@ protocol FooViewModelProtocol: ViewModel, ViewLifecycleable {
     var statusText: String { get }                   // state the VC renders
     var event: ViewEvent<FooViewModel.Event>? { get } // one-shot effects the VC consumes
     func goBack()
+    func openDetail()
     func refresh()
+    func save()
 }
 
 @Observable @MainActor
 final class FooViewModel {
-    enum Requested { case goBack }                   // navigation the coordinator answers
+    enum Requested { case goBack, detail }           // navigation the coordinator answers (many times)
+    enum Performed { case done }                     // results the coordinator reacts to (once per unit of work)
     enum Event { case refreshed }                    // modal effects over this screen
 
     private(set) var statusText = ""                 // tracked: any change re-runs the VC's updateContent()
     private(set) var event: ViewEvent<Event>?        // tracked: a fresh value per firing
     @ObservationIgnored private let onRequested: Handler<Requested>   // closures are never tracked
+    @ObservationIgnored private let onPerformed: Handler<Performed>
 
-    init(onRequested: @escaping Handler<Requested>) {
+    init(onRequested: @escaping Handler<Requested>, onPerformed: @escaping Handler<Performed>) {
         self.onRequested = onRequested
+        self.onPerformed = onPerformed
     }
 }
 
 extension FooViewModel: FooViewModelProtocol {
     func goBack() { onRequested(.goBack) }           // the VC's back button calls this intent
+    func openDetail() { onRequested(.detail) }
     func refresh() {
         statusText = "Updated"                       // mutate state; no view call needed
         event = .init(.refreshed)                    // fire an effect; consumed once by the VC
     }
+    func save() { onPerformed(.done) }               // the unit of work is complete
 }
 extension FooViewModel: ViewLifecycleable {}         // only the hooks you need; all have defaults
 
@@ -142,7 +152,8 @@ final class FooViewController: BaseViewModelableViewController<FooViewModelProto
 ### Coordinator
 
 ```swift
-final class AppCoordinator: BaseCoordinator {
+// A flow coordinator: its parent starts it with addChildAndStart; it pushes onto the parent's stack.
+final class FooCoordinator: BaseCoordinator {
     override func start() { push(fooViewController) }
 
     // Computed var — fresh instance on each navigation, no stale state.
@@ -152,21 +163,28 @@ final class AppCoordinator: BaseCoordinator {
             onRequested: { [weak self] request in
                 guard let self else { return }
                 switch request {
-                case .goBack: pop()
-                case .next: push(BarWireframe.createModule())
-                case .child:
-                    addChildAndStart(ChildCoordinator(
-                        navigationController: navigationController,
-                        onPerformed: { [weak self] _ in self?.pop() }
-                    ))
+                case .goBack: pop()                  // the entry screen leaves → this flow cancels itself
+                case .detail: push(fooViewController)
                 }
             },
             onPerformed: { [weak self] result in
                 switch result {
-                case .done: self?.finish()
+                case .done: self?.finish()           // fires this coordinator's onPerformed exactly once
                 }
             }
         )
+    }
+}
+
+// The app's root coordinator owns the whole stack: start() calls set(_:), never push.
+final class AppCoordinator: BaseCoordinator {
+    override func start() { set(UIViewController()) }  // your home module
+
+    func startFoo() {                                  // e.g. from the home module's onRequested
+        addChildAndStart(FooCoordinator(
+            navigationController: navigationController,
+            onPerformed: { [weak self] _ in self?.pop() }   // the parent reacts to the result
+        ))
     }
 }
 ```
@@ -175,6 +193,29 @@ final class AppCoordinator: BaseCoordinator {
 - The child calls `finish()` when its flow *succeeds* → fires `onPerformed` exactly once.
 - `cancel()` fires **automatically** when the child's entry screen leaves the nav stack (back button, swipe-back, any pop) → deliberately does **not** fire `onPerformed`.
 - The parent never invokes the closure itself, and the child never calls `finish()` for abandonment.
+
+**A child flow in a sheet** (its own navigation controller) is the exception: its screens never land on the parent's stack, and dismissing the presented controller doesn't remove them from their container, so nothing cancels it automatically. Wire both endings:
+
+```swift
+extension FooCoordinator: UIAdaptivePresentationControllerDelegate {
+    // Swipe-down: the sheet is already gone, so abandon the flow. (Not called for a programmatic dismiss.)
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) { cancel() }
+}
+
+extension AppCoordinator {
+    func presentFooSheet() {
+        let sheet = UINavigationController()
+        let flow = FooCoordinator(
+            navigationController: sheet,
+            onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet
+        )
+        addChild(flow)                                  // not addChildAndStart: nothing lands on this stack to track
+        flow.start()                                    // the flow's first screen goes into `sheet`
+        sheet.presentationController?.delegate = flow   // set before presenting
+        present(.overCurrent, viewController: sheet)    // the default, .dismissingCurrent, closes what's on screen first
+    }
+}
+```
 
 ### New API Domain (Router → Client → UseCase)
 
@@ -323,6 +364,8 @@ final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
         titleLabel.text(viewModel.title)
     }
 
+    // The root is pinned edge to edge to the content view unless it declares its own constraints;
+    // declared ones are applied instead (as for BaseView), so a root that declares any pins all four edges.
     @UIViewBuilder override var mainView: UIView {
         VStack(spacing: 4) { titleLabel }.setConstraints { $0.snap(to: $1) }
     }
@@ -371,7 +414,7 @@ final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
   is called again on the same view. In cells, call `cancelImageLoad()` in
   `prepareForReuse()` for reuse paths that don't immediately re-load.
 - Options: `imageView.loadImage(from: url, options: .init(placeholder: UIImage(systemName: "photo"), transition: .fade(0.25)))`
-- `ImageLoader.shared.preload(urls:)` for upcoming cells; `cancelPreloads()` when the screen goes away
+- `ImageLoader` is an actor: `Task { await ImageLoader.shared.preload(urls: urls) }` for upcoming cells; `Task { await ImageLoader.shared.cancelPreloads() }` when the screen goes away
 
 **No ZStack** — achieve layering via constraints (`.sendSelfToBack()`).
 
