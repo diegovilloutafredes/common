@@ -4,6 +4,7 @@
 
 // MARK: - AlertRequestable
 /// A protocol for objects that can request the presentation of an alert.
+/// - Note: Legacy: in new modules an alert is a `ViewEvent` that the view controller presents; a coordinator calls `presentAlertView` directly (guide §6).
 @MainActor
 public protocol AlertRequestable: AnyObject {
     
@@ -13,10 +14,12 @@ public protocol AlertRequestable: AnyObject {
     ///   - message: The message body of the alert.
     ///   - handler: Optional completion handler for the accept action.
     ///   - cancelHandler: Optional completion handler for the cancel action.
+    /// - Note: Legacy: new modules fire a `ViewEvent` and the view controller presents the alert (guide §6).
     func onPresentAlertRequested(title: String, message: String, handler: CompletionHandler, cancelHandler: CompletionHandler)
     
     /// Requests the presentation of a custom alert using a view model.
     /// - Parameter viewModel: The view model for the alert.
+    /// - Note: Legacy: new modules fire a `ViewEvent` and the view controller presents the alert (guide §6).
     func onPresentAlertRequested(viewModel: AlertViewModel)
 }
 

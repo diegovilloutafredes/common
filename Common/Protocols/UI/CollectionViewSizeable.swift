@@ -24,6 +24,11 @@ public protocol CollectionViewSizeable: AnyObject {
 
     /// Returns the size for the header item in the specified section, given the size it may occupy
     /// (see `onSizeForItem(in:at:availableSize:)`). Defaults to forwarding to the legacy hook.
+    ///
+    /// `availableSize` is computed as for items, so this section's inset is subtracted, although a flow
+    /// layout doesn't inset headers and footers: it uses only the dimension along the scrolling direction
+    /// and stretches the view across the list. Content measured against the view's real width (text that
+    /// sets its height, for example) adds the section's left and right insets back to `availableSize.width`.
     func onSizeForHeaderItem(in section: Int, availableSize: Size) -> Size
 
     /// Returns the size for the footer item in the specified section. Legacy hook: prefer
@@ -32,6 +37,11 @@ public protocol CollectionViewSizeable: AnyObject {
 
     /// Returns the size for the footer item in the specified section, given the size it may occupy
     /// (see `onSizeForItem(in:at:availableSize:)`). Defaults to forwarding to the legacy hook.
+    ///
+    /// `availableSize` is computed as for items, so this section's inset is subtracted, although a flow
+    /// layout doesn't inset headers and footers: it uses only the dimension along the scrolling direction
+    /// and stretches the view across the list. Content measured against the view's real width (text that
+    /// sets its height, for example) adds the section's left and right insets back to `availableSize.width`.
     func onSizeForFooterItem(in section: Int, availableSize: Size) -> Size
     
     /// Returns the size for the cell at the specified path.

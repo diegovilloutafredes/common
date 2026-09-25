@@ -40,6 +40,9 @@ public protocol ViewModel {}
 public protocol ViewModelSettable: ViewModelable {
     /// Sets the view model of the object.
     /// - Parameter viewModel: The view model instance.
+    /// - Note: Legacy on view controllers and views: a new module injects its ViewModel once, through
+    ///   `init(viewModel:)`, and later state reaches the view through observation (guide §6). The collection
+    ///   base view controller still binds cells and supplementary views with it.
     func set(viewModel: ViewModel)
 }
 
