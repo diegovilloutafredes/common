@@ -25,14 +25,62 @@ final class SetupAsKeyboardDismissableTests: XCTestCase {
         XCTAssertTrue(textField.isFirstResponder, "precondition: the text field must hold first responder before the tap")
 
         // Synthesized touches don't exist in the unit harness — drive the
-        // recognizer's registered action (the view's onTap trampoline) directly.
+        // recognizer's registered action directly.
         let tap = try XCTUnwrap(
-            vc.view.gestureRecognizers?.compactMap { $0 as? UITapGestureRecognizer }.first,
-            "setupAsKeyboardDismissable must install a tap recognizer on the view"
+            vc.view.gestureRecognizers?.compactMap { $0 as? KeyboardDismissTapGestureRecognizer }.first,
+            "setupAsKeyboardDismissable must install its tap recognizer on the view"
         )
-        vc.view.perform(NSSelectorFromString("onTappedWithSender:"), with: tap)
+        tap.recognized()
 
         XCTAssertFalse(textField.isFirstResponder, "tapping the view must dismiss the keyboard (resign first responder)")
+    }
+
+    private func tapRecognizers(on view: UIView) -> [UITapGestureRecognizer] {
+        view.gestureRecognizers?.compactMap { $0 as? UITapGestureRecognizer } ?? []
+    }
+
+    /// The defect: the recognizer cancelled the touches it saw, swallowing cell selection, picker rows and other taps
+    /// under it while the keyboard was up.
+    func test_dismissalRecognizer_letsTouchesThrough() {
+        let vc = UIViewController()
+        vc.loadViewIfNeeded()
+        vc.setupAsKeyboardDismissable()
+
+        let taps = tapRecognizers(on: vc.view)
+        XCTAssertFalse(taps.isEmpty, "setupAsKeyboardDismissable must install a tap recognizer")
+        XCTAssertTrue(taps.allSatisfy { !$0.cancelsTouchesInView }, "keyboard dismissal must not cancel the tap's touches")
+    }
+
+    /// The defect: dismissal lived in the view's single onTap slot, so a later onTap silently replaced it.
+    func test_onTapAfterSetup_keepsDismissal() {
+        let vc = UIViewController()
+        vc.loadViewIfNeeded()
+        vc.setupAsKeyboardDismissable()
+        vc.view.onTap { _ in }
+
+        XCTAssertEqual(tapRecognizers(on: vc.view).count, 2, "onTap must add its own recognizer next to the dismissal one")
+    }
+
+    func test_setupTwice_installsOneRecognizer() {
+        let vc = UIViewController()
+        vc.loadViewIfNeeded()
+        vc.setupAsKeyboardDismissable()
+        vc.setupAsKeyboardDismissable()
+
+        XCTAssertEqual(tapRecognizers(on: vc.view).count, 1)
+    }
+
+    /// Two tap recognizers on one view don't both recognize by default; the dismissal one must allow it, so a tap
+    /// both dismisses the keyboard and runs the view's onTap handler.
+    func test_dismissalRecognizer_recognizesAlongsideOtherRecognizers() throws {
+        let vc = UIViewController()
+        vc.loadViewIfNeeded()
+        vc.setupAsKeyboardDismissable()
+        vc.view.onTap { _ in }
+
+        let dismissal = try XCTUnwrap(tapRecognizers(on: vc.view).first { !$0.cancelsTouchesInView })
+        let other = try XCTUnwrap(tapRecognizers(on: vc.view).first { $0 !== dismissal })
+        XCTAssertEqual(dismissal.delegate?.gestureRecognizer?(dismissal, shouldRecognizeSimultaneouslyWith: other), true)
     }
 
     /// Regression: the tap handler used to capture the VC strongly, creating a
