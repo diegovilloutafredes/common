@@ -34,7 +34,7 @@ extension ActivityIndicatorable where Self: BaseCoordinator {
 
 // MARK: - where Self: UITextField
 extension ActivityIndicatorable where Self: UITextField {
-    public func startActivityIndicator() { startActivityIndicator(with: textColor ?? backgroundColor?.inverted ?? .black) }
+    public func startActivityIndicator() { startActivityIndicator(with: textColor ?? UIColor.indicatorColor(over: backgroundColor) ?? .label) }
 
     public func startActivityIndicator(with color: UIColor) {
         let activityIndicator = UIActivityIndicatorView()
@@ -71,7 +71,7 @@ extension ActivityIndicatorable where Self: UITextField {
 // MARK: - where Self: UIView
 extension ActivityIndicatorable where Self: UIView {
     public func startActivityIndicator() {
-        dispatchOnMain { [weak self] in guard let self else { return }; startActivityIndicator(with: backgroundColor?.inverted ?? .black) }
+        dispatchOnMain { [weak self] in guard let self else { return }; startActivityIndicator(with: UIColor.indicatorColor(over: backgroundColor) ?? .label) }
     }
 
     public func startActivityIndicator(with color: UIColor) {
@@ -92,10 +92,11 @@ extension ActivityIndicatorable where Self: UIView {
             objc_setAssociatedObject(self, &preHiddenSubviewsKey, preHidden, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
 
+        // isHidden, not hide(animated:): the subviews' alpha must survive the round-trip.
         subviews
             .forEach {
                 ($0 as? UIActivityIndicatorView)?.removeFromSuperview()
-                $0.hide(animated: false)
+                $0.isHidden = true
             }
 
         subviews { activityIndicator }
@@ -111,7 +112,7 @@ extension ActivityIndicatorable where Self: UIView {
 
             subviews
                 .filter { !(preHidden?.contains($0) ?? false) }
-                .forEach { $0.show(animated: false) }
+                .forEach { $0.isHidden = false }
 
             subviews
                 .compactMap { $0 as? UIActivityIndicatorView }
@@ -130,9 +131,9 @@ extension ActivityIndicatorable where Self: UIViewController {
     public func startActivityIndicator() {
         dispatchOnMain { [weak self] in guard let self else { return }
             var color: UIColor {
-                navigationController?.navigationBar.backgroundColor?.inverted ??
+                UIColor.indicatorColor(over: navigationController?.navigationBar.backgroundColor) ??
                 navigationController?.navigationBar.titleColor ??
-                .black
+                .label
             }
 
             startActivityIndicator(with: color)
@@ -201,6 +202,18 @@ extension ActivityIndicatorable where Self: UIViewController {
             let itemsToAdd = navigationItem.rightBarButtonItems?.filter { !($0.customView is UIActivityIndicatorView) }
             navigationItem.setRightBarButtonItems(itemsToAdd, animated: true)
         }
+    }
+}
+
+// MARK: - Default indicator color
+private extension UIColor {
+    /// The default indicator color over `background`: its inverse, made opaque, when the background is mostly opaque.
+    /// Otherwise `nil`, and the caller falls back (ultimately to `.label`, which follows the appearance).
+    // shortcut: below 0.5 alpha what shows through depends on the content behind the view, which it can't see, so the
+    // caller falls back to .label; an exact answer would composite the background over the content behind it.
+    static func indicatorColor(over background: UIColor?) -> UIColor? {
+        guard let background, background.cgColor.alpha >= 0.5 else { return nil }
+        return background.inverted.withAlphaComponent(1)
     }
 }
 

@@ -118,4 +118,87 @@ final class ActivityIndicatorableTests: XCTestCase {
 
         XCTAssertTrue(hiddenSubview.isHidden)
     }
+
+    /// The defect: hiding the subviews for the spinner zeroed their alpha, and stopping set it to 1.
+    func test_view_roundTrip_keepsSubviewAlpha() {
+        let view = IndicatorView()
+        let translucentSubview = UIView()
+        translucentSubview.alpha = 0.5
+        view.addSubview(translucentSubview)
+
+        view.startActivityIndicator()
+        view.stopActivityIndicator()
+
+        XCTAssertFalse(translucentSubview.isHidden)
+        XCTAssertEqual(translucentSubview.alpha, 0.5)
+    }
+
+    // MARK: - Default color
+
+    private let light = UITraitCollection(userInterfaceStyle: .light)
+    private let dark = UITraitCollection(userInterfaceStyle: .dark)
+
+    private func spinnerColor(in view: UIView) throws -> UIColor {
+        let spinner = try XCTUnwrap(view.subviews.compactMap { $0 as? UIActivityIndicatorView }.first)
+        return try XCTUnwrap(spinner.color)
+    }
+
+    /// Compares resolved colors by components, so the same color in two color spaces still matches.
+    private func assertColor(_ color: UIColor, equals expected: UIColor, in traits: UITraitCollection, line: UInt = #line) {
+        func rgba(_ color: UIColor) -> [CGFloat] {
+            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+            color.resolvedColor(with: traits).getRed(&r, green: &g, blue: &b, alpha: &a)
+            return [r, g, b, a]
+        }
+        zip(rgba(color), rgba(expected)).forEach { XCTAssertEqual($0, $1, accuracy: 0.001, line: line) }
+    }
+
+    /// The defect: the inverted background kept the background's alpha, so a clear background gave an invisible spinner.
+    func test_view_defaultColor_onClearBackground_isOpaqueLabel() throws {
+        let view = IndicatorView()
+        view.backgroundColor = .clear
+
+        view.startActivityIndicator()
+
+        let color = try spinnerColor(in: view)
+        assertColor(color, equals: .label, in: light)
+        assertColor(color, equals: .label, in: dark)
+    }
+
+    func test_view_defaultColor_onOpaqueWhite_isOpaqueBlack() throws {
+        let view = IndicatorView()
+        view.backgroundColor = .white
+
+        view.startActivityIndicator()
+
+        assertColor(try spinnerColor(in: view), equals: .black, in: light)
+    }
+
+    func test_view_defaultColor_onMostlyTransparentBackground_isOpaqueLabel() throws {
+        let view = IndicatorView()
+        view.backgroundColor = .black.withAlphaComponent(0.3)
+
+        view.startActivityIndicator()
+
+        assertColor(try spinnerColor(in: view), equals: .label, in: light)
+    }
+
+    /// The defect: with no background the fallback was black, invisible in dark mode.
+    func test_view_defaultColor_withoutBackground_followsTheAppearance() throws {
+        let view = IndicatorView()
+
+        view.startActivityIndicator()
+
+        assertColor(try spinnerColor(in: view), equals: .label, in: dark)
+    }
+
+    func test_textField_defaultColor_usesTextColor() throws {
+        let textField = IndicatorTextField()
+        textField.textColor = .red
+
+        textField.startActivityIndicator()
+
+        let spinner = try XCTUnwrap(textField.rightView as? UIActivityIndicatorView)
+        XCTAssertEqual(spinner.color, .red)
+    }
 }

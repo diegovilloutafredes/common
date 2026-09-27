@@ -6,18 +6,23 @@ import UIKit
 
 // MARK: - Hide
 extension UIView {
-    
+
     /// Hides the view with optional animation.
+    ///
+    /// The last `hide`/`show` call wins: a `show` made while this hide is still animating cancels its effect. The
+    /// completion always runs exactly once, right away when the view is already hidden or hiding.
     /// - Parameters:
     ///   - animated: Whether to animate. Defaults to `true`.
     ///   - duration: The animation duration.
     ///   - completion: Completion handler.
     public func hide(animated: Bool = true, with duration: TimeInterval = .DefaultValues.animationDuration, completion: CompletionHandler = nil) {
-        guard isNotHidden else { return }
+        guard !isHiddenOrHiding else { completion?(); return }
+        let generation = beginVisibilityTransition(toHidden: true)
 
         guard animated else {
             alpha(.zero)
-            isHidden(!animated)
+            isHidden(true)
+            _ = settleVisibilityTransition(generation)
             completion?()
             return
         }
@@ -29,7 +34,7 @@ extension UIView {
                 options: .curveEaseOut,
                 animations: { self.alpha(.zero) }
             ) { _ in
-                self.isHidden(animated)
+                if self.settleVisibilityTransition(generation) { self.isHidden(true) }
                 completion?()
             }
         }
