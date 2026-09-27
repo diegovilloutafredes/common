@@ -24,6 +24,23 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
     private var shouldAddIconImageView: Bool { viewModel.icon.isNotNil }
     private var shouldAddCancelButton: Bool { viewModel.onCancel.isNotNil }
 
+    /// The attributed message with the default font, the message color and the alignment filled into the ranges that
+    /// set none. Setting them on the label instead would restyle the whole string, wiping the message's own styling.
+    private var message: NSAttributedString {
+        let message = NSMutableAttributedString(attributedString: viewModel.attributedMessage)
+        let defaults: [(NSAttributedString.Key, Any)] = [
+            (.font, UIFont.systemFont(ofSize: 16)),
+            (.foregroundColor, viewModel.messageColor),
+            (.paragraphStyle, NSMutableParagraphStyle().with { $0.alignment = viewModel.messageAlignment })
+        ]
+        defaults.forEach { key, value in
+            message.enumerateAttribute(key, in: NSRange(location: .zero, length: message.length)) { existing, range, _ in
+                if existing == nil { message.addAttribute(key, value: value, range: range) }
+            }
+        }
+        return message
+    }
+
     @UIViewBuilder
     public override var mainView: UIView {
         VStack(
@@ -41,11 +58,8 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
 
             UILabel()
                 .adjustsFontSizeToFitWidth(true)
-                .attributedText(viewModel.attributedMessage)
-                .font(.systemFont(ofSize: 16))
                 .numberOfLines(.zero)
-                .textAlignment(viewModel.messageAlignment)
-                .textColor(viewModel.messageColor)
+                .attributedText(message)
 
             shouldAddCancelButton ?
             HStack(

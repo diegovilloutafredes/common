@@ -61,6 +61,36 @@ final class AlertPresentationTests: XCTestCase {
         XCTAssertNil(weakSentinel, "the view model's handlers must be released with the view")
     }
 
+    // MARK: - A custom alert keeps its message's styling
+
+    private func messageLabel(in view: UIView, text: String) throws -> UILabel {
+        func labels(in view: UIView) -> [UILabel] { view.subviews.flatMap { ($0 as? UILabel).map { [$0] } ?? labels(in: $0) } }
+        return try XCTUnwrap(labels(in: view).first { $0.attributedText?.string == text }, "the message label")
+    }
+
+    /// The defect: the label's font, color and alignment were set after the attributed message, wiping its styling.
+    func test_alertView_keepsTheMessagesOwnStyling_andFillsTheRest() throws {
+        let bold = UIFont.boldSystemFont(ofSize: 20)
+        let message = NSMutableAttributedString(string: "Bold", attributes: [.font: bold, .foregroundColor: UIColor.red])
+        message.append(NSAttributedString(string: " plain"))
+        let view = AlertView(viewModel: AlertViewModelPayload(title: "Title", attributedMessage: message, onActionButtonPressedHandler: nil))
+
+        let rendered = try XCTUnwrap(try messageLabel(in: view, text: "Bold plain").attributedText)
+        XCTAssertEqual(rendered.attribute(.font, at: 0, effectiveRange: nil) as? UIFont, bold)
+        XCTAssertEqual(rendered.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor, .red)
+        XCTAssertEqual(rendered.attribute(.font, at: 5, effectiveRange: nil) as? UIFont, .systemFont(ofSize: 16))
+        XCTAssertEqual(rendered.attribute(.foregroundColor, at: 5, effectiveRange: nil) as? UIColor, .black)
+    }
+
+    func test_alertView_plainMessage_usesTheDefaults() throws {
+        let view = AlertView(viewModel: AlertViewModelPayload(title: "Title", attributedMessage: .init(string: "Plain"), onActionButtonPressedHandler: nil))
+
+        let rendered = try XCTUnwrap(try messageLabel(in: view, text: "Plain").attributedText)
+        XCTAssertEqual(rendered.attribute(.font, at: 0, effectiveRange: nil) as? UIFont, .systemFont(ofSize: 16))
+        XCTAssertEqual(rendered.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor, .black)
+        XCTAssertEqual((rendered.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle)?.alignment, .center)
+    }
+
     private func payload(onAction: CompletionHandler, onCancel: CompletionHandler) -> AlertViewModelPayload {
         AlertViewModelPayload(title: "Title", attributedMessage: .init(string: "Message"),
                               onActionButtonPressedHandler: onAction, onCancelButtonPressedHandler: onCancel)
