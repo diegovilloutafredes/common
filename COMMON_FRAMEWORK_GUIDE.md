@@ -935,6 +935,8 @@ showNavigationBar(animated: false)
 titleView(UIImageView(image: .logo).setRatio(80/24))
 ```
 
+`setNavigationBar(…)` styles only the screen that calls it: the style lives in that screen's `navigationItem` appearances, so it never leaks onto the other screens in the stack. Call it on each screen that needs the style (it works in `setupView()`, before the screen is pushed), or style the navigation controller's bar once for all of them. `hasShadow: true` adds the system's bar hairline; it is off by default. `isTranslucent` is the exception: UIKit has no per-screen translucency, so it sets the navigation controller's bar, for every screen in the stack.
+
 ### Lifecycle order
 
 Observed at runtime for a `BaseViewModelableViewController` pushed in a navigation controller. In every step that has hooks, the view controller's closure (`onViewWillAppear { }` and the rest) runs first, inside `super`, and then the ViewModel's `ViewLifecycleable` method.
