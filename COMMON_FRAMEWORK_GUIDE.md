@@ -1023,7 +1023,7 @@ Data flows one way. Nothing on the ViewModel points back at its controller or it
 | ViewModel → Controller, state | `@Observable` properties, read in `updateContent()`; the framework re-runs it on change (§5 *Observation-driven updates*) |
 | ViewModel → Controller, one-shot effects | A `ViewEvent` slot — still observed state, consumed once by the controller's `ViewEventCursor` (§5) |
 | ViewModel → Coordinator | Two constructor-injected closures: `onRequested` (navigation to answer) and `onPerformed` (results to react to) |
-| Coordinator → ViewModel | Constructor arguments, or writes into it as a data source: the wireframe then returns `(viewController:, viewModel:)` and the coordinator keeps the ViewModel `weak` (the DemoApp's CoordinatorDemo module). A request that needs a single answer can carry a `reply` closure the coordinator calls once instead |
+| Coordinator → ViewModel | Constructor arguments, or writes into it as a data source: the wireframe then returns `(viewController:, viewModel:)` and the coordinator keeps the ViewModel `weak` (the DemoApp's CoordinatorDemo module). A request that needs an answer carries a `reply` closure instead, as its last associated value, which the coordinator calls at most once (*Requests that need an answer*, below) |
 
 No `weak var view`, no `weak var delegate`. Measurements the ViewModel used to read through a view protocol (a list's width) are handed in by the framework instead (`availableSize`, §5).
 
@@ -1110,6 +1110,28 @@ final class ProfileViewController: BaseViewModelableViewController<ProfileViewMo
 | `Event` | as often as it happens | controller, presenting over the current screen | alert, snackbar, toast, action sheet, "submitted" |
 
 The line between `Event` and `Requested`: a modal effect **over this screen** is an event the controller presents; anything that **starts a module or flow** is a request the coordinator answers. The same pair exists one level up — `BaseCoordinator` takes `onPerformed` and fires it from `finish()` — so module → coordinator and child → parent read alike.
+
+**Requests that need an answer.** When the answer comes back from what the coordinator opens (a date picker, a contact chooser), the `Requested` case carries a closure named `reply` as its last associated value. The ViewModel captures itself weakly in it, and the coordinator calls it from the opened module's output:
+
+```swift
+// ViewModel
+enum Requested { case pickDate(initial: Date, reply: Handler<Date>) }
+
+func chooseDate() {
+    onRequested(.pickDate(initial: date, reply: { [weak self] in self?.date = $0 }))
+}
+
+// Coordinator, answering the request
+case .pickDate(let initial, let reply):
+    push(DatePickerWireframe.createModule(initial: initial) { [weak self] result in
+        self?.pop()
+        if case .picked(let date) = result { reply(date) }   // .cancelled: no reply
+    })
+```
+
+- The coordinator calls `reply` at most once, when the answer exists, and never for an abandoned flow (the user went back or cancelled).
+- The ViewModel never waits on it: it keeps working, and applies the answer if and when `reply` runs.
+- A request that needs no answer carries no `reply`. The convention is plain Swift; there is no framework API for it.
 
 ### Screens without a ViewModel
 

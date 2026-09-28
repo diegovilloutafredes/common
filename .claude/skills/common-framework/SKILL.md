@@ -42,6 +42,7 @@ Communication directions (strict, one way):
 - ViewModel → VC, state: `@Observable` properties on the VM; the VC reads them in `updateContent()` and the framework re-runs it on change (guide §5 *Observation-driven updates*). `@Observable` needs **iOS 17 or later**; the contract has no iOS 16 fallback
 - ViewModel → VC, one-shot effects (snackbar, alert, "submitted"): a `ViewEvent<Event>?` slot on the VM, consumed once by the VC's `ViewEventCursor` inside `updateContent()` — still observed state, no view protocol
 - ViewModel → Coordinator: `onRequested` (navigation to answer, fires many times) and `onPerformed` (results, once per unit of work) — constructor-injected closures over enums nested in the VM; declare only the channels the module has
+- Coordinator → ViewModel, an answer: a request that needs one carries a `reply` closure as its last associated value; the coordinator calls it at most once and never for an abandoned flow, and the VM never waits on it (convention 2 under *Interim Conventions*)
 - Coordinator navigates: `push`, `pop`, `set`, `present` — VCs never navigate directly; the VC reaches the closures only through VM intents (`viewModel.goBack()`)
 - Measurements (list width) are handed in by the framework (`availableSize`), never read from a view
 - Events vs requests: a modal effect **over this screen** (alert, snackbar, toast) is a `ViewEvent` the VC presents; anything that **starts a module or flow** (push, sheet built by a wireframe, child coordinator) is `onRequested`
@@ -533,8 +534,10 @@ extension FooViewController {
     }
 }
 
-// 2. A request that needs an answer carries a `reply` closure as its last associated value;
-//    the coordinator calls it once, e.g. `case .pickDate(let initial, let reply):` … `reply(picked)`.
+// 2. A request that needs an answer carries a `reply` closure as its last associated value. The view model
+//    captures itself weakly in it and never waits on it. The coordinator calls it from the opened module's output,
+//    at most once, when the answer exists, and never for an abandoned flow:
+//    `case .pickDate(let initial, let reply):` … `reply(picked)`. A request that needs no answer carries none.
 @Observable @MainActor
 final class BookingViewModel {
     enum Requested { case pickDate(initial: Date, reply: Handler<Date>) }
