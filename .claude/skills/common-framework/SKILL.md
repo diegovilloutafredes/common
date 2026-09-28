@@ -3,7 +3,7 @@ name: common-framework
 description: Use when building, reviewing, refactoring, or debugging Swift code that imports the Common iOS framework (UIKit, MVVM-C) — BaseViewModelableViewController, BaseCoordinator, wireframes, VStack/HStack with @UIViewBuilder, VList + CollectionViewable, ViewEvent/onRequested, Endpoint/AsyncBaseClient, KeyValueStore, FieldsValidator. Not for UIKit apps that don't link Common.
 ---
 
-<!-- synced-with: COMMON_FRAMEWORK_GUIDE.md @ b85cc04 (2026-09-27).
+<!-- synced-with: COMMON_FRAMEWORK_GUIDE.md @ da76281 (2026-09-28).
      If the guide changed since that commit, re-diff this skill against it. -->
 
 # Common Framework — Quick Reference
