@@ -109,4 +109,91 @@ final class KeychainRoundTripTests: XCTestCase {
         let afterRemove: Token? = store.get(using: key("token"))
         XCTAssertNil(afterRemove)
     }
+
+    // MARK: - Accessibility (strict)
+
+    private let firstToken = Token(value: "first", issuedAt: Date(timeIntervalSince1970: 1))
+    private let secondToken = Token(value: "second", issuedAt: Date(timeIntervalSince1970: 2))
+
+    func test_secureStoreWithAccessibility_storesIt_andSecureStoresWhenUnlocked() {
+        KeyValueStore(type: .secure(accessibility: .afterFirstUnlock)).add(item: (key("background"), firstToken))
+        KeyValueStore(type: .secure).add(item: (key("foreground"), secondToken))
+
+        XCTAssertEqual(keychain.accessibilityOfKey(key("background")), .afterFirstUnlock)
+        XCTAssertEqual(keychain.accessibilityOfKey(key("foreground")), .whenUnlocked)
+    }
+
+    func test_bothSecureStores_readEitherItem() {
+        let background = KeyValueStore(type: .secure(accessibility: .afterFirstUnlock))
+        let foreground = KeyValueStore(type: .secure)
+        background.add(item: (key("background"), firstToken))
+        foreground.add(item: (key("foreground"), secondToken))
+
+        let backgroundThroughForeground: Token? = foreground.get(using: key("background"))
+        let foregroundThroughBackground: Token? = background.get(using: key("foreground"))
+
+        XCTAssertEqual(backgroundThroughForeground, firstToken)
+        XCTAssertEqual(foregroundThroughBackground, secondToken)
+    }
+
+    func test_secureKey_reSavedWithAdd_throughAnAfterFirstUnlockStore_migrates() {
+        KeyValueStore(type: .secure).add(item: (key("upgrade"), firstToken))
+
+        KeyValueStore(type: .secure(accessibility: .afterFirstUnlock)).add(item: (key("upgrade"), secondToken))
+
+        let read: Token? = KeyValueStore(type: .secure).get(using: key("upgrade"))
+        XCTAssertEqual(read, secondToken)
+        XCTAssertEqual(keychain.accessibilityOfKey(key("upgrade")), .afterFirstUnlock)
+    }
+
+    func test_secureKey_reSavedWithTryAdd_throughAnAfterFirstUnlockStore_succeedsAndMigrates() {
+        KeyValueStore(type: .secure).add(item: (key("upgrade"), firstToken))
+
+        let result = KeyValueStore(type: .secure(accessibility: .afterFirstUnlock)).tryAdd(item: (key("upgrade"), secondToken))
+
+        XCTAssertNoThrow(try result.get())
+        let read: Token? = KeyValueStore(type: .secure).get(using: key("upgrade"))
+        XCTAssertEqual(read, secondToken)
+        XCTAssertEqual(keychain.accessibilityOfKey(key("upgrade")), .afterFirstUnlock)
+    }
+
+    func test_setWithAccessibility_acrossAccessibilities_returnsTrueAndMigrates() {
+        XCTAssertTrue(keychain.set("first", forKey: key("migrate"), withAccessibility: .whenUnlocked))
+
+        XCTAssertTrue(keychain.set("second", forKey: key("migrate"), withAccessibility: .afterFirstUnlock))
+
+        XCTAssertEqual(keychain.string(forKey: key("migrate")), "second")
+        XCTAssertEqual(keychain.accessibilityOfKey(key("migrate")), .afterFirstUnlock)
+    }
+
+    func test_setWithoutAccessibility_keepsTheExistingAccessibility() {
+        keychain.set("first", forKey: key("keep"), withAccessibility: .afterFirstUnlock)
+
+        XCTAssertTrue(keychain.set("second", forKey: key("keep")))
+
+        XCTAssertEqual(keychain.string(forKey: key("keep")), "second")
+        XCTAssertEqual(keychain.accessibilityOfKey(key("keep")), .afterFirstUnlock, "a save without an accessibility re-classes nothing")
+    }
+
+    func test_afterFirstUnlockItem_reSavedWithSecureStoreTryAdd_succeedsAndStoresWhenUnlocked() throws {
+        keychain.set(try XCTUnwrap(firstToken.asData()), forKey: key("legacy"), withAccessibility: .afterFirstUnlock)
+        let store = KeyValueStore(type: .secure)
+
+        XCTAssertNoThrow(try store.tryAdd(item: (key("legacy"), secondToken)).get())
+
+        let read: Token? = store.get(using: key("legacy"))
+        XCTAssertEqual(read, secondToken)
+        XCTAssertEqual(keychain.accessibilityOfKey(key("legacy")), .whenUnlocked)
+    }
+
+    func test_afterFirstUnlockItem_reSavedWithSecureStoreAdd_storesWhenUnlocked() throws {
+        keychain.set(try XCTUnwrap(firstToken.asData()), forKey: key("legacy"), withAccessibility: .afterFirstUnlock)
+        let store = KeyValueStore(type: .secure)
+
+        store.add(item: (key("legacy"), secondToken))
+
+        let read: Token? = store.get(using: key("legacy"))
+        XCTAssertEqual(read, secondToken)
+        XCTAssertEqual(keychain.accessibilityOfKey(key("legacy")), .whenUnlocked)
+    }
 }

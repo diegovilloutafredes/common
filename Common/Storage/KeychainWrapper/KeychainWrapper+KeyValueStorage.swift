@@ -7,11 +7,12 @@ import Foundation
 /// Makes KeychainWrapper conform to the KeyValueStorage protocol.
 extension KeychainWrapper: KeyValueStorage {
     
-    /// Adds an item to the keychain.
+    /// Adds an item to the keychain, with this wrapper's default accessibility. Saving a key that already exists moves
+    /// the item to that accessibility.
     /// - Parameter item: A tuple containing the key and the storable value.
     public func add(item: (key: String, value: Storable)) {
         guard let data = item.value.asData() else { return }
-        set(data, forKey: item.key)
+        set(data, forKey: item.key, withAccessibility: defaultAccessibility)
     }
 
     /// Adds a key-storable item to the keychain.
@@ -39,7 +40,7 @@ extension KeychainWrapper: KeyValueStorage {
         guard let data = item.value.asData() else {
             return .failure(.encodingFailed(CocoaError(.coderInvalidValue)))
         }
-        let status = addOrUpdateStatus(data, forKey: item.key)
+        let status = addOrUpdateStatus(data, forKey: item.key, accessibility: defaultAccessibility)
         return status == errSecSuccess ? .success(()) : .failure(.keychainError(status))
     }
 

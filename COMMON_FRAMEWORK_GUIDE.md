@@ -2214,9 +2214,12 @@ extension UploadParameters {
 |------|---------|---------|
 | `.notSecure(.userDefaults)` | `UserDefaults` | Preferences, non-sensitive settings |
 | `.notSecure(.files)` | Documents directory | Larger non-sensitive data |
-| `.secure` | Keychain | Tokens, credentials, sensitive data |
+| `.secure` | Keychain, when-unlocked | Tokens, credentials, sensitive data |
+| `.secure(accessibility:)` | Keychain, with the given accessibility | The same, when something reads it while the device is locked: `.secure(accessibility: .afterFirstUnlock)` for a background refresh |
 
 All stored values must conform to `Storable` (which is `Codable`).
+
+Both secure types reach the same items. Reads don't depend on accessibility, and saving a key that already exists moves it to the saving store's accessibility. So to move existing items to after-first-unlock, re-save them through a `.secure(accessibility: .afterFirstUnlock)` store; there is no separate migration step, and nothing needs removing first. Saving the key through a plain `.secure` store later moves it back to when-unlocked.
 
 ### `SingleRawValueKeyValueObjectStorage`
 
@@ -2285,9 +2288,12 @@ For raw Keychain access without the `KeyValueStore` facade:
 
 ```swift
 KeychainWrapper.standard.set("token-value", forKey: "authToken")
+KeychainWrapper.standard.set("token-value", forKey: "authToken", withAccessibility: .afterFirstUnlock)  // moves the item
 let token = KeychainWrapper.standard.string(forKey: "authToken")
 KeychainWrapper.standard.removeObject(forKey: "authToken")
 ```
+
+`set(_:forKey:)` without an accessibility keeps an existing item's; with one, it moves the item to it.
 
 - **Important:** individual operations are atomic (Security framework), but
   `KeychainWrapper` adds no synchronization of its own — a get-then-set

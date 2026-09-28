@@ -22,8 +22,20 @@ public struct KeyValueStore {
 
         /// Non-secure storage.
         case notSecure(NotSecureType)
-        /// Secure storage (Keychain).
+        /// Secure storage (Keychain). Items are stored when-unlocked: readable only while the device is unlocked.
         case secure
+        /// Secure storage (Keychain) whose items are stored with the given accessibility. Write it as
+        /// `.secure(accessibility:)`; the case exists because an enum case can't share the name of `secure`.
+        case keychain(accessibility: KeychainItemAccessibility)
+
+        /// Secure storage (Keychain) whose items are stored with `accessibility`, for example `.afterFirstUnlock` for
+        /// items a background task reads while the device is locked.
+        ///
+        /// It reaches the same items as `.secure`: reads don't depend on accessibility, and saving a key that already
+        /// exists moves it to this store's accessibility.
+        public static func secure(accessibility: KeychainItemAccessibility) -> StoreType {
+            .keychain(accessibility: accessibility)
+        }
 
         /// Returns the underlying `KeyValueStorage` implementation for the type.
         public var storage: KeyValueStorage {
@@ -34,6 +46,7 @@ public struct KeyValueStore {
                 case .files: FileStorage.shared
                 }
             case .secure: KeychainWrapper.standard
+            case .keychain(let accessibility): KeychainWrapper(defaultAccessibility: accessibility)
             }
         }
     }

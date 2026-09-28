@@ -31,6 +31,9 @@ final public class KeychainWrapper {
     /// AccessGroup is used for the kSecAttrAccessGroup property to identify which Keychain Access Group this entry belongs to. This allows you to use the KeychainWrapper with shared keychain access between different applications.
     private(set) var accessGroup: String?
 
+    /// The accessibility the key-value store paths (`add`, `tryAdd`) save with.
+    let defaultAccessibility: KeychainItemAccessibility
+
     private static let defaultServiceName: String = {
         Bundle.main.bundleIdentifier ?? "KeychainWrapper"
     }()
@@ -38,14 +41,21 @@ final public class KeychainWrapper {
     private convenience init() {
         self.init(serviceName: KeychainWrapper.defaultServiceName)
     }
-    
+
+    /// A wrapper over the standard service whose key-value store paths save with `defaultAccessibility`.
+    convenience init(defaultAccessibility: KeychainItemAccessibility) {
+        self.init(serviceName: KeychainWrapper.defaultServiceName, defaultAccessibility: defaultAccessibility)
+    }
+
     /// Create a custom instance of KeychainWrapper with a custom Service Name and optional custom access group.
     ///
     /// - parameter serviceName: The ServiceName for this instance. Used to uniquely identify all keys stored using this keychain wrapper instance.
     /// - parameter accessGroup: Optional unique AccessGroup for this instance. Use a matching AccessGroup between applications to allow shared keychain access.
-     init(serviceName: String, accessGroup: String? = nil) {
+    /// - parameter defaultAccessibility: The accessibility the key-value store paths save with.
+     init(serviceName: String, accessGroup: String? = nil, defaultAccessibility: KeychainItemAccessibility = .whenUnlocked) {
         self.serviceName = serviceName
         self.accessGroup = accessGroup
+        self.defaultAccessibility = defaultAccessibility
     }
 
     // MARK: - Public Methods
@@ -257,7 +267,7 @@ final public class KeychainWrapper {
         return set(data, forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
     }
 
-    /// Save a Data object to the keychain associated with a specified key. If data already exists for the given key, the data will be overwritten with the new value.
+    /// Save a Data object to the keychain associated with a specified key. If data already exists for the given key, the data will be overwritten with the new value. When `withAccessibility` is given, the existing item also moves to that accessibility; without it, the item keeps its own.
     ///
     /// - parameter value: The Data object to save.
     /// - parameter forKey: The key to save the object under.
@@ -287,7 +297,7 @@ final public class KeychainWrapper {
         }
     }
 
-    /// Remove an object associated with a specified key. If re-using a key but with a different accessibility, first remove the previous key value using removeObjectForKey(:withAccessibility) using the same accessibilty it was saved with.
+    /// Remove an object associated with a specified key. Re-using a key with a different accessibility needs no removal first: saving it with that accessibility moves the item.
     ///
     /// - parameter forKey: The key value to remove data for.
     /// - parameter withAccessibility: Optional accessibility level to use when looking up the keychain item.
@@ -334,14 +344,17 @@ final public class KeychainWrapper {
 
     // MARK: - Internal helpers for StorageError-surfacing overrides
 
-    func addOrUpdateStatus(_ value: Data, forKey key: String) -> OSStatus {
+    func addOrUpdateStatus(_ value: Data, forKey key: String, accessibility: KeychainItemAccessibility) -> OSStatus {
         var dict = setupKeychainQueryDictionary(forKey: key)
         dict[secValueData] = value
-        dict[secAttrAccessible] = KeychainItemAccessibility.whenUnlocked.keychainAttrValue
+        dict[secAttrAccessible] = accessibility.keychainAttrValue
         let status = SecItemAdd(dict as CFDictionary, nil)
         if status == errSecDuplicateItem {
-            let updateDictionary = [secValueData: value]
-            return SecItemUpdate(dict as CFDictionary, updateDictionary as CFDictionary)
+            // Search by identity only, then write the value and the accessibility: accessibility isn't part of a
+            // generic password's identity, so exactly one item matches whatever accessibility it has.
+            let identity = setupKeychainQueryDictionary(forKey: key)
+            let updateDictionary: [String: Any] = [secValueData: value, secAttrAccessible: accessibility.keychainAttrValue]
+            return SecItemUpdate(identity as CFDictionary, updateDictionary as CFDictionary)
         }
         return status
     }
@@ -373,12 +386,14 @@ final public class KeychainWrapper {
     
     /// Update existing data associated with a specified key name. The existing data will be overwritten by the new data.
     private func update(_ value: Data, forKey key: String, withAccessibility accessibility: KeychainItemAccessibility? = nil, isSynchronizable: Bool = false) -> Bool {
-        var keychainQueryDictionary: [String: Any] = setupKeychainQueryDictionary(forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
-        let updateDictionary = [secValueData: value]
+        // Search by identity only: accessibility isn't part of a generic password's identity, so exactly one item
+        // matches whatever accessibility it has.
+        let keychainQueryDictionary: [String: Any] = setupKeychainQueryDictionary(forKey: key, isSynchronizable: isSynchronizable)
+        var updateDictionary: [String: Any] = [secValueData: value]
 
-        // on update, only set accessibility if passed in
+        // on update, only set accessibility if passed in: it moves the item; without it, the item keeps its own
         if let accessibility = accessibility {
-            keychainQueryDictionary[secAttrAccessible] = accessibility.keychainAttrValue
+            updateDictionary[secAttrAccessible] = accessibility.keychainAttrValue
         }
 
         // Update
