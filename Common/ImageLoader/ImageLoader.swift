@@ -14,7 +14,13 @@ public actor ImageLoader {
     /// The two-tier cache managed by this loader. Use `cache.clearAll()` to evict all entries.
     public let cache: ImageCache
     private var inFlightTasks: [URL: Task<UIImage, Error>] = [:]
-    private var preloadTasks: [URL: Task<Void, Never>] = [:]
+    private var preloads: [URL: Preload] = [:]
+
+    /// A tracked preload: the fetch it registered as the URL's in-flight task, and the task that cleans up after it.
+    private struct Preload {
+        let fetch: Task<UIImage, Error>
+        let cleanup: Task<Void, Never>
+    }
 
     private init() {
         self.session = URLSession(configuration: .ephemeral)
@@ -54,7 +60,8 @@ public actor ImageLoader {
             try await self.fetchAndStore(url: url)
         }
         inFlightTasks[url] = task
-        defer { inFlightTasks.removeValue(forKey: url) }
+        // Only while the entry is still this task: newer work may have replaced it.
+        defer { if inFlightTasks[url] == task { inFlightTasks.removeValue(forKey: url) } }
         let image = try await task.value
         // The fetch runs on an unstructured task, so the awaiting caller's
         // cancellation doesn't propagate into it — check before delivering.
@@ -71,20 +78,23 @@ public actor ImageLoader {
     // MARK: - Preloading
 
     /// Fetches and caches images for `urls` in the background at utility priority.
-    /// URLs already in-flight (preload or normal load) are skipped.
-    /// Errors are silently discarded — preloading is best-effort.
+    /// URLs already in-flight (preload or normal load) are skipped, and so are cached
+    /// ones: a memory hit costs nothing, and a disk hit is moved into memory without a
+    /// network request. Errors are silently discarded — preloading is best-effort.
     public func preload(urls: [URL]) {
         for url in urls {
-            guard preloadTasks[url] == nil, inFlightTasks[url] == nil else { continue }
-            let fetchTask = Task<UIImage, Error>(priority: .utility) {
-                try await self.fetchAndStore(url: url)
+            guard preloads[url] == nil, inFlightTasks[url] == nil, cache.memoryImage(for: url) == nil else { continue }
+            let fetch = Task<UIImage, Error>(priority: .utility) {
+                // diskData(for:) promotes a disk hit to memory.
+                if let data = await self.cache.diskData(for: url), let image = UIImage(data: data) { return image }
+                return try await self.fetchAndStore(url: url)
             }
-            inFlightTasks[url] = fetchTask
-            preloadTasks[url] = Task(priority: .utility) {
-                _ = try? await fetchTask.value
-                self.inFlightTasks.removeValue(forKey: url)
-                self.preloadTasks.removeValue(forKey: url)
+            inFlightTasks[url] = fetch
+            let cleanup = Task(priority: .utility) {
+                _ = try? await fetch.value
+                self.finishPreload(for: url, fetch: fetch)
             }
+            preloads[url] = Preload(fetch: fetch, cleanup: cleanup)
         }
     }
 
@@ -93,17 +103,30 @@ public actor ImageLoader {
     /// joined a preloaded URL receives a cancellation error (preloading is
     /// best-effort; so is cancelling it).
     public func cancelPreloads() {
-        for url in preloadTasks.keys {
-            preloadTasks[url]?.cancel()
-            // Cancel the underlying fetch too — cancelling only the wrapper
-            // would let the network request complete and store to cache. For a
-            // preload URL the in-flight task IS the preload-originated fetch
-            // (normal loads join it, they never replace it).
-            inFlightTasks[url]?.cancel()
-            inFlightTasks.removeValue(forKey: url)
+        for (url, preload) in preloads {
+            preload.cleanup.cancel()
+            // Cancel the underlying fetch too — cancelling only the cleanup task
+            // would let the network request complete and store to cache.
+            preload.fetch.cancel()
+            if inFlightTasks[url] == preload.fetch { inFlightTasks.removeValue(forKey: url) }
         }
-        preloadTasks.removeAll()
+        preloads.removeAll()
     }
+
+    /// Drops what a finished preload registered, unless newer work has replaced it: after
+    /// `cancelPreloads()` a normal load may already own the URL's in-flight entry.
+    private func finishPreload(for url: URL, fetch: Task<UIImage, Error>) {
+        if inFlightTasks[url] == fetch { inFlightTasks.removeValue(forKey: url) }
+        if preloads[url]?.fetch == fetch { preloads.removeValue(forKey: url) }
+    }
+
+    // MARK: - Test seams
+
+    /// The in-flight fetch registered for `url`, if any.
+    func inFlightTask(for url: URL) -> Task<UIImage, Error>? { inFlightTasks[url] }
+
+    /// The preload still tracked for `url`, if any. Awaiting it waits until its cleanup has run.
+    func preloadTask(for url: URL) -> Task<Void, Never>? { preloads[url]?.cleanup }
 
     // MARK: - Private
 

@@ -2615,7 +2615,7 @@ Cache hits (L1 or L2) always use `.none` — the transition is only applied when
 
 ### Preloading
 
-Warm the cache for images the user is about to see (e.g. the next page of a list). Preloads run at background priority and deduplicate against in-flight fetches, so a preloaded URL that a cell then requests joins the same task:
+Warm the cache for images the user is about to see (e.g. the next page of a list). Preloads run at background priority and deduplicate against in-flight fetches, so a preloaded URL that a cell then requests joins the same task. URLs already cached are skipped: a memory hit costs nothing, and a disk hit is moved into memory without a network request:
 
 ```swift
 // Warm the cache for upcoming cells

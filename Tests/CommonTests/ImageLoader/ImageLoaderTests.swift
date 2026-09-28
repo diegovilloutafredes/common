@@ -179,6 +179,62 @@ final class ImageLoaderTests: XCTestCase {
         XCTAssertNil(cache.memoryImage(for: url), "Cancelled preload must not populate cache")
     }
 
+    /// The defect: a cancelled preload's cleanup removed the URL's in-flight entry unconditionally. When a normal load
+    /// had registered for the same URL in between (a list calling `cancelPreloads()` and then loading the visible
+    /// images), its entry was dropped, so the next load for that URL started a duplicate request.
+    ///
+    /// Can't flake on the fixed code: with every response held, only the newer load's own completion could remove its
+    /// entry. On the old code it catches the eviction when the cancelled preload finishes after the newer load has
+    /// registered, which is the usual order.
+    func test_cancelledPreload_finishingLater_doesNotEvictANewerLoad() async throws {
+        let gate = DispatchSemaphore(value: 0)          // holds every response
+        ImageMockURLProtocol.releaseGate = gate
+        let (loader, _, url) = makeTestLoader(cleanupWith: self)
+
+        await loader.preload(urls: [url])
+        let trackedPreload = await loader.preloadTask(for: url)
+        let preload = try XCTUnwrap(trackedPreload)
+        let preloadStarted = await poll(timeout: 5) { ImageMockURLProtocol.requestCount == 1 }
+        XCTAssertTrue(preloadStarted, "precondition: the preload must be in flight")
+
+        await loader.cancelPreloads()
+        let newerLoad = Task { try await loader.image(for: url) }
+        let newerStarted = await poll(timeout: 5) { ImageMockURLProtocol.requestCount == 2 }
+        XCTAssertTrue(newerStarted, "precondition: the newer load must be in flight")
+        let newerTask = await loader.inFlightTask(for: url)
+        XCTAssertNotNil(newerTask, "the newer load's entry must survive the cancelled preload's cleanup")
+
+        await preload.value                             // the cancelled preload has finished, cleanup included
+
+        let entry = await loader.inFlightTask(for: url)
+        XCTAssertTrue(entry != nil && entry == newerTask, "the newer load's entry must survive, so later loads join it")
+
+        for _ in 0..<4 { gate.signal() }
+        _ = try? await newerLoad.value
+    }
+
+    /// The defect: preloading always went to the network, even for images already cached.
+    func test_preload_skipsAnImageInTheMemoryCache() async {
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
+        cache.storeInMemory(makeTestImage(), for: url)
+
+        await loader.preload(urls: [url])
+        await loader.preloadTask(for: url)?.value
+
+        XCTAssertEqual(ImageMockURLProtocol.requestCount, 0)
+    }
+
+    func test_preload_skipsAnImageOnDisk_andLeavesItInMemory() async {
+        let (loader, cache, url) = makeTestLoader(cleanupWith: self)
+        await cache.storeToDisk(makeTestPNGData(), for: url, extension: "png")
+
+        await loader.preload(urls: [url])
+        await loader.preloadTask(for: url)?.value
+
+        XCTAssertEqual(ImageMockURLProtocol.requestCount, 0)
+        XCTAssertNotNil(cache.memoryImage(for: url), "a preload that finds the image on disk must leave it in memory")
+    }
+
     // MARK: - Task cancellation
 
     func test_cancellation_doesNotDeliverImage() async throws {
