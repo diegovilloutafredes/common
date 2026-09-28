@@ -83,6 +83,22 @@ final class SetupAsKeyboardDismissableTests: XCTestCase {
         XCTAssertEqual(dismissal.delegate?.gestureRecognizer?(dismissal, shouldRecognizeSimultaneouslyWith: other), true)
     }
 
+    /// Controls and text inputs keep their taps, as UIKit gives them over any parent tap recognizer: a tap on another
+    /// field must move the focus, not end editing (a DemoApp UI test caught the version that ended it).
+    func test_tapsOnControlsAndTextInputs_doNotEndEditing() {
+        let root = UIView()
+        let field = UITextField(), button = UIButton(), textView = UITextView(), label = UILabel(), buttonLabel = UILabel()
+        [field, button, textView, label].forEach(root.addSubview)
+        button.addSubview(buttonLabel)
+
+        XCTAssertFalse(KeyboardDismissTapGestureRecognizer.endsEditing(forTapOn: field, in: root))
+        XCTAssertFalse(KeyboardDismissTapGestureRecognizer.endsEditing(forTapOn: button, in: root))
+        XCTAssertFalse(KeyboardDismissTapGestureRecognizer.endsEditing(forTapOn: buttonLabel, in: root), "inside a control")
+        XCTAssertFalse(KeyboardDismissTapGestureRecognizer.endsEditing(forTapOn: textView, in: root))
+        XCTAssertTrue(KeyboardDismissTapGestureRecognizer.endsEditing(forTapOn: label, in: root))
+        XCTAssertTrue(KeyboardDismissTapGestureRecognizer.endsEditing(forTapOn: root, in: root))
+    }
+
     /// Regression: the tap handler used to capture the VC strongly, creating a
     /// VC → view → handler → VC cycle that leaked every VC that opted in.
     func test_setupAsKeyboardDismissable_doesNotRetainViewController() {

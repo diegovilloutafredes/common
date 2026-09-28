@@ -974,7 +974,7 @@ private lazy var actionButton = UIButton(configuration: .filled()
 
 ```swift
 backgroundColor(.systemBackground)
-setupAsKeyboardDismissable()   // a tap ends editing; buttons, cells and the view's onTap still receive it
+setupAsKeyboardDismissable()   // a tap outside controls ends editing; cells, pickers and the view's onTap still receive it
 dismissKeyboard()
 animate { /* UIView animations */ }
 ```
