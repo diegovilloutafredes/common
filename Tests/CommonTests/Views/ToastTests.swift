@@ -60,6 +60,15 @@ final class ToastTests: XCTestCase {
         XCTAssertEqual(bottom.secondAttribute, .top)
     }
 
+    /// With no keyboard, the keyboard layout guide's top is the safe-area bottom, where the toast has always rested.
+    func test_restsAtTheHostViewsSafeAreaBottom() throws {
+        Toast.present(with: "resting")
+        let toast = try XCTUnwrap(Toast.current)
+        host.layoutIfNeeded()
+
+        XCTAssertEqual(toast.frame.maxY, host.bounds.height - host.safeAreaInsets.bottom, accuracy: 0.5)
+    }
+
     // MARK: - Completion contract
 
     func test_present_withoutHostView_deliversCompletionOnce() async {

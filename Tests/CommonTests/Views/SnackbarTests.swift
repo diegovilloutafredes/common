@@ -66,15 +66,38 @@ final class SnackbarTests: XCTestCase {
 
     // MARK: - Keyboard placement
 
-    /// The defect: the snackbar was pinned to the safe area, so it sat behind the keyboard while the user typed. The
-    /// guide's top is the safe-area bottom when no keyboard is shown, so the resting position doesn't change.
-    func test_bottomEdge_followsTheKeyboardLayoutGuide() throws {
+    /// The defect: the snackbar was pinned to the safe area, so it sat behind the keyboard while the user typed. It now
+    /// follows a keyboard layout guide, but not the window's own: UIKit never positions that one (its frame stays
+    /// zero), which put the snackbar above the top of the screen.
+    func test_bottomEdge_followsAMaintainedKeyboardLayoutGuide() throws {
         Snackbar.show(.init(message: "above the keyboard"))
         let snackbar = try XCTUnwrap(Snackbar.current)
 
         let bottom = try XCTUnwrap(window.constraints.first { $0.firstItem === snackbar && $0.firstAttribute == .bottom })
-        XCTAssertTrue(bottom.secondItem === window.keyboardLayoutGuide, "the bottom edge must follow the keyboard layout guide")
+        let guide = try XCTUnwrap(bottom.secondItem as? UIKeyboardLayoutGuide, "the bottom edge must follow a keyboard layout guide")
         XCTAssertEqual(bottom.secondAttribute, .top)
+        XCTAssertFalse(guide.owningView is UIWindow, "a window's own keyboard layout guide is never positioned")
+    }
+
+    /// Dismissal removes everything the snackbar added to the window, including the view whose keyboard guide it follows.
+    func test_dismissal_leavesTheWindowAsItFoundIt() throws {
+        let before = window.subviews.count
+        Snackbar.show(.init(message: "transient"))
+        XCTAssertGreaterThan(window.subviews.count, before)
+
+        try XCTUnwrap(Snackbar.current).dismiss()
+        pumpRunLoop()
+
+        XCTAssertEqual(window.subviews.count, before)
+    }
+
+    /// With no keyboard, the keyboard layout guide's top is the safe-area bottom, where the snackbar has always rested.
+    func test_restsAtTheHostWindowsSafeAreaBottom() throws {
+        Snackbar.show(.init(message: "resting"))
+        let snackbar = try XCTUnwrap(Snackbar.current)
+        window.layoutIfNeeded()
+
+        XCTAssertEqual(snackbar.frame.maxY, window.bounds.height - window.safeAreaInsets.bottom, accuracy: 0.5)
     }
 
     /// Dismissal completions are delivered on a later run-loop pass even with

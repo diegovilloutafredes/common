@@ -67,13 +67,21 @@ final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
     override func setupView() {
         super.setupView()
         guard let hostWindow else { return }
+        hostWindow.addSubview(keyboardTracker)
         // The keyboard guide's top is the safe-area bottom while no keyboard is shown.
-        setConstraints {
-            $0.snapLeadTrail(to: $1.safeAreaLayoutGuide)
-            $0.pinBottom(to: $1.keyboardLayoutGuide.topAnchor)
+        setConstraints { [keyboardTracker] snackbar, window in
+            snackbar.snapLeadTrail(to: window.safeAreaLayoutGuide)
+            snackbar.pinBottom(to: keyboardTracker.keyboardLayoutGuide.topAnchor)
         }
         hostWindow.addSubview(self)
     }
+
+    /// A transparent, non-interactive view covering the host window, whose keyboard layout guide places the snackbar.
+    /// UIKit doesn't maintain a window's own keyboard layout guide (its frame stays zero), only those of the views
+    /// inside the window. Removed together with the snackbar.
+    private lazy var keyboardTracker = UIView()
+        .isUserInteractionEnabled(false)
+        .setConstraints { $0.snap(to: $1) }
 
     private var timer: Timer?
 
@@ -134,6 +142,7 @@ extension SnackbarView {
             animations: { [weak self] in guard let self else { return }; transform(.init(translationX: .zero, y: translationDistance)) }
         ) { [weak self] _ in guard let self else { return }
             removeFromSuperview()
+            keyboardTracker.removeFromSuperview()
             viewModel.onDismiss?()
         }
     }
