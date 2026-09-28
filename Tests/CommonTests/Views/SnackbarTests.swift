@@ -91,6 +91,19 @@ final class SnackbarTests: XCTestCase {
         XCTAssertEqual(window.subviews.count, before)
     }
 
+    /// The same when the host window can no longer be resolved at dismissal time: the snackbar takes its no-animation
+    /// path, and must still take its keyboard tracker with it.
+    func test_dismissal_withoutHostWindow_leavesTheWindowAsItFoundIt() throws {
+        let before = window.subviews.count
+        Snackbar.show(.init(message: "orphaned"))
+        Snackbar.hostWindow = { nil }
+
+        try XCTUnwrap(Snackbar.current).dismiss()
+        pumpRunLoop()
+
+        XCTAssertEqual(window.subviews.count, before)
+    }
+
     /// With no keyboard, the keyboard layout guide's top is the safe-area bottom, where the snackbar has always rested.
     func test_restsAtTheHostWindowsSafeAreaBottom() throws {
         Snackbar.show(.init(message: "resting"))

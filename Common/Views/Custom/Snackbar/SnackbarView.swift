@@ -131,6 +131,7 @@ extension SnackbarView {
 
         guard hostWindow.isNotNil else {
             removeFromSuperview()
+            keyboardTracker.removeFromSuperview()
             viewModel.onDismiss?()
             return
         }
