@@ -35,8 +35,6 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
     }
     .backgroundColor(.secondarySystemGroupedBackground)
 
-    private var renderedRevision: Int = .zero
-
     @UIViewBuilder
     override var mainView: UIView {
         VStack(spacing: 0) {
@@ -71,13 +69,6 @@ final class ImageLoadingViewController: BaseCollectionViewableViewController<Ima
         )
         clearCacheButton.accessibilityIdentifier = "clearCacheButton"
         navigationItem.rightBarButtonItems = [clearCacheButton, preloadButton]
-    }
-
-    override func updateContent() {
-        super.updateContent()
-        guard renderedRevision != viewModel.revision else { return }
-        renderedRevision = viewModel.revision
-        list.reloadData()
     }
 
     @objc private func clearCacheTapped() {

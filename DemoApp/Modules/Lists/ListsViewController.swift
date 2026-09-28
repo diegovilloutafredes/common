@@ -14,9 +14,6 @@ final class ListsViewController: BaseCollectionViewableViewController<ListsViewM
         .register(ListSectionHeaderView.self, kind: .header)
         .register(ListSectionHeaderView.self, kind: .footer)
 
-    /// The revision last pushed into the collection view. `updateContent()` re-runs for any
-    /// tracked change (e.g. `isRefreshing`), so the reload is gated on the revision it read.
-    private var renderedRevision: Int = .zero
     /// Acts on each `viewModel.event` once, however many times the hook re-runs.
     private var eventCursor = ViewEventCursor()
 
@@ -33,12 +30,9 @@ final class ListsViewController: BaseCollectionViewableViewController<ListsViewM
             .onValueChanged { [weak self] in self?.viewModel.refresh() }
     }
 
+    /// `super` reloads the list when the view model's revision moves (`RevisionTrackable`).
     override func updateContent() {
         super.updateContent()
-        if renderedRevision != viewModel.revision {
-            renderedRevision = viewModel.revision
-            list.reloadData()
-        }
         if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true {
             list.refreshControl?.endRefreshing()
         }

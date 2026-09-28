@@ -119,7 +119,6 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
     }
     .setConstraints { $0.set(height: 44) }
 
-    private var renderedRevision: Int = .zero
     /// Acts on each `viewModel.event` once, however many times the hook re-runs.
     private var eventCursor = ViewEventCursor()
 
@@ -161,16 +160,13 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
         view.backgroundColor(.systemBackground)
     }
 
-    /// Every read below is tracked: `statusText`, `isLoading` and `revision` changes re-run
-    /// this method. The reload is gated on the revision so status-only changes never reload.
+    /// Every read below is tracked: `statusText` and `isLoading` changes re-run this method.
+    /// `super` reloads the list only when the view model's revision moves (`RevisionTrackable`),
+    /// so status-only changes never reload.
     override func updateContent() {
         super.updateContent()
         statusLabel.text(viewModel.statusText)
         setActivityIndicator(visible: viewModel.isLoading)   // idempotent: safe on every pass
-        if renderedRevision != viewModel.revision {
-            renderedRevision = viewModel.revision
-            list.reloadData()
-        }
         eventCursor.consume(viewModel.event) { event in
             switch event {
             case .failed(let message): Snackbar.show(.init(message: "Error: \(message)"))

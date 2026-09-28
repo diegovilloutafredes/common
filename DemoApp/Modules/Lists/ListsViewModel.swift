@@ -9,11 +9,8 @@ import UIKit
 
 // MARK: - ListsViewModelProtocol
 @MainActor
-protocol ListsViewModelProtocol: ViewModel, CollectionViewable {
+protocol ListsViewModelProtocol: ViewModel, CollectionViewable, RevisionTrackable {
     var title: String { get }
-    /// Bumped whenever the item collection changes; the controller reloads when it differs
-    /// from the revision it last rendered.
-    var revision: Int { get }
     var isRefreshing: Bool { get }
     /// Row taps; the controller consumes the slot with a `ViewEventCursor`.
     var event: ViewEvent<ListsViewModel.Event>? { get }

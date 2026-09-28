@@ -23,14 +23,24 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
     /// Cached once per `viewModel` assignment — delegate and sizing methods run
     /// several times per scroll frame, so the conformance cast must not be repeated there.
     private var asCollectionViewable: CollectionViewable?
+    /// Cached the same way: read on every update pass.
+    private var asRevisionTrackable: RevisionTrackable?
+    /// The collection views this controller is the data source of, recorded as they ask it for data.
+    private let servedCollectionViews = NSHashTable<UICollectionView>.weakObjects()
+    /// The revision the lists last rendered, `nil` until the first update pass records it.
+    private var renderedRevision: Int?
 
     open override var viewModel: ViewModelType {
-        didSet { asCollectionViewable = viewModel as? CollectionViewable }
+        didSet {
+            asCollectionViewable = viewModel as? CollectionViewable
+            asRevisionTrackable = viewModel as? RevisionTrackable
+        }
     }
 
     required public init(viewModel: ViewModelType) {
         super.init(viewModel: viewModel)
         asCollectionViewable = viewModel as? CollectionViewable
+        asRevisionTrackable = viewModel as? RevisionTrackable
     }
 
     @available(*, unavailable)
@@ -40,10 +50,22 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
 
     open func bottomInsetForLastCollectionSection() -> CGFloat { .zero }
 
+    /// Reloads every list this controller serves when a `RevisionTrackable` view model's `revision` moved since the
+    /// last pass. The first pass only records it, because the lists load their data then anyway. Subclasses that
+    /// override this hook call `super.updateContent()`.
+    open override func updateContent() {
+        super.updateContent()
+        guard let revision = asRevisionTrackable?.revision else { return }
+        defer { renderedRevision = revision }
+        guard let renderedRevision, renderedRevision != revision else { return }
+        servedCollectionViews.allObjects.forEach { $0.reloadData() }
+    }
+
     // MARK: - UICollectionViewDataSource
 
     open func numberOfSections(in collectionView: UICollectionView) -> Int {
-        asCollectionViewable?.getNumberOfSections() ?? 1
+        servedCollectionViews.add(collectionView)
+        return asCollectionViewable?.getNumberOfSections() ?? 1
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

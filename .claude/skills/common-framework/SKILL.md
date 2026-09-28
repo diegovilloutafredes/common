@@ -323,10 +323,9 @@ extension AuthStorage: SingleRawValueKeyValueObjectStorage {
 // The list screen's ViewModel MUST conform to CollectionViewable (item counts,
 // cell view models, sizes) — the base VC reaches it at runtime; a VM without it
 // compiles fine and renders an empty list.
+// RevisionTrackable: the base VC reloads the list whenever `revision` moves; write no compare in the VC.
 @MainActor
-protocol FooListViewModelProtocol: CollectionViewable, ViewModel, ViewLifecycleable {
-    var revision: Int { get }                    // bumps when items change; the VC reloads on it
-}
+protocol FooListViewModelProtocol: CollectionViewable, RevisionTrackable, ViewModel, ViewLifecycleable {}
 
 // BaseCollectionViewableViewController — NOT BaseViewModelableViewController — for screens with VList/HList
 final class FooListViewController: BaseCollectionViewableViewController<FooListViewModelProtocol> {
@@ -336,19 +335,14 @@ final class FooListViewController: BaseCollectionViewableViewController<FooListV
         .setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
 
     @UIViewBuilder override var mainView: UIView { list }
-
-    private var renderedRevision: Int = .zero
-    override func updateContent() {
-        super.updateContent()
-        if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
-    }
+    // An updateContent() override for other state calls super.updateContent() first: that's where the list reloads.
 }
 
 // FooListViewModel.swift — the cell contract the base VC calls at runtime.
 // CollectionViewable = CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable.
 @Observable @MainActor
 final class FooListViewModel {
-    private(set) var revision: Int = .zero                    // tracked: the VC reloads when this moves
+    private(set) var revision: Int = .zero                    // tracked: the base VC reloads the list when this moves
     @ObservationIgnored private var items: [FooCellViewModel] = [] { didSet { revision += 1 } }   // the array itself is NOT tracked
 }
 extension FooListViewModel: CollectionViewable {
@@ -456,7 +450,7 @@ init(viewModel:) → loadView() [mainView wrapped in a container view] → viewD
 - Lifecycle work goes through hooks, not UIKit overrides, and both sides use the same names. Logic (loading data, starting a session) goes in the ViewModel's `ViewLifecycleable` methods, listed below. View-only work (bar visibility) uses the closures every view controller has, `onViewWillAppear { vc in … }` and the rest, set in `setupView()` or by the coordinator on the instance it creates (`onViewDidLoad` has already fired by `setupView()`, so only the coordinator can set it).
 - Observable state: read it in `updateContent()` (view/cell/VC), the only render point; the framework re-runs the hook on change (`ObservationMode.current`: native on 26, manual on 17–18). Never pair it with `didSet` or `setNeedsLayout`.
 - Self-sizing rows: `VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }` (the trailing closure configures the flow layout), and `onSizeForItem` returns `(availableSize.width, estimatedHeight)`: the list's own width, never `screenWidth`, because wider items are dropped and the list renders empty. A cell binds its content synchronously when its `viewModel` is assigned, so UIKit's measurement sees it.
-- Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int` the controller compares before `reloadData()`; guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a VC covered by a push or full-screen modal consumes on return, but one under a sheet consumes underneath, where its own `present(_:animated:)` fails: consume with `consume(_:ifAble: presentedViewController == nil)` and call `setNeedsContentUpdate()` once the sheet is dismissed, or use `presentAlertView` or `Snackbar`); never write observed state inside the hook (lost in manual mode: move it to `onViewWillAppear()` or a `Task`); `setActivityIndicator(visible: isLoading)` for spinners.
+- Observable view model checklist: `import Observation`; `@Observable @MainActor final class` + `@MainActor` protocol + `@MainActor static func createModule`; `@ObservationIgnored` on closures, `lazy var`s and arrays; collections behind a tracked `revision: Int`, with the view model protocol adopting `RevisionTrackable` so the base collection VC reloads its lists when it moves (no compare in the VC); guard same-value writes in scroll/frame handlers; `super.updateContent()` first; one-shot effects (snackbar, error) are a `ViewEvent<Event>?` slot consumed by the VC's `ViewEventCursor` in the hook (last-writer-wins between passes; a VC covered by a push or full-screen modal consumes on return, but one under a sheet consumes underneath, where its own `present(_:animated:)` fails: consume with `consume(_:ifAble: presentedViewController == nil)` and call `setNeedsContentUpdate()` once the sheet is dismissed, or use `presentAlertView` or `Snackbar`); never write observed state inside the hook (lost in manual mode: move it to `onViewWillAppear()` or a `Task`); `setActivityIndicator(visible: isLoading)` for spinners.
 - `onUpdateProperties()` (ViewModel-side hook) is legacy: an escape hatch for code written before the contract — it needs a view to push into. New modules render in the VC's `updateContent()` only.
 - `ViewLifecycleable` (ViewModel side, all defaulted): `onViewDidLoad`, `onViewWillAppear`, `onViewIsAppearing`, `onViewDidAppear`, `onViewWillLayoutSubviews`, `onViewDidLayoutSubviews`, `onViewWillDisappear`, `onViewDidDisappear`, `onUpdateProperties` (legacy). Load data in `onViewWillAppear()` / `onViewIsAppearing()`; the base VC calls them.
 - Pull-to-refresh under the contract: `list.refreshControl = UIRefreshControl().onValueChanged { [weak self] in self?.viewModel.refresh() }`; the VM tracks `isRefreshing` and bumps `revision`; the VC mirrors `if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true { list.refreshControl?.endRefreshing() }` in `updateContent()`.

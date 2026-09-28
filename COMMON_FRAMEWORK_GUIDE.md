@@ -689,6 +689,19 @@ The base class accesses the ViewModel via `viewModel as? CollectionViewable` at 
 
 Override `bottomInsetForLastCollectionSection()` when the screen sits above a tab bar (default returns `.zero`).
 
+**Reloading when the items change.** Keep the items `@ObservationIgnored`, bump a tracked `revision` when they change, and adopt `RevisionTrackable` on the ViewModel protocol. The base controller then reloads every list it is the data source of whenever `revision` moves, from its own `updateContent()`: status-only changes don't reload, and neither does the first pass, when the lists load anyway. A subclass that overrides `updateContent()` calls `super.updateContent()` and writes no compare of its own.
+
+```swift
+@MainActor
+protocol ProductsViewModelProtocol: ViewModel, CollectionViewable, RevisionTrackable {}
+
+@Observable @MainActor
+final class ProductsViewModel: ProductsViewModelProtocol {
+    private(set) var revision: Int = .zero                                                // tracked
+    @ObservationIgnored private var products: [ProductCellViewModel] = [] { didSet { revision += 1 } }
+}
+```
+
 **The cell contract.** `CollectionViewable` is `CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`; the base VC forwards every `UICollectionView` callback to these hooks, so the ViewModel — not the VC — answers them. Three are required, one of the two sizing hooks must be implemented, and the rest have defaults:
 
 ```swift
@@ -868,7 +881,7 @@ Rules:
 - **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. To keep it pending until the sheet is gone, consume it with `eventCursor.consume(viewModel.event, ifAble: presentedViewController == nil) { … }`, and call `setNeedsContentUpdate()` once the sheet is dismissed, for example `dismiss(animated: true) { [weak self] in self?.setNeedsContentUpdate() }` (or from `presentationControllerDidDismiss(_:)` for a swipe-down): `presentedViewController` isn't observed, so its change alone schedules no pass. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) show even under a sheet. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
 - **`onUpdateProperties()` is an escape hatch.** The ViewModel-side hook runs in the same pass and tracks the same way, but it needs somewhere to push into — a view reference the module contract no longer has. Keep it for code written against earlier releases; new modules render in the controller's `updateContent()` only.
 - **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
-- **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and let the controller compare it with the revision it last rendered before calling `reloadData()`. This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view.
+- **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and adopt `RevisionTrackable` on the ViewModel protocol: `BaseCollectionViewableViewController` then reloads its lists whenever the revision moves (*`BaseCollectionViewableViewController`*, above). This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view. A controller that rebuilds a stack of rows instead of a list compares the revision it last rendered itself.
 - Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
 - A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
 - Self-sizing cells (`estimatedItemSize = .automaticSize`, `preferredLayoutAttributesFitting`) are measured before any update or layout pass. That is why `viewModel` assignment binds synchronously; if you bind from anywhere else before a measurement, call `updateContentIfNeeded()` first.
@@ -890,14 +903,12 @@ final class FooViewModel: FooViewModelProtocol {     // the protocol is @MainAct
     @ObservationIgnored private lazy var validator = …
 }
 
-final class FooViewController: BaseViewModelableViewController<FooViewModelProtocol> {
-    private var renderedRevision: Int = .zero
+final class FooViewController: BaseCollectionViewableViewController<FooViewModelProtocol> {   // protocol adopts RevisionTrackable
     private var eventCursor = ViewEventCursor()
     override func updateContent() {
-        super.updateContent()
+        super.updateContent()                                // reloads the list when `revision` moves
         statusLabel.text(viewModel.statusText)
         setActivityIndicator(visible: viewModel.isLoading)
-        if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
         eventCursor.consume(viewModel.event) { [weak self] in self?.handle($0) }
     }
 }
@@ -1696,7 +1707,9 @@ private lazy var list = HList(
 
 Cells subclass `BaseViewModelableCell<T>` and use `@UIViewBuilder` for layout. Always call `.register(CellType.self)` before use — and `.register(View.self, kind: .header)` / `.footer` for supplementary views (see §5, "Section headers and footers").
 
-**Pull-to-refresh** with `UIRefreshControl.onValueChanged`. The gesture calls an intent; the ViewModel tracks `isRefreshing` and bumps `revision` when the items change; the controller mirrors both in `updateContent()` (this is what the DemoApp's Lists module does):
+**Reloading.** The ViewModel bumps a tracked `revision` when its items change, and its protocol adopts `RevisionTrackable`; the controller's `super.updateContent()` then reloads the list (§5, *`BaseCollectionViewableViewController`*).
+
+**Pull-to-refresh** with `UIRefreshControl.onValueChanged`. The gesture calls an intent; the ViewModel tracks `isRefreshing` and bumps `revision` when the items change; the base controller reloads on the revision, and the controller ends refreshing in `updateContent()` (this is what the DemoApp's Lists module does):
 
 ```swift
 override func setupView() {
@@ -1706,8 +1719,7 @@ override func setupView() {
 }
 
 override func updateContent() {
-    super.updateContent()
-    if renderedRevision != viewModel.revision { renderedRevision = viewModel.revision; list.reloadData() }
+    super.updateContent()   // reloads the list when `revision` moved
     if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true { list.refreshControl?.endRefreshing() }
 }
 ```
@@ -2514,6 +2526,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 | `ContentReloadable` | Views that can reload their content (legacy: new modules re-render from observed state) |
 | `ViewLifecycleable` | View lifecycle event hooks |
 | `CollectionViewable` | The list contract a ViewModel answers (`CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`); sizes take `availableSize` |
+| `RevisionTrackable` | A list ViewModel's tracked `revision`; `BaseCollectionViewableViewController` reloads its lists when it moves (§5) |
 
 ### Module output types
 

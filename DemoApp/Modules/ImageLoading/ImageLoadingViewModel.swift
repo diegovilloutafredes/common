@@ -12,11 +12,8 @@ struct ImageDemoSection {
 // MARK: - ImageLoadingViewModelProtocol
 
 @MainActor
-protocol ImageLoadingViewModelProtocol: ViewModel, CollectionViewable {
+protocol ImageLoadingViewModelProtocol: ViewModel, CollectionViewable, RevisionTrackable {
     var title: String { get }
-    /// Bumped when the sections are rebuilt (after a cache clear); the controller reloads
-    /// when it differs from the revision it last rendered.
-    var revision: Int { get }
     func clearCache() async
     func preloadBatch()
 }

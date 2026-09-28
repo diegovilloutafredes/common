@@ -11,14 +11,11 @@ enum NetworkingMode { case callback, async }
 
 // MARK: - NetworkingViewModelProtocol
 @MainActor
-protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable {
+protocol NetworkingViewModelProtocol: ViewModel, CollectionViewable, RevisionTrackable {
     var title: String { get }
     var statusText: String { get }
     var mode: NetworkingMode { get }
     var isLoading: Bool { get }
-    /// Bumped whenever `posts` changes; the controller reloads its list when it differs
-    /// from the revision it last rendered.
-    var revision: Int { get }
     /// One-shot failures; the controller consumes the slot with a `ViewEventCursor`.
     var event: ViewEvent<NetworkingViewModel.Event>? { get }
     func loadPosts()
