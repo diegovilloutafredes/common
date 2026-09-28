@@ -37,6 +37,12 @@ public protocol Endpoint: URLRequestConvertible {
     
     /// The URL encoded form encoder to use for parameters.
     var urlEncodedFormEncoder: URLEncodedFormEncoder { get }
+
+    /// The timeout for this endpoint's requests, or `nil` (the default) for `HTTPService.defaultTimeoutInterval`.
+    ///
+    /// When set, the endpoint's `URLRequest` carries it, and `HTTPService` dispatches requests and uploads to this
+    /// endpoint with it, whatever `defaultTimeoutInterval` is.
+    var timeoutInterval: TimeInterval? { get }
 }
 
 // MARK: - Default Implementation
@@ -46,6 +52,7 @@ extension Endpoint {
     public var url: URL? { baseURL?.appendingPathComponent("\(basePath)\(version)\(path)") }
     public var jsonEncoder: JSONEncoder { .init().keyEncodingStrategy(.convertToSnakeCase) }
     public var urlEncodedFormEncoder: URLEncodedFormEncoder { .init(keyEncoding: .convertToSnakeCase) }
+    public var timeoutInterval: TimeInterval? { nil }
 }
 
 // MARK: - URLRequestConvertible
@@ -74,6 +81,9 @@ extension Endpoint {
 
         // MARK: - HTTPMethod
         urlRequest.httpMethod = method.rawValue
+
+        // MARK: - Timeout
+        if let timeoutInterval { urlRequest.timeoutInterval = timeoutInterval }
 
 
         // MARK: - Parameters Encoding

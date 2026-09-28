@@ -1952,7 +1952,17 @@ extension ProductRouter: Endpoint {
 > **Note:** earlier drafts of this guide referenced an `extension Router: ResolveTokensUseCase {}`. **No such protocol exists in Common** — token resolution is done inline in `headers` as shown above, reading from an app-defined storage type.
 
 URL construction: `baseURL + basePath + version + path`  
-Parameter encoding: POST/PUT/PATCH → JSON body (snake_case keys; `Content-Type: application/json` unless `headers` sets one), GET/HEAD/DELETE → query string (snake_case keys). Override `jsonEncoder` (a `JSONEncoder`) or `urlEncodedFormEncoder` (a `URLEncodedFormEncoder`) on the router to change that; `var jsonEncoder: JSONEncoder { JSONEncoder() }` keeps keys as written
+Parameter encoding: POST/PUT/PATCH → JSON body (snake_case keys; `Content-Type: application/json` unless `headers` sets one), GET/HEAD/DELETE → query string (snake_case keys). Override `jsonEncoder` (a `JSONEncoder`) or `urlEncodedFormEncoder` (a `URLEncodedFormEncoder`) on the router to change that; `var jsonEncoder: JSONEncoder { JSONEncoder() }` keeps keys as written  
+Timeout: `nil` by default, which dispatches with `HTTPService.defaultTimeoutInterval`. A route that needs its own declares it, and requests and uploads to it use it exactly, whatever the default is:
+
+```swift
+var timeoutInterval: TimeInterval? {
+    switch self {
+    case .create: 120      // a slow write
+    default:      nil      // HTTPService.defaultTimeoutInterval
+    }
+}
+```
 
 ### Client
 
@@ -1975,6 +1985,15 @@ extension ProductClient: ProductClientProtocol {
 ```
 
 `BaseClient.request(from:_:result:)` keys each in-flight request by its `from:` identifier (`#function` by default), per client instance: a new call cancels the earlier request with the same key, whose `result` handler then never fires. Duplicate taps therefore collapse only through a client you store; one created per call starts with an empty table and sends every request. The cancel-and-replace isn't atomic, so make the calls from one thread (the main actor, as UI code does).
+
+A call that needs its own `URLSession` or `JSONDecoder` passes them; both default to what the calls above use (`HTTPService.defaultSession` and the snake_case decoder), and the in-flight keying is the same:
+
+```swift
+request(from: #function, ProductRouter.list, urlSession: pinnedSession, decoder: JSONDecoder(), result: result)
+upload(from: #function, multipart: multipart, to: UploadRouter.upload, urlSession: pinnedSession, result: result)
+```
+
+These overloads send the request themselves: a conformer that implements `request(from:_:result:)` itself (to add a retry, say) isn't involved when they're called.
 
 ### Async client (`AsyncBaseClient`)
 
@@ -2017,6 +2036,8 @@ func userMessage(for error: Error) -> String {
 ```
 
 `AsyncBaseClient` uses the same `Endpoint` router definitions as `BaseClient` — the two are interchangeable at the routing layer, but not in deduplication: `AsyncBaseClient` has none (its `from:` parameter is accepted and unused), so a request is abandoned by cancelling the `Task` that awaits it. Use `AsyncBaseClient` for new code where structured concurrency is available; use `BaseClient` when integrating with callback-based coordinator flows.
+
+The async client takes a session and a decoder the same way: `try await request(ProductRouter.list, urlSession: pinnedSession, decoder: JSONDecoder())`, and `upload(multipart:to:urlSession:decoder:)` likewise.
 
 ### BaseResponse wrapper
 
@@ -2133,13 +2154,23 @@ extension NetworkError {
 }
 ```
 
+A success without a body (a 204, most DELETEs) is requested as `EmptyResponse`: any 2xx succeeds and its body, if any, is ignored. Requested as a model, an empty 2xx body fails with `.decodingError`, and an error status fails with `.responseError` whatever the type:
+
+```swift
+func deleteAccount() async throws {
+    let _: EmptyResponse = try await request(AccountRouter.delete)
+}
+```
+
 ### Test/override points
 
 ```swift
-// Both live on HTTPService and apply to every request made through it:
-HTTPService.defaultSession = mockSession       // inject a URLSession (tests)
-HTTPService.defaultTimeoutInterval = 30        // default is 60s
+// Both live on HTTPService:
+HTTPService.defaultSession = mockSession       // inject a URLSession (tests); one call can pass urlSession: instead
+HTTPService.defaultTimeoutInterval = 30        // default is 60 s, for requests that don't set their own
 ```
+
+An endpoint's `timeoutInterval` wins over the default (see *Router*). A raw `URLRequest` keeps its own `timeoutInterval`, unless it is still URLRequest's built-in 60 s, which counts as setting none: to make 60 s exact, declare it on an endpoint.
 
 ### File upload (multipart)
 
@@ -2163,6 +2194,8 @@ extension UploadParameters {
     }
 }
 ```
+
+`EmptyResponse` is Common's type for a success without a body (*Error handling*, above). To upload through another session, pass `urlSession:`, as in `HTTPService.upload(multipart:to:urlSession:result:)`. An upload to an endpoint uses the endpoint's timeout, as a request does.
 
 ### Do's and Don'ts
 

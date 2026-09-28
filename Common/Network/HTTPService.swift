@@ -41,7 +41,21 @@ public enum HTTPService {
         decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase),
         result: @escaping NetworkResultHandler<T>
     ) -> Task<Void, Never> {
-        deliver(to: result) { try await upload(multipart: multipart, to: resource, decoder: decoder) }
+        upload(multipart: multipart, to: resource, urlSession: HTTPService.defaultSession, decoder: decoder, result: result)
+    }
+
+    /// Uploads a multipart request through the given session and decodes the response to a specified type.
+    ///
+    /// Wraps the `async throws` overload in an unstructured `Task` for callback-based
+    /// callers, with the same cancellation contract as the overload without a session.
+    @discardableResult public static func upload<T: Decodable>(
+        multipart: MultipartRequest,
+        to resource: URLRequestConvertible,
+        urlSession: URLSession = HTTPService.defaultSession,
+        decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase),
+        result: @escaping NetworkResultHandler<T>
+    ) -> Task<Void, Never> {
+        deliver(to: result) { try await upload(multipart: multipart, to: resource, urlSession: urlSession, decoder: decoder) }
     }
 
     /// The callback bridge: runs `operation` in an unstructured `Task` and hands its outcome to `result` on the main
