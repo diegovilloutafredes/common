@@ -608,6 +608,22 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertFalse(parentPerformed, "the parent's screen was abandoned too, so it is cancelled and finish() is a no-op")
     }
 
+    /// A presented child re-roots its own navigation controller, not the stack its ancestors' screens are on, so they
+    /// keep tracking them.
+    func test_set_inADescendantsOwnNavigationController_keepsTheAncestorsTracking() {
+        let root = StubCoordinator(navigationController: nav)
+        root.set([UIViewController()])
+        let flow = PushingCoordinator(navigationController: nav)
+        root.addChildAndStart(flow)                                     // tracks flow.pushedVC on `nav`
+        let presented = StubCoordinator(navigationController: UINavigationController())
+        flow.addChild(presented)
+
+        presented.set([UIViewController()])                             // re-roots the presented child's own stack
+        nav.viewControllers = Array(nav.viewControllers.dropLast())     // the flow's screen leaves `nav`
+
+        XCTAssertTrue(root.childCoordinators.isEmpty, "the flow still tracked its screen, so its removal cancels it")
+    }
+
     // MARK: - finish() and cancel() are independent override points
 
     func test_finish_doesNotCallCancelOverride() {
