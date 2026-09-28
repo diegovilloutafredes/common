@@ -2714,8 +2714,10 @@ CameraAuthorizationManager.requestAuthorization { granted in ... }
 NotificationAuthorizationManager.getCurrentStatus { status in ... }
 NotificationAuthorizationManager.requestAuthorization { granted in ... }  // .alert/.badge/.sound by default
 
-LocationAuthorizationManager().request(.whenInUse) { status in ... }      // instance-based (CLLocationManager delegate)
+locationAuthorization.request(.whenInUse) { status in ... }  // a stored LocationAuthorizationManager()
 ```
+
+`LocationAuthorizationManager` is instance-based (it is a `CLLocationManager` delegate), so store it: a temporary one is gone before the user answers the prompt. Each `request` is answered exactly once, on the main thread: right away when the user has already decided, otherwise with their decision. Later permission changes are not reported to it; use a `CLLocationManager` delegate for continuous updates.
 
 ### `NotificationRegisterManager`
 
