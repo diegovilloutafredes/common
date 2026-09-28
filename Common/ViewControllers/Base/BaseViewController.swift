@@ -123,5 +123,11 @@ extension BaseViewController {
 /// Restores the swipe to go back gesture when using a custom back button.
 // MARK: - UIGestureRecognizerDelegate
 extension BaseViewController: UIGestureRecognizerDelegate {
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool { navigationController?.viewControllers.count ?? .zero > 1 }
+    /// Lets the navigation controller's swipe-back gesture begin only when there is a screen to go back to. Any other
+    /// recognizer this controller is the delegate of begins normally. Override it to block swipe-back on a screen, for
+    /// example while a payment is in progress.
+    @objc open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard gestureRecognizer === navigationController?.interactivePopGestureRecognizer else { return true }
+        return navigationController?.viewControllers.count ?? .zero > 1
+    }
 }

@@ -625,7 +625,7 @@ The minimal base class. All view controllers inherit from it — never use `UIVi
 - `loadView()` installs `mainView` inside a plain container view, which becomes `self.view`: `view !== mainView`, and `$1` in `mainView`'s `setConstraints` is that container
 - `setupView()` called in `viewDidLoad()` — override for post-load configuration; **always call `super.setupView()`**
 - Default status bar style: `.darkContent`
-- Swipe-to-go-back gesture restored automatically
+- Swipe-to-go-back gesture restored automatically, custom back button included. To block it on one screen (say, during a payment), override `gestureRecognizerShouldBegin(_:)` and return `false` for `navigationController?.interactivePopGestureRecognizer`. The rule covers only that gesture, so the controller can also be the delegate of its own recognizers.
 
 ```swift
 final class SimpleViewController: BaseViewController {
