@@ -74,24 +74,23 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
             ofKind: kind, withReuseIdentifier: reuseIdentifier, for: indexPath
         )
 
-        guard
-            let viewModelableView = supplementaryView as? any ViewModelableReusableView,
-            let dataSourceViewModel
-        else { return supplementaryView }
-
-        viewModelableView.set(viewModel: dataSourceViewModel)
+        guard let viewModelableView = supplementaryView as? any ViewModelableReusableView else { return supplementaryView }
+        bind(dataSourceViewModel, to: viewModelableView)
         return supplementaryView
     }
 
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let reuseIdentifier = asCollectionViewable?.onReuseIdentifierRequested(in: indexPath.section, at: indexPath.item) ?? .empty
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        guard
-            let viewModelableCell = cell as? any ViewModelableCell,
-            let cellViewModel = asCollectionViewable?.onCellForItem(in: indexPath.section, at: indexPath.item)
-        else { return cell }
-        viewModelableCell.set(viewModel: cellViewModel)
+        guard let viewModelableCell = cell as? any ViewModelableCell else { return cell }
+        bind(asCollectionViewable?.onCellForItem(in: indexPath.section, at: indexPath.item), to: viewModelableCell)
         return viewModelableCell
+    }
+
+    /// Assigns the data source's model to a dequeued view, nil included, so a recycled view never keeps the model of
+    /// the item it showed before. The view's `updateContent()` then renders the nil state.
+    private func bind<View: OptionalViewModelHolder & ViewModelSettable>(_ viewModel: ViewModel?, to view: View) {
+        if let viewModel { view.set(viewModel: viewModel) } else { view.viewModel = nil }
     }
 
     // MARK: - UICollectionViewDelegate

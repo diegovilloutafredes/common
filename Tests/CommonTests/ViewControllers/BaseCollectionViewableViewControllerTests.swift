@@ -37,6 +37,75 @@ final class BaseCollectionViewableViewControllerTests: XCTestCase {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private let layout = UICollectionViewFlowLayout()
 
+    // MARK: - Binding the data source's model, nil included
+
+    private final class Item: ViewModel {
+        let text: String
+        init(_ text: String) { self.text = text }
+    }
+
+    private final class CountingCell: BaseViewModelableCell<Item> {
+        static let identifier = "CountingCell"
+        var updates = 0
+        override func updateContent() { updates += 1 }
+    }
+
+    private final class CountingHeader: BaseViewModelableReusableView<Item> {
+        static let identifier = "CountingHeader"
+        var updates = 0
+        override func updateContent() { updates += 1 }
+    }
+
+    /// One item with a header; `hasModels = false` makes the data source return nil for both.
+    private final class SwitchableViewModel: CollectionViewDataSourceable, CollectionViewDelegateable, CollectionViewSizeable {
+        var hasModels = true
+        func getNumberOfItems(in section: Int) -> Int { 1 }
+        func onCellForItem(in section: Int, at index: Int) -> ViewModel? { hasModels ? Item("item") : nil }
+        func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { CountingCell.identifier }
+        func onSizeForItem(in section: Int, at index: Int) -> Size { (width: 100, height: 44) }
+        func onHeaderItemDataSourceRequested(in section: Int) -> ViewModel? { hasModels ? Item("header") : nil }
+        func onHeaderItemReuseIdentifierRequested(in section: Int) -> String { CountingHeader.identifier }
+        func onSizeForHeaderItem(in section: Int) -> Size { (width: 100, height: 30) }
+    }
+
+    /// The defect: when the data source returned nil, the base skipped the assignment, so a recycled cell or header
+    /// kept the model, and the content, of the item it showed before.
+    func test_nilModel_isAssignedToTheRecycledCellAndHeader() throws {
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 640))
+        window.isHidden = false
+        defer { window.isHidden = true }
+        let viewModel = SwitchableViewModel()
+        let vc = BaseCollectionViewableViewController<SwitchableViewModel>(viewModel: viewModel)
+        let list = UICollectionView(frame: window.bounds, collectionViewLayout: UICollectionViewFlowLayout())
+        list.register(CountingCell.self, forCellWithReuseIdentifier: CountingCell.identifier)
+        list.register(CountingHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CountingHeader.identifier)
+        list.dataSource = vc
+        list.delegate = vc
+        window.addSubview(list)
+        list.reloadData()
+        list.layoutIfNeeded()
+
+        let first = IndexPath(item: 0, section: 0)
+        let cell = try XCTUnwrap(list.cellForItem(at: first) as? CountingCell)
+        let header = try XCTUnwrap(list.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: first) as? CountingHeader)
+        XCTAssertEqual(cell.viewModel?.text, "item")
+        XCTAssertEqual(header.viewModel?.text, "header")
+        let cellUpdates = cell.updates, headerUpdates = header.updates
+
+        viewModel.hasModels = false
+        list.reloadData()
+        list.layoutIfNeeded()
+
+        let recycledCell = try XCTUnwrap(list.cellForItem(at: first) as? CountingCell)
+        let recycledHeader = try XCTUnwrap(list.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: first) as? CountingHeader)
+        XCTAssertIdentical(recycledCell, cell, "precondition: the cell must be recycled")
+        XCTAssertIdentical(recycledHeader, header, "precondition: the header must be recycled")
+        XCTAssertNil(recycledCell.viewModel)
+        XCTAssertNil(recycledHeader.viewModel)
+        XCTAssertGreaterThan(recycledCell.updates, cellUpdates, "updateContent() must run for the nil model")
+        XCTAssertGreaterThan(recycledHeader.updates, headerUpdates, "updateContent() must run for the nil model")
+    }
+
     func test_dataSourceCalls_routeToInjectedViewModel() {
         let vc = BaseCollectionViewableViewController<FakeViewModel>(viewModel: .init(itemCount: 3))
         XCTAssertEqual(vc.collectionView(collectionView, numberOfItemsInSection: 0), 3)

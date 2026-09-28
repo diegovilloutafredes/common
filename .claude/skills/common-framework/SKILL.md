@@ -384,9 +384,10 @@ final class FooCell: BaseViewModelableCell<FooCellViewModelProtocol> {
 
     // ALL model-driven content goes here — never reference viewModel in mainView (it's nil at build time).
     // Runs after every viewModel assignment and, for @Observable models, after any tracked change.
+    // viewModel is nil when the data source has no model for the item: clear the content, never return early,
+    // or the recycled cell keeps showing the previous item.
     override func updateContent() {
-        guard let viewModel else { return }
-        titleLabel.text(viewModel.title)
+        titleLabel.text(viewModel?.title)
     }
 
     // The root is pinned edge to edge to the content view unless it declares its own constraints;

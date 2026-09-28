@@ -770,14 +770,15 @@ final class ListItemCell: BaseViewModelableCell<ListItemCellViewModel> {
     }
 
     override func updateContent() {
-        guard let viewModel else { return }
-        titleLabel.text(viewModel.title)
-        subtitleLabel.text(viewModel.subtitle)
+        titleLabel.text(viewModel?.title)
+        subtitleLabel.text(viewModel?.subtitle)
     }
 }
 ```
 
 > **Critical**: Never reference `viewModel` inside `mainView` — it is `nil` when the view builder runs. All model-driven updates go in `updateContent()`.
+
+A `nil` model is a state to render, not a case to skip. The collection base assigns whatever the data source returns for the item, `nil` included, so `updateContent()` clears the content for it, as above. With `guard let viewModel else { return }`, a recycled cell would keep showing the previous item.
 
 `override var viewModel { didSet { … } }` still works for plain value models and runs synchronously on assignment; prefer `updateContent()` for new code so the cell has one render path. Work that must happen exactly once per assignment (e.g. issuing an image load) belongs behind a guard on the bound value, because `updateContent()` may run more than once — see `ImageDemoCell` in the DemoApp.
 
@@ -840,8 +841,7 @@ final class ProfileViewController: BaseViewModelableViewController<ProfileViewMo
 
 final class ProfileCell: BaseViewModelableCell<ProfileModel> {
     override func updateContent() {
-        guard let viewModel else { return }
-        nameLabel.text(viewModel.name)          // re-runs when name changes
+        nameLabel.text(viewModel?.name)         // re-runs when name changes; a nil model clears it
     }
 }
 ```
