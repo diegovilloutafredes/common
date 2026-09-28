@@ -26,11 +26,43 @@ extension HTTPService {
         urlSession: URLSession = HTTPService.defaultSession,
         decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)
     ) async throws -> T {
-        guard let urlRequest = resource.urlRequest else {
+        try await send(resource, urlSession: urlSession, decoder: decoder)
+    }
+
+    /// Uploads a multipart request asynchronously and decodes the response to a specified type.
+    ///
+    /// - Parameters:
+    ///   - multipart: The multipart data to upload.
+    ///   - resource: The resource to upload to.
+    ///   - decoder: The JSONDecoder to use. Defaults to snake_case conversion.
+    /// - Returns: The decoded response of type `T`.
+    /// - Throws: `NetworkError` on failure, or `CancellationError` if the enclosing Task is cancelled.
+    public static func upload<T: Decodable>(
+        multipart: MultipartRequest,
+        to resource: URLRequestConvertible,
+        decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)
+    ) async throws -> T {
+        try await send(resource, multipart: multipart, urlSession: HTTPService.defaultSession, decoder: decoder)
+    }
+
+    /// The core `request` and `upload` share. It receives the original resource, so everything the resource declares
+    /// is still known when the request is prepared.
+    static func send<T: Decodable>(
+        _ resource: URLRequestConvertible,
+        multipart: MultipartRequest? = nil,
+        urlSession: URLSession,
+        decoder: JSONDecoder
+    ) async throws -> T {
+        guard var mutableRequest = resource.urlRequest else {
             throw NetworkError.invalidRequest(resource)
         }
 
-        var mutableRequest = urlRequest
+        if let multipart {
+            if shouldLog { Logger.log(["multipart": multipart]) }
+            mutableRequest.setValue(multipart.contentTypeHeaderValue, forHTTPHeaderField: "Content-Type")
+            mutableRequest.httpBody = multipart.httpBody
+        }
+
         mutableRequest.timeoutInterval = HTTPService.defaultTimeoutInterval
 
         let beforeRequestTime = Date.asMilliseconds
@@ -75,31 +107,6 @@ extension HTTPService {
         default:
             throw responseError(from: data, statusCode: statusCode)
         }
-    }
-
-    /// Uploads a multipart request asynchronously and decodes the response to a specified type.
-    ///
-    /// - Parameters:
-    ///   - multipart: The multipart data to upload.
-    ///   - resource: The resource to upload to.
-    ///   - decoder: The JSONDecoder to use. Defaults to snake_case conversion.
-    /// - Returns: The decoded response of type `T`.
-    /// - Throws: `NetworkError` on failure, or `CancellationError` if the enclosing Task is cancelled.
-    public static func upload<T: Decodable>(
-        multipart: MultipartRequest,
-        to resource: URLRequestConvertible,
-        decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)
-    ) async throws -> T {
-        guard var urlRequest = resource.urlRequest else {
-            throw NetworkError.invalidRequest(resource)
-        }
-
-        if shouldLog { Logger.log(["multipart": multipart]) }
-
-        urlRequest.setValue(multipart.contentTypeHeaderValue, forHTTPHeaderField: "Content-Type")
-        urlRequest.httpBody = multipart.httpBody
-
-        return try await request(urlRequest, decoder: decoder)
     }
 
     // Shared helper — visible within the module so both the async and (legacy) callback paths use

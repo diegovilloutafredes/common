@@ -24,23 +24,7 @@ public enum HTTPService {
         decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase),
         result: @escaping NetworkResultHandler<T>
     ) -> Task<Void, Never> {
-        Task {
-            let outcome: Result<T, NetworkError>
-            do {
-                let value: T = try await request(resource, urlSession: urlSession, decoder: decoder)
-                outcome = .success(value)
-            } catch let error as NetworkError {
-                outcome = .failure(error)
-            } catch {
-                outcome = .failure(.requestError(error))
-            }
-            // Checked on the main actor, in the same step as the delivery: a cancel issued on the main actor either
-            // lands first and is seen here, or after the handler has run.
-            await MainActor.run {
-                guard !Task.isCancelled else { return }
-                result(outcome)
-            }
-        }
+        deliver(to: result) { try await request(resource, urlSession: urlSession, decoder: decoder) }
     }
 
     /// Uploads a multipart request and decodes the response to a specified type.
@@ -57,11 +41,19 @@ public enum HTTPService {
         decoder: JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase),
         result: @escaping NetworkResultHandler<T>
     ) -> Task<Void, Never> {
+        deliver(to: result) { try await upload(multipart: multipart, to: resource, decoder: decoder) }
+    }
+
+    /// The callback bridge: runs `operation` in an unstructured `Task` and hands its outcome to `result` on the main
+    /// actor, unless the task was cancelled by then.
+    private static func deliver<T>(
+        to result: @escaping NetworkResultHandler<T>,
+        from operation: @escaping () async throws -> T
+    ) -> Task<Void, Never> {
         Task {
             let outcome: Result<T, NetworkError>
             do {
-                let value: T = try await upload(multipart: multipart, to: resource, decoder: decoder)
-                outcome = .success(value)
+                outcome = .success(try await operation())
             } catch let error as NetworkError {
                 outcome = .failure(error)
             } catch {
