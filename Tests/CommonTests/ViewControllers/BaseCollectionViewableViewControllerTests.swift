@@ -138,7 +138,7 @@ final class BaseCollectionViewableViewControllerTests: XCTestCase {
         XCTAssertEqual(vc.collectionView(collectionView, layout: layout, referenceSizeForFooterInSection: 0), .zero)
     }
 
-    /// The generic constraint is intentionally absent (see CLAUDE.md) —
+    /// The generic constraint is intentionally absent (guide §5, `BaseCollectionViewableViewController`):
     /// conformance is checked at runtime, so a non-conforming view model must
     /// hit the documented fallbacks, never crash.
     func test_nonConformingViewModel_usesDocumentedFallbacks() {
