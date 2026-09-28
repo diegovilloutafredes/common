@@ -13,7 +13,7 @@
 ///     static let varelaRound = AppFontFamily(rawValue: "varelaRound")
 /// }
 /// ```
-public struct AppFontFamily: RawRepresentable, Hashable, Uppercaseable {
+public struct AppFontFamily: RawRepresentable, Hashable, Sendable, Uppercaseable {
     /// The family's PostScript base name (camelCase; uppercased on first letter when resolving).
     public let rawValue: String
     /// Creates a family identifier from its PostScript base name.

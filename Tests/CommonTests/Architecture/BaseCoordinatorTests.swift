@@ -216,6 +216,43 @@ final class BaseCoordinatorTests: XCTestCase {
         XCTAssertTrue(parent.childCoordinators.isEmpty)
     }
 
+    // MARK: - isFinished
+
+    func test_isFinished_isFalseUntilFinishAndTrueAfter() {
+        parent.addChild(child)
+        XCTAssertFalse(child.isFinished)
+
+        child.finish()
+
+        XCTAssertTrue(child.isFinished)
+    }
+
+    func test_isFinished_isTrueAfterCancel() {
+        parent.addChild(child)
+
+        child.cancel()
+
+        XCTAssertTrue(child.isFinished)
+    }
+
+    func test_isFinished_letsAFinishOverrideRunItsOwnWorkOnce() {
+        final class GuardedCoordinator: BaseCoordinator {
+            var ownWorkCount = 0
+            override func finish() {
+                guard !isFinished else { return }
+                ownWorkCount += 1
+                super.finish()
+            }
+        }
+        let coordinator = GuardedCoordinator(navigationController: nav)
+        parent.addChild(coordinator)
+
+        coordinator.finish()
+        coordinator.finish()
+
+        XCTAssertEqual(coordinator.ownWorkCount, 1)
+    }
+
     // MARK: - Navigation stack mechanics (push / pop / set)
 
     func test_push_appendsToNavigationStack_inOrder() {

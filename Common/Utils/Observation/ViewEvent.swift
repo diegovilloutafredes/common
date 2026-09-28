@@ -24,6 +24,9 @@ import Foundation
 ///   the second. Screens that can burst keep an array behind a tracked `revision` instead.
 /// - A controller whose view is covered (a child pushed over it) does not render; it consumes
 ///   the pending event when it returns on screen, not underneath the child.
+/// - A controller under a sheet keeps rendering, so it would consume the event underneath, where its own
+///   presentations fail. `ViewEventCursor.consume(_:ifAble:_:)` with `presentedViewController == nil` keeps the
+///   event pending until the sheet is dismissed.
 ///
 /// shortcut: single slot, last-writer-wins; upgrade path is a queued variant consumed in order.
 public struct ViewEvent<Payload> {

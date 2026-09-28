@@ -47,4 +47,10 @@ extension UIButton.Configuration {
     public func imagePlacement(_ imagePlacement: NSDirectionalRectEdge) -> Self {
         with { $0.imagePlacement = imagePlacement }
     }
+
+    /// Sets the title and returns self.
+    @discardableResult
+    public func title(_ title: String?) -> Self {
+        with { $0.title = title }
+    }
 }

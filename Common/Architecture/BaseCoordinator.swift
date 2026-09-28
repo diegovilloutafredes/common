@@ -32,7 +32,11 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// The parent coordinator that owns this coordinator. Set automatically by `addChild`.
     public weak var parent: BaseCoordinator?
 
-    private var isFinished = false
+    /// Whether this coordinator's flow has ended, through `finish()` or `cancel()`.
+    ///
+    /// Both ignore every call after the first, but an override runs its own code on every call: guard that code with
+    /// `isFinished` when it must run once.
+    public private(set) var isFinished = false
     private weak var trackedViewController: UIViewController?
 
     // MARK: - Coordinator

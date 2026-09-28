@@ -411,7 +411,12 @@ UIButton(configuration: .filled()
         $0.background.strokeWidth = 1
     }
 )
+
+// Plain title — the configuration's own font
+UIButton(configuration: .filled().title("Pay").baseBackgroundColor(.black))
 ```
+
+Configuration chainables: `.title(_:)`, `.attributedTitle(_:)`, `.baseBackgroundColor(_:)`, `.baseForegroundColor(_:)`, `.cornerStyle(_:)`, `.image(_:)`, `.imagePadding(_:)`, `.imagePlacement(_:)`; anything else goes through `.with { }`.
 
 **Simple button (no configuration):**
 
@@ -860,7 +865,7 @@ Rules:
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
 - Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`. In cells, views and reusable views the base implementation is empty, so `super` is optional there.
-- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) still show. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
+- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. To keep it pending until the sheet is gone, consume it with `eventCursor.consume(viewModel.event, ifAble: presentedViewController == nil) { … }`, and call `setNeedsContentUpdate()` once the sheet is dismissed, for example `dismiss(animated: true) { [weak self] in self?.setNeedsContentUpdate() }` (or from `presentationControllerDidDismiss(_:)` for a swipe-down): `presentedViewController` isn't observed, so its change alone schedules no pass. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) show even under a sheet. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
 - **`onUpdateProperties()` is an escape hatch.** The ViewModel-side hook runs in the same pass and tracks the same way, but it needs somewhere to push into — a view reference the module contract no longer has. Keep it for code written against earlier releases; new modules render in the controller's `updateContent()` only.
 - **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
 - **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and let the controller compare it with the revision it last rendered before calling `reloadData()`. This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view.
@@ -1257,16 +1262,20 @@ class AppCoordinator: BaseCoordinator {
 - **`finish()`** — the flow completed successfully. Triggers `onPerformed`, which the parent uses to navigate forward or pop the child's screen. `onPerformed` receives the finished coordinator, so a flow that produces a value exposes it as a property the parent reads there (`(child as? SignUpCoordinator)?.name`).
 - **`cancel()`** — the user abandoned the flow (e.g. swipe-back). Does NOT trigger `onPerformed`. The parent observes this implicitly; UIKit already popped the VC.
 
+Both ignore every call after the first, and `isFinished` reads `true` from then on. An override runs its own code on every call, so guard that code with `isFinished` when it must run once.
+
 Override both when the child needs to emit events or clean up:
 
 ```swift
 final class CheckoutCoordinator: BaseCoordinator {
     override func finish() {
+        guard !isFinished else { return }   // a second call would repeat the work below
         // notify parent of success before handing control back
         super.finish()  // triggers onPerformed
     }
 
     override func cancel() {
+        guard !isFinished else { return }
         // user bailed — clean up, do NOT call onPerformed
         super.cancel()
     }
@@ -2341,6 +2350,8 @@ UIFont.register(fonts: [.inter], styles: [.regular, .bold], type: "otf")
 UIFont.setPrimaryFamily(.montserrat)
 ```
 
+`AppFontFamily` is `Sendable`, so these `static let` constants also compile in Swift 6 language mode.
+
 ```swift
 .font(.appFont(size: 16))                                     // regular, primary family
 .font(.appFont(style: .bold, size: 14))
@@ -2427,7 +2438,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 |------|---------|
 | `Handler<T>` | `(T) -> Void`; the type of `onRequested` / `onPerformed` closures |
 | `ViewEvent<Payload>` | A one-shot effect as observed state: `UUID` identity + payload; assign a fresh value to fire (§5, §6) |
-| `ViewEventCursor` | Controller-side `consume(_:_:)` that acts once per `ViewEvent` id inside `updateContent()` |
+| `ViewEventCursor` | Controller-side `consume(_:_:)` that acts once per `ViewEvent` id inside `updateContent()`; `consume(_:ifAble:_:)` keeps the event pending until the controller can act on it |
 
 ### Controller capability vocabulary
 
