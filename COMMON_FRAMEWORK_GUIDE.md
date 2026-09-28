@@ -1604,9 +1604,11 @@ Snackbar.show(.init(
 
 Only one snackbar is shown at a time — a new one dismisses the previous.
 `onDismiss` always fires exactly once, even when no window is available to
-present in (the snackbar then never appears). Only the visible card intercepts
+present in (the snackbar then never appears), and `onAction` at most once, even
+on a double tap. Only the visible card intercepts
 touches — the transparent strips beside it pass through to the UI beneath —
-and the auto-dismiss timer keeps counting while the user scrolls.
+and the auto-dismiss timer keeps counting while the user scrolls. While the
+keyboard is up, the snackbar sits above it.
 
 ### `Toast`
 
@@ -1620,7 +1622,7 @@ A toast is purely informational: its whole hierarchy is touch-transparent and
 never blocks the UI beneath it. Only one toast is shown at a time — a new
 `present` replaces the current one (firing its completion at replacement).
 The completion is always delivered exactly once, including when no host view
-is available.
+is available. While the keyboard is up, the toast sits above it.
 
 ### `HList` and `VList`
 

@@ -47,6 +47,19 @@ final class ToastTests: XCTestCase {
         return texts
     }
 
+    // MARK: - Keyboard placement
+
+    /// The defect: the toast was pinned to the safe area, so it sat behind the keyboard. The guide's top is the
+    /// safe-area bottom when no keyboard is shown, so the resting position doesn't change.
+    func test_bottomEdge_followsTheKeyboardLayoutGuide() throws {
+        Toast.present(with: "above the keyboard")
+        let toast = try XCTUnwrap(Toast.current)
+
+        let bottom = try XCTUnwrap(host.constraints.first { $0.firstItem === toast && $0.firstAttribute == .bottom })
+        XCTAssertTrue(bottom.secondItem === host.keyboardLayoutGuide, "the bottom edge must follow the keyboard layout guide")
+        XCTAssertEqual(bottom.secondAttribute, .top)
+    }
+
     // MARK: - Completion contract
 
     func test_present_withoutHostView_deliversCompletionOnce() async {

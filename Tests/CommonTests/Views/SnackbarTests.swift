@@ -34,6 +34,49 @@ final class SnackbarTests: XCTestCase {
         window.subviews.compactMap { $0 as? SnackbarView }
     }
 
+    // MARK: - Single dismissal
+
+    /// The defect: dismiss() had no re-entry guard, so every extra call animated out again and fired onDismiss again.
+    func test_dismissTwice_firesOnDismissOnce() throws {
+        var dismissed = 0
+        Snackbar.show(.init(message: "twice", onDismiss: { dismissed += 1 }))
+        let snackbar = try XCTUnwrap(Snackbar.current)
+
+        snackbar.dismiss()
+        snackbar.dismiss()
+        pumpRunLoop()
+
+        XCTAssertEqual(dismissed, 1)
+    }
+
+    func test_replacedWhileDismissing_firesOnDismissOnce_andPresentsTheNewOne() throws {
+        var firstDismissed = 0
+        Snackbar.show(.init(message: "first", onDismiss: { firstDismissed += 1 }))
+        let first = try XCTUnwrap(Snackbar.current)
+
+        first.dismiss()
+        Snackbar.show(.init(message: "second"))
+        pumpRunLoop()
+
+        XCTAssertEqual(firstDismissed, 1)
+        XCTAssertEqual(snackbars().count, 1)
+        XCTAssertFalse(Snackbar.current === first)
+        XCTAssertTrue(Snackbar.current === snackbars().first)
+    }
+
+    // MARK: - Keyboard placement
+
+    /// The defect: the snackbar was pinned to the safe area, so it sat behind the keyboard while the user typed. The
+    /// guide's top is the safe-area bottom when no keyboard is shown, so the resting position doesn't change.
+    func test_bottomEdge_followsTheKeyboardLayoutGuide() throws {
+        Snackbar.show(.init(message: "above the keyboard"))
+        let snackbar = try XCTUnwrap(Snackbar.current)
+
+        let bottom = try XCTUnwrap(window.constraints.first { $0.firstItem === snackbar && $0.firstAttribute == .bottom })
+        XCTAssertTrue(bottom.secondItem === window.keyboardLayoutGuide, "the bottom edge must follow the keyboard layout guide")
+        XCTAssertEqual(bottom.secondAttribute, .top)
+    }
+
     /// Dismissal completions are delivered on a later run-loop pass even with
     /// animations disabled — pump briefly before asserting on post-dismiss state.
     private func pumpRunLoop(_ interval: TimeInterval = 0.05) {

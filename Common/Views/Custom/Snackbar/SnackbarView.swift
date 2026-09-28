@@ -43,7 +43,7 @@ final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
                 .font(viewModel.actionFont)
                 .title(viewModel.actionTitle)
                 .titleColor(.white)
-                .onTap { [weak self] in guard let self else { return }
+                .onTap { [weak self] in guard let self, !isDismissing else { return }
                     viewModel.onAction?()
                     dismiss()
                 }
@@ -67,11 +67,18 @@ final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
     override func setupView() {
         super.setupView()
         guard let hostWindow else { return }
-        setConstraints { $0.snapLeadBottomTrail(to: $1.safeAreaLayoutGuide) }
+        // The keyboard guide's top is the safe-area bottom while no keyboard is shown.
+        setConstraints {
+            $0.snapLeadTrail(to: $1.safeAreaLayoutGuide)
+            $0.pinBottom(to: $1.keyboardLayoutGuide.topAnchor)
+        }
         hostWindow.addSubview(self)
     }
 
     private var timer: Timer?
+
+    /// Set when dismissal starts, so the action button, the timer and a replacing snackbar dismiss it only once.
+    private var isDismissing = false
 
     private var hostWindow: UIWindow? { Snackbar.hostWindow() }
 
@@ -110,6 +117,8 @@ extension SnackbarView {
     }
 
     func dismiss() {
+        guard !isDismissing else { return }
+        isDismissing = true
         timer?.invalidate()
 
         guard hostWindow.isNotNil else {

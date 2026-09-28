@@ -63,7 +63,11 @@ public enum Toast {
                     margins: .DefaultValues.StackView.margins
                 ) { label }
                     .isUserInteractionEnabled(false)
-                    .setConstraints { $0.snapLeadBottomTrail(to: $1.safeAreaLayoutGuide) }
+                    // The keyboard guide's top is the safe-area bottom while no keyboard is shown.
+                    .setConstraints {
+                        $0.snapLeadTrail(to: $1.safeAreaLayoutGuide)
+                        $0.pinBottom(to: $1.keyboardLayoutGuide.topAnchor)
+                    }
 
                 view.subviews { stackView }
                 current = stackView
