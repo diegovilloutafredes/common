@@ -1256,7 +1256,7 @@ presentAlertView(
     type: .customAlert(title: "Location is off", message: "Turn it on to see places near you."),
     acceptTitle: "Open Settings",
     cancelTitle: "Not now",
-    acceptAction: { [weak self] _ in self?.onAppSettingsRequested() },
+    acceptAction: { _ in UIApplication.openAppSettings() },
     cancelAction: { _ in }
 )
 ```
