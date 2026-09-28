@@ -31,6 +31,9 @@ extension Dismissable {
     public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
 
     public func dismiss(_ type: DismissType = .topMost, animated: Bool = true, completion: CompletionHandler = nil) {
+        if let anchor = anchorController(of: self) {
+            return anchor.dismissFromAnchor(type, animated: animated, completion: completion)
+        }
         switch type {
         case .fromRoot: viewController?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
         case .topMost: viewController?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
@@ -43,6 +46,9 @@ extension Dismissable where Self: Navigationable {
     public var viewController: UIViewController? { navigationController }
 
     public func dismiss(_ type: DismissType = .topMost, animated: Bool = true, completion: CompletionHandler = nil) {
+        if let anchor = anchorController(of: self) {
+            return anchor.dismissFromAnchor(type, animated: animated, completion: completion)
+        }
         switch type {
         case .fromRoot: viewController?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
         case .topMost: viewController?.dismissTopMostPresentedViewController(animated: animated, completion: completion)

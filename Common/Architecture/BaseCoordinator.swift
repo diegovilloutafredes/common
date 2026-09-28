@@ -32,12 +32,21 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// The parent coordinator that owns this coordinator. Set automatically by `addChild`.
     public weak var parent: BaseCoordinator?
 
+    /// The controller this coordinator's presentations, dismissals and alerts go through (`PresentationAnchorProviding`).
+    ///
+    /// `nil`, the default, keeps the usual targets: the navigation controller for presentations and dismissals, and
+    /// the application's top-most controller for alerts. Override it to move them, for example onto a controller
+    /// this coordinator doesn't own.
+    open var presentationAnchor: UIViewController? { nil }
+
     /// Whether this coordinator's flow has ended, through `finish()` or `cancel()`.
     ///
     /// Both ignore every call after the first, but an override runs its own code on every call: guard that code with
     /// `isFinished` when it must run once.
     public private(set) var isFinished = false
     private weak var trackedViewController: UIViewController?
+    /// Set on a child started with `presentChild`: the sheet its flow runs in.
+    fileprivate var presentedFlow: PresentedFlow?
 
     // MARK: - Coordinator
 
@@ -58,10 +67,10 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
 
     /// Completes this coordinator's flow: removes self from parent's child list, then fires `onPerformed`.
     /// Idempotent — safe to call multiple times; only the first call has effect.
+    /// For a child started with `presentChild`, `onPerformed` fires once its sheet has been dismissed.
     open func finish() {
         guard !isFinished else { return }
-        terminate()
-        onPerformed?(self)
+        terminate { [self] in onPerformed?(self) }
     }
 
     /// Cancels this coordinator's flow without firing `onPerformed`.
@@ -75,11 +84,37 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
 
     // MARK: - Lifecycle tracking
 
-    private func terminate() {
+    private func terminate(then completion: (() -> Void)? = nil) {
         isFinished = true
         stopLifecycleTracking()
         cancelChildren()
         parent?.removeChild(self)
+        endPresentedFlow(then: completion)
+    }
+
+    /// Dismisses the sheet of a child started with `presentChild`, with anything presented over it, then runs
+    /// `completion`, which keeps this coordinator alive until then. Runs `completion` at once when there is no sheet
+    /// to dismiss, or when an ending ancestor's own dismissal takes this sheet with it.
+    private func endPresentedFlow(then completion: (() -> Void)?) {
+        guard let presentedFlow, !isCoveredByAnEndingAncestor else {
+            completion?()
+            return
+        }
+        presentedFlow.dismiss(navigationController, then: completion)
+    }
+
+    /// Whether an ancestor that is ending is about to dismiss its own sheet, which takes this one with it. The
+    /// ancestor dismisses after its children end; had this sheet started its own dismissal, UIKit would refuse the
+    /// ancestor's while that one runs.
+    private var isCoveredByAnEndingAncestor: Bool {
+        var ancestor = parent
+        while let current = ancestor {
+            if current.isFinished, current.presentedFlow != nil, current.navigationController.presentingViewController != nil {
+                return true
+            }
+            ancestor = current.parent
+        }
+        return false
     }
 
     /// Abandoning a flow abandons everything it started.
@@ -149,6 +184,33 @@ extension BaseCoordinator {
            let base = coordinator as? BaseCoordinator {
             base.beginLifecycleTracking(for: entry)
         }
+    }
+
+    /// Adds `coordinator` as a child, starts it, and presents its navigation controller modally over what is on
+    /// screen, from this coordinator's presentation target: `presentationAnchor`, or else the top-most controller its
+    /// navigation controller presents.
+    ///
+    /// The child gets the lifecycle a pushed child has, with no code in either coordinator:
+    /// - Swiping its sheet down cancels it.
+    /// - Whenever its flow ends, through `finish()` or `cancel()`, its sheet is dismissed with anything presented
+    ///   over it. After `finish()`, its `onPerformed` runs once the sheet is gone, so the parent can present its next
+    ///   screen there and never dismisses the sheet itself.
+    /// - A child that ends during `start()` is never presented.
+    ///
+    /// Style the sheet (`modalPresentationStyle`, detents) in the child's `start()`, which runs before it is
+    /// presented. End a flow outside its own transitions: a dismissal UIKit refuses, because the flow is presenting or
+    /// dismissing something at that moment, leaves the sheet up and `onPerformed` unsent.
+    /// - Parameters:
+    ///   - coordinator: The child. Its navigation controller becomes the sheet.
+    ///   - animated: Whether the sheet is presented, and later dismissed, with an animation.
+    public func presentChild(_ coordinator: BaseCoordinator, animated: Bool = true) {
+        Logger.log(["\(Self.self)": coordinator])
+        addChild(coordinator)
+        coordinator.start()
+        guard !coordinator.isFinished else { return }
+        let flow = PresentedFlow(coordinator: coordinator, animated: animated)
+        coordinator.presentedFlow = flow
+        flow.present(from: self)
     }
 
     /// Retrieves the first child coordinator of a specific type.
@@ -228,3 +290,64 @@ extension BaseCoordinator: Navigationable {
 
 // MARK: - Presentable
 extension BaseCoordinator: Presentable {}
+
+
+// MARK: - PresentationAnchorProviding
+extension BaseCoordinator: PresentationAnchorProviding {}
+
+
+// MARK: - PresentedFlow
+
+/// The sheet a child started with `presentChild` runs in. The child retains it, and it refers back weakly. It is the
+/// sheet's presentation controller delegate, so `BaseCoordinator` needn't adopt that protocol, which subclasses may.
+@MainActor
+private final class PresentedFlow: NSObject, UIAdaptivePresentationControllerDelegate {
+
+    private weak var coordinator: BaseCoordinator?
+    /// Used for the presentation and for the dismissal that ends the flow.
+    private let animated: Bool
+    /// Set while UIKit presents the sheet: a dismissal requested then waits for the presentation to complete,
+    /// because UIKit ignores one requested mid-transition.
+    private var isPresenting = false
+    private var dismissalAfterPresentation: (() -> Void)?
+
+    init(coordinator: BaseCoordinator, animated: Bool) {
+        self.coordinator = coordinator
+        self.animated = animated
+    }
+
+    func present(from parent: BaseCoordinator) {
+        guard let navigation = coordinator?.navigationController else { return }
+        navigation.presentationController?.delegate = self
+        isPresenting = true
+        // The completion keeps this object alive until the presentation completes, so a dismissal waiting on it
+        // still runs when the ended flow has already released it.
+        parent.present(.overCurrent, viewController: navigation, animated: animated) { self.presentationDidComplete() }
+    }
+
+    /// Dismisses the sheet, with anything presented over it, then runs `completion`. Runs it at once when the sheet
+    /// isn't presented: never presented, refused by UIKit, or already swiped away.
+    func dismiss(_ navigation: UINavigationController, then completion: (() -> Void)?) {
+        guard let presenter = navigation.presentingViewController else {
+            completion?()
+            return
+        }
+        let dismissal = { [animated] in presenter.dismiss(animated: animated) { completion?() } }
+        if isPresenting {
+            dismissalAfterPresentation = dismissal
+        } else {
+            dismissal()
+        }
+    }
+
+    /// UIKit sends this only for an interactive dismissal: the sheet is already gone, so the flow is abandoned.
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        coordinator?.cancel()
+    }
+
+    private func presentationDidComplete() {
+        isPresenting = false
+        dismissalAfterPresentation?()
+        dismissalAfterPresentation = nil
+    }
+}

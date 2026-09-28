@@ -32,6 +32,9 @@ extension Presentable {
     public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
 
     public func present(_ type: PresentType = .dismissingCurrent, viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
+        if let anchor = anchorController(of: self) {
+            return anchor.presentFromAnchor(type, viewController: viewController, animated: animated, completion: completion)
+        }
         switch type {
         case .dismissingCurrent:
             self.viewController?.dismiss(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
@@ -46,6 +49,9 @@ extension Presentable where Self: Navigationable {
     public var viewController: UIViewController? { navigationController }
 
     public func present(_ type: PresentType = .dismissingCurrent, viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
+        if let anchor = anchorController(of: self) {
+            return anchor.presentFromAnchor(type, viewController: viewController, animated: animated, completion: completion)
+        }
         switch type {
         case .dismissingCurrent:
             self.viewController?.dismissTopMostPresentedViewController(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }

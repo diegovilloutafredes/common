@@ -412,7 +412,7 @@ UIButton(configuration: .filled()
     }
 )
 
-// Plain title — the configuration's own font
+// Plain title, in the configuration's own font
 UIButton(configuration: .filled().title("Pay").baseBackgroundColor(.black))
 ```
 
@@ -1252,7 +1252,29 @@ Start/stop is state-preserving: a `UITextField` gets its previous `rightView`/`r
 ```swift
 presentAlertView(type: .genericError, acceptAction: nil, cancelAction: nil)
 presentAlertView(type: .customAlert(title: "Oops", message: "Something failed"), acceptAction: { _ in }, cancelAction: nil)
+presentAlertView(
+    type: .customAlert(title: "Location is off", message: "Turn it on to see places near you."),
+    acceptTitle: "Open Settings",
+    cancelTitle: "Not now",
+    acceptAction: { [weak self] _ in self?.onAppSettingsRequested() },
+    cancelAction: { _ in }
+)
 ```
+
+Button titles default to `String.DefaultValues.Alerts.acceptActionTitle` and `cancelActionTitle`, and the cancel button appears only when there is a `cancelAction`.
+
+#### Where it presents from: `presentationAnchor`
+
+By default a coordinator presents and dismisses through its navigation controller (from the top-most controller that one presents), and shows alerts from the application's top-most controller. To move all three, override `presentationAnchor`:
+
+```swift
+final class ProfileCoordinator: BaseCoordinator {
+    weak var container: UIViewController?        // e.g. the controller this flow's screens are embedded in
+    override var presentationAnchor: UIViewController? { container }
+}
+```
+
+With an anchor, presentations and alerts are presented from the top-most controller the anchor presents, or from the anchor itself, and `dismiss()` dismisses that top-most controller. `nil`, the default, keeps the targets above. Any other presenting type can adopt `PresentationAnchorProviding` the same way: a view controller that adopts it presents its alerts from its anchor, which also lets a test redirect them. The `viewController` property of the three protocols doesn't follow the anchor.
 
 ### Child coordinators
 
@@ -1308,29 +1330,27 @@ final class CheckoutCoordinator: BaseCoordinator {
 
 **Nothing to wire on the parent's stack.** A coordinator started with `addChildAndStart` cancels itself when its entry screen leaves the navigation stack — back button, swipe-back, `pop()`, `pop(.to(viewController:))`, `pop(.toRoot)`, or a stack replacement. `BaseCoordinator` tracks the screen through UIKit's view-controller containment callback, so no ViewController code participates.
 
-**A flow presented in its own navigation controller is the exception.** Its screens never land on the parent's stack, and dismissing the presented controller doesn't remove them from their container, so nothing cancels the flow. Wire both endings: the child cancels itself when the sheet is swiped down, and the parent closes the sheet when the child finishes.
+**A flow presented in its own navigation controller starts with `presentChild`.** Its screens never land on the parent's stack, so screen tracking can't end it; `presentChild` gives it the same two endings instead:
 
 ```swift
-extension SettingsCoordinator: UIAdaptivePresentationControllerDelegate {
-    // Swipe-down: the sheet is already gone, so abandon the flow. (Not called for a programmatic dismiss.)
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) { cancel() }
-}
-
 // In the parent coordinator:
 func presentSettings() {
-    let sheet = UINavigationController()
-    let flow = SettingsCoordinator(
-        navigationController: sheet,
-        onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet
-    )
-    addChild(flow)                                  // not addChildAndStart: nothing lands on this stack to track
-    flow.start()                                    // the flow's first screen goes into `sheet` (`set`, or a push onto the empty stack)
-    sheet.presentationController?.delegate = flow   // set before presenting
-    present(.overCurrent, viewController: sheet)    // the default, .dismissingCurrent, closes what's on screen first
+    presentChild(SettingsCoordinator(
+        navigationController: UINavigationController(),          // the sheet: the flow's own stack
+        onPerformed: { [weak self] _ in self?.showSummary() }    // runs once the sheet is gone
+    ))
 }
 ```
 
+- Swiping the sheet down cancels the flow. Neither coordinator has code for it.
+- Whenever the flow ends, through its `finish()` or a `cancel()` (its own, or cascaded from the parent), the sheet is dismissed with anything presented over it. After `finish()`, `onPerformed` runs once the sheet is gone, so the parent can present its next screen there. The parent never dismisses the sheet.
+- A flow that finishes during `start()` is never presented.
+- The sheet is presented from the parent's presentation target: its `presentationAnchor`, or else the top-most controller its navigation controller presents. Style it in the child's `start()` (`navigationController.modalPresentationStyle`, detents; see *Sheet presentation*), which runs before the presentation.
+- End a flow outside its own transitions. If UIKit refuses the dismissal because the flow is presenting or dismissing something at that moment, the sheet stays up and `onPerformed` isn't sent.
+
 Either ending removes the child from `childCoordinators`.
+
+**Migrating from the manual wiring** (a `UIAdaptivePresentationControllerDelegate` extension on the child, `addChild`, `start()` and `present(.overCurrent, …)` in the parent, and `dismiss()` in `onPerformed`): call `presentChild` instead, then delete the delegate extension and the parent's `dismiss()`. A `dismiss()` left in `onPerformed` does nothing while the parent presents nothing else, but would dismiss what it does present.
 
 Override `cancel()` when the flow needs to react to abandonment:
 
@@ -1521,6 +1541,8 @@ extension AppCoordinator: LogoutUseCase {}   // app-level, no screen owns it
 ```
 
 ### Sheet presentation
+
+A child flow in a sheet starts with `presentChild` (*Swipe-back and back-button cancellation*, above); its `start()` styles the sheet before it's presented. A single screen in a sheet is styled the same way:
 
 ```swift
 .with {
@@ -2508,7 +2530,7 @@ What a view controller can call, and how it gets it. Call these from the control
 | Protocol | Grants | On a view controller |
 |----------|--------|----------------------|
 | `ActivityIndicatorable` | `startActivityIndicator()` / `stopActivityIndicator()`; `setActivityIndicator(visible:)` is the idempotent form for `updateContent()` | Built in |
-| `AlertPresentable` | `presentAlertView(type:…)` / `presentAlertView(viewModel:…)` | Built in |
+| `AlertPresentable` | `presentAlertView(type:…)`, with optional `acceptTitle:` / `cancelTitle:`, and `presentAlertView(viewModel:…)` | Built in |
 | `BackgroundColorable` | `backgroundColor(_:)` | Built in |
 | `KeyboardDismissable` | `dismissKeyboard()` (pair with `setupAsKeyboardDismissable()`) | Built in |
 | `LargeTitleSettable` | `enableLargeTitles()` / `disableLargeTitles()` | Built in |
@@ -2519,6 +2541,7 @@ What a view controller can call, and how it gets it. Call these from the control
 | `Vibrator` | `vibrate()` haptic | Built in |
 | `SafariWebViewRequestable` | `onSafariWebViewRequested(url:)` presents an in-app Safari view | Declare the conformance; the default implementation does the rest |
 | `AppSettingsRequestable` | `onAppSettingsRequested()` opens the app's Settings page | Declare the conformance; the default implementation does the rest |
+| `PresentationAnchorProviding` | `presentationAnchor`: the controller its alerts are presented from (§7) | Declare the conformance and return the controller; `nil` keeps the top-most controller |
 | `BackButtonAddable` | An `addBackButton(_:handler:)` overload | Not needed: `addBackButton(_:action:)` (`addBackButton { }`) is a method on every view controller |
 | `NavigationBarSetupable` | A `setupNavigationBar()` hook | No default: adopt it only when you implement the hook (an empty conformance doesn't compile) |
 | `CameraSessionHandler` | `beginSession()` / `finishSession()` | No default and no adopter in Common: implement both |

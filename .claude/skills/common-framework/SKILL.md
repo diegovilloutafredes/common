@@ -194,28 +194,20 @@ final class AppCoordinator: BaseCoordinator {
 - `cancel()` fires **automatically** when the child's entry screen leaves the nav stack (back button, swipe-back, any pop) → deliberately does **not** fire `onPerformed`.
 - The parent never invokes the closure itself, and the child never calls `finish()` for abandonment.
 
-**A child flow in a sheet** (its own navigation controller) is the exception: its screens never land on the parent's stack, and dismissing the presented controller doesn't remove them from their container, so nothing cancels it automatically. Wire both endings:
+**A child flow in a sheet** (its own navigation controller) starts with `presentChild`, which gives it the endings a pushed child has: swiping the sheet down cancels it, and the sheet is dismissed whenever the flow ends. After `finish()`, `onPerformed` runs once the sheet is gone. Never dismiss the sheet in `onPerformed`, and don't adopt `UIAdaptivePresentationControllerDelegate` for this:
 
 ```swift
-extension FooCoordinator: UIAdaptivePresentationControllerDelegate {
-    // Swipe-down: the sheet is already gone, so abandon the flow. (Not called for a programmatic dismiss.)
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) { cancel() }
-}
-
 extension AppCoordinator {
     func presentFooSheet() {
-        let sheet = UINavigationController()
-        let flow = FooCoordinator(
-            navigationController: sheet,
-            onPerformed: { [weak self] _ in self?.dismiss() }   // the flow finished: the parent closes the sheet (`dismiss { … }` runs after it's gone)
-        )
-        addChild(flow)                                  // not addChildAndStart: nothing lands on this stack to track
-        flow.start()                                    // the flow's first screen goes into `sheet` (a push onto the empty stack becomes its root)
-        sheet.presentationController?.delegate = flow   // set before presenting
-        present(.overCurrent, viewController: sheet)    // the default, .dismissingCurrent, closes what's on screen first
+        presentChild(FooCoordinator(
+            navigationController: UINavigationController(),     // the sheet: the flow's own stack
+            onPerformed: { [weak self] _ in self?.showNext() }  // runs once the sheet is gone
+        ))
     }
 }
 ```
+
+The child's `start()` puts its first screen in that navigation controller (`set`) and styles the sheet before it's presented. A flow that finishes during `start()` is never presented.
 
 ### New API Domain (Router → Client → UseCase)
 
@@ -515,8 +507,9 @@ The callback client's `NetworkResultHandler` wraps `Swift.Result` (frozen, so no
 Use these instead of inventing a variant per screen:
 
 ```swift
-// 1. Product copy on alert buttons: a custom alert through its payload, since
-//    presentAlertView(type:acceptAction:cancelAction:) titles its buttons with fixed defaults.
+// 1. Product copy on alert buttons: pass the titles to the standard alert,
+//    presentAlertView(type: .customAlert(title:message:), acceptTitle: "Save", cancelTitle: "Keep editing", …).
+//    For richer content (an attributed message), a custom alert through its payload, as below.
 //    The custom alert doesn't dismiss itself: every handler dismisses it.
 extension FooViewController {
     func presentSaveConfirmation() {

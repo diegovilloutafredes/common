@@ -35,6 +35,32 @@ extension AlertPresentable {
     public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
 
     public func presentAlertView(type: AlertViewType, acceptAction: ((UIAlertAction) -> Void)? = nil, cancelAction: ((UIAlertAction) -> Void)? = nil) {
+        presentAlertView(
+            type: type,
+            acceptTitle: .DefaultValues.Alerts.acceptActionTitle,
+            cancelTitle: .DefaultValues.Alerts.cancelActionTitle,
+            acceptAction: acceptAction,
+            cancelAction: cancelAction
+        )
+    }
+
+    /// Presents the standard alert with the given button titles.
+    ///
+    /// The same alert as `presentAlertView(type:acceptAction:cancelAction:)`, whose default titles these default to.
+    /// The cancel button appears only when `cancelAction` is given.
+    /// - Parameters:
+    ///   - type: The type of alert to present.
+    ///   - acceptTitle: The accept button's title.
+    ///   - cancelTitle: The cancel button's title.
+    ///   - acceptAction: Optional handler for the accept action.
+    ///   - cancelAction: Optional handler for the cancel action; without it there is no cancel button.
+    public func presentAlertView(
+        type: AlertViewType,
+        acceptTitle: String = .DefaultValues.Alerts.acceptActionTitle,
+        cancelTitle: String = .DefaultValues.Alerts.cancelActionTitle,
+        acceptAction: ((UIAlertAction) -> Void)? = nil,
+        cancelAction: ((UIAlertAction) -> Void)? = nil
+    ) {
         var alertTitle: String = .empty
         var alertMessage: String = .empty
 
@@ -53,7 +79,7 @@ extension AlertPresentable {
         )
 
         let acceptAlertAction = UIAlertAction(
-            title: .DefaultValues.Alerts.acceptActionTitle,
+            title: acceptTitle,
             style: .default,
             handler: acceptAction
         )
@@ -62,7 +88,7 @@ extension AlertPresentable {
 
         if let cancelAction = cancelAction {
             let cancelAlertAction = UIAlertAction(
-                title: .DefaultValues.Alerts.cancelActionTitle,
+                title: cancelTitle,
                 style: .cancel,
                 handler: cancelAction
             )
@@ -76,22 +102,18 @@ extension AlertPresentable {
             alertMessage: alertMessage
         )
 
-        guard viewController is UIAlertController else {
-            viewController?.present(
-                alertController,
-                animated: true
-            )
-
-            return
-        }
-
-        viewController?.present(alertController, animated: true)
+        alertPresenter?.present(alertController, animated: true)
     }
 
     public func presentAlertView(viewModel: AlertViewModel, onDismissRequested handler: CompletionHandler) {
         let view = AlertView(viewModel: viewModel)
         let vc = CustomAlertWireframe.createModule(view, onDismissRequested: viewModel.shouldHandleBackgroundClick ? handler : nil)
-        viewController?.present(vc, animated: true)
+        alertPresenter?.present(vc, animated: true)
+    }
+
+    /// The top-most controller the presentation anchor presents, or, without an anchor, `viewController`.
+    private var alertPresenter: UIViewController? {
+        anchorController(of: self)?.topMostPresentedViewController ?? viewController
     }
 }
 
