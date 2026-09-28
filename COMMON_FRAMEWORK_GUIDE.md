@@ -2756,6 +2756,33 @@ auth.authenticate { [weak self] success in
 The result handler is always delivered on the main thread; `false` covers both
 denial and errors.
 
+To tell why it failed, await `authenticate()` instead. It returns on success and throws an `LAError` whose `code` is
+the reason; when the device can't evaluate the policy at all (no passcode set), it throws without showing a prompt:
+
+```swift
+import LocalAuthentication
+
+func unlock() async {
+    do {
+        try await auth.authenticate()
+        isUnlocked = true
+    } catch let error as LAError {
+        switch error.code {
+        case .userCancel, .appCancel, .systemCancel: break               // dismissed: stay on the lock screen
+        case .userFallback: event = .init(.askForPassword)                // the user chose the fallback button
+        case .biometryLockout: event = .init(.failed(message: "Too many attempts. Unlock your device first."))
+        case .passcodeNotSet: event = .init(.failed(message: "Set a device passcode to use this."))
+        default: event = .init(.failed(message: "Couldn't verify it's you."))
+        }
+    } catch {
+        event = .init(.failed(message: "Couldn't verify it's you."))
+    }
+}
+```
+
+A test double that implements only `authenticate(result:)` gets `authenticate()` for free: it returns on `true` and
+throws `.authenticationFailed` on `false`.
+
 ### `CameraManager` + `PreviewView`
 
 Frame-capture pipeline: configure, then `begin` on a `PreviewView` — the

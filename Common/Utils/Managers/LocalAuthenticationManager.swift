@@ -63,6 +63,23 @@ public protocol LocalAuthenticationManagerProtocol: AnyObject {
     /// Attempts to authenticate the user using the available method.
     /// - Parameter result: Completion handler returning `true` if successful.
     func authenticate(result: @escaping Handler<Bool>)
+
+    /// Attempts to authenticate the user using the available method, and tells why it failed.
+    ///
+    /// Returns when the user authenticates. Otherwise it throws an `LAError` whose `code` is the reason, such as
+    /// `.userCancel`, `.userFallback` or `.biometryLockout`. A conformer that doesn't implement it gets one built on
+    /// `authenticate(result:)`, which throws `.authenticationFailed` for `false`.
+    func authenticate() async throws
+}
+
+// MARK: - Default Implementation
+extension LocalAuthenticationManagerProtocol {
+    public func authenticate() async throws {
+        let succeeded = await withCheckedContinuation { continuation in
+            authenticate { continuation.resume(returning: $0) }
+        }
+        guard succeeded else { throw LAError(.authenticationFailed) }
+    }
 }
 
 // MARK: - LocalAuthenticationManager
@@ -70,6 +87,7 @@ public protocol LocalAuthenticationManagerProtocol: AnyObject {
 final public class LocalAuthenticationManager {
     private let cancelTitle: String?
     private let reason: String
+    private let contextFactory: () -> LAContext
 
     /// - Parameters:
     ///   - cancelTitle: Label for the cancel button. Pass `nil` to use the system default.
@@ -77,11 +95,19 @@ final public class LocalAuthenticationManager {
     public init(cancelTitle: String? = nil, reason: String = "Authentication is required.") {
         self.cancelTitle = cancelTitle
         self.reason = reason
+        contextFactory = LAContext.init
+    }
+
+    /// Takes the contexts it evaluates from `contextFactory`, so tests can answer without a prompt.
+    init(cancelTitle: String? = nil, reason: String = "Authentication is required.", contextFactory: @escaping () -> LAContext) {
+        self.cancelTitle = cancelTitle
+        self.reason = reason
+        self.contextFactory = contextFactory
     }
 
     /// Creates a fresh LAContext per call so biometric enrollment changes are always reflected.
     private func makeContext() -> LAContext {
-        LAContext().with {
+        contextFactory().with {
             if let cancelTitle { $0.localizedCancelTitle = cancelTitle }
         }
     }
@@ -139,6 +165,17 @@ extension LocalAuthenticationManager: LocalAuthenticationManagerProtocol {
         }
         ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, error in
             dispatchOnMain { result(error.isNil ? success : false) }
+        }
+    }
+
+    public func authenticate() async throws {
+        let context = makeContext()
+        var error: NSError?
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+            throw error ?? LAError(.authenticationFailed)
+        }
+        guard try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) else {
+            throw LAError(.authenticationFailed)
         }
     }
 }
