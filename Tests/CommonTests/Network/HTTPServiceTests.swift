@@ -299,6 +299,90 @@ final class HTTPServiceTests: XCTestCase {
         XCTAssertFalse(handlerFired, "the handler must not fire after cancellation")
     }
 
+    // MARK: - Callback overload — cancellation up to the moment of delivery
+    //
+    // The request's task decodes, then hops to the main actor to deliver. These tests hold the main thread from the
+    // moment of decoding until they cancel, so the cancel always lands before the delivery runs. They can't flake on
+    // the fixed code, which checks cancellation inside that main-actor step. On the old code, which checked it before
+    // the hop, they usually but not always catch the late delivery: the check can still race the main thread waking up.
+
+    /// Signals `decoded` from the request's own task, the moment its response is decoded.
+    private struct DecodeSignalling: Decodable {
+        nonisolated(unsafe) static var decoded = DispatchSemaphore(value: 0)
+        init(from decoder: Decoder) throws { Self.decoded.signal() }
+    }
+
+    private final class SignallingClient: BaseClient {
+        func fetch(result: @escaping NetworkResultHandler<DecodeSignalling>) { request(TestEndpoint.get, result: result) }
+    }
+
+    private func respondWithEmptyObject() {
+        DecodeSignalling.decoded = DispatchSemaphore(value: 0)
+        MockURLProtocol.requestHandler = { request in
+            (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data("{}".utf8))
+        }
+    }
+
+    /// Blocks the main thread until a response has been decoded; while it is held, no main-actor delivery can run.
+    private func holdMainThreadUntilDecoded() {
+        XCTAssertEqual(DecodeSignalling.decoded.wait(timeout: .now() + callbackDeliveryTimeout), .success, "the response was never decoded")
+    }
+
+    /// Lets a delivery that was already queued on the main actor run before asserting it didn't.
+    private func drainMainActor() async {
+        for _ in 0..<5 { await Task.yield() }
+    }
+
+    @MainActor
+    func test_callbackRequest_cancelledAfterDecodingBeforeDelivery_doesNotFireHandler() async {
+        respondWithEmptyObject()
+        nonisolated(unsafe) var handlerFired = false
+        let task: Task<Void, Never> = HTTPService.request(TestEndpoint.get) { (_: Result<DecodeSignalling, NetworkError>) in
+            handlerFired = true
+        }
+
+        holdMainThreadUntilDecoded()
+        task.cancel()
+        await task.value
+        await drainMainActor()
+
+        XCTAssertFalse(handlerFired, "a request cancelled on the main actor before its delivery must not deliver")
+    }
+
+    @MainActor
+    func test_callbackUpload_cancelledAfterDecodingBeforeDelivery_doesNotFireHandler() async {
+        respondWithEmptyObject()
+        nonisolated(unsafe) var handlerFired = false
+        let task: Task<Void, Never> = HTTPService.upload(multipart: MultipartRequest(boundary: "boundary"), to: TestEndpoint.get) { (_: Result<DecodeSignalling, NetworkError>) in
+            handlerFired = true
+        }
+
+        holdMainThreadUntilDecoded()
+        task.cancel()
+        await task.value
+        await drainMainActor()
+
+        XCTAssertFalse(handlerFired, "an upload cancelled on the main actor before its delivery must not deliver")
+    }
+
+    /// `ClientProtocol` cancels the previous request made from the same function; a response it had already decoded
+    /// must not be delivered after the new request started.
+    @MainActor
+    func test_supersededClientRequest_onlyTheSecondDelivers() async {
+        respondWithEmptyObject()
+        let client = SignallingClient()
+        nonisolated(unsafe) var firstFired = false
+        let secondDelivered = expectation(description: "the second request delivers")
+
+        client.fetch { _ in firstFired = true }
+        holdMainThreadUntilDecoded()
+        client.fetch { _ in secondDelivered.fulfill() }
+
+        await fulfillment(of: [secondDelivered], timeout: callbackDeliveryTimeout)
+        await drainMainActor()
+        XCTAssertFalse(firstFired, "the superseded request must not deliver")
+    }
+
     func test_callbackRequest_completesNormally_firesHandler() async throws {
         let expected = TestItem(id: 7, name: "Foo")
         MockURLProtocol.requestHandler = { request in

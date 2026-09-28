@@ -10,7 +10,8 @@ public protocol ClientProtocol: AnyObject {
     
     /// A dictionary storing active network tasks, keyed by function or identifier.
     /// Tasks are `Task<Void, Never>` wrappers around the async network call;
-    /// `cancel()` aborts the in-flight request and prevents the result handler from firing.
+    /// `cancel()` on the main actor aborts the in-flight request and prevents the result
+    /// handler from firing, even when the response has already arrived.
     var requests: [String: Task<Void, Never>] { get set }
     
     /// Performs a network request and decodes the response.

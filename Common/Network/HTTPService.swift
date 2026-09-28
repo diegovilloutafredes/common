@@ -14,8 +14,10 @@ public enum HTTPService {
     /// Wraps the `async throws` overload in an unstructured `Task` for callback-based
     /// callers. The returned `Task` can be cancelled to abort the in-flight request;
     /// cancellation propagates to the underlying `URLSession.data(for:)` and the
-    /// result handler is not invoked. Callers already in Swift Concurrency should
-    /// prefer the async overload directly.
+    /// result handler is not invoked. Cancellation is checked on the main actor at the
+    /// moment of delivery, so a `Task` cancelled on the main actor before its handler
+    /// runs never delivers. Callers already in Swift Concurrency should prefer the
+    /// async overload directly.
     @discardableResult public static func request<T: Decodable>(
         _ resource: URLRequestConvertible,
         urlSession: URLSession = HTTPService.defaultSession,
@@ -32,8 +34,12 @@ public enum HTTPService {
             } catch {
                 outcome = .failure(.requestError(error))
             }
-            guard !Task.isCancelled else { return }
-            Task { @MainActor in result(outcome) }
+            // Checked on the main actor, in the same step as the delivery: a cancel issued on the main actor either
+            // lands first and is seen here, or after the handler has run.
+            await MainActor.run {
+                guard !Task.isCancelled else { return }
+                result(outcome)
+            }
         }
     }
 
@@ -42,7 +48,9 @@ public enum HTTPService {
     /// Wraps the `async throws` overload in an unstructured `Task` for callback-based
     /// callers. The returned `Task` can be cancelled to abort the in-flight upload;
     /// cancellation propagates to the underlying `URLSession.data(for:)` and the
-    /// result handler is not invoked.
+    /// result handler is not invoked. Cancellation is checked on the main actor at the
+    /// moment of delivery, so a `Task` cancelled on the main actor before its handler
+    /// runs never delivers.
     @discardableResult public static func upload<T: Decodable>(
         multipart: MultipartRequest,
         to resource: URLRequestConvertible,
@@ -59,8 +67,12 @@ public enum HTTPService {
             } catch {
                 outcome = .failure(.requestError(error))
             }
-            guard !Task.isCancelled else { return }
-            Task { @MainActor in result(outcome) }
+            // Checked on the main actor, in the same step as the delivery: a cancel issued on the main actor either
+            // lands first and is seen here, or after the handler has run.
+            await MainActor.run {
+                guard !Task.isCancelled else { return }
+                result(outcome)
+            }
         }
     }
 }
