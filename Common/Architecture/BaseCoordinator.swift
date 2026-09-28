@@ -84,7 +84,7 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
 
     // MARK: - Lifecycle tracking
 
-    private func terminate(then completion: (() -> Void)? = nil) {
+    private func terminate(then completion: CompletionHandler = nil) {
         isFinished = true
         stopLifecycleTracking()
         cancelChildren()
@@ -95,7 +95,7 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     /// Dismisses the sheet of a child started with `presentChild`, with anything presented over it, then runs
     /// `completion`, which keeps this coordinator alive until then. Runs `completion` at once when there is no sheet
     /// to dismiss, or when an ending ancestor's own dismissal takes this sheet with it.
-    private func endPresentedFlow(then completion: (() -> Void)?) {
+    private func endPresentedFlow(then completion: CompletionHandler) {
         guard let presentedFlow, !isCoveredByAnEndingAncestor else {
             completion?()
             return
@@ -311,7 +311,7 @@ private final class PresentedFlow: NSObject, UIAdaptivePresentationControllerDel
     /// Set while UIKit presents the sheet: a dismissal requested then waits for the presentation to complete,
     /// because UIKit ignores one requested mid-transition.
     private var isPresenting = false
-    private var dismissalAfterPresentation: (() -> Void)?
+    private var dismissalAfterPresentation: CompletionHandler = nil
 
     init(coordinator: BaseCoordinator, animated: Bool) {
         self.coordinator = coordinator
@@ -329,7 +329,7 @@ private final class PresentedFlow: NSObject, UIAdaptivePresentationControllerDel
 
     /// Dismisses the sheet, with anything presented over it, then runs `completion`. Runs it at once when the sheet
     /// isn't presented: never presented, refused by UIKit, or already swiped away.
-    func dismiss(_ navigation: UINavigationController, then completion: (() -> Void)?) {
+    func dismiss(_ navigation: UINavigationController, then completion: CompletionHandler) {
         guard let presenter = navigation.presentingViewController else {
             completion?()
             return
