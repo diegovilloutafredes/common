@@ -13,7 +13,9 @@ extension UIApplication {
     /// permission prompts, Face ID and Control Center — then any other connected window scene. Among scenes in the same
     /// state, the app's current key window wins. Returns `nil` only when no connected window scene has a key window.
     public var keyWindow: UIWindow? {
-        Self.preferredKeyWindow(
+        // UIApplication, not Self: `Self` reads the dynamic type of `self`, which crashes where `shared` is a nil
+        // object (a process with no UIApplication instance, such as a hostless test bundle).
+        UIApplication.preferredKeyWindow(
             among: connectedScenes
                 .compactMap { $0 as? UIWindowScene }
                 .map { (activationState: $0.activationState, keyWindow: $0.keyWindow) }
