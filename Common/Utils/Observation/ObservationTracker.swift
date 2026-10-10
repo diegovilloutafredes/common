@@ -20,7 +20,7 @@ enum ObservationTracker {
     /// when the caller runs `body` again on the next pass, which also coalesces bursts.
     @MainActor
     static func run(_ body: @MainActor () -> Void, onInvalidate: @escaping @MainActor () -> Void) {
-        guard ObservationMode.current == .manual, #available(iOS 17.0, *) else { return body() }
+        guard ObservationMode.current == .manual else { return body() }
         withObservationTracking {
             body()
         } onChange: {

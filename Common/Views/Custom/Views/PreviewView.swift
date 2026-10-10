@@ -34,6 +34,7 @@ extension PreviewView {
 }
 
 extension PreviewView {
+    @available(iOS, deprecated: 17.0, message: "Set videoRotationAngle on the connection, with an angle from AVCaptureDevice.RotationCoordinator.")
     @discardableResult public func videoOrientation(_ videoOrientation: AVCaptureVideoOrientation) -> Self {
         with { $0.captureVideoPreviewLayer.connection?.videoOrientation = videoOrientation }
     }

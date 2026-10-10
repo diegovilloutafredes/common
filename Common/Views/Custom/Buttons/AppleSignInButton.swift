@@ -66,10 +66,8 @@ public final class AppleSignInButton: UIButton {
         isAccessibilityElement = true
         resolvedStyle = resolveStyle()
         rebuildInnerButton()
-        if #available(iOS 17.0, *) {
-            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: AppleSignInButton, _: UITraitCollection) in
-                self.updateStyleIfNeeded()
-            }
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: AppleSignInButton, _: UITraitCollection) in
+            self.updateStyleIfNeeded()
         }
     }
 
@@ -98,13 +96,11 @@ public final class AppleSignInButton: UIButton {
         set { super.accessibilityLabel = newValue }
     }
 
-    // iOS 16 fallback — iOS 17+ uses the registered trait observation above.
+    // Kept so modules built against an earlier version keep linking. It was the fallback before iOS 17, which
+    // lacked the registration above.
+    @available(iOS, deprecated: 17.0, message: "Don't call it: the view registers for trait changes itself.")
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if #unavailable(iOS 17.0),
-           traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-            updateStyleIfNeeded()
-        }
     }
 
     // MARK: - Private

@@ -47,7 +47,7 @@ for SLICE in "${SLICES[@]}"; do
 
   for INTERFACE in "${INTERFACES[@]}"; do
     TRIPLE=$(basename "$INTERFACE" .swiftinterface)
-    # The interface records the target it was built for (e.g. arm64-apple-ios16.0-simulator).
+    # The interface records the target it was built for (e.g. arm64-apple-ios17.0-simulator).
     TARGET=$(sed -n 's/^\/\/ swift-module-flags:.* -target \([^ ]*\).*/\1/p' "$INTERFACE")
     [[ -n "$TARGET" ]] || fail "$TRIPLE: no -target in the interface's swift-module-flags"
     if [[ "$TRIPLE" == *-simulator ]]; then SDK=iphonesimulator; else SDK=iphoneos; fi

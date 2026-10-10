@@ -16,10 +16,8 @@ final class ObservationModeTests: XCTestCase {
     func test_current_followsTheOSVersion() {
         if #available(iOS 26.0, *) {
             XCTAssertEqual(ObservationMode.current, .native)
-        } else if #available(iOS 17.0, *) {
-            XCTAssertEqual(ObservationMode.current, .manual)
         } else {
-            XCTAssertEqual(ObservationMode.current, .unavailable)
+            XCTAssertEqual(ObservationMode.current, .manual)
         }
     }
 

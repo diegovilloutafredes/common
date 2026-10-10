@@ -20,15 +20,15 @@ public enum ObservationMode: Sendable {
     /// the next layout pass. Works with or without the app's `UIObservationTrackingEnabled` key.
     case manual
 
-    /// iOS 16: the hook runs on every layout pass with no tracking.
+    /// No tracking: the hook runs on every layout pass. It was the mode on iOS 16; with iOS 17 as the minimum,
+    /// `current` never returns it.
     case unavailable
 
     /// The mode in effect for this process.
     @MainActor public static var current: ObservationMode {
         if let override { return override }
         if #available(iOS 26.0, *) { return .native }
-        if #available(iOS 17.0, *) { return .manual }
-        return .unavailable
+        return .manual
     }
 
     /// Test seam: forces a mode regardless of OS. Internal on purpose — tests reset it

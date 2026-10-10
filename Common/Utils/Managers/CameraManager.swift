@@ -38,7 +38,6 @@ public final class CameraManager: NSObject {
 
     private let position: AVCaptureDevice.Position
     private let type: CameraType
-    private let orientation: AVCaptureVideoOrientation
     private let zoomFactor: Double
     private let delayBetweenFrames: Int64
     private let captureDeviceHandler: Handler<AVCaptureDevice>?
@@ -48,7 +47,8 @@ public final class CameraManager: NSObject {
     /// - Parameters:
     ///   - position: The camera position (front or back).
     ///   - type: The camera lens type.
-    ///   - orientation: The video orientation.
+    ///   - orientation: Has no effect. It was applied before the output had a connection, so it never reached the
+    ///     capture pipeline; the parameter stays so existing calls compile.
     ///   - zoomFactor: The initial zoom factor.
     ///   - delayBetweenFrames: The minimum delay between processed frames.
     ///   - captureDeviceHandler: Optional handler to configure the capture device.
@@ -64,7 +64,6 @@ public final class CameraManager: NSObject {
     ) {
         self.position = position
         self.type = type
-        self.orientation = orientation
         self.zoomFactor = zoomFactor
         self.delayBetweenFrames = delayBetweenFrames
         self.captureDeviceHandler = captureDeviceHandler
@@ -81,7 +80,6 @@ public final class CameraManager: NSObject {
     private lazy var captureVideoDataOutput = AVCaptureVideoDataOutput()
         .alwaysDiscardsLateVideoFrames()
         .setSampleBufferDelegate(self)
-        .videoOrientation(orientation)
         .videoSettings([.init(kCVPixelBufferPixelFormatTypeKey): kCVPixelFormatType_32BGRA])
 
     private lazy var sessionQueue = DispatchQueue(label: "\(Bundle.main.bundleIdentifier ?? "*").\(Self.self).queue")

@@ -2,7 +2,7 @@
 
 This guide documents how to use the **Common** framework to build UI, wire modules, handle navigation, and perform networking in iOS projects. It is a portable reference for any project that adopts Common as a dependency.
 
-> **Minimum deployment target:** iOS 16.0+  
+> **Minimum deployment target:** iOS 17.0+  
 > **UI paradigm:** UIKit with a declarative DSL that mimics SwiftUI syntax  
 > **Note:** `Common.xcframework` is a pre-compiled binary. This guide is inferred from real production usage — treat it as a living reference, not a generated API spec. Every file importing Common must also `import UIKit`.
 
@@ -106,7 +106,7 @@ VStack {
     UILabel("Always visible")
     if showDetails { UILabel("Detail text") }
     if let subtitle = optionalSubtitle { UILabel(subtitle) }
-    if #available(iOS 16, *) { UILabel("iOS 16+ only") }
+    if #available(iOS 18, *) { UILabel("iOS 18+ only") }
 
     // Optional UIView? drops in directly — nil values are removed from layout with no gap
     let badge: UIView? = hasUnread ? badgeView : nil
@@ -871,7 +871,7 @@ final class ProfileCell: BaseViewModelableCell<ProfileModel> {
 |---|---|---|
 | iOS 26+ | `.native` | UIKit's `updateProperties()` — runs before layout; text/color changes cost no layout pass |
 | iOS 17–18 | `.manual` | Common wraps the hook in `withObservationTracking` from `layoutSubviews` / `viewWillLayoutSubviews` and re-arms on the next pass; no Info.plist key needed. On iOS 18 with `UIObservationTrackingEnabled` set, UIKit also tracks the same reads: both invalidate (UIKit synchronously, Common on the next main-actor hop), which can cost a second layout pass per change but stays correct because the hook is idempotent |
-| iOS 16 | `.unavailable` | the hook runs on every layout pass, untracked |
+| never, since 1.9.0 | `.unavailable` | The mode iOS 16 had: the hook ran on every layout pass, untracked. iOS 17 is the minimum now, so `current` doesn't return it; the case stays in the enum |
 
 Rules:
 - Read state and write views inside the hook only. Mutate models anywhere on the main actor except inside the hook: in manual mode (iOS 17–18) a write there to state the same pass reads is lost. It lands before the pass arms its observer, so the hook doesn't re-run and the view keeps the value it read before the write. Move such writes to `onViewWillAppear()` or a `Task`. Native mode isn't verified to behave differently, so treat both modes the same.
@@ -3090,3 +3090,5 @@ A deprecated declaration still compiles and behaves as before. Each use gets a c
 | `String`'s conformance to `Error`, as in `throw "…"` | A type that conforms to `Error`, such as an enum |
 | `String.DateFormats.yyyyMMddHHmmss0000`, `String.DateFormats.yyyyMMddTHHmmssSSSZ` | `Date.ISO8601FormatStyle`, or a formatter whose time zone is UTC. Their `+0000` and `Z` are literal text, so dates are formatted and parsed in the local time zone |
 | The `description` that every `CustomStringConvertible` type got by default | `MirrorDescribable` for the same output, or the type's own `description` (§18) |
+| `videoOrientation(_:)` on `PreviewView`, `AVCaptureVideoPreviewLayer` and `AVCaptureVideoDataOutput` | `videoRotationAngle` on the connection, with an angle from `AVCaptureDevice.RotationCoordinator`. iOS 17 deprecated the `videoOrientation` property they set |
+| `traitCollectionDidChange(_:)` on `GradientView`, `CircularActivityIndicatorView` and `AppleSignInButton` | Nothing to call: each view registers for trait changes itself. The overrides stay only so earlier builds keep linking |

@@ -31,10 +31,8 @@ public final class GradientView: UIView {
         super.init(frame: frame)
         // CGColors do not re-resolve dynamic UIColors: without this hook a
         // dark/light flip keeps the stale gradient until an incidental relayout.
-        if #available(iOS 17.0, *) {
-            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: GradientView, _: UITraitCollection) in
-                self.updateColors()
-            }
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: GradientView, _: UITraitCollection) in
+            self.updateColors()
         }
     }
 
@@ -43,13 +41,11 @@ public final class GradientView: UIView {
         fatalError("NSCoder is not supported")
     }
 
-    // iOS 16 fallback — iOS 17+ uses the registered trait observation above.
+    // Kept so modules built against an earlier version keep linking. It was the fallback before iOS 17, which
+    // lacked the registration above.
+    @available(iOS, deprecated: 17.0, message: "Don't call it: the view registers for trait changes itself.")
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if #unavailable(iOS 17.0),
-           traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            updateColors()
-        }
     }
 
     public override func layoutSubviews() {

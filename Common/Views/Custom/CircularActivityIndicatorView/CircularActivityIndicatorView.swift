@@ -32,20 +32,16 @@ public final class CircularActivityIndicatorView: UIView {
         // CGColors do not re-resolve dynamic UIColors: without this hook a
         // dark/light flip keeps the stale stroke colors until the animations
         // happen to be re-added. Re-adding via the restore path re-resolves.
-        if #available(iOS 17.0, *) {
-            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: CircularActivityIndicatorView, _: UITraitCollection) in
-                self.restoreAnimationsIfNeeded()
-            }
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: CircularActivityIndicatorView, _: UITraitCollection) in
+            self.restoreAnimationsIfNeeded()
         }
     }
 
-    // iOS 16 fallback — iOS 17+ uses the registered trait observation above.
+    // Kept so modules built against an earlier version keep linking. It was the fallback before iOS 17, which
+    // lacked the registration above.
+    @available(iOS, deprecated: 17.0, message: "Don't call it: the view registers for trait changes itself.")
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if #unavailable(iOS 17.0),
-           traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            restoreAnimationsIfNeeded()
-        }
     }
 
     /// Initializes a new circular activity indicator with default frame.
