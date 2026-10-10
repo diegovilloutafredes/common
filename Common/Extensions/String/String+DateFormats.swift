@@ -21,8 +21,10 @@ extension String {
         public static let MMyy = "MM yy"
         public static let yyyyMMdd = "yyyy-MM-dd"
         public static let yyyyMMddHHmmss = "yyyy-MM-dd HH:mm:ss"
+        @available(*, deprecated, message: "+0000 is literal text: dates are formatted and parsed in the local time zone. Use Date.ISO8601FormatStyle, or a formatter whose time zone is UTC.")
         public static let yyyyMMddHHmmss0000 = "yyyy-MM-dd HH:mm:ss +0000"
         public static let yyyyMMddHHmmss000000 = "yyyy-MM-dd HH:mm:ss.000000"
+        @available(*, deprecated, message: "'Z' is literal text: dates are formatted and parsed in the local time zone. Use Date.ISO8601FormatStyle, or a formatter whose time zone is UTC.")
         public static let yyyyMMddTHHmmssSSSZ = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         public static let yyMMdd = "yyMMdd"
     }

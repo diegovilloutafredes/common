@@ -2781,6 +2781,23 @@ Debouncer.debounce(seconds: 0.5) { [weak self] in self?.performSearch() }
 Debouncer.debounce(id: field.identifier, seconds: 0.5) { validate(field) }
 ```
 
+### `MirrorDescribable`
+
+Gives an adopting type a `description` that lists its stored properties as `label: value`, one per line, in declaration order:
+
+```swift
+struct Item: MirrorDescribable {
+    let name: String
+    let count: Int
+}
+
+print(Item(name: "a", count: 2))
+// name: a
+// count: 2
+```
+
+A type that implements `description` keeps its own. Earlier releases gave this output to every `CustomStringConvertible` type that didn't implement `description`. That default is deprecated in 1.9.0 (Appendix D): a type that relies on it gets a warning at its conformance, and adopting `MirrorDescribable` keeps the text.
+
 ### `LocalAuthenticationManager` — FaceID / TouchID / passcode
 
 ```swift
@@ -3065,3 +3082,11 @@ A deprecated declaration still compiles and behaves as before. Each use gets a c
 | `Actionable` | No replacement: declare an action closure on the type that needs one |
 | `LargeTitleSettable`, `enableLargeTitles()`, `disableLargeTitles()` | `navigationBar.prefersLargeTitles` on the navigation controller, or `navigationItem.largeTitleDisplayMode` for one screen |
 | `OffsetResetable`, `resetOffsetIfNeeded()` and its scroll-view and collection-view variants | `setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:)` on the scroll view. The deprecated methods scroll to a zero offset, which ignores the content inset. `closestScrollView`, `closestCollectionView` and `getClosest()` are not deprecated |
+| `AES` | CryptoKit's `AES.GCM` with a `SymmetricKey`. `AES` is AES-CBC with a string key, a fixed IV and no authentication |
+| `CVPixelBuffer.resized(to:)` | No replacement in Common: scale with vImage or Core Image. It leaks its buffer when scaling fails, and doesn't crop |
+| `String.removeStressedVowels()` | `folding(options: .diacriticInsensitive, locale:)`, which also handles uppercase letters and turns ñ into n |
+| `String.asData` | `Data(string.utf8)`. `asData()`, the JSON encoding, is not deprecated |
+| `Data`'s conformance to `Keyable` | A key derived from the content, such as its Base64 encoding. Every `Data` of the same length gets the same key |
+| `String`'s conformance to `Error`, as in `throw "…"` | A type that conforms to `Error`, such as an enum |
+| `String.DateFormats.yyyyMMddHHmmss0000`, `String.DateFormats.yyyyMMddTHHmmssSSSZ` | `Date.ISO8601FormatStyle`, or a formatter whose time zone is UTC. Their `+0000` and `Z` are literal text, so dates are formatted and parsed in the local time zone |
+| The `description` that every `CustomStringConvertible` type got by default | `MirrorDescribable` for the same output, or the type's own `description` (§18) |

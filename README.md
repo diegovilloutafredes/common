@@ -74,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/diegovilloutafredes/common/$V/COMMO
 | Gated structured logging | `Logger.log(_:)` (ordered `KeyValuePairs`), `Logger.isRuntimeForceEnabled(_:)` |
 | Feedback UI (toasts, snackbars, modals) | `Snackbar`, `Toast`, `CustomAlertWireframe` |
 | Debounced input | `Debouncer.debounce(seconds:function:)` |
-| AES-128/256 encryption | `AES(key:iv:)` |
+| AES-128/256 encryption (deprecated in 1.9.0) | `AES(key:iv:)` |
 | 400+ UIKit, Foundation, and AVFoundation extensions | `Extensions/` |
 
 ---
@@ -606,7 +606,9 @@ Debouncer.debounce(from: #function, id: "email",    seconds: 0.3) { self.validat
 
 ---
 
-### AES encryption
+### AES encryption (deprecated)
+
+> **Deprecated in 1.9.0.** `AES` is AES-CBC with a string key, a fixed IV and no authentication. Use CryptoKit's `AES.GCM` with a `SymmetricKey` in new code. `AES` still works, with a deprecation warning, until the next major release.
 
 Encrypt and decrypt strings or raw `Data` with AES-128 or AES-256 in CBC mode (PKCS7 padding). Key must be exactly 16 or 32 characters; IV must be exactly 16 characters.
 

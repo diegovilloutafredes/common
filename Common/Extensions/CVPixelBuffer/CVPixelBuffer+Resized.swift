@@ -2,6 +2,7 @@ import Accelerate
 
 extension CVPixelBuffer {
     /// Returns thumbnail by cropping pixel buffer to biggest square and scaling the cropped image to model dimensions.
+    @available(*, deprecated, message: "Leaks its buffer when scaling fails and doesn't crop. No replacement in Common; scale with vImage or Core Image.")
     public func resized(to size: CGSize) -> CVPixelBuffer? {
         let imageWidth = CVPixelBufferGetWidth(self)
         let imageHeight = CVPixelBufferGetHeight(self)

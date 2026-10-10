@@ -8,10 +8,6 @@ import Foundation
 extension CustomStringConvertible {
     
     /// Returns a string description of the object using Mirror to reflect its properties.
-    public var description: String {
-        Mirror(reflecting: self)
-            .children
-            .map { "\($0.label ?? "No label"): \($0.value)" }
-            .joined(separator: "\n")
-    }
+    @available(*, deprecated, message: "Adopt MirrorDescribable for this output, or implement description.")
+    public var description: String { mirrorDescription(of: self) }
 }

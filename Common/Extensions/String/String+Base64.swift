@@ -13,5 +13,5 @@ extension String {
 extension String {
     
     /// Encodes the string to Base64.
-    public var encodedAsBase64: String { asData.base64EncodedString() }
+    public var encodedAsBase64: String { Data(utf8).base64EncodedString() }
 }
