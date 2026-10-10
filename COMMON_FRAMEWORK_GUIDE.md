@@ -1571,7 +1571,7 @@ A child flow in a sheet starts with `presentChild` (*Swipe-back and back-button 
 
 Common detent sizes: `0.45` (small), `0.75` (medium), `0.8` (large), `0.9625` (near-fullscreen).
 
-### Default delegate behavior (legacy)
+### Default delegate behavior (deprecated in 1.9.0)
 
 `BaseCoordinator` still conforms to `BaseModuleDelegate` for modules written against earlier releases, and since 1.9.0 that conformance is deprecated (Appendix D). Its two hooks are not: `onGoBackRequested()` → `pop()` and `onDismissRequested()` → `dismiss()` stay `open`, and a coordinator that overrides or calls them gets no warning. New modules fire `onRequested(.goBack)` and the coordinator pops (§6).
 
