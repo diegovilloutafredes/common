@@ -112,6 +112,21 @@ final class PresentationAnchorHostedTests: XCTestCase {
     @available(*, deprecated, message: "Pins the deprecated viewController")
     private func alertTarget<T: AlertPresentable>(of presenter: T) -> UIViewController? { presenter.viewController }
 
+    @available(*, deprecated, message: "Pins the deprecated viewController")
+    func test_viewControllerProperty_ofATypeWithoutANavigationController_isTheTopMostController() throws {
+        let host = try hostTopMost()
+        let presenter = PlainPresenter()
+
+        XCTAssertTrue(plainPresentableTarget(of: presenter) === host)
+        XCTAssertTrue(plainDismissableTarget(of: presenter) === host)
+        XCTAssertTrue(alertTarget(of: presenter) === host)
+    }
+
+    @available(*, deprecated, message: "Pins the deprecated viewController")
+    private func plainPresentableTarget<T: Presentable>(of presenter: T) -> UIViewController? { presenter.viewController }
+    @available(*, deprecated, message: "Pins the deprecated viewController")
+    private func plainDismissableTarget<T: Dismissable>(of presenter: T) -> UIViewController? { presenter.viewController }
+
     // MARK: - Default targets
 
     func test_defaultCoordinator_presentsFromItsNavigationControllersTopMostPresentedController() async throws {
@@ -155,6 +170,88 @@ final class PresentationAnchorHostedTests: XCTestCase {
         PlainPresenter().presentAlertView(type: .emptyAlert)
 
         XCTAssertTrue(host.presentedViewController is UIAlertController)
+    }
+
+    func test_defaultCoordinator_presentingAfterDismissing_replacesWhatItsNavigationControllerPresents() async throws {
+        let navigation = UINavigationController(rootViewController: UIViewController())
+        await present(navigation, from: try hostTopMost())
+        let sheet = UIViewController()
+        await present(sheet, from: navigation)
+        let coordinator = BaseCoordinator(navigationController: navigation)
+        let replacement = UIViewController()
+
+        await transition("the coordinator presents after dismissing") { coordinator.present(.dismissingCurrent, viewController: replacement, animated: false, completion: $0) }
+
+        XCTAssertTrue(navigation.presentedViewController === replacement)
+        XCTAssertNil(sheet.presentingViewController)
+    }
+
+    func test_defaultCoordinator_dismissesWhatItsNavigationControllerPresents() async throws {
+        let navigation = UINavigationController(rootViewController: UIViewController())
+        await present(navigation, from: try hostTopMost())
+        await present(UIViewController(), from: navigation)
+        let coordinator = BaseCoordinator(navigationController: navigation)
+
+        await transition("the coordinator dismisses") { coordinator.dismiss(animated: false, completion: $0) }
+
+        XCTAssertNil(navigation.presentedViewController)
+        XCTAssertNotNil(navigation.presentingViewController, "its own navigation controller stays presented")
+    }
+
+    func test_defaultCoordinator_dismissingFromTheRoot_dismissesItsNavigationControllerToo() async throws {
+        let host = try hostTopMost()
+        let navigation = UINavigationController(rootViewController: UIViewController())
+        await present(navigation, from: host)
+        await present(UIViewController(), from: navigation)
+        let coordinator = BaseCoordinator(navigationController: navigation)
+
+        await transition("the coordinator dismisses from the root") { coordinator.dismiss(.fromRoot, animated: false, completion: $0) }
+
+        XCTAssertNil(host.presentedViewController)
+    }
+
+    func test_typeWithoutANavigationController_presentsFromTheTopMostController() async throws {
+        let host = try hostTopMost()
+        let presented = UIViewController()
+
+        await transition("the presenter presents") { PlainPresenter().present(.overCurrent, viewController: presented, animated: false, completion: $0) }
+
+        XCTAssertTrue(host.presentedViewController === presented)
+    }
+
+    func test_typeWithoutANavigationController_presentingAfterDismissing_replacesTheTopMostController() async throws {
+        let host = try hostTopMost()
+        let sheet = UIViewController()
+        await present(sheet, from: host)
+        let replacement = UIViewController()
+
+        await transition("the presenter presents after dismissing") { PlainPresenter().present(.dismissingCurrent, viewController: replacement, animated: false, completion: $0) }
+
+        XCTAssertTrue(host.presentedViewController === replacement)
+        XCTAssertNil(sheet.presentingViewController)
+    }
+
+    func test_typeWithoutANavigationController_dismissingFromTheRoot_dismissesEverythingPresented() async throws {
+        let host = try hostTopMost()
+        let sheet = UIViewController()
+        await present(sheet, from: host)
+        await present(UIViewController(), from: sheet)
+
+        await transition("the presenter dismisses from the root") { PlainPresenter().dismiss(.fromRoot, animated: false, completion: $0) }
+
+        XCTAssertNil(host.presentedViewController)
+    }
+
+    /// Pins the behavior as it is: the target is the top-most controller, which presents nothing, so there is
+    /// nothing for it to dismiss and only the completion runs.
+    func test_typeWithoutANavigationController_dismissingTheTopMost_dismissesNothing() async throws {
+        let host = try hostTopMost()
+        let sheet = UIViewController()
+        await present(sheet, from: host)
+
+        await transition("the presenter's completion runs") { PlainPresenter().dismiss(animated: false, completion: $0) }
+
+        XCTAssertTrue(host.presentedViewController === sheet)
     }
 
     // MARK: - Helpers

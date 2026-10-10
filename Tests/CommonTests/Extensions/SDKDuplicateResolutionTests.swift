@@ -25,5 +25,12 @@ final class SDKDuplicateResolutionTests: XCTestCase {
         XCTAssertEqual(passedThrough(.zero), zeros)
     }
 
+    /// The reads above resolve to the SDK's declarations. A module selector names each module's own, which pins
+    /// the premise that lets Common's yield: both have the same value.
+    func test_commonsMembers_haveTheSDKsValues() {
+        XCTAssertEqual(Bundle.main.Common::bundleIdentifier, Bundle.main.Foundation::bundleIdentifier)
+        XCTAssertEqual(NSDirectionalEdgeInsets.Common::zero, NSDirectionalEdgeInsets.UIKit::zero)
+    }
+
     private func passedThrough(_ insets: NSDirectionalEdgeInsets) -> NSDirectionalEdgeInsets { insets }
 }

@@ -2,7 +2,7 @@ import CommonCrypto
 import Foundation
 
 /// A helper struct for AES encryption and decryption.
-@available(*, deprecated, message: "AES-CBC with a string key, a fixed IV and no authentication. Use CryptoKit's AES.GCM with a SymmetricKey.")
+@available(*, deprecated, message: "AES-CBC with a string key, an IV fixed per instance and no authentication. Use CryptoKit's AES.GCM with a SymmetricKey.")
 public struct AES {
     private let key: Data
     private let iv: Data

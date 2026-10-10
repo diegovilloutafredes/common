@@ -15,6 +15,10 @@
 /// "\(Item(name: "a", count: 2))"   // "name: a\ncount: 2"
 /// ```
 /// A type that implements `description` itself keeps its own.
+///
+/// The text lists what the type's `Mirror` exposes. A case without a payload has no children and describes as an
+/// empty string, a subclass lists only the properties it declares, and an `@Observable` class lists its generated
+/// storage: implement `description` for those.
 public protocol MirrorDescribable: CustomStringConvertible {}
 
 // MARK: - Default implementation

@@ -608,7 +608,7 @@ Debouncer.debounce(from: #function, id: "email",    seconds: 0.3) { self.validat
 
 ### AES encryption (deprecated)
 
-> **Deprecated in 1.9.0.** `AES` is AES-CBC with a string key, a fixed IV and no authentication. Use CryptoKit's `AES.GCM` with a `SymmetricKey` in new code. `AES` still works, with a deprecation warning, until the next major release.
+> **Deprecated in 1.9.0.** `AES` is AES-CBC with a string key, an IV fixed per instance and no authentication. Use CryptoKit's `AES.GCM` with a `SymmetricKey` in new code. `AES` still works, with a deprecation warning, until the next major release. In a file that imports CryptoKit and Common, write `CryptoKit.AES` where a type is expected, as in `CryptoKit.AES.GCM.SealedBox`.
 
 Encrypt and decrypt strings or raw `Data` with AES-128 or AES-256 in CBC mode (PKCS7 padding). Key must be exactly 16 or 32 characters; IV must be exactly 16 characters.
 
