@@ -93,6 +93,7 @@ final class PresentationAnchorHostedTests: XCTestCase {
         XCTAssertNil(host.presentedViewController)
     }
 
+    @available(*, deprecated, message: "Pins the deprecated viewController")
     func test_viewControllerProperty_ignoresTheAnchor() throws {
         let anchor = try makeAnchor()
         let navigation = UINavigationController()
@@ -104,8 +105,11 @@ final class PresentationAnchorHostedTests: XCTestCase {
         XCTAssertTrue(alertTarget(of: coordinator) === UIApplication.shared.topMostViewController)
     }
 
+    @available(*, deprecated, message: "Pins the deprecated viewController")
     private func presentableTarget<T: Presentable & Navigationable>(of presenter: T) -> UIViewController? { presenter.viewController }
+    @available(*, deprecated, message: "Pins the deprecated viewController")
     private func dismissableTarget<T: Dismissable & Navigationable>(of presenter: T) -> UIViewController? { presenter.viewController }
+    @available(*, deprecated, message: "Pins the deprecated viewController")
     private func alertTarget<T: AlertPresentable>(of presenter: T) -> UIViewController? { presenter.viewController }
 
     // MARK: - Default targets

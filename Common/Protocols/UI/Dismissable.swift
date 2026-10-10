@@ -28,30 +28,38 @@ public protocol Dismissable {
 
 // MARK: - Default implementation
 extension Dismissable {
-    public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
+    @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
+    public var viewController: UIViewController? { presentationTarget }
+
+    /// Where the default `dismiss` goes without a presentation anchor: the application's top-most controller.
+    var presentationTarget: UIViewController? { UIApplication.shared.topMostViewController }
 
     public func dismiss(_ type: DismissType = .topMost, animated: Bool = true, completion: CompletionHandler = nil) {
         if let anchor = anchorController(of: self) {
             return anchor.dismissFromAnchor(type, animated: animated, completion: completion)
         }
         switch type {
-        case .fromRoot: viewController?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
-        case .topMost: viewController?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
+        case .fromRoot: presentationTarget?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
+        case .topMost: presentationTarget?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
         }
     }
 }
 
 // MARK: - where Self: Navigationable
 extension Dismissable where Self: Navigationable {
-    public var viewController: UIViewController? { navigationController }
+    @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
+    public var viewController: UIViewController? { presentationTarget }
+
+    /// Where the default `dismiss` goes without a presentation anchor: the navigation controller.
+    var presentationTarget: UIViewController? { navigationController }
 
     public func dismiss(_ type: DismissType = .topMost, animated: Bool = true, completion: CompletionHandler = nil) {
         if let anchor = anchorController(of: self) {
             return anchor.dismissFromAnchor(type, animated: animated, completion: completion)
         }
         switch type {
-        case .fromRoot: viewController?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
-        case .topMost: viewController?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
+        case .fromRoot: presentationTarget?.dismissFromRootPresentingViewController(animated: animated, completion: completion)
+        case .topMost: presentationTarget?.dismissTopMostPresentedViewController(animated: animated, completion: completion)
         }
     }
 }

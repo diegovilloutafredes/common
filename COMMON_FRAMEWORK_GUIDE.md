@@ -1290,7 +1290,7 @@ final class ProfileCoordinator: BaseCoordinator {
 }
 ```
 
-With an anchor, presentations and alerts are presented from the top-most controller the anchor presents, or from the anchor itself, and `dismiss()` dismisses that top-most controller. `nil`, the default, keeps the targets above. Any other presenting type can adopt `PresentationAnchorProviding` the same way: a view controller that adopts it presents its alerts from its anchor, which also lets a test redirect them. The `viewController` property of the three protocols doesn't follow the anchor.
+With an anchor, presentations and alerts are presented from the top-most controller the anchor presents, or from the anchor itself, and `dismiss()` dismisses that top-most controller. `nil`, the default, keeps the targets above. Any other presenting type can adopt `PresentationAnchorProviding` the same way: a view controller that adopts it presents its alerts from its anchor, which also lets a test redirect them. The `viewController` property of the three protocols doesn't follow the anchor, and since 1.9.0 it is deprecated: call `present`, `dismiss` or `presentAlertView`, which do.
 
 ### Child coordinators
 
@@ -3061,3 +3061,4 @@ A deprecated declaration still compiles and behaves as before. Each use gets a c
 | `GoBackRequestable` | A `Requested` case through `onRequested`; the coordinator calls `pop()` |
 | `BaseCoordinator`'s conformance to those four protocols | `presentAlertView`, `present`, `dismiss()` or `pop()`, called on the coordinator. Its hooks `onDismissRequested()` and `onGoBackRequested()` are not deprecated |
 | `ContentReloadable`, `ReloadContentRequestable`, `BaseViewModelableViewController.reloadContent()` | An intent on the ViewModel, or a `ViewLifecycleable` hook, that reloads its state; the controller re-renders in `updateContent()` (§5) |
+| The `viewController` property of `Presentable`, `Dismissable` and `AlertPresentable` | The protocols' own `present`, `dismiss` and `presentAlertView`, which honor `presentationAnchor` (§7). A type's own `viewController` property is unaffected |

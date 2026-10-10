@@ -32,7 +32,11 @@ public protocol AlertPresentable: AnyObject {
 
 // MARK: - Default implementation
 extension AlertPresentable {
-    public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
+    @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
+    public var viewController: UIViewController? { presentationTarget }
+
+    /// Where the default alerts go without a presentation anchor: the application's top-most controller.
+    var presentationTarget: UIViewController? { UIApplication.shared.topMostViewController }
 
     public func presentAlertView(type: AlertViewType, acceptAction: ((UIAlertAction) -> Void)? = nil, cancelAction: ((UIAlertAction) -> Void)? = nil) {
         presentAlertView(
@@ -111,9 +115,9 @@ extension AlertPresentable {
         alertPresenter?.present(vc, animated: true)
     }
 
-    /// The top-most controller the presentation anchor presents, or, without an anchor, `viewController`.
+    /// The top-most controller the presentation anchor presents, or, without an anchor, `presentationTarget`.
     private var alertPresenter: UIViewController? {
-        anchorController(of: self)?.topMostPresentedViewController ?? viewController
+        anchorController(of: self)?.topMostPresentedViewController ?? presentationTarget
     }
 }
 

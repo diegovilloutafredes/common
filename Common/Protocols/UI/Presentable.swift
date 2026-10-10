@@ -29,7 +29,11 @@ public protocol Presentable {
 
 // MARK: - Default implementation
 extension Presentable {
-    public var viewController: UIViewController? { UIApplication.shared.topMostViewController }
+    @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
+    public var viewController: UIViewController? { presentationTarget }
+
+    /// Where the default `present` goes without a presentation anchor: the application's top-most controller.
+    var presentationTarget: UIViewController? { UIApplication.shared.topMostViewController }
 
     public func present(_ type: PresentType = .dismissingCurrent, viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
         if let anchor = anchorController(of: self) {
@@ -37,16 +41,20 @@ extension Presentable {
         }
         switch type {
         case .dismissingCurrent:
-            self.viewController?.dismiss(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
+            presentationTarget?.dismiss(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
         case .overCurrent:
-            self.viewController?.present(viewController, animated: animated, completion: completion)
+            presentationTarget?.present(viewController, animated: animated, completion: completion)
         }
     }
 }
 
 // MARK: - where Self: Navigationable
 extension Presentable where Self: Navigationable {
-    public var viewController: UIViewController? { navigationController }
+    @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
+    public var viewController: UIViewController? { presentationTarget }
+
+    /// Where the default `present` goes without a presentation anchor: the navigation controller.
+    var presentationTarget: UIViewController? { navigationController }
 
     public func present(_ type: PresentType = .dismissingCurrent, viewController: UIViewController, animated: Bool = true, completion: CompletionHandler = nil) {
         if let anchor = anchorController(of: self) {
@@ -54,9 +62,9 @@ extension Presentable where Self: Navigationable {
         }
         switch type {
         case .dismissingCurrent:
-            self.viewController?.dismissTopMostPresentedViewController(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
+            presentationTarget?.dismissTopMostPresentedViewController(animated: animated) { present(.overCurrent, viewController: viewController, animated: animated, completion: completion) }
         case .overCurrent:
-            (self.viewController?.topMostPresentedViewController ?? self.viewController)?.present(viewController, animated: animated, completion: completion)
+            (presentationTarget?.topMostPresentedViewController ?? presentationTarget)?.present(viewController, animated: animated, completion: completion)
         }
     }
 }
