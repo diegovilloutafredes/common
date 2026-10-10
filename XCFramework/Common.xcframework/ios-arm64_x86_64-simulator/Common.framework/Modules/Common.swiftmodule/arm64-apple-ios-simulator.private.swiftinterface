@@ -1,6 +1,6 @@
 // swift-interface-format-version: 1.0
 // swift-compiler-version: Apple Swift version 6.4 effective-5.10 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
-// swift-module-flags: -target arm64-apple-ios16.0-simulator -enable-objc-interop -enable-library-evolution -language-mode 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
+// swift-module-flags: -target arm64-apple-ios17.0-simulator -enable-objc-interop -enable-library-evolution -language-mode 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name Common
 // swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4
 import ARKit
 @_exported import AVFoundation
@@ -32,6 +32,7 @@ import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
 import os
+@available(*, deprecated, message: "AES-CBC with a string key, an IV fixed per instance and no authentication. Use CryptoKit's AES.GCM with a SymmetricKey.")
 public struct AES {
   public init?(key: Swift::String, iv: Swift::String)
   public func encrypt(_ string: Swift::String) -> Foundation::Data?
@@ -106,6 +107,7 @@ extension AVFoundation::AVCaptureVideoDataOutput {
   public func setSampleBufferDelegate(_ delegate: any AVFoundation::AVCaptureVideoDataOutputSampleBufferDelegate, queue: Dispatch::DispatchQueue = .init(label: "VideoDataOutputQueue")) -> Self
 }
 extension AVFoundation::AVCaptureVideoDataOutput {
+  @available(iOS, deprecated: 17.0, message: "Set videoRotationAngle on the connection, with an angle from AVCaptureDevice.RotationCoordinator.")
   @discardableResult
   public func videoOrientation(_ videoOrientation: AVFoundation::AVCaptureVideoOrientation) -> Self
 }
@@ -122,6 +124,7 @@ extension AVFoundation::AVCaptureVideoPreviewLayer {
   public func videoGravity(_ videoGravity: AVFoundation::AVLayerVideoGravity) -> Self
 }
 extension AVFoundation::AVCaptureVideoPreviewLayer {
+  @available(iOS, deprecated: 17.0, message: "Set videoRotationAngle on the connection, with an angle from AVCaptureDevice.RotationCoordinator.")
   @discardableResult
   public func videoOrientation(_ videoOrientation: AVFoundation::AVCaptureVideoOrientation) -> Self
 }
@@ -168,12 +171,15 @@ extension Common::ActionButton {
   @discardableResult
   @_Concurrency::MainActor @preconcurrency final public func set(isEnabled: Swift::Bool) -> Self
 }
+@available(*, deprecated, message: "No replacement: declare an action closure on the type that needs one.")
 public protocol Actionable {
   var onAction: Common::Action { get }
 }
+@available(*, deprecated, message: "Fire a ViewEvent and present a UIActivityViewController from the view controller (guide §6).")
 @_Concurrency::MainActor public protocol ActivityControllerRequestable : AnyObject {
   @_Concurrency::MainActor func onPresentActivityControllerRequested(with item: Any)
 }
+@available(*, deprecated, message: "Present a UIActivityViewController with present(.overCurrent, viewController:).")
 extension Common::ActivityControllerRequestable {
   @_Concurrency::MainActor public func onPresentActivityControllerRequested(with item: Any)
 }
@@ -218,19 +224,24 @@ public enum AlertViewType : Swift::Sendable {
   @_Concurrency::MainActor func presentAlertView(viewModel: any Common::AlertViewModel, onDismissRequested handler: Common::CompletionHandler)
 }
 extension Common::AlertPresentable {
+  @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
   @_Concurrency::MainActor public var viewController: UIKit::UIViewController? {
     get
   }
   @_Concurrency::MainActor public func presentAlertView(type: Common::AlertViewType, acceptAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil, cancelAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil)
+  @_Concurrency::MainActor public func presentAlertView(type: Common::AlertViewType, acceptTitle: Swift::String = .DefaultValues.Alerts.acceptActionTitle, cancelTitle: Swift::String = .DefaultValues.Alerts.cancelActionTitle, acceptAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil, cancelAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil)
   @_Concurrency::MainActor public func presentAlertView(viewModel: any Common::AlertViewModel, onDismissRequested handler: Common::CompletionHandler)
 }
+@available(*, deprecated, message: "Fire a ViewEvent that the view controller presents; a coordinator calls presentAlertView directly (guide §6).")
 @_Concurrency::MainActor public protocol AlertRequestable : AnyObject {
   @_Concurrency::MainActor func onPresentAlertRequested(title: Swift::String, message: Swift::String, handler: Common::CompletionHandler, cancelHandler: Common::CompletionHandler)
   @_Concurrency::MainActor func onPresentAlertRequested(viewModel: any Common::AlertViewModel)
 }
+@available(*, deprecated, message: "Use presentAlertView(type:acceptAction:cancelAction:).")
 extension Common::AlertRequestable where Self : Common::AlertPresentable {
   @_Concurrency::MainActor public func onPresentAlertRequested(title: Swift::String = .DefaultValues.Alerts.title, message: Swift::String, handler: Common::CompletionHandler = nil, cancelHandler: Common::CompletionHandler = nil)
 }
+@available(*, deprecated, message: "Use presentAlertView(viewModel:onDismissRequested:).")
 extension Common::AlertRequestable where Self : Common::BaseCoordinator {
   @_Concurrency::MainActor public func onPresentAlertRequested(viewModel: any Common::AlertViewModel)
 }
@@ -354,6 +365,7 @@ extension Common::AppleLoginManager : AuthenticationServices::ASAuthorizationCon
     @objc get
     @objc set
   }
+  @available(iOS, deprecated: 17.0, message: "Don't call it: the view registers for trait changes itself.")
   @_Concurrency::MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit::UITraitCollection?)
   @objc deinit
 }
@@ -433,6 +445,8 @@ public protocol AsyncClientProtocol : AnyObject {
 extension Common::AsyncClientProtocol {
   public func request<T>(from function: Swift::String = #function, _ request: any Common::URLRequestConvertible) async throws -> T where T : Swift::Decodable
   public func upload<T>(from function: Swift::String = #function, multipart: Common::MultipartRequest, to request: any Common::URLRequestConvertible) async throws -> T where T : Swift::Decodable
+  public func request<T>(from function: Swift::String = #function, _ request: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift::Decodable
+  public func upload<T>(from function: Swift::String = #function, multipart: Common::MultipartRequest, to request: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift::Decodable
 }
 extension Foundation::AttributeContainer : Common::ValueWithable {
   @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
@@ -542,6 +556,7 @@ extension Common::BaseClient : Common::ClientProtocol {
   @available(*, unavailable)
   @_Concurrency::MainActor @preconcurrency required public init?(coder: Foundation::NSCoder)
   @_Concurrency::MainActor @preconcurrency open func bottomInsetForLastCollectionSection() -> CoreFoundation::CGFloat
+  @_Concurrency::MainActor @preconcurrency override open func updateContent()
   @_Concurrency::MainActor @preconcurrency @objc open func numberOfSections(in collectionView: UIKit::UICollectionView) -> Swift::Int
   @_Concurrency::MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit::UICollectionView, numberOfItemsInSection section: Swift::Int) -> Swift::Int
   @_Concurrency::MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit::UICollectionView, viewForSupplementaryElementOfKind kind: Swift::String, at indexPath: Foundation::IndexPath) -> UIKit::UICollectionReusableView
@@ -560,12 +575,18 @@ extension Common::BaseClient : Common::ClientProtocol {
   @_Concurrency::MainActor @preconcurrency @objc open func scrollViewWillEndDragging(_ scrollView: UIKit::UIScrollView, withVelocity velocity: CoreFoundation::CGPoint, targetContentOffset: Swift::UnsafeMutablePointer<CoreFoundation::CGPoint>)
   @objc deinit
 }
-@objc @_Concurrency::MainActor open class BaseCoordinator : ObjectiveC::NSObject, Common::Coordinator, Common::BaseModuleDelegate {
+@objc @_Concurrency::MainActor open class BaseCoordinator : ObjectiveC::NSObject, Common::Coordinator {
   @_Concurrency::MainActor final public let navigationController: UIKit::UINavigationController
   @_Concurrency::MainActor final public let onPerformed: Common::Handler<any Common::Coordinator>?
   @_Concurrency::MainActor public init(navigationController: UIKit::UINavigationController, onPerformed: Common::Handler<any Common::Coordinator>? = nil)
   @_Concurrency::MainActor public var childCoordinators: [any Common::Coordinator]
   @_Concurrency::MainActor weak public var parent: Common::BaseCoordinator?
+  @_Concurrency::MainActor open var presentationAnchor: UIKit::UIViewController? {
+    get
+  }
+  @_Concurrency::MainActor public var isFinished: Swift::Bool {
+    get
+  }
   @_Concurrency::MainActor open func start()
   @_Concurrency::MainActor open func onDismissRequested()
   @_Concurrency::MainActor open func onGoBackRequested()
@@ -576,12 +597,16 @@ extension Common::BaseClient : Common::ClientProtocol {
 extension Common::BaseCoordinator {
   @_Concurrency::MainActor public func addChild(_ coordinator: some Coordinator)
   @_Concurrency::MainActor public func addChildAndStart(_ coordinator: some Coordinator)
+  @_Concurrency::MainActor public func presentChild(_ coordinator: Common::BaseCoordinator, animated: Swift::Bool = true)
   @_Concurrency::MainActor public func getChild<T>(_ type: T.Type) -> T? where T : Common::Coordinator
   @_Concurrency::MainActor public func removeChild<T>(_ coordinator: T) where T : Common::Coordinator
 }
 extension Common::BaseCoordinator : Common::ActivityIndicatorable {
 }
 extension Common::BaseCoordinator : Common::AlertPresentable {
+}
+@available(*, deprecated, message: "Call presentAlertView, present, dismiss() or pop() on the coordinator directly.")
+extension Common::BaseCoordinator : Common::BaseModuleDelegate {
 }
 extension Common::BaseCoordinator : Common::Dismissable {
 }
@@ -590,6 +615,8 @@ extension Common::BaseCoordinator : Common::Navigationable {
   @_Concurrency::MainActor public func set(_ viewController: UIKit::UIViewController, animated: Swift::Bool = false)
 }
 extension Common::BaseCoordinator : Common::Presentable {
+}
+extension Common::BaseCoordinator : Common::PresentationAnchorProviding {
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency::MainActor @preconcurrency open class BaseDNITextField : Common::BaseTextField {
   @_Concurrency::MainActor @preconcurrency override open func setupView()
@@ -692,7 +719,7 @@ extension Common::BaseViewController {
   @_Concurrency::MainActor @preconcurrency @objc override dynamic open func viewDidDisappear(_ animated: Swift::Bool)
 }
 extension Common::BaseViewController : UIKit::UIGestureRecognizerDelegate {
-  @_Concurrency::MainActor @preconcurrency @objc dynamic public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIKit::UIGestureRecognizer) -> Swift::Bool
+  @_Concurrency::MainActor @preconcurrency @objc dynamic open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIKit::UIGestureRecognizer) -> Swift::Bool
 }
 @_inheritsConvenienceInitializers @_Concurrency::MainActor @preconcurrency open class BaseViewModelableCell<ViewModelType> : Common::ViewModelableCell {
   @_Concurrency::MainActor @preconcurrency open var viewModel: ViewModelType? {
@@ -718,7 +745,7 @@ extension Common::BaseViewController : UIKit::UIGestureRecognizerDelegate {
   @_Concurrency::MainActor @preconcurrency required public init(viewModel: ViewModelType)
   @objc deinit
 }
-@_Concurrency::MainActor @preconcurrency open class BaseViewModelableViewController<ViewModelType> : Common::ViewModelableViewController, Common::ContentReloadable {
+@_Concurrency::MainActor @preconcurrency open class BaseViewModelableViewController<ViewModelType> : Common::ViewModelableViewController {
   @_Concurrency::MainActor @preconcurrency open var viewModel: ViewModelType {
     get
     set
@@ -735,8 +762,12 @@ extension Common::BaseViewController : UIKit::UIGestureRecognizerDelegate {
   @_Concurrency::MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift::Bool)
   @_Concurrency::MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift::Bool)
   @_Concurrency::MainActor @preconcurrency @objc override dynamic open func viewDidDisappear(_ animated: Swift::Bool)
+  @available(*, deprecated, message: "Call an intent on the view model; the controller re-renders in updateContent() (guide §6).")
   @_Concurrency::MainActor @preconcurrency open func reloadContent()
   @objc deinit
+}
+@available(*, deprecated, message: "Let the view model reload itself from an intent or a ViewLifecycleable hook; the controller re-renders in updateContent() (guide §6).")
+extension Common::BaseViewModelableViewController : Common::ContentReloadable {
 }
 extension Foundation::Bundle {
   public var appVersion: Swift::String {
@@ -749,7 +780,7 @@ extension Foundation::Bundle {
   }
 }
 extension Foundation::Bundle {
-  public var bundleIdentifier: Swift::String? {
+  @_disfavoredOverload public var bundleIdentifier: Swift::String? {
     get
   }
 }
@@ -957,6 +988,7 @@ extension CoreVideo::CVBuffer {
   }
 }
 extension CoreVideo::CVBuffer {
+  @available(*, deprecated, message: "Leaks its buffer when scaling fails and doesn't crop. No replacement in Common; scale with vImage or Core Image.")
   public func resized(to size: CoreFoundation::CGSize) -> CoreVideo::CVPixelBuffer?
 }
 extension CoreVideo::CVBuffer {
@@ -1076,6 +1108,7 @@ public struct CardViewModelPayload : Common::CardViewModel {
     @objc get
   }
   @_Concurrency::MainActor @preconcurrency public init(frame: CoreFoundation::CGRect, colors: [UIKit::UIColor], lineCap: QuartzCore::CAShapeLayerLineCap, lineWidth: CoreFoundation::CGFloat)
+  @available(iOS, deprecated: 17.0, message: "Don't call it: the view registers for trait changes itself.")
   @_Concurrency::MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit::UITraitCollection?)
   @_Concurrency::MainActor @preconcurrency convenience public init(colors: [UIKit::UIColor], lineCap: QuartzCore::CAShapeLayerLineCap = .butt, lineWidth: CoreFoundation::CGFloat = 4)
   @objc deinit
@@ -1102,6 +1135,8 @@ public protocol ClientProtocol : AnyObject {
 extension Common::ClientProtocol {
   public func request<T>(from function: Swift::String = #function, _ request: any Common::URLRequestConvertible, result: @escaping Common::NetworkResultHandler<T>) where T : Swift::Decodable
   public func upload<T>(from function: Swift::String = #function, multipart: Common::MultipartRequest, to request: any Common::URLRequestConvertible, result: @escaping Common::NetworkResultHandler<T>) where T : Swift::Decodable
+  public func request<T>(from function: Swift::String = #function, _ request: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common::NetworkResultHandler<T>) where T : Swift::Decodable
+  public func upload<T>(from function: Swift::String = #function, multipart: Common::MultipartRequest, to request: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common::NetworkResultHandler<T>) where T : Swift::Decodable
 }
 extension Swift::Collection {
   public var isNotEmpty: Swift::Bool {
@@ -1155,6 +1190,7 @@ extension Common::CollectionViewSizeable {
   @_Concurrency::MainActor public func onSizeForItem(in section: Swift::Int, at index: Swift::Int) -> Common::Size
   @_Concurrency::MainActor public func onSizeForItem(in section: Swift::Int, at index: Swift::Int, availableSize: Common::Size) -> Common::Size
 }
+@available(*, deprecated, message: "Let the view model reload itself from an intent or a ViewLifecycleable hook; the controller re-renders in updateContent() (guide §6).")
 public protocol ContentReloadable {
   func reloadContent()
 }
@@ -1173,6 +1209,7 @@ public enum CustomAlertWireframe {
   public static func createModule(_ contentView: UIKit::UIView, onDismissRequested handler: Common::CompletionHandler = nil) -> UIKit::UIViewController
 }
 extension Swift::CustomStringConvertible {
+  @available(*, deprecated, message: "Adopt MirrorDescribable for this output, or implement description.")
   public var description: Swift::String {
     get
   }
@@ -1209,6 +1246,7 @@ extension Foundation::Data {
   }
   public func hexEncodedString(options: Foundation::Data.Common::HexEncodingOptions = []) -> Swift::String
 }
+@available(*, deprecated, message: "Every Data of the same length gets the same key. Use a key derived from the content, such as its base64 encoding.")
 extension Foundation::Data : Common::Keyable {
 }
 extension Foundation::Date {
@@ -1239,6 +1277,7 @@ extension Foundation::DateComponents : Common::ValueWithable {
   @_Concurrency::MainActor public static func debounce(from: Swift::String = #function, id: Swift::String = .empty, seconds: Foundation::TimeInterval, function: @escaping () -> Swift::Void)
   @objc deinit
 }
+@available(*, deprecated, message: "Send a Requested case through onRequested; the coordinator calls dismiss() (guide §6).")
 @_Concurrency::MainActor public protocol DismissRequestable : AnyObject {
   @_Concurrency::MainActor func onDismissRequested()
 }
@@ -1255,12 +1294,14 @@ public enum DismissType : Swift::Sendable {
   @_Concurrency::MainActor func dismiss(_ type: Common::DismissType, animated: Swift::Bool, completion: Common::CompletionHandler)
 }
 extension Common::Dismissable {
+  @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
   @_Concurrency::MainActor public var viewController: UIKit::UIViewController? {
     get
   }
   @_Concurrency::MainActor public func dismiss(_ type: Common::DismissType = .topMost, animated: Swift::Bool = true, completion: Common::CompletionHandler = nil)
 }
 extension Common::Dismissable where Self : Common::Navigationable {
+  @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
   @_Concurrency::MainActor public var viewController: UIKit::UIViewController? {
     get
   }
@@ -1278,6 +1319,11 @@ extension Swift::Double {
 }
 extension Swift::Double {
   public func isClose(to other: Swift::Double, tolerance: Swift::Double = 1e-9) -> Swift::Bool
+}
+public struct EmptyResponse : Swift::Decodable, Swift::Equatable, Swift::Sendable {
+  public init()
+  public init(from decoder: any Swift::Decoder) throws
+  public static func == (a: Common::EmptyResponse, b: Common::EmptyResponse) -> Swift::Bool
 }
 extension Swift::Encodable {
   public func asData(encoder: Foundation::JSONEncoder = .init()) -> Foundation::Data?
@@ -1299,6 +1345,7 @@ public protocol Endpoint : Common::URLRequestConvertible {
   var parameters: (any Swift::Encodable)? { get }
   var jsonEncoder: Foundation::JSONEncoder { get }
   var urlEncodedFormEncoder: Common::URLEncodedFormEncoder { get }
+  var timeoutInterval: Foundation::TimeInterval? { get }
 }
 extension Common::Endpoint {
   public var version: Swift::String {
@@ -1314,6 +1361,9 @@ extension Common::Endpoint {
     get
   }
   public var urlEncodedFormEncoder: Common::URLEncodedFormEncoder {
+    get
+  }
+  public var timeoutInterval: Foundation::TimeInterval? {
     get
   }
 }
@@ -1420,6 +1470,7 @@ public enum EmptyResult<Failure> where Failure : Swift::Error {
   case success
   case failure(Failure)
 }
+@available(*, deprecated, message: "Send a Requested case through onRequested; the coordinator calls pop() (guide §6).")
 @_Concurrency::MainActor public protocol GoBackRequestable : AnyObject {
   @_Concurrency::MainActor func onGoBackRequested()
 }
@@ -1452,6 +1503,7 @@ public enum EmptyResult<Failure> where Failure : Swift::Error {
     @objc get
   }
   @_Concurrency::MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation::CGRect)
+  @available(iOS, deprecated: 17.0, message: "Don't call it: the view registers for trait changes itself.")
   @_Concurrency::MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit::UITraitCollection?)
   @_Concurrency::MainActor @preconcurrency @objc override final public func layoutSubviews()
   @objc deinit
@@ -1596,12 +1648,15 @@ extension Common::HTTPService {
   public static var defaultTimeoutInterval: Swift::Double
   public static func request<T>(_ resource: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift::Decodable
   public static func upload<T>(multipart: Common::MultipartRequest, to resource: any Common::URLRequestConvertible, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift::Decodable
+  public static func upload<T>(multipart: Common::MultipartRequest, to resource: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase)) async throws -> T where T : Swift::Decodable
 }
 public enum HTTPService {
   @discardableResult
   public static func request<T>(_ resource: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common::NetworkResultHandler<T>) -> _Concurrency::Task<Swift::Void, Swift::Never> where T : Swift::Decodable
   @discardableResult
   public static func upload<T>(multipart: Common::MultipartRequest, to resource: any Common::URLRequestConvertible, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common::NetworkResultHandler<T>) -> _Concurrency::Task<Swift::Void, Swift::Never> where T : Swift::Decodable
+  @discardableResult
+  public static func upload<T>(multipart: Common::MultipartRequest, to resource: any Common::URLRequestConvertible, urlSession: Foundation::URLSession = HTTPService.defaultSession, decoder: Foundation::JSONDecoder = .init().keyDecodingStrategy(.convertFromSnakeCase), result: @escaping Common::NetworkResultHandler<T>) -> _Concurrency::Task<Swift::Void, Swift::Never> where T : Swift::Decodable
 }
 extension Common::HTTPService : Common::Loggable {
 }
@@ -1763,6 +1818,8 @@ public struct KeyValueStore {
     }
     case notSecure(Common::KeyValueStore.Common::StoreType.Common::NotSecureType)
     case secure
+    case keychain(accessibility: Common::KeychainItemAccessibility)
+    public static func secure(accessibility: Common::KeychainItemAccessibility) -> Common::KeyValueStore.Common::StoreType
     public var storage: any Common::KeyValueStorage {
       get
     }
@@ -1870,14 +1927,17 @@ extension Common::KeychainWrapper : Common::KeyValueStorage {
   final public class func wipeKeychain()
   @objc deinit
 }
+@available(*, deprecated, message: "Set navigationBar.prefersLargeTitles or navigationItem.largeTitleDisplayMode directly.")
 public protocol LargeTitleSettable : AnyObject {
   func disableLargeTitles()
   func enableLargeTitles()
 }
+@available(*, deprecated, message: "Set navigationBar.prefersLargeTitles or navigationItem.largeTitleDisplayMode directly.")
 extension Common::LargeTitleSettable where Self : UIKit::UINavigationController {
   public func disableLargeTitles()
   public func enableLargeTitles()
 }
+@available(*, deprecated, message: "Set navigationBar.prefersLargeTitles or navigationItem.largeTitleDisplayMode directly.")
 extension Common::LargeTitleSettable where Self : UIKit::UIViewController {
   public func disableLargeTitles()
   public func enableLargeTitles()
@@ -1916,8 +1976,12 @@ public protocol LocalAuthenticationManagerProtocol : AnyObject {
   var isBiometricAuthenticationSupported: Swift::Bool { get }
   var localAuthenticationType: Common::LocalAuthenticationType { get }
   func authenticate(result: @escaping Common::Handler<Swift::Bool>)
+  func authenticate() async throws
 }
-final public class LocalAuthenticationManager {
+extension Common::LocalAuthenticationManagerProtocol {
+  public func authenticate() async throws
+}
+@_hasMissingDesignatedInitializers final public class LocalAuthenticationManager {
   public init(cancelTitle: Swift::String? = nil, reason: Swift::String = "Authentication is required.")
   @objc deinit
 }
@@ -1935,13 +1999,14 @@ extension Common::LocalAuthenticationManager : Common::LocalAuthenticationManage
     get
   }
   final public func authenticate(result: @escaping Common::Handler<Swift::Bool>)
+  final public func authenticate() async throws
 }
 extension Foundation::Locale {
   public static var preferredLanguageCode: Swift::String {
     get
   }
 }
-@objc @_inheritsConvenienceInitializers final public class LocationAuthorizationManager : ObjectiveC::NSObject {
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class LocationAuthorizationManager : ObjectiveC::NSObject {
   public enum AuthorizationType {
     case always
     case whenInUse
@@ -1951,11 +2016,11 @@ extension Foundation::Locale {
       get
     }
   }
+  @objc override dynamic public init()
   final public var currentStatus: Common::AuthorizationStatus {
     get
   }
   final public func request(_ authorizationType: Common::LocationAuthorizationManager.Common::AuthorizationType, handler: Common::Handler<Common::AuthorizationStatus>? = nil)
-  @objc override dynamic public init()
   @objc deinit
 }
 extension Common::LocationAuthorizationManager : CoreLocation::CLLocationManagerDelegate {
@@ -1987,6 +2052,13 @@ extension Common::Logger {
   @discardableResult
   public static func isRuntimeForceEnabled(_ value: Swift::Bool) -> Common::Logger.Type
 }
+public protocol MirrorDescribable : Swift::CustomStringConvertible {
+}
+extension Common::MirrorDescribable {
+  public var description: Swift::String {
+    get
+  }
+}
 public struct MultipartRequest {
   public init(boundary: Swift::String = UUID().uuidString)
   public var contentTypeHeaderValue: Swift::String {
@@ -2007,7 +2079,7 @@ public enum NFCReadingAvailability {
   }
 }
 extension UIKit::NSDirectionalEdgeInsets {
-  public static var zero: UIKit::NSDirectionalEdgeInsets {
+  @_disfavoredOverload public static var zero: UIKit::NSDirectionalEdgeInsets {
     get
   }
 }
@@ -2202,16 +2274,21 @@ public enum PresentType {
   @_Concurrency::MainActor func present(_ type: Common::PresentType, viewController: UIKit::UIViewController, animated: Swift::Bool, completion: Common::CompletionHandler)
 }
 extension Common::Presentable {
+  @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
   @_Concurrency::MainActor public var viewController: UIKit::UIViewController? {
     get
   }
   @_Concurrency::MainActor public func present(_ type: Common::PresentType = .dismissingCurrent, viewController: UIKit::UIViewController, animated: Swift::Bool = true, completion: Common::CompletionHandler = nil)
 }
 extension Common::Presentable where Self : Common::Navigationable {
+  @available(*, deprecated, message: "Use present, dismiss or presentAlertView, which honor presentationAnchor.")
   @_Concurrency::MainActor public var viewController: UIKit::UIViewController? {
     get
   }
   @_Concurrency::MainActor public func present(_ type: Common::PresentType = .dismissingCurrent, viewController: UIKit::UIViewController, animated: Swift::Bool = true, completion: Common::CompletionHandler = nil)
+}
+@_Concurrency::MainActor public protocol PresentationAnchorProviding : AnyObject {
+  @_Concurrency::MainActor var presentationAnchor: UIKit::UIViewController? { get }
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency::MainActor @preconcurrency final public class PreviewView : UIKit::UIView {
   @_Concurrency::MainActor @preconcurrency @objc override final public class var layerClass: Swift::AnyClass {
@@ -2230,6 +2307,7 @@ extension Common::PreviewView {
   @_Concurrency::MainActor @preconcurrency final public func videoGravity(_ videoGravity: AVFoundation::AVLayerVideoGravity) -> Self
 }
 extension Common::PreviewView {
+  @available(iOS, deprecated: 17.0, message: "Set videoRotationAngle on the connection, with an angle from AVCaptureDevice.RotationCoordinator.")
   @discardableResult
   @_Concurrency::MainActor @preconcurrency final public func videoOrientation(_ videoOrientation: AVFoundation::AVCaptureVideoOrientation) -> Self
 }
@@ -2280,8 +2358,12 @@ extension Common::RawValueKeyableStorage where Self : Common::KeyValueStorage, S
   public func get<T>(using key: Self.Keys) -> T? where T : Swift::Decodable, T : Swift::Encodable
   public func remove(using key: Self.Keys)
 }
+@available(*, deprecated, message: "Let the view model reload itself from an intent or a ViewLifecycleable hook; the controller re-renders in updateContent() (guide §6).")
 public protocol ReloadContentRequestable : AnyObject {
   func onReloadContentRequested()
+}
+@_Concurrency::MainActor public protocol RevisionTrackable : AnyObject {
+  @_Concurrency::MainActor var revision: Swift::Int { get }
 }
 public protocol SafariWebViewRequestable : AnyObject {
   func onSafariWebViewRequested(url: Foundation::URL)
@@ -2365,6 +2447,7 @@ public enum StorageError : Swift::Error, Swift::Sendable {
   }
 }
 extension Swift::String {
+  @available(*, deprecated, message: "Use Data(string.utf8). asData() is the JSON encoding.")
   public var asData: Foundation::Data {
     get
   }
@@ -2450,8 +2533,10 @@ extension Swift::String {
     public static let MMyy: Swift::String
     public static let yyyyMMdd: Swift::String
     public static let yyyyMMddHHmmss: Swift::String
+    @available(*, deprecated, message: "+0000 is literal text: dates are formatted and parsed in the local time zone. Use Date.ISO8601FormatStyle, or a formatter whose time zone is UTC.")
     public static let yyyyMMddHHmmss0000: Swift::String
     public static let yyyyMMddHHmmss000000: Swift::String
+    @available(*, deprecated, message: "'Z' is literal text: dates are formatted and parsed in the local time zone. Use Date.ISO8601FormatStyle, or a formatter whose time zone is UTC.")
     public static let yyyyMMddTHHmmssSSSZ: Swift::String
     public static let yyMMdd: Swift::String
   }
@@ -2477,6 +2562,7 @@ extension Swift::String {
     }
   }
 }
+@available(*, deprecated, message: "Throw a type that conforms to Error, such as an enum.")
 extension Swift::String : @retroactive Swift::Error {
 }
 extension Swift::String {
@@ -2513,6 +2599,7 @@ extension Swift::String {
   public static func random(length: Swift::Int, chars: Swift::String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") -> Swift::String
 }
 extension Swift::String {
+  @available(*, deprecated, message: "Use folding(options: .diacriticInsensitive, locale:), which also handles uppercase letters and turns ñ into n.")
   public func removeStressedVowels() -> Swift::String
 }
 extension Swift::String {
@@ -2569,6 +2656,7 @@ public enum Toast {
   }
   public static func present(with message: Swift::String, duration: Common::Toast.Common::Duration = .medium, completion: Common::CompletionHandler = nil)
 }
+@available(*, deprecated, message: "Give the view model onRequested and onPerformed closures and fire ViewEvents instead of holding a delegate (guide §6).")
 public typealias BaseModuleDelegate = Common::ActivityControllerRequestable & Common::AlertRequestable & Common::DismissRequestable & Common::GoBackRequestable
 public typealias Action = () -> Swift::Void
 public typealias CompletionHandler = Common::Action?
@@ -2706,6 +2794,8 @@ extension UIKit::UIButton.UIKit::Configuration {
   public func imagePadding(_ imagePadding: CoreFoundation::CGFloat) -> UIKit::UIButton.UIKit::Configuration
   @discardableResult
   public func imagePlacement(_ imagePlacement: UIKit::NSDirectionalRectEdge) -> UIKit::UIButton.UIKit::Configuration
+  @discardableResult
+  public func title(_ title: Swift::String?) -> UIKit::UIButton.UIKit::Configuration
 }
 extension UIKit::UIButton.UIKit::Configuration : Common::ValueWithable {
   @available(iOS 15.0, tvOS 15.0, *)
@@ -2876,7 +2966,7 @@ extension UIKit::UIFont {
   @_disfavoredOverload public static func appFont(style: UIKit::UIFont.Common::FontStyle = .regular, size: CoreFoundation::CGFloat) -> UIKit::UIFont
   public static func register(fonts names: [Common::AppFontFamily], styles: [UIKit::UIFont.Common::FontStyle] = FontStyle.allCases, type: Swift::String = "ttf", on bundle: Foundation::Bundle = .main)
 }
-public struct AppFontFamily : Swift::RawRepresentable, Swift::Hashable, Common::Uppercaseable {
+public struct AppFontFamily : Swift::RawRepresentable, Swift::Hashable, Swift::Sendable, Common::Uppercaseable {
   public let rawValue: Swift::String
   public init(rawValue: Swift::String)
   public typealias RawValue = Swift::String
@@ -3786,6 +3876,7 @@ extension UIKit::UIViewController {
 extension UIKit::UIViewController : Common::KeyboardDismissable {
   @objc @_Concurrency::MainActor @preconcurrency dynamic public func dismissKeyboard()
 }
+@available(*, deprecated, message: "Set navigationBar.prefersLargeTitles or navigationItem.largeTitleDisplayMode directly.")
 extension UIKit::UIViewController : Common::LargeTitleSettable {
 }
 extension UIKit::UIViewController {
@@ -3812,16 +3903,22 @@ extension UIKit::UIViewController {
 }
 extension UIKit::UIViewController : Common::NavigationBarVisibilityTogglable {
 }
+@available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
 public protocol OffsetResetable {
+  @available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
   func resetOffsetIfNeeded()
+  @available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
   func resetCollectionViewOffsetIfNeeded()
+  @available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
   func resetScrollViewOffsetIfNeeded()
 }
+@available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
 extension Common::OffsetResetable where Self : UIKit::UIViewController {
   public func resetOffsetIfNeeded()
   public func resetScrollViewOffsetIfNeeded()
   public func resetCollectionViewOffsetIfNeeded()
 }
+@available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
 extension UIKit::UIViewController : Common::OffsetResetable {
 }
 extension UIKit::UIViewController {
@@ -3862,7 +3959,7 @@ extension UIKit::UIViewController {
 extension UIKit::UIViewController : Common::ScreenSizeMeasurable {
 }
 extension UIKit::UIViewController {
-  @_Concurrency::MainActor @preconcurrency public func setNavigationBar(backgroundColor: UIKit::UIColor? = nil, titleColor: UIKit::UIColor = .black, titleFont: UIKit::UIFont = .systemFont(ofSize: 16), largeTitleFont: UIKit::UIFont = .systemFont(ofSize: 28), leftBarButtonItemTintColor: UIKit::UIColor? = .black, rightBarButtonItemTintColor: UIKit::UIColor? = .black, barButtonItemFont: UIKit::UIFont? = nil, hasShadow: Swift::Bool = true, isTranslucent: Swift::Bool = true)
+  @_Concurrency::MainActor @preconcurrency public func setNavigationBar(backgroundColor: UIKit::UIColor? = nil, titleColor: UIKit::UIColor = .black, titleFont: UIKit::UIFont = .systemFont(ofSize: 16), largeTitleFont: UIKit::UIFont = .systemFont(ofSize: 28), leftBarButtonItemTintColor: UIKit::UIColor? = .black, rightBarButtonItemTintColor: UIKit::UIColor? = .black, barButtonItemFont: UIKit::UIFont? = nil, hasShadow: Swift::Bool = false, isTranslucent: Swift::Bool = true)
 }
 extension UIKit::UIViewController {
   @_Concurrency::MainActor @preconcurrency public func setupAsKeyboardDismissable()
@@ -4086,6 +4183,7 @@ public struct ViewEvent<Payload> {
 public struct ViewEventCursor {
   public init()
   public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, _ handle: (Payload) -> Swift::Void)
+  public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, ifAble: Swift::Bool, _ handle: (Payload) -> Swift::Void)
 }
 @_Concurrency::MainActor public protocol ViewLifecycleable : AnyObject {
   @_Concurrency::MainActor func onViewDidLoad()

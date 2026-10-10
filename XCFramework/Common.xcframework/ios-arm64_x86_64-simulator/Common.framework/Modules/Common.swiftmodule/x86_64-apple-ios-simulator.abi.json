@@ -178,8 +178,10 @@
         "usr": "s:6Common3AESV",
         "mangledName": "$s6Common3AESV",
         "moduleName": "Common",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -1524,8 +1526,10 @@
         "usr": "s:6Common10ActionableP",
         "mangledName": "$s6Common10ActionableP",
         "moduleName": "Common",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -1626,9 +1630,11 @@
         "moduleName": "Common",
         "genericSig": "<τ_0_0 : AnyObject>",
         "sugared_genericSig": "<Self : AnyObject>",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
           "Custom",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -2532,9 +2538,11 @@
             "usr": "s:6Common16AlertPresentablePAAE14viewControllerSo06UIViewE0CSgvp",
             "mangledName": "$s6Common16AlertPresentablePAAE14viewControllerSo06UIViewE0CSgvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Custom",
-              "AccessControl"
+              "AccessControl",
+              "Available"
             ],
             "isFromExtension": true,
             "accessors": [
@@ -2649,6 +2657,105 @@
             "declAttributes": [
               "Custom",
               "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "presentAlertView",
+            "printedName": "presentAlertView(type:acceptTitle:cancelTitle:acceptAction:cancelAction:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "AlertViewType",
+                "printedName": "Common.AlertViewType",
+                "usr": "s:6Common13AlertViewTypeO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((UIKit.UIAlertAction) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(UIKit.UIAlertAction) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UIAlertAction",
+                        "printedName": "UIKit.UIAlertAction",
+                        "usr": "c:objc(cs)UIAlertAction"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((UIKit.UIAlertAction) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(UIKit.UIAlertAction) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UIAlertAction",
+                        "printedName": "UIKit.UIAlertAction",
+                        "usr": "c:objc(cs)UIAlertAction"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common16AlertPresentablePAAE07presentB4View4type11acceptTitle06cancelH00G6Action0iJ0yAA0bE4TypeO_S2SySo07UIAlertJ0CcSgANtF",
+            "mangledName": "$s6Common16AlertPresentablePAAE07presentB4View4type11acceptTitle06cancelH00G6Action0iJ0yAA0bE4TypeO_S2SySo07UIAlertJ0CcSgANtF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.AlertPresentable>",
+            "sugared_genericSig": "<Self where Self : Common.AlertPresentable>",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -2986,9 +3093,11 @@
         "moduleName": "Common",
         "genericSig": "<τ_0_0 : AnyObject>",
         "sugared_genericSig": "<Self : AnyObject>",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
           "Custom",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -6602,6 +6711,7 @@
             "usr": "c:@M@Common@objc(cs)AppleSignInButton(im)traitCollectionDidChange:",
             "mangledName": "$s6Common17AppleSignInButtonC24traitCollectionDidChangeyySo07UITraitG0CSgF",
             "moduleName": "Common",
+            "deprecated": true,
             "overriding": true,
             "objc_name": "traitCollectionDidChange:",
             "declAttributes": [
@@ -6611,6 +6721,7 @@
               "Custom",
               "Override",
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
@@ -8122,6 +8233,116 @@
             "declKind": "Func",
             "usr": "s:6Common19AsyncClientProtocolPAAE6upload4from9multipart2toqd__SS_AA16MultipartRequestVAA21URLRequestConvertible_ptYaKSeRd__lF",
             "mangledName": "$s6Common19AsyncClientProtocolPAAE6upload4from9multipart2toqd__SS_AA16MultipartRequestVAA21URLRequestConvertible_ptYaKSeRd__lF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0, τ_1_0 where τ_0_0 : Common.AsyncClientProtocol, τ_1_0 : Swift.Decodable>",
+            "sugared_genericSig": "<Self, T where Self : Common.AsyncClientProtocol, T : Swift.Decodable>",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "request",
+            "printedName": "request(from:_:urlSession:decoder:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "GenericTypeParam",
+                "printedName": "τ_1_0"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLRequestConvertible",
+                "printedName": "any Common.URLRequestConvertible",
+                "usr": "s:6Common21URLRequestConvertibleP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLSession",
+                "printedName": "Foundation.URLSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)NSURLSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "JSONDecoder",
+                "printedName": "Foundation.JSONDecoder",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation11JSONDecoderC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common19AsyncClientProtocolPAAE7request4from_10urlSession7decoderqd__SS_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCtYaKSeRd__lF",
+            "mangledName": "$s6Common19AsyncClientProtocolPAAE7request4from_10urlSession7decoderqd__SS_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCtYaKSeRd__lF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0, τ_1_0 where τ_0_0 : Common.AsyncClientProtocol, τ_1_0 : Swift.Decodable>",
+            "sugared_genericSig": "<Self, T where Self : Common.AsyncClientProtocol, T : Swift.Decodable>",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "upload",
+            "printedName": "upload(from:multipart:to:urlSession:decoder:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "GenericTypeParam",
+                "printedName": "τ_1_0"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "MultipartRequest",
+                "printedName": "Common.MultipartRequest",
+                "usr": "s:6Common16MultipartRequestV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLRequestConvertible",
+                "printedName": "any Common.URLRequestConvertible",
+                "usr": "s:6Common21URLRequestConvertibleP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLSession",
+                "printedName": "Foundation.URLSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)NSURLSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "JSONDecoder",
+                "printedName": "Foundation.JSONDecoder",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation11JSONDecoderC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common19AsyncClientProtocolPAAE6upload4from9multipart2to10urlSession7decoderqd__SS_AA16MultipartRequestVAA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCtYaKSeRd__lF",
+            "mangledName": "$s6Common19AsyncClientProtocolPAAE6upload4from9multipart2to10urlSession7decoderqd__SS_AA16MultipartRequestVAA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCtYaKSeRd__lF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0, τ_1_0 where τ_0_0 : Common.AsyncClientProtocol, τ_1_0 : Swift.Decodable>",
             "sugared_genericSig": "<Self, T where Self : Common.AsyncClientProtocol, T : Swift.Decodable>",
@@ -10085,6 +10306,34 @@
           },
           {
             "kind": "Function",
+            "name": "updateContent",
+            "printedName": "updateContent()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common36BaseCollectionViewableViewControllerC13updateContentyyF",
+            "mangledName": "$s6Common36BaseCollectionViewableViewControllerC13updateContentyyF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<ViewModelType>",
+            "overriding": true,
+            "isOpen": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "numberOfSections",
             "printedName": "numberOfSections(in:)",
             "children": [
@@ -11440,6 +11689,113 @@
             ]
           },
           {
+            "kind": "Var",
+            "name": "presentationAnchor",
+            "printedName": "presentationAnchor",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIViewController?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIViewController",
+                    "printedName": "UIKit.UIViewController",
+                    "usr": "c:objc(cs)UIViewController"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common15BaseCoordinatorC18presentationAnchorSo16UIViewControllerCSgvp",
+            "mangledName": "$s6Common15BaseCoordinatorC18presentationAnchorSo16UIViewControllerCSgvp",
+            "moduleName": "Common",
+            "isOpen": true,
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "UIKit.UIViewController?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UIViewController",
+                        "printedName": "UIKit.UIViewController",
+                        "usr": "c:objc(cs)UIViewController"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common15BaseCoordinatorC18presentationAnchorSo16UIViewControllerCSgvg",
+                "mangledName": "$s6Common15BaseCoordinatorC18presentationAnchorSo16UIViewControllerCSgvg",
+                "moduleName": "Common",
+                "isOpen": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "isFinished",
+            "printedName": "isFinished",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common15BaseCoordinatorC10isFinishedSbvp",
+            "mangledName": "$s6Common15BaseCoordinatorC10isFinishedSbvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "HasInitialValue",
+              "Custom",
+              "HasStorage",
+              "SetterAccess",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common15BaseCoordinatorC10isFinishedSbvg",
+                "mangledName": "$s6Common15BaseCoordinatorC10isFinishedSbvg",
+                "moduleName": "Common",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
             "kind": "Function",
             "name": "start",
             "printedName": "start()",
@@ -11641,6 +11997,42 @@
           },
           {
             "kind": "Function",
+            "name": "presentChild",
+            "printedName": "presentChild(_:animated:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaseCoordinator",
+                "printedName": "Common.BaseCoordinator",
+                "usr": "c:@M@Common@objc(cs)BaseCoordinator"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15BaseCoordinatorC12presentChild_8animatedyAC_SbtF",
+            "mangledName": "$s6Common15BaseCoordinatorC12presentChild_8animatedyAC_SbtF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "getChild",
             "printedName": "getChild(_:)",
             "children": [
@@ -11819,6 +12211,27 @@
           },
           {
             "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ActivityIndicatorable",
+            "printedName": "ActivityIndicatorable",
+            "usr": "s:6Common21ActivityIndicatorableP",
+            "mangledName": "$s6Common21ActivityIndicatorableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "AlertPresentable",
+            "printedName": "AlertPresentable",
+            "usr": "s:6Common16AlertPresentableP",
+            "mangledName": "$s6Common16AlertPresentableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "ActivityControllerRequestable",
             "printedName": "ActivityControllerRequestable",
             "usr": "s:6Common29ActivityControllerRequestableP",
@@ -11847,27 +12260,6 @@
           },
           {
             "kind": "Conformance",
-            "name": "Sendable",
-            "printedName": "Sendable",
-            "usr": "s:s8SendableP",
-            "mangledName": "$ss8SendableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "ActivityIndicatorable",
-            "printedName": "ActivityIndicatorable",
-            "usr": "s:6Common21ActivityIndicatorableP",
-            "mangledName": "$s6Common21ActivityIndicatorableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "AlertPresentable",
-            "printedName": "AlertPresentable",
-            "usr": "s:6Common16AlertPresentableP",
-            "mangledName": "$s6Common16AlertPresentableP"
-          },
-          {
-            "kind": "Conformance",
             "name": "Dismissable",
             "printedName": "Dismissable",
             "usr": "s:6Common11DismissableP",
@@ -11886,6 +12278,13 @@
             "printedName": "Presentable",
             "usr": "s:6Common11PresentableP",
             "mangledName": "$s6Common11PresentableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "PresentationAnchorProviding",
+            "printedName": "PresentationAnchorProviding",
+            "usr": "s:6Common27PresentationAnchorProvidingP",
+            "mangledName": "$s6Common27PresentationAnchorProvidingP"
           },
           {
             "kind": "Conformance",
@@ -14443,13 +14842,15 @@
             "usr": "c:@CM@Common@objc(cs)BaseViewController(im)gestureRecognizerShouldBegin:",
             "mangledName": "$s6Common18BaseViewControllerC28gestureRecognizerShouldBeginySbSo09UIGestureF0CF",
             "moduleName": "Common",
+            "isOpen": true,
             "objc_name": "gestureRecognizerShouldBegin:",
             "declAttributes": [
               "Dynamic",
               "ObjC",
               "Preconcurrency",
               "Custom",
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -16277,11 +16678,13 @@
             "moduleName": "Common",
             "genericSig": "<τ_0_0>",
             "sugared_genericSig": "<ViewModelType>",
+            "deprecated": true,
             "isOpen": true,
             "declAttributes": [
               "Preconcurrency",
               "Custom",
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
@@ -16396,13 +16799,6 @@
           },
           {
             "kind": "Conformance",
-            "name": "ContentReloadable",
-            "printedName": "ContentReloadable",
-            "usr": "s:6Common17ContentReloadableP",
-            "mangledName": "$s6Common17ContentReloadableP"
-          },
-          {
-            "kind": "Conformance",
             "name": "KeyboardDismissable",
             "printedName": "KeyboardDismissable",
             "usr": "s:6Common19KeyboardDismissableP",
@@ -16463,6 +16859,13 @@
             "printedName": "ViewModelInitializable",
             "usr": "s:6Common22ViewModelInitializableP",
             "mangledName": "$s6Common22ViewModelInitializableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ContentReloadable",
+            "printedName": "ContentReloadable",
+            "usr": "s:6Common17ContentReloadableP",
+            "mangledName": "$s6Common17ContentReloadableP"
           },
           {
             "kind": "Conformance",
@@ -20250,6 +20653,7 @@
             "usr": "c:@M@Common@objc(cs)CircularActivityIndicatorView(im)traitCollectionDidChange:",
             "mangledName": "$s6Common29CircularActivityIndicatorViewC24traitCollectionDidChangeyySo07UITraitG0CSgF",
             "moduleName": "Common",
+            "deprecated": true,
             "overriding": true,
             "objc_name": "traitCollectionDidChange:",
             "declAttributes": [
@@ -20259,6 +20663,7 @@
               "Custom",
               "Override",
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
@@ -21189,6 +21594,176 @@
             "declKind": "Func",
             "usr": "s:6Common14ClientProtocolPAAE6upload4from9multipart2to6resultySS_AA16MultipartRequestVAA21URLRequestConvertible_pys6ResultOyqd__AA12NetworkErrorOGctSeRd__lF",
             "mangledName": "$s6Common14ClientProtocolPAAE6upload4from9multipart2to6resultySS_AA16MultipartRequestVAA21URLRequestConvertible_pys6ResultOyqd__AA12NetworkErrorOGctSeRd__lF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0, τ_1_0 where τ_0_0 : Common.ClientProtocol, τ_1_0 : Swift.Decodable>",
+            "sugared_genericSig": "<Self, T where Self : Common.ClientProtocol, T : Swift.Decodable>",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "request",
+            "printedName": "request(from:_:urlSession:decoder:result:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLRequestConvertible",
+                "printedName": "any Common.URLRequestConvertible",
+                "usr": "s:6Common21URLRequestConvertibleP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLSession",
+                "printedName": "Foundation.URLSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)NSURLSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "JSONDecoder",
+                "printedName": "Foundation.JSONDecoder",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation11JSONDecoderC"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Result<τ_1_0, Common.NetworkError>) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Result",
+                    "printedName": "Swift.Result<τ_1_0, Common.NetworkError>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_1_0"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "NetworkError",
+                        "printedName": "Common.NetworkError",
+                        "usr": "s:6Common12NetworkErrorO"
+                      }
+                    ],
+                    "usr": "s:s6ResultO"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common14ClientProtocolPAAE7request4from_10urlSession7decoder6resultySS_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCys6ResultOyqd__AA12NetworkErrorOGctSeRd__lF",
+            "mangledName": "$s6Common14ClientProtocolPAAE7request4from_10urlSession7decoder6resultySS_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCys6ResultOyqd__AA12NetworkErrorOGctSeRd__lF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0, τ_1_0 where τ_0_0 : Common.ClientProtocol, τ_1_0 : Swift.Decodable>",
+            "sugared_genericSig": "<Self, T where Self : Common.ClientProtocol, T : Swift.Decodable>",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "upload",
+            "printedName": "upload(from:multipart:to:urlSession:decoder:result:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "MultipartRequest",
+                "printedName": "Common.MultipartRequest",
+                "usr": "s:6Common16MultipartRequestV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLRequestConvertible",
+                "printedName": "any Common.URLRequestConvertible",
+                "usr": "s:6Common21URLRequestConvertibleP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLSession",
+                "printedName": "Foundation.URLSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)NSURLSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "JSONDecoder",
+                "printedName": "Foundation.JSONDecoder",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation11JSONDecoderC"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Result<τ_1_0, Common.NetworkError>) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Result",
+                    "printedName": "Swift.Result<τ_1_0, Common.NetworkError>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_1_0"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "NetworkError",
+                        "printedName": "Common.NetworkError",
+                        "usr": "s:6Common12NetworkErrorO"
+                      }
+                    ],
+                    "usr": "s:s6ResultO"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common14ClientProtocolPAAE6upload4from9multipart2to10urlSession7decoder6resultySS_AA16MultipartRequestVAA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCys6ResultOyqd__AA12NetworkErrorOGctSeRd__lF",
+            "mangledName": "$s6Common14ClientProtocolPAAE6upload4from9multipart2to10urlSession7decoder6resultySS_AA16MultipartRequestVAA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCys6ResultOyqd__AA12NetworkErrorOGctSeRd__lF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0, τ_1_0 where τ_0_0 : Common.ClientProtocol, τ_1_0 : Swift.Decodable>",
             "sugared_genericSig": "<Self, T where Self : Common.ClientProtocol, T : Swift.Decodable>",
@@ -22798,8 +23373,10 @@
         "usr": "s:6Common17ContentReloadableP",
         "mangledName": "$s6Common17ContentReloadableP",
         "moduleName": "Common",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -24007,9 +24584,11 @@
         "moduleName": "Common",
         "genericSig": "<τ_0_0 : AnyObject>",
         "sugared_genericSig": "<Self : AnyObject>",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
           "Custom",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -24365,9 +24944,11 @@
             "usr": "s:6Common11DismissablePAAE14viewControllerSo06UIViewD0CSgvp",
             "mangledName": "$s6Common11DismissablePAAE14viewControllerSo06UIViewD0CSgvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Custom",
-              "AccessControl"
+              "AccessControl",
+              "Available"
             ],
             "isFromExtension": true,
             "accessors": [
@@ -24490,9 +25071,11 @@
             "usr": "s:6Common11DismissablePA2A14NavigationableRzrlE14viewControllerSo06UIViewE0CSgvp",
             "mangledName": "$s6Common11DismissablePA2A14NavigationableRzrlE14viewControllerSo06UIViewE0CSgvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Custom",
-              "AccessControl"
+              "AccessControl",
+              "Available"
             ],
             "isFromExtension": true,
             "accessors": [
@@ -24615,6 +25198,158 @@
             "printedName": "Copyable",
             "usr": "s:s8CopyableP",
             "mangledName": "$ss8CopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "EmptyResponse",
+        "printedName": "EmptyResponse",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "EmptyResponse",
+                "printedName": "Common.EmptyResponse",
+                "usr": "s:6Common13EmptyResponseV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:6Common13EmptyResponseVACycfc",
+            "mangledName": "$s6Common13EmptyResponseVACycfc",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(from:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "EmptyResponse",
+                "printedName": "Common.EmptyResponse",
+                "usr": "s:6Common13EmptyResponseV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Decoder",
+                "printedName": "any Swift.Decoder",
+                "usr": "s:s7DecoderP"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:6Common13EmptyResponseV4fromACs7Decoder_p_tKcfc",
+            "mangledName": "$s6Common13EmptyResponseV4fromACs7Decoder_p_tKcfc",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "throwing": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "EmptyResponse",
+                "printedName": "Common.EmptyResponse",
+                "usr": "s:6Common13EmptyResponseV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "EmptyResponse",
+                "printedName": "Common.EmptyResponse",
+                "usr": "s:6Common13EmptyResponseV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common13EmptyResponseV2eeoiySbAC_ACtFZ",
+            "mangledName": "$s6Common13EmptyResponseV2eeoiySbAC_ACtFZ",
+            "moduleName": "Common",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:6Common13EmptyResponseV",
+        "mangledName": "$s6Common13EmptyResponseV",
+        "moduleName": "Common",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Decodable",
+            "printedName": "Decodable",
+            "usr": "s:Se",
+            "mangledName": "$sSe"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
           }
         ]
       },
@@ -25163,6 +25898,67 @@
           },
           {
             "kind": "Var",
+            "name": "timeoutInterval",
+            "printedName": "timeoutInterval",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Double?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common8EndpointP15timeoutIntervalSdSgvp",
+            "mangledName": "$s6Common8EndpointP15timeoutIntervalSdSgvp",
+            "moduleName": "Common",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.Double?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Double",
+                        "printedName": "Swift.Double",
+                        "usr": "s:Sd"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common8EndpointP15timeoutIntervalSdSgvg",
+                "mangledName": "$s6Common8EndpointP15timeoutIntervalSdSgvg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0 where τ_0_0 : Common.Endpoint>",
+                "sugared_genericSig": "<Self where Self : Common.Endpoint>",
+                "protocolReq": true,
+                "reqNewWitnessTableEntry": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "version",
             "printedName": "version",
             "children": [
@@ -25389,6 +26185,66 @@
                 "declKind": "Accessor",
                 "usr": "s:6Common8EndpointPAAE21urlEncodedFormEncoderAA010URLEncodedeF0Cvg",
                 "mangledName": "$s6Common8EndpointPAAE21urlEncodedFormEncoderAA010URLEncodedeF0Cvg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0 where τ_0_0 : Common.Endpoint>",
+                "sugared_genericSig": "<Self where Self : Common.Endpoint>",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "timeoutInterval",
+            "printedName": "timeoutInterval",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Double?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common8EndpointPAAE15timeoutIntervalSdSgvp",
+            "mangledName": "$s6Common8EndpointPAAE15timeoutIntervalSdSgvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.Double?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Double",
+                        "printedName": "Swift.Double",
+                        "usr": "s:Sd"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common8EndpointPAAE15timeoutIntervalSdSgvg",
+                "mangledName": "$s6Common8EndpointPAAE15timeoutIntervalSdSgvg",
                 "moduleName": "Common",
                 "genericSig": "<τ_0_0 where τ_0_0 : Common.Endpoint>",
                 "sugared_genericSig": "<Self where Self : Common.Endpoint>",
@@ -28760,9 +29616,11 @@
         "moduleName": "Common",
         "genericSig": "<τ_0_0 : AnyObject>",
         "sugared_genericSig": "<Self : AnyObject>",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
           "Custom",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -29522,6 +30380,7 @@
             "usr": "c:@M@Common@objc(cs)GradientView(im)traitCollectionDidChange:",
             "mangledName": "$s6Common12GradientViewC24traitCollectionDidChangeyySo07UITraitE0CSgF",
             "moduleName": "Common",
+            "deprecated": true,
             "overriding": true,
             "objc_name": "traitCollectionDidChange:",
             "declAttributes": [
@@ -29531,6 +30390,7 @@
               "Custom",
               "Override",
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
@@ -32972,6 +33832,102 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Function",
+            "name": "upload",
+            "printedName": "upload(multipart:to:urlSession:decoder:result:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Task",
+                "printedName": "_Concurrency.Task<(), Swift.Never>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Never",
+                    "printedName": "Swift.Never",
+                    "usr": "s:s5NeverO"
+                  }
+                ],
+                "usr": "s:ScT"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "MultipartRequest",
+                "printedName": "Common.MultipartRequest",
+                "usr": "s:6Common16MultipartRequestV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLRequestConvertible",
+                "printedName": "any Common.URLRequestConvertible",
+                "usr": "s:6Common21URLRequestConvertibleP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLSession",
+                "printedName": "Foundation.URLSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)NSURLSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "JSONDecoder",
+                "printedName": "Foundation.JSONDecoder",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation11JSONDecoderC"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Result<τ_0_0, Common.NetworkError>) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Result",
+                    "printedName": "Swift.Result<τ_0_0, Common.NetworkError>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_0_0"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "NetworkError",
+                        "printedName": "Common.NetworkError",
+                        "usr": "s:6Common12NetworkErrorO"
+                      }
+                    ],
+                    "usr": "s:s6ResultO"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common11HTTPServiceO6upload9multipart2to10urlSession7decoder6resultScTyyts5NeverOGAA16MultipartRequestV_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCys6ResultOyxAA12NetworkErrorOGctSeRzlFZ",
+            "mangledName": "$s6Common11HTTPServiceO6upload9multipart2to10urlSession7decoder6resultScTyyts5NeverOGAA16MultipartRequestV_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCys6ResultOyxAA12NetworkErrorOGctSeRzlFZ",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Swift.Decodable>",
+            "sugared_genericSig": "<T where T : Swift.Decodable>",
+            "static": true,
+            "declAttributes": [
+              "AccessControl",
+              "DiscardableResult",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
             "kind": "Var",
             "name": "defaultSession",
             "printedName": "defaultSession",
@@ -33240,6 +34196,58 @@
             "declKind": "Func",
             "usr": "s:6Common11HTTPServiceO6upload9multipart2to7decoderxAA16MultipartRequestV_AA21URLRequestConvertible_p10Foundation11JSONDecoderCtYaKSeRzlFZ",
             "mangledName": "$s6Common11HTTPServiceO6upload9multipart2to7decoderxAA16MultipartRequestV_AA21URLRequestConvertible_p10Foundation11JSONDecoderCtYaKSeRzlFZ",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Swift.Decodable>",
+            "sugared_genericSig": "<T where T : Swift.Decodable>",
+            "static": true,
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "upload",
+            "printedName": "upload(multipart:to:urlSession:decoder:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "GenericTypeParam",
+                "printedName": "τ_0_0"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "MultipartRequest",
+                "printedName": "Common.MultipartRequest",
+                "usr": "s:6Common16MultipartRequestV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLRequestConvertible",
+                "printedName": "any Common.URLRequestConvertible",
+                "usr": "s:6Common21URLRequestConvertibleP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URLSession",
+                "printedName": "Foundation.URLSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)NSURLSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "JSONDecoder",
+                "printedName": "Foundation.JSONDecoder",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation11JSONDecoderC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common11HTTPServiceO6upload9multipart2to10urlSession7decoderxAA16MultipartRequestV_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCtYaKSeRzlFZ",
+            "mangledName": "$s6Common11HTTPServiceO6upload9multipart2to10urlSession7decoderxAA16MultipartRequestV_AA21URLRequestConvertible_pSo12NSURLSessionC10Foundation11JSONDecoderCtYaKSeRzlFZ",
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Swift.Decodable>",
             "sugared_genericSig": "<T where T : Swift.Decodable>",
@@ -36950,6 +37958,95 @@
               },
               {
                 "kind": "Var",
+                "name": "keychain",
+                "printedName": "keychain",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Common.KeyValueStore.StoreType.Type) -> (Common.KeychainItemAccessibility) -> Common.KeyValueStore.StoreType",
+                    "children": [
+                      {
+                        "kind": "TypeFunc",
+                        "name": "Function",
+                        "printedName": "(Common.KeychainItemAccessibility) -> Common.KeyValueStore.StoreType",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "StoreType",
+                            "printedName": "Common.KeyValueStore.StoreType",
+                            "usr": "s:6Common13KeyValueStoreV0D4TypeO"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Tuple",
+                            "printedName": "(accessibility: Common.KeychainItemAccessibility)",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "KeychainItemAccessibility",
+                                "printedName": "Common.KeychainItemAccessibility",
+                                "usr": "s:6Common25KeychainItemAccessibilityO"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "Common.KeyValueStore.StoreType.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "StoreType",
+                            "printedName": "Common.KeyValueStore.StoreType",
+                            "usr": "s:6Common13KeyValueStoreV0D4TypeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:6Common13KeyValueStoreV0D4TypeO8keychainyAeA25KeychainItemAccessibilityO_tcAEmF",
+                "mangledName": "$s6Common13KeyValueStoreV0D4TypeO8keychainyAeA25KeychainItemAccessibilityO_tcAEmF",
+                "moduleName": "Common",
+                "declAttributes": [
+                  "RawDocComment"
+                ]
+              },
+              {
+                "kind": "Function",
+                "name": "secure",
+                "printedName": "secure(accessibility:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StoreType",
+                    "printedName": "Common.KeyValueStore.StoreType",
+                    "usr": "s:6Common13KeyValueStoreV0D4TypeO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "KeychainItemAccessibility",
+                    "printedName": "Common.KeychainItemAccessibility",
+                    "usr": "s:6Common25KeychainItemAccessibilityO"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:6Common13KeyValueStoreV0D4TypeO6secure13accessibilityAeA25KeychainItemAccessibilityO_tFZ",
+                "mangledName": "$s6Common13KeyValueStoreV0D4TypeO6secure13accessibilityAeA25KeychainItemAccessibilityO_tFZ",
+                "moduleName": "Common",
+                "static": true,
+                "declAttributes": [
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "funcSelfKind": "NonMutating"
+              },
+              {
+                "kind": "Var",
                 "name": "storage",
                 "printedName": "storage",
                 "children": [
@@ -39954,8 +41051,10 @@
         "moduleName": "Common",
         "genericSig": "<τ_0_0 : AnyObject>",
         "sugared_genericSig": "<Self : AnyObject>",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -41073,6 +42172,55 @@
             ],
             "reqNewWitnessTableEntry": true,
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "authenticate",
+            "printedName": "authenticate()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common34LocalAuthenticationManagerProtocolP12authenticateyyYaKF",
+            "mangledName": "$s6Common34LocalAuthenticationManagerProtocolP12authenticateyyYaKF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.LocalAuthenticationManagerProtocol>",
+            "sugared_genericSig": "<Self where Self : Common.LocalAuthenticationManagerProtocol>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "throwing": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "authenticate",
+            "printedName": "authenticate()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common34LocalAuthenticationManagerProtocolPAAE12authenticateyyYaKF",
+            "mangledName": "$s6Common34LocalAuthenticationManagerProtocolPAAE12authenticateyyYaKF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0 where τ_0_0 : Common.LocalAuthenticationManagerProtocol>",
+            "sugared_genericSig": "<Self where Self : Common.LocalAuthenticationManagerProtocol>",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Protocol",
@@ -41390,6 +42538,29 @@
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "authenticate",
+            "printedName": "authenticate()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common26LocalAuthenticationManagerC12authenticateyyYaKF",
+            "mangledName": "$s6Common26LocalAuthenticationManagerC12authenticateyyYaKF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Class",
@@ -41401,6 +42572,7 @@
           "Final",
           "RawDocComment"
         ],
+        "hasMissingDesignatedInitializers": true,
         "conformances": [
           {
             "kind": "Conformance",
@@ -41672,6 +42844,33 @@
             ]
           },
           {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "LocationAuthorizationManager",
+                "printedName": "Common.LocationAuthorizationManager",
+                "usr": "c:@M@Common@objc(cs)LocationAuthorizationManager"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@Common@objc(cs)LocationAuthorizationManager(im)init",
+            "mangledName": "$s6Common28LocationAuthorizationManagerCACycfc",
+            "moduleName": "Common",
+            "overriding": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
             "kind": "Var",
             "name": "currentStatus",
             "printedName": "currentStatus",
@@ -41772,32 +42971,6 @@
             "funcSelfKind": "NonMutating"
           },
           {
-            "kind": "Constructor",
-            "name": "init",
-            "printedName": "init()",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "LocationAuthorizationManager",
-                "printedName": "Common.LocationAuthorizationManager",
-                "usr": "c:@M@Common@objc(cs)LocationAuthorizationManager"
-              }
-            ],
-            "declKind": "Constructor",
-            "usr": "c:@M@Common@objc(cs)LocationAuthorizationManager(im)init",
-            "mangledName": "$s6Common28LocationAuthorizationManagerCACycfc",
-            "moduleName": "Common",
-            "overriding": true,
-            "implicit": true,
-            "objc_name": "init",
-            "declAttributes": [
-              "Dynamic",
-              "ObjC",
-              "Override"
-            ],
-            "init_kind": "Designated"
-          },
-          {
             "kind": "Function",
             "name": "locationManagerDidChangeAuthorization",
             "printedName": "locationManagerDidChangeAuthorization(_:)",
@@ -41822,7 +42995,8 @@
             "declAttributes": [
               "Final",
               "ObjC",
-              "AccessControl"
+              "AccessControl",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -41839,6 +43013,7 @@
           "ObjC"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
+        "hasMissingDesignatedInitializers": true,
         "inheritsConvenienceInitializers": true,
         "superclassNames": [
           "ObjectiveC.NSObject"
@@ -42595,6 +43770,90 @@
             "printedName": "Escapable",
             "usr": "s:s9EscapableP",
             "mangledName": "$ss9EscapableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "MirrorDescribable",
+        "printedName": "MirrorDescribable",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "description",
+            "printedName": "description",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common17MirrorDescribablePAAE11descriptionSSvp",
+            "mangledName": "$s6Common17MirrorDescribablePAAE11descriptionSSvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common17MirrorDescribablePAAE11descriptionSSvg",
+                "mangledName": "$s6Common17MirrorDescribablePAAE11descriptionSSvg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0 where τ_0_0 : Common.MirrorDescribable>",
+                "sugared_genericSig": "<Self where Self : Common.MirrorDescribable>",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:6Common17MirrorDescribableP",
+        "mangledName": "$s6Common17MirrorDescribableP",
+        "moduleName": "Common",
+        "genericSig": "<τ_0_0 : Swift.CustomStringConvertible>",
+        "sugared_genericSig": "<Self : Swift.CustomStringConvertible>",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
           }
         ]
       },
@@ -46233,9 +47492,11 @@
             "usr": "s:6Common11PresentablePAAE14viewControllerSo06UIViewD0CSgvp",
             "mangledName": "$s6Common11PresentablePAAE14viewControllerSo06UIViewD0CSgvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Custom",
-              "AccessControl"
+              "AccessControl",
+              "Available"
             ],
             "isFromExtension": true,
             "accessors": [
@@ -46364,9 +47625,11 @@
             "usr": "s:6Common11PresentablePA2A14NavigationableRzrlE14viewControllerSo06UIViewE0CSgvp",
             "mangledName": "$s6Common11PresentablePA2A14NavigationableRzrlE14viewControllerSo06UIViewE0CSgvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Custom",
-              "AccessControl"
+              "AccessControl",
+              "Available"
             ],
             "isFromExtension": true,
             "accessors": [
@@ -46476,6 +47739,112 @@
         "usr": "s:6Common11PresentableP",
         "mangledName": "$s6Common11PresentableP",
         "moduleName": "Common",
+        "declAttributes": [
+          "AccessControl",
+          "Custom",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "PresentationAnchorProviding",
+        "printedName": "PresentationAnchorProviding",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "presentationAnchor",
+            "printedName": "presentationAnchor",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIViewController?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIViewController",
+                    "printedName": "UIKit.UIViewController",
+                    "usr": "c:objc(cs)UIViewController"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common27PresentationAnchorProvidingP012presentationC0So16UIViewControllerCSgvp",
+            "mangledName": "$s6Common27PresentationAnchorProvidingP012presentationC0So16UIViewControllerCSgvp",
+            "moduleName": "Common",
+            "protocolReq": true,
+            "declAttributes": [
+              "Custom",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "UIKit.UIViewController?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UIViewController",
+                        "printedName": "UIKit.UIViewController",
+                        "usr": "c:objc(cs)UIViewController"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common27PresentationAnchorProvidingP012presentationC0So16UIViewControllerCSgvg",
+                "mangledName": "$s6Common27PresentationAnchorProvidingP012presentationC0So16UIViewControllerCSgvg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0 where τ_0_0 : Common.PresentationAnchorProviding>",
+                "sugared_genericSig": "<Self where Self : Common.PresentationAnchorProviding>",
+                "protocolReq": true,
+                "reqNewWitnessTableEntry": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:6Common27PresentationAnchorProvidingP",
+        "mangledName": "$s6Common27PresentationAnchorProvidingP",
+        "moduleName": "Common",
+        "genericSig": "<τ_0_0 : AnyObject>",
+        "sugared_genericSig": "<Self : AnyObject>",
         "declAttributes": [
           "AccessControl",
           "Custom",
@@ -46761,12 +48130,14 @@
             "usr": "s:6Common11PreviewViewC16videoOrientationyACXDSo014AVCaptureVideoE0VF",
             "mangledName": "$s6Common11PreviewViewC16videoOrientationyACXDSo014AVCaptureVideoE0VF",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "Preconcurrency",
               "Custom",
               "Final",
               "AccessControl",
-              "DiscardableResult"
+              "DiscardableResult",
+              "Available"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -47993,8 +49364,90 @@
         "moduleName": "Common",
         "genericSig": "<τ_0_0 : AnyObject>",
         "sugared_genericSig": "<Self : AnyObject>",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
+          "Available",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "RevisionTrackable",
+        "printedName": "RevisionTrackable",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "revision",
+            "printedName": "revision",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common17RevisionTrackableP8revisionSivp",
+            "mangledName": "$s6Common17RevisionTrackableP8revisionSivp",
+            "moduleName": "Common",
+            "protocolReq": true,
+            "declAttributes": [
+              "Custom",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common17RevisionTrackableP8revisionSivg",
+                "mangledName": "$s6Common17RevisionTrackableP8revisionSivg",
+                "moduleName": "Common",
+                "genericSig": "<τ_0_0 where τ_0_0 : Common.RevisionTrackable>",
+                "sugared_genericSig": "<Self where Self : Common.RevisionTrackable>",
+                "protocolReq": true,
+                "reqNewWitnessTableEntry": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:6Common17RevisionTrackableP",
+        "mangledName": "$s6Common17RevisionTrackableP",
+        "moduleName": "Common",
+        "genericSig": "<τ_0_0 : AnyObject>",
+        "sugared_genericSig": "<Self : AnyObject>",
+        "declAttributes": [
+          "AccessControl",
+          "Custom",
           "RawDocComment"
         ],
         "conformances": [
@@ -52257,6 +53710,41 @@
           },
           {
             "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Uppercaseable",
+            "printedName": "Uppercaseable",
+            "usr": "s:6Common13UppercaseableP",
+            "mangledName": "$s6Common13UppercaseableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
             "name": "RawRepresentable",
             "printedName": "RawRepresentable",
             "children": [
@@ -52276,27 +53764,6 @@
             ],
             "usr": "s:SY",
             "mangledName": "$sSY"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Hashable",
-            "printedName": "Hashable",
-            "usr": "s:SH",
-            "mangledName": "$sSH"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Uppercaseable",
-            "printedName": "Uppercaseable",
-            "usr": "s:6Common13UppercaseableP",
-            "mangledName": "$s6Common13UppercaseableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Equatable",
-            "printedName": "Equatable",
-            "usr": "s:SQ",
-            "mangledName": "$sSQ"
           }
         ]
       },
@@ -52526,6 +53993,16 @@
         "printedName": "UIKit",
         "declKind": "Import",
         "moduleName": "Common"
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
       },
       {
         "kind": "Import",
@@ -54360,8 +55837,10 @@
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.OffsetResetable>",
             "sugared_genericSig": "<Self where Self : Common.OffsetResetable>",
+            "deprecated": true,
             "protocolReq": true,
             "declAttributes": [
+              "Available",
               "RawDocComment"
             ],
             "reqNewWitnessTableEntry": true,
@@ -54384,8 +55863,10 @@
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.OffsetResetable>",
             "sugared_genericSig": "<Self where Self : Common.OffsetResetable>",
+            "deprecated": true,
             "protocolReq": true,
             "declAttributes": [
+              "Available",
               "RawDocComment"
             ],
             "reqNewWitnessTableEntry": true,
@@ -54408,8 +55889,10 @@
             "moduleName": "Common",
             "genericSig": "<τ_0_0 where τ_0_0 : Common.OffsetResetable>",
             "sugared_genericSig": "<Self where Self : Common.OffsetResetable>",
+            "deprecated": true,
             "protocolReq": true,
             "declAttributes": [
+              "Available",
               "RawDocComment"
             ],
             "reqNewWitnessTableEntry": true,
@@ -54492,8 +55975,10 @@
         "usr": "s:6Common15OffsetResetableP",
         "mangledName": "$s6Common15OffsetResetableP",
         "moduleName": "Common",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
+          "Available",
           "RawDocComment"
         ],
         "conformances": [
@@ -57204,6 +58689,77 @@
               "RawDocComment"
             ],
             "funcSelfKind": "Mutating"
+          },
+          {
+            "kind": "Function",
+            "name": "consume",
+            "printedName": "consume(_:ifAble:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Common.ViewEvent<τ_0_0>?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ViewEvent",
+                    "printedName": "Common.ViewEvent<τ_0_0>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_0_0"
+                      }
+                    ],
+                    "usr": "s:6Common9ViewEventV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(τ_0_0) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "typeAttributes": [
+                  "noescape"
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15ViewEventCursorV7consume_6ifAble_yAA0bC0VyxGSg_SbyxXEtlF",
+            "mangledName": "$s6Common15ViewEventCursorV7consume_6ifAble_yAA0bC0VyxGSg_SbyxXEtlF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<Payload>",
+            "declAttributes": [
+              "Mutating",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "Mutating"
           }
         ],
         "declKind": "Struct",
@@ -59620,9 +61176,11 @@
             "usr": "s:So24AVCaptureVideoDataOutputC6CommonE16videoOrientationyABXDSo0abG0VF",
             "mangledName": "$sSo24AVCaptureVideoDataOutputC6CommonE16videoOrientationyABXDSo0abG0VF",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "AccessControl",
               "DiscardableResult",
+              "Available",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -59869,9 +61427,11 @@
             "usr": "s:So26AVCaptureVideoPreviewLayerC6CommonE16videoOrientationyABXDSo0abG0VF",
             "mangledName": "$sSo26AVCaptureVideoPreviewLayerC6CommonE16videoOrientationyABXDSo0abG0VF",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "AccessControl",
               "DiscardableResult",
+              "Available",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -59995,6 +61555,577 @@
             "printedName": "SendableMetatype",
             "usr": "s:s16SendableMetatypeP",
             "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "UIColor",
+        "printedName": "UIColor",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "asHexString",
+            "printedName": "asHexString",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:So7UIColorC6CommonE11asHexStringSSvp",
+            "mangledName": "$sSo7UIColorC6CommonE11asHexStringSSvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So7UIColorC6CommonE11asHexStringSSvg",
+                "mangledName": "$sSo7UIColorC6CommonE11asHexStringSSvg",
+                "moduleName": "Common",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "blend",
+            "printedName": "blend(_:with:weight:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGFloat",
+                "printedName": "CoreGraphics.CGFloat",
+                "usr": "s:14CoreFoundation7CGFloatV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So7UIColorC6CommonE5blend_4with6weightA2B_AB14CoreFoundation7CGFloatVtFZ",
+            "mangledName": "$sSo7UIColorC6CommonE5blend_4with6weightA2B_AB12CoreGraphics7CGFloatVtFZ",
+            "moduleName": "Common",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "blendedMidpoint",
+            "printedName": "blendedMidpoint(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So7UIColorC6CommonE15blendedMidpointyA2B_ABtFZ",
+            "mangledName": "$sSo7UIColorC6CommonE15blendedMidpointyA2B_ABtFZ",
+            "moduleName": "Common",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(hex:alpha:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGFloat",
+                "printedName": "CoreGraphics.CGFloat",
+                "hasDefaultArg": true,
+                "usr": "s:14CoreFoundation7CGFloatV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:So7UIColorC6CommonE3hex5alphaABSS_14CoreFoundation7CGFloatVtcfc",
+            "mangledName": "$sSo7UIColorC6CommonE3hex5alphaABSS_12CoreGraphics7CGFloatVtcfc",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "Convenience",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "init_kind": "Convenience"
+          },
+          {
+            "kind": "Var",
+            "name": "inverted",
+            "printedName": "inverted",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:So7UIColorC6CommonE8invertedABvp",
+            "mangledName": "$sSo7UIColorC6CommonE8invertedABvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIColor",
+                    "printedName": "UIKit.UIColor",
+                    "usr": "c:objc(cs)UIColor"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So7UIColorC6CommonE8invertedABvg",
+                "mangledName": "$sSo7UIColorC6CommonE8invertedABvg",
+                "moduleName": "Common",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "getModified",
+            "printedName": "getModified(byPercentage:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIColor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIColor",
+                    "printedName": "UIKit.UIColor",
+                    "usr": "c:objc(cs)UIColor"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGFloat",
+                "printedName": "CoreGraphics.CGFloat",
+                "usr": "s:14CoreFoundation7CGFloatV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So7UIColorC6CommonE11getModified12byPercentageABSg14CoreFoundation7CGFloatV_tF",
+            "mangledName": "$sSo7UIColorC6CommonE11getModified12byPercentageABSg12CoreGraphics7CGFloatV_tF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "named",
+            "printedName": "named(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIColor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIColor",
+                    "printedName": "UIKit.UIColor",
+                    "usr": "c:objc(cs)UIColor"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So7UIColorC6CommonE5namedyABSgSSFZ",
+            "mangledName": "$sSo7UIColorC6CommonE5namedyABSgSSFZ",
+            "moduleName": "Common",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "rgbaComponents",
+            "printedName": "rgbaComponents",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CGFloat",
+                        "printedName": "CoreGraphics.CGFloat",
+                        "usr": "s:14CoreFoundation7CGFloatV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CGFloat",
+                        "printedName": "CoreGraphics.CGFloat",
+                        "usr": "s:14CoreFoundation7CGFloatV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CGFloat",
+                        "printedName": "CoreGraphics.CGFloat",
+                        "usr": "s:14CoreFoundation7CGFloatV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CGFloat",
+                        "printedName": "CoreGraphics.CGFloat",
+                        "usr": "s:14CoreFoundation7CGFloatV"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:So7UIColorC6CommonE14rgbaComponents14CoreFoundation7CGFloatV3red_AG5greenAG4blueAG5alphatSgvp",
+            "mangledName": "$sSo7UIColorC6CommonE14rgbaComponents12CoreGraphics7CGFloatV3red_AG5greenAG4blueAG5alphatSgvp",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "CGFloat",
+                            "printedName": "CoreGraphics.CGFloat",
+                            "usr": "s:14CoreFoundation7CGFloatV"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "CGFloat",
+                            "printedName": "CoreGraphics.CGFloat",
+                            "usr": "s:14CoreFoundation7CGFloatV"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "CGFloat",
+                            "printedName": "CoreGraphics.CGFloat",
+                            "usr": "s:14CoreFoundation7CGFloatV"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "CGFloat",
+                            "printedName": "CoreGraphics.CGFloat",
+                            "usr": "s:14CoreFoundation7CGFloatV"
+                          }
+                        ]
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So7UIColorC6CommonE14rgbaComponents14CoreFoundation7CGFloatV3red_AG5greenAG4blueAG5alphatSgvg",
+                "mangledName": "$sSo7UIColorC6CommonE14rgbaComponents12CoreGraphics7CGFloatV3red_AG5greenAG4blueAG5alphatSgvg",
+                "moduleName": "Common",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "randomColor",
+            "printedName": "randomColor",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UIColor",
+                "printedName": "UIKit.UIColor",
+                "usr": "c:objc(cs)UIColor"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:So7UIColorC6CommonE11randomColorABvpZ",
+            "mangledName": "$sSo7UIColorC6CommonE11randomColorABvpZ",
+            "moduleName": "Common",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIColor",
+                    "printedName": "UIKit.UIColor",
+                    "usr": "c:objc(cs)UIColor"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So7UIColorC6CommonE11randomColorABvgZ",
+                "mangledName": "$sSo7UIColorC6CommonE11randomColorABvgZ",
+                "moduleName": "Common",
+                "static": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:objc(cs)UIColor",
+        "moduleName": "UIKit",
+        "isOpen": true,
+        "intro_iOS": "2.0",
+        "objc_name": "UIColor",
+        "declAttributes": [
+          "Available",
+          "ObjC",
+          "SynthesizedProtocol",
+          "NonSendable",
+          "Dynamic"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "isExternal": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Withable",
+            "printedName": "Withable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "T",
+                "printedName": "T",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "NSObject",
+                    "printedName": "ObjectiveC.NSObject",
+                    "usr": "c:objc(cs)NSObject"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:6Common8WithableP",
+            "mangledName": "$s6Common8WithableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_ExpressibleByColorLiteral",
+            "printedName": "_ExpressibleByColorLiteral",
+            "usr": "s:s26_ExpressibleByColorLiteralP",
+            "mangledName": "$ss26_ExpressibleByColorLiteralP"
           }
         ]
       },
@@ -67840,6 +69971,7 @@
             "moduleName": "Common",
             "declAttributes": [
               "AccessControl",
+              "DisfavoredOverload",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -72182,8 +74314,10 @@
             "usr": "s:So11CVBufferRefa6CommonE7resized2toABSgSo6CGSizeV_tF",
             "mangledName": "$sSo11CVBufferRefa6CommonE7resized2toABSgSo6CGSizeV_tF",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -72649,8 +74783,10 @@
             "usr": "s:s23CustomStringConvertibleP6CommonE11descriptionSSvp",
             "mangledName": "$ss23CustomStringConvertibleP6CommonE11descriptionSSvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -78399,6 +80535,7 @@
             "static": true,
             "declAttributes": [
               "AccessControl",
+              "DisfavoredOverload",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -80693,8 +82830,10 @@
             "usr": "s:SS6CommonE6asData10Foundation0C0Vvp",
             "mangledName": "$sSS6CommonE6asData10Foundation0C0Vvp",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
               "AccessControl",
+              "Available",
               "RawDocComment"
             ],
             "isFromExtension": true,
@@ -82084,10 +84223,12 @@
                 "mangledName": "$sSS6CommonE11DateFormatsO18yyyyMMddHHmmss0000SSvpZ",
                 "moduleName": "Common",
                 "static": true,
+                "deprecated": true,
                 "declAttributes": [
                   "HasInitialValue",
                   "HasStorage",
-                  "AccessControl"
+                  "AccessControl",
+                  "Available"
                 ],
                 "isLet": true,
                 "hasStorage": true,
@@ -82178,10 +84319,12 @@
                 "mangledName": "$sSS6CommonE11DateFormatsO19yyyyMMddTHHmmssSSSZSSvpZ",
                 "moduleName": "Common",
                 "static": true,
+                "deprecated": true,
                 "declAttributes": [
                   "HasInitialValue",
                   "HasStorage",
-                  "AccessControl"
+                  "AccessControl",
+                  "Available"
                 ],
                 "isLet": true,
                 "hasStorage": true,
@@ -83258,8 +85401,10 @@
             "usr": "s:SS6CommonE20removeStressedVowelsSSyF",
             "mangledName": "$sSS6CommonE20removeStressedVowelsSSyF",
             "moduleName": "Common",
+            "deprecated": true,
             "declAttributes": [
-              "AccessControl"
+              "AccessControl",
+              "Available"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -86799,6 +88944,44 @@
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "title",
+            "printedName": "title(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Configuration",
+                "printedName": "UIKit.UIButton.Configuration",
+                "usr": "s:So8UIButtonC5UIKitE13ConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So8UIButtonC5UIKitE13ConfigurationV6CommonE5titleyAESSSgF",
+            "mangledName": "$sSo8UIButtonC5UIKitE13ConfigurationV6CommonE5titleyAESSSgF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "AccessControl",
+              "DiscardableResult",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Struct",
@@ -87831,577 +90014,6 @@
             "printedName": "Hashable",
             "usr": "s:SH",
             "mangledName": "$sSH"
-          }
-        ]
-      },
-      {
-        "kind": "TypeDecl",
-        "name": "UIColor",
-        "printedName": "UIColor",
-        "children": [
-          {
-            "kind": "Var",
-            "name": "asHexString",
-            "printedName": "asHexString",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
-              }
-            ],
-            "declKind": "Var",
-            "usr": "s:So7UIColorC6CommonE11asHexStringSSvp",
-            "mangledName": "$sSo7UIColorC6CommonE11asHexStringSSvp",
-            "moduleName": "Common",
-            "declAttributes": [
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "accessors": [
-              {
-                "kind": "Accessor",
-                "name": "Get",
-                "printedName": "Get()",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "String",
-                    "printedName": "Swift.String",
-                    "usr": "s:SS"
-                  }
-                ],
-                "declKind": "Accessor",
-                "usr": "s:So7UIColorC6CommonE11asHexStringSSvg",
-                "mangledName": "$sSo7UIColorC6CommonE11asHexStringSSvg",
-                "moduleName": "Common",
-                "isFromExtension": true,
-                "accessorKind": "get"
-              }
-            ]
-          },
-          {
-            "kind": "Function",
-            "name": "blend",
-            "printedName": "blend(_:with:weight:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "CGFloat",
-                "printedName": "CoreGraphics.CGFloat",
-                "usr": "s:14CoreFoundation7CGFloatV"
-              }
-            ],
-            "declKind": "Func",
-            "usr": "s:So7UIColorC6CommonE5blend_4with6weightA2B_AB14CoreFoundation7CGFloatVtFZ",
-            "mangledName": "$sSo7UIColorC6CommonE5blend_4with6weightA2B_AB12CoreGraphics7CGFloatVtFZ",
-            "moduleName": "Common",
-            "static": true,
-            "declAttributes": [
-              "Final",
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "funcSelfKind": "NonMutating"
-          },
-          {
-            "kind": "Function",
-            "name": "blendedMidpoint",
-            "printedName": "blendedMidpoint(_:_:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              }
-            ],
-            "declKind": "Func",
-            "usr": "s:So7UIColorC6CommonE15blendedMidpointyA2B_ABtFZ",
-            "mangledName": "$sSo7UIColorC6CommonE15blendedMidpointyA2B_ABtFZ",
-            "moduleName": "Common",
-            "static": true,
-            "declAttributes": [
-              "Final",
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "funcSelfKind": "NonMutating"
-          },
-          {
-            "kind": "Constructor",
-            "name": "init",
-            "printedName": "init(hex:alpha:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "CGFloat",
-                "printedName": "CoreGraphics.CGFloat",
-                "hasDefaultArg": true,
-                "usr": "s:14CoreFoundation7CGFloatV"
-              }
-            ],
-            "declKind": "Constructor",
-            "usr": "s:So7UIColorC6CommonE3hex5alphaABSS_14CoreFoundation7CGFloatVtcfc",
-            "mangledName": "$sSo7UIColorC6CommonE3hex5alphaABSS_12CoreGraphics7CGFloatVtcfc",
-            "moduleName": "Common",
-            "declAttributes": [
-              "AccessControl",
-              "Convenience",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "init_kind": "Convenience"
-          },
-          {
-            "kind": "Var",
-            "name": "inverted",
-            "printedName": "inverted",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              }
-            ],
-            "declKind": "Var",
-            "usr": "s:So7UIColorC6CommonE8invertedABvp",
-            "mangledName": "$sSo7UIColorC6CommonE8invertedABvp",
-            "moduleName": "Common",
-            "declAttributes": [
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "accessors": [
-              {
-                "kind": "Accessor",
-                "name": "Get",
-                "printedName": "Get()",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "UIColor",
-                    "printedName": "UIKit.UIColor",
-                    "usr": "c:objc(cs)UIColor"
-                  }
-                ],
-                "declKind": "Accessor",
-                "usr": "s:So7UIColorC6CommonE8invertedABvg",
-                "mangledName": "$sSo7UIColorC6CommonE8invertedABvg",
-                "moduleName": "Common",
-                "isFromExtension": true,
-                "accessorKind": "get"
-              }
-            ]
-          },
-          {
-            "kind": "Function",
-            "name": "getModified",
-            "printedName": "getModified(byPercentage:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "Optional",
-                "printedName": "UIKit.UIColor?",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "UIColor",
-                    "printedName": "UIKit.UIColor",
-                    "usr": "c:objc(cs)UIColor"
-                  }
-                ],
-                "usr": "s:Sq"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "CGFloat",
-                "printedName": "CoreGraphics.CGFloat",
-                "usr": "s:14CoreFoundation7CGFloatV"
-              }
-            ],
-            "declKind": "Func",
-            "usr": "s:So7UIColorC6CommonE11getModified12byPercentageABSg14CoreFoundation7CGFloatV_tF",
-            "mangledName": "$sSo7UIColorC6CommonE11getModified12byPercentageABSg12CoreGraphics7CGFloatV_tF",
-            "moduleName": "Common",
-            "declAttributes": [
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "funcSelfKind": "NonMutating"
-          },
-          {
-            "kind": "Function",
-            "name": "named",
-            "printedName": "named(_:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "Optional",
-                "printedName": "UIKit.UIColor?",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "UIColor",
-                    "printedName": "UIKit.UIColor",
-                    "usr": "c:objc(cs)UIColor"
-                  }
-                ],
-                "usr": "s:Sq"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
-              }
-            ],
-            "declKind": "Func",
-            "usr": "s:So7UIColorC6CommonE5namedyABSgSSFZ",
-            "mangledName": "$sSo7UIColorC6CommonE5namedyABSgSSFZ",
-            "moduleName": "Common",
-            "static": true,
-            "declAttributes": [
-              "Final",
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "funcSelfKind": "NonMutating"
-          },
-          {
-            "kind": "Var",
-            "name": "rgbaComponents",
-            "printedName": "rgbaComponents",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "Optional",
-                "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)?",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "Tuple",
-                    "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)",
-                    "children": [
-                      {
-                        "kind": "TypeNominal",
-                        "name": "CGFloat",
-                        "printedName": "CoreGraphics.CGFloat",
-                        "usr": "s:14CoreFoundation7CGFloatV"
-                      },
-                      {
-                        "kind": "TypeNominal",
-                        "name": "CGFloat",
-                        "printedName": "CoreGraphics.CGFloat",
-                        "usr": "s:14CoreFoundation7CGFloatV"
-                      },
-                      {
-                        "kind": "TypeNominal",
-                        "name": "CGFloat",
-                        "printedName": "CoreGraphics.CGFloat",
-                        "usr": "s:14CoreFoundation7CGFloatV"
-                      },
-                      {
-                        "kind": "TypeNominal",
-                        "name": "CGFloat",
-                        "printedName": "CoreGraphics.CGFloat",
-                        "usr": "s:14CoreFoundation7CGFloatV"
-                      }
-                    ]
-                  }
-                ],
-                "usr": "s:Sq"
-              }
-            ],
-            "declKind": "Var",
-            "usr": "s:So7UIColorC6CommonE14rgbaComponents14CoreFoundation7CGFloatV3red_AG5greenAG4blueAG5alphatSgvp",
-            "mangledName": "$sSo7UIColorC6CommonE14rgbaComponents12CoreGraphics7CGFloatV3red_AG5greenAG4blueAG5alphatSgvp",
-            "moduleName": "Common",
-            "declAttributes": [
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "accessors": [
-              {
-                "kind": "Accessor",
-                "name": "Get",
-                "printedName": "Get()",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "Optional",
-                    "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)?",
-                    "children": [
-                      {
-                        "kind": "TypeNominal",
-                        "name": "Tuple",
-                        "printedName": "(red: CoreGraphics.CGFloat, green: CoreGraphics.CGFloat, blue: CoreGraphics.CGFloat, alpha: CoreGraphics.CGFloat)",
-                        "children": [
-                          {
-                            "kind": "TypeNominal",
-                            "name": "CGFloat",
-                            "printedName": "CoreGraphics.CGFloat",
-                            "usr": "s:14CoreFoundation7CGFloatV"
-                          },
-                          {
-                            "kind": "TypeNominal",
-                            "name": "CGFloat",
-                            "printedName": "CoreGraphics.CGFloat",
-                            "usr": "s:14CoreFoundation7CGFloatV"
-                          },
-                          {
-                            "kind": "TypeNominal",
-                            "name": "CGFloat",
-                            "printedName": "CoreGraphics.CGFloat",
-                            "usr": "s:14CoreFoundation7CGFloatV"
-                          },
-                          {
-                            "kind": "TypeNominal",
-                            "name": "CGFloat",
-                            "printedName": "CoreGraphics.CGFloat",
-                            "usr": "s:14CoreFoundation7CGFloatV"
-                          }
-                        ]
-                      }
-                    ],
-                    "usr": "s:Sq"
-                  }
-                ],
-                "declKind": "Accessor",
-                "usr": "s:So7UIColorC6CommonE14rgbaComponents14CoreFoundation7CGFloatV3red_AG5greenAG4blueAG5alphatSgvg",
-                "mangledName": "$sSo7UIColorC6CommonE14rgbaComponents12CoreGraphics7CGFloatV3red_AG5greenAG4blueAG5alphatSgvg",
-                "moduleName": "Common",
-                "isFromExtension": true,
-                "accessorKind": "get"
-              }
-            ]
-          },
-          {
-            "kind": "Var",
-            "name": "randomColor",
-            "printedName": "randomColor",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "UIColor",
-                "printedName": "UIKit.UIColor",
-                "usr": "c:objc(cs)UIColor"
-              }
-            ],
-            "declKind": "Var",
-            "usr": "s:So7UIColorC6CommonE11randomColorABvpZ",
-            "mangledName": "$sSo7UIColorC6CommonE11randomColorABvpZ",
-            "moduleName": "Common",
-            "static": true,
-            "declAttributes": [
-              "Final",
-              "AccessControl",
-              "RawDocComment"
-            ],
-            "isFromExtension": true,
-            "accessors": [
-              {
-                "kind": "Accessor",
-                "name": "Get",
-                "printedName": "Get()",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "UIColor",
-                    "printedName": "UIKit.UIColor",
-                    "usr": "c:objc(cs)UIColor"
-                  }
-                ],
-                "declKind": "Accessor",
-                "usr": "s:So7UIColorC6CommonE11randomColorABvgZ",
-                "mangledName": "$sSo7UIColorC6CommonE11randomColorABvgZ",
-                "moduleName": "Common",
-                "static": true,
-                "declAttributes": [
-                  "Final"
-                ],
-                "isFromExtension": true,
-                "accessorKind": "get"
-              }
-            ]
-          }
-        ],
-        "declKind": "Class",
-        "usr": "c:objc(cs)UIColor",
-        "moduleName": "UIKit",
-        "isOpen": true,
-        "intro_iOS": "2.0",
-        "objc_name": "UIColor",
-        "declAttributes": [
-          "Available",
-          "ObjC",
-          "SynthesizedProtocol",
-          "NonSendable",
-          "Dynamic"
-        ],
-        "superclassUsr": "c:objc(cs)NSObject",
-        "isExternal": true,
-        "inheritsConvenienceInitializers": true,
-        "superclassNames": [
-          "ObjectiveC.NSObject"
-        ],
-        "conformances": [
-          {
-            "kind": "Conformance",
-            "name": "Withable",
-            "printedName": "Withable",
-            "children": [
-              {
-                "kind": "TypeWitness",
-                "name": "T",
-                "printedName": "T",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "NSObject",
-                    "printedName": "ObjectiveC.NSObject",
-                    "usr": "c:objc(cs)NSObject"
-                  }
-                ]
-              }
-            ],
-            "usr": "s:6Common8WithableP",
-            "mangledName": "$s6Common8WithableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "_KeyValueCodingAndObserving",
-            "printedName": "_KeyValueCodingAndObserving",
-            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
-            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "_KeyValueCodingAndObservingPublishing",
-            "printedName": "_KeyValueCodingAndObservingPublishing",
-            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
-            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "CVarArg",
-            "printedName": "CVarArg",
-            "usr": "s:s7CVarArgP",
-            "mangledName": "$ss7CVarArgP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Copyable",
-            "printedName": "Copyable",
-            "usr": "s:s8CopyableP",
-            "mangledName": "$ss8CopyableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "CustomDebugStringConvertible",
-            "printedName": "CustomDebugStringConvertible",
-            "usr": "s:s28CustomDebugStringConvertibleP",
-            "mangledName": "$ss28CustomDebugStringConvertibleP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "CustomStringConvertible",
-            "printedName": "CustomStringConvertible",
-            "usr": "s:s23CustomStringConvertibleP",
-            "mangledName": "$ss23CustomStringConvertibleP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Equatable",
-            "printedName": "Equatable",
-            "usr": "s:SQ",
-            "mangledName": "$sSQ"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Escapable",
-            "printedName": "Escapable",
-            "usr": "s:s9EscapableP",
-            "mangledName": "$ss9EscapableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Hashable",
-            "printedName": "Hashable",
-            "usr": "s:SH",
-            "mangledName": "$sSH"
-          },
-          {
-            "kind": "Conformance",
-            "name": "SendableMetatype",
-            "printedName": "SendableMetatype",
-            "usr": "s:s16SendableMetatypeP",
-            "mangledName": "$ss16SendableMetatypeP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Sendable",
-            "printedName": "Sendable",
-            "usr": "s:s8SendableP",
-            "mangledName": "$ss8SendableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "_ExpressibleByColorLiteral",
-            "printedName": "_ExpressibleByColorLiteral",
-            "usr": "s:s26_ExpressibleByColorLiteralP",
-            "mangledName": "$ss26_ExpressibleByColorLiteralP"
           }
         ]
       },
@@ -100937,70 +102549,63 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1054,
+      "offset": 2025,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1064,
+      "offset": 2035,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1076,
+      "offset": 2047,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1087,
+      "offset": 2058,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1314,
+      "offset": 2285,
       "length": 2,
       "value": "21"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 1551,
+      "offset": 2522,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1660,
-      "length": 2,
-      "value": "16"
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2076,
+      "offset": 2870,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2502,
+      "offset": 3296,
       "length": 3,
       "value": "120"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2506,
+      "offset": 3300,
       "length": 2,
       "value": "40"
     },
@@ -101010,13 +102615,6 @@
       "offset": 2486,
       "length": 4,
       "value": "true"
-    },
-    {
-      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/Array\/Array+FloatingPoint.swift",
-      "kind": "IntegerLiteral",
-      "offset": 817,
-      "length": 1,
-      "value": "1"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/BackButtonAddable.swift",
@@ -101056,28 +102654,42 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "Array",
-      "offset": 1126,
+      "offset": 1063,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 1297,
+      "offset": 1961,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 8324,
+      "offset": 9716,
+      "length": 4,
+      "value": "true"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
+      "kind": "BooleanLiteral",
+      "offset": 12605,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
       "kind": "BooleanLiteral",
-      "offset": 9146,
+      "offset": 13497,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Architecture\/BaseCoordinator.swift",
+      "kind": "BooleanLiteral",
+      "offset": 14454,
       "length": 5,
       "value": "false"
     },
@@ -101238,28 +102850,28 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
-      "offset": 3658,
+      "offset": 3669,
       "length": 59,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
-      "offset": 3693,
+      "offset": 3704,
       "length": 3,
       "value": "\"*\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
-      "offset": 3697,
+      "offset": 3708,
       "length": 1,
       "value": "\".\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/CameraManager.swift",
       "kind": "StringLiteral",
-      "offset": 3710,
+      "offset": 3721,
       "length": 1,
       "value": "\".queue\""
     },
@@ -101273,28 +102885,28 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2320,
+      "offset": 2261,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 4897,
+      "offset": 4838,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 5071,
+      "offset": 5012,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/CircularActivityIndicatorView\/CircularActivityIndicatorView.swift",
       "kind": "BooleanLiteral",
-      "offset": 4797,
+      "offset": 4738,
       "length": 5,
       "value": "false"
     },
@@ -101406,14 +103018,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Dismissable.swift",
       "kind": "BooleanLiteral",
-      "offset": 1046,
+      "offset": 1343,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Dismissable.swift",
       "kind": "BooleanLiteral",
-      "offset": 1614,
+      "offset": 2361,
       "length": 4,
       "value": "true"
     },
@@ -101490,7 +103102,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Views\/GradientView.swift",
       "kind": "BooleanLiteral",
-      "offset": 3836,
+      "offset": 3790,
       "length": 4,
       "value": "true"
     },
@@ -101581,7 +103193,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPService+Async.swift",
       "kind": "IntegerLiteral",
-      "offset": 453,
+      "offset": 824,
+      "length": 2,
+      "value": "60"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Network\/HTTPService+Async.swift",
+      "kind": "IntegerLiteral",
+      "offset": 984,
       "length": 2,
       "value": "60"
     },
@@ -101665,7 +103284,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ImageLoader\/ImageLoader.swift",
       "kind": "Dictionary",
-      "offset": 729,
+      "offset": 715,
       "length": 3,
       "value": "[]"
     },
@@ -101679,140 +103298,140 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "StringLiteral",
-      "offset": 2177,
+      "offset": 2315,
       "length": 17,
       "value": "\"KeychainWrapper\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 3529,
+      "offset": 4178,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 6129,
+      "offset": 6778,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 6489,
+      "offset": 7138,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 6854,
+      "offset": 7503,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 7219,
+      "offset": 7868,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 8127,
+      "offset": 8776,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 9578,
+      "offset": 10227,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 10540,
+      "offset": 11189,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 11838,
+      "offset": 12487,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 12694,
+      "offset": 13343,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 13008,
+      "offset": 13657,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 13323,
+      "offset": 13972,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 13636,
+      "offset": 14285,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 14592,
+      "offset": 15241,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 15666,
+      "offset": 16315,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 16728,
+      "offset": 17500,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 18552,
+      "offset": 19262,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 22220,
+      "offset": 23304,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Storage\/KeychainWrapper\/KeychainWrapper.swift",
       "kind": "BooleanLiteral",
-      "offset": 23662,
+      "offset": 24940,
       "length": 5,
       "value": "false"
     },
@@ -101826,9 +103445,23 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/LocalAuthenticationManager.swift",
       "kind": "StringLiteral",
-      "offset": 2419,
+      "offset": 3275,
       "length": 29,
       "value": "\"Authentication is required.\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/LocalAuthenticationManager.swift",
+      "kind": "StringLiteral",
+      "offset": 3578,
+      "length": 29,
+      "value": "\"Authentication is required.\""
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Managers\/Authorization\/LocationAuthorizationManager.swift",
+      "kind": "Array",
+      "offset": 787,
+      "length": 2,
+      "value": "[]"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Logger\/Loggable.swift",
@@ -101938,14 +103571,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Presentable.swift",
       "kind": "BooleanLiteral",
-      "offset": 1197,
+      "offset": 1494,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Protocols\/UI\/Presentable.swift",
       "kind": "BooleanLiteral",
-      "offset": 1888,
+      "offset": 2657,
       "length": 4,
       "value": "true"
     },
@@ -102036,23 +103669,37 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1571,
+      "offset": 1586,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1644,
+      "offset": 1659,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1670,
+      "offset": 1685,
       "length": 2,
       "value": "16"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "BooleanLiteral",
+      "offset": 2993,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Custom\/Snackbar\/SnackbarView.swift",
+      "kind": "BooleanLiteral",
+      "offset": 3221,
+      "length": 5,
+      "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Stacks\/Stack.swift",
@@ -102169,28 +103816,28 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
-      "offset": 895,
+      "offset": 1087,
       "length": 27,
       "value": "\"yyyy-MM-dd HH:mm:ss +0000\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
-      "offset": 972,
+      "offset": 1164,
       "length": 28,
       "value": "\"yyyy-MM-dd HH:mm:ss.000000\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
-      "offset": 1049,
+      "offset": 1431,
       "length": 30,
       "value": "\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\""
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/String\/String+DateFormats.swift",
       "kind": "StringLiteral",
-      "offset": 1115,
+      "offset": 1497,
       "length": 8,
       "value": "\"yyMMdd\""
     },
@@ -102603,7 +104250,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Hide.swift",
       "kind": "BooleanLiteral",
-      "offset": 343,
+      "offset": 561,
       "length": 4,
       "value": "true"
     },
@@ -102743,14 +104390,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Show.swift",
       "kind": "BooleanLiteral",
-      "offset": 406,
+      "offset": 615,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+Show.swift",
       "kind": "IntegerLiteral",
-      "offset": 496,
+      "offset": 705,
       "length": 1,
       "value": "1"
     },
@@ -102760,6 +104407,20 @@
       "offset": 769,
       "length": 2,
       "value": "[]"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+VisibilityTransition.swift",
+      "kind": "IntegerLiteral",
+      "offset": 124,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Layout\/UIView\/UIView+VisibilityTransition.swift",
+      "kind": "IntegerLiteral",
+      "offset": 458,
+      "length": 1,
+      "value": "0"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+CoordinatorTracking.swift",
@@ -102813,28 +104474,28 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "IntegerLiteral",
-      "offset": 1024,
+      "offset": 1582,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "IntegerLiteral",
-      "offset": 1082,
+      "offset": 1640,
       "length": 2,
       "value": "28"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "BooleanLiteral",
-      "offset": 1266,
-      "length": 4,
-      "value": "true"
+      "offset": 1824,
+      "length": 5,
+      "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Extensions\/UIKit\/Presentation\/UIViewController\/UIViewController+SetNavigationBar.swift",
       "kind": "BooleanLiteral",
-      "offset": 1302,
+      "offset": 1861,
       "length": 4,
       "value": "true"
     },
