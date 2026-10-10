@@ -7,18 +7,23 @@ import UIKit
 // MARK: - OffsetResetable
 
 /// Protocol defining methods to reset the content offset of scroll views and collection views.
+@available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
 public protocol OffsetResetable {
     /// Resets the content offset of both the closest scroll view and collection view.
+    @available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
     func resetOffsetIfNeeded()
     
     /// Resets the content offset of the closest collection view.
+    @available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
     func resetCollectionViewOffsetIfNeeded()
     
     /// Resets the content offset of the closest scroll view.
+    @available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
     func resetScrollViewOffsetIfNeeded()
 }
 
 // MARK: - where Self: UIViewController
+@available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
 extension OffsetResetable where Self: UIViewController {
     
     /// Resets the content offset of both the closest scroll view and collection view.
@@ -41,6 +46,7 @@ extension OffsetResetable where Self: UIViewController {
 }
 
 // MARK: - OffsetResetable
+@available(*, deprecated, message: "Scrolls to a zero offset, which ignores the content inset. Call setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:) on the scroll view.")
 extension UIViewController: OffsetResetable {}
 
 

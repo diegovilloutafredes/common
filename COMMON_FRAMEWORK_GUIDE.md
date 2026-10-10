@@ -2551,9 +2551,9 @@ What a view controller can call, and how it gets it. Call these from the control
 | `AlertPresentable` | `presentAlertView(type:…)`, with optional `acceptTitle:` / `cancelTitle:`, and `presentAlertView(viewModel:…)` | Built in |
 | `BackgroundColorable` | `backgroundColor(_:)` | Built in |
 | `KeyboardDismissable` | `dismissKeyboard()` (pair with `setupAsKeyboardDismissable()`) | Built in |
-| `LargeTitleSettable` | `enableLargeTitles()` / `disableLargeTitles()` | Built in |
+| `LargeTitleSettable` | `enableLargeTitles()` / `disableLargeTitles()` | Built in. Deprecated in 1.9.0 (Appendix D) |
 | `NavigationBarVisibilityTogglable` | `showNavigationBar(animated:)` / `hideNavigationBar(animated:)` | Built in |
-| `OffsetResetable` | `resetOffsetIfNeeded()` and its scroll/collection variants | Built in |
+| `OffsetResetable` | `resetOffsetIfNeeded()` and its scroll/collection variants | Built in. Deprecated in 1.9.0 (Appendix D) |
 | `ScreenSizeMeasurable` | `screenWidth` / `screenHeight` (not for list sizes: use `availableSize`) | Built in |
 | `TitleSettable` | `set(title:)` | Built in |
 | `Vibrator` | `vibrate()` haptic | Built in |
@@ -2922,7 +2922,7 @@ The framework's conventions — follow them for any code that lives in `Common/`
   per type; protocol conformances as separate `extension Type: Protocol {}`
   blocks at the bottom of the file, each with its own MARK.
 - **Protocol taxonomy**: capabilities end in `-able` (`Navigationable`,
-  `Actionable` — consistency beats grammar); `*Requestable` = a capability to
+  `Withable`: consistency beats grammar); `*Requestable` = a capability to
   request something, as `onXRequested` methods with a default implementation
   (`onAppSettingsRequested()`), adopted by whatever performs the request. It is
   not how a module reports upward: module outputs are the ViewModel's
@@ -3062,3 +3062,6 @@ A deprecated declaration still compiles and behaves as before. Each use gets a c
 | `BaseCoordinator`'s conformance to those four protocols | `presentAlertView`, `present`, `dismiss()` or `pop()`, called on the coordinator. Its hooks `onDismissRequested()` and `onGoBackRequested()` are not deprecated |
 | `ContentReloadable`, `ReloadContentRequestable`, `BaseViewModelableViewController.reloadContent()` | An intent on the ViewModel, or a `ViewLifecycleable` hook, that reloads its state; the controller re-renders in `updateContent()` (§5) |
 | The `viewController` property of `Presentable`, `Dismissable` and `AlertPresentable` | The protocols' own `present`, `dismiss` and `presentAlertView`, which honor `presentationAnchor` (§7). A type's own `viewController` property is unaffected |
+| `Actionable` | No replacement: declare an action closure on the type that needs one |
+| `LargeTitleSettable`, `enableLargeTitles()`, `disableLargeTitles()` | `navigationBar.prefersLargeTitles` on the navigation controller, or `navigationItem.largeTitleDisplayMode` for one screen |
+| `OffsetResetable`, `resetOffsetIfNeeded()` and its scroll-view and collection-view variants | `setContentOffset(CGPoint(x: 0, y: -adjustedContentInset.top), animated:)` on the scroll view. The deprecated methods scroll to a zero offset, which ignores the content inset. `closestScrollView`, `closestCollectionView` and `getClosest()` are not deprecated |
