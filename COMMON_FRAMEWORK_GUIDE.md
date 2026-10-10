@@ -32,6 +32,7 @@ This guide documents how to use the **Common** framework to build UI, wire modul
 20. [Appendix A — alertView() helper](#appendix-a--alertview-helper)
 21. [Appendix B — New screen checklist](#appendix-b--new-screen-checklist)
 22. [Appendix C — New API domain checklist](#appendix-c--new-api-domain-checklist)
+23. [Appendix D: Deprecations](#appendix-d-deprecations)
 
 ---
 
@@ -1165,9 +1166,9 @@ final class SheetFlowViewController: BaseViewController {
 
 Use the full VC + VM + wireframe set when there is real view-model state to hold; don't add empty ceremony for a static screen. Never add closures to a `BaseViewModelableViewController` subclass: it would force a stubbed `required init(viewModel:)`. Closures belong on the ViewModel.
 
-### `BaseModuleDelegate` (legacy)
+### `BaseModuleDelegate` (deprecated in 1.9.0)
 
-Earlier releases wired navigation through `weak var delegate: BaseModuleDelegate?` (`GoBackRequestable`, `DismissRequestable`, `AlertRequestable`, `ActivityControllerRequestable`), which `BaseCoordinator` still implements with default behavior (`onGoBackRequested()` → `pop()`, `onDismissRequested()` → `dismiss()`). The typealias and the conformance stay for compatibility; new modules use `onRequested` instead, and the DemoApp no longer uses the delegate anywhere.
+Earlier releases wired navigation through `weak var delegate: BaseModuleDelegate?` (`GoBackRequestable`, `DismissRequestable`, `AlertRequestable`, `ActivityControllerRequestable`), which `BaseCoordinator` still implements with default behavior (`onGoBackRequested()` → `pop()`, `onDismissRequested()` → `dismiss()`). Since 1.9.0 the typealias, the four protocols and the coordinator's conformance to them are deprecated: they compile and behave as before, with a warning that names the replacement (Appendix D). New modules use `onRequested` instead, and the DemoApp no longer uses the delegate anywhere.
 
 ### Do's and Don'ts
 
@@ -1187,13 +1188,17 @@ Earlier releases wired navigation through `weak var delegate: BaseModuleDelegate
 Manages a `UINavigationController`, child coordinators, and conforms to all navigation protocols. It is `@MainActor`.
 
 ```swift
-open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
+open class BaseCoordinator: NSObject, Coordinator {
     public let navigationController: UINavigationController
     public let onPerformed: Handler<Coordinator>?
     public var childCoordinators: [Coordinator] = []
 
     open func start() {}  // Override to push the first screen
 }
+
+// The module delegate of earlier releases (§6):
+@available(*, deprecated, message: "Call presentAlertView, present, dismiss() or pop() on the coordinator directly.")
+extension BaseCoordinator: BaseModuleDelegate {}
 ```
 
 ### Starting a coordinator
@@ -1568,7 +1573,7 @@ Common detent sizes: `0.45` (small), `0.75` (medium), `0.8` (large), `0.9625` (n
 
 ### Default delegate behavior (legacy)
 
-`BaseCoordinator` still conforms to `BaseModuleDelegate` for modules written against earlier releases: `onGoBackRequested()` → `pop()`, `onDismissRequested()` → `dismiss()`. New modules fire `onRequested(.goBack)` and the coordinator pops (§6).
+`BaseCoordinator` still conforms to `BaseModuleDelegate` for modules written against earlier releases, and since 1.9.0 that conformance is deprecated (Appendix D). Its two hooks are not: `onGoBackRequested()` → `pop()` and `onDismissRequested()` → `dismiss()` stay `open`, and a coordinator that overrides or calls them gets no warning. New modules fire `onRequested(.goBack)` and the coordinator pops (§6).
 
 ### Do's and Don'ts
 
@@ -2523,7 +2528,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 | `ValueWithable` | Enables `.with { }` on value types (structs) |
 | `Endpoint` | API route definition |
 | `SingleRawValueKeyValueObjectStorage` | Single-item key-value storage |
-| `ContentReloadable` | Views that can reload their content (legacy: new modules re-render from observed state) |
+| `ContentReloadable` | Views that can reload their content (deprecated in 1.9.0: new modules re-render from observed state) |
 | `ViewLifecycleable` | View lifecycle event hooks |
 | `CollectionViewable` | The list contract a ViewModel answers (`CollectionViewDataSourceable & CollectionViewDelegateable & CollectionViewSizeable`); sizes take `availableSize` |
 | `RevisionTrackable` | A list ViewModel's tracked `revision`; `BaseCollectionViewableViewController` reloads its lists when it moves (§5) |
@@ -2927,7 +2932,7 @@ The framework's conventions — follow them for any code that lives in `Common/`
   one file per chainable property (`UILabel+Font.swift`), rooted in `Withable`.
 - **Closure vocabulary**: `Action`, `Handler<T>`, `NetworkResultHandler<T>`,
   `CompletionHandler` — a raw `(T) -> Void` in a public signature is a
-  violation. Name protocol compositions (the legacy `BaseModuleDelegate` is one).
+  violation. Name protocol compositions (the deprecated `BaseModuleDelegate` is one).
 - **Semantic sugar**: `.empty` over `""`, `.zero` over `0`, `.init()` shorthand
   where the type is inferable, `.isNotNil` / `.isNotEmpty` over negations.
 - **DocC on every public symbol**; `- Note:` / `- Warning:` / `- Important:`
@@ -3038,3 +3043,21 @@ func alertView(
 - [ ] Or the callback style: `protocol MyClientProtocol: AnyObject` with method signatures using `NetworkResultHandler<T>`, `final class MyClient: BaseClient` (empty body), and `extension MyClient: MyClientProtocol` — style (a): `request(from: #function, router, result:)` on `BaseClient` (store the client to deduplicate); or style (b): direct `HTTPService.request(router, result:)` (see §10 Do's and Don'ts)
 - [ ] `protocol MyUseCase` + `extension MyUseCase` with default implementation, in the client's style
 - [ ] Conform the screen's ViewModel to `MyUseCase` (a coordinator only for an app-level flow no screen owns; never a view controller)
+
+---
+
+## Appendix D: Deprecations
+
+A deprecated declaration still compiles and behaves as before. Each use gets a compiler warning that names the replacement, and the next major release removes the declaration.
+
+### Deprecated in 1.9.0
+
+| Deprecated | Use instead |
+|------------|-------------|
+| `BaseModuleDelegate` | `onRequested` / `onPerformed` closures on the ViewModel, and a `ViewEvent` for an effect over the screen (§6) |
+| `ActivityControllerRequestable`, `onPresentActivityControllerRequested(with:)` | A `ViewEvent` that the view controller answers by presenting a `UIActivityViewController`. A coordinator calls `present(.overCurrent, viewController:)` |
+| `AlertRequestable`, both `onPresentAlertRequested` methods | A `ViewEvent` that the view controller presents. A coordinator calls `presentAlertView(type:acceptAction:cancelAction:)` or `presentAlertView(viewModel:onDismissRequested:)` |
+| `DismissRequestable` | A `Requested` case through `onRequested`; the coordinator calls `dismiss()` |
+| `GoBackRequestable` | A `Requested` case through `onRequested`; the coordinator calls `pop()` |
+| `BaseCoordinator`'s conformance to those four protocols | `presentAlertView`, `present`, `dismiss()` or `pop()`, called on the coordinator. Its hooks `onDismissRequested()` and `onGoBackRequested()` are not deprecated |
+| `ContentReloadable`, `ReloadContentRequestable`, `BaseViewModelableViewController.reloadContent()` | An intent on the ViewModel, or a `ViewLifecycleable` hook, that reloads its state; the controller re-renders in `updateContent()` (§5) |

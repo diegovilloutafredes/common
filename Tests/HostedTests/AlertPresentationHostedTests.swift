@@ -31,6 +31,7 @@ final class AlertPresentationHostedTests: XCTestCase {
 
     // MARK: - A presented alert does not keep its coordinator alive
 
+    @available(*, deprecated, message: "Pins the deprecated onPresentAlertRequested(viewModel:)")
     func test_coordinator_isReleased_whileItsAlertIsPresented() {
         weak var weakCoordinator: AlertingCoordinator?
         autoreleasepool {
@@ -43,6 +44,7 @@ final class AlertPresentationHostedTests: XCTestCase {
         XCTAssertNil(weakCoordinator, "the presented alert must not keep its coordinator alive")
     }
 
+    @available(*, deprecated, message: "Pins the deprecated onPresentAlertRequested(viewModel:)")
     func test_backgroundTap_reachesTheLiveCoordinator() throws {
         let coordinator = AlertingCoordinator(navigationController: UINavigationController())
         coordinator.onPresentAlertRequested(viewModel: payload())

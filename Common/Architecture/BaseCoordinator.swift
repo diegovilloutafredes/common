@@ -6,10 +6,10 @@ import UIKit
 
 // MARK: - BaseCoordinator
 
-/// A base implementation of the `Coordinator` protocol that also conforms to `BaseModuleDelegate`.
+/// A base implementation of the `Coordinator` protocol.
 /// It manages a `UINavigationController` and an optional completion handler.
 @MainActor
-open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
+open class BaseCoordinator: NSObject, Coordinator {
     
     /// The navigation controller used for navigation.
     public let navigationController: UINavigationController
@@ -55,7 +55,7 @@ open class BaseCoordinator: NSObject, Coordinator, BaseModuleDelegate {
     open func start() {}
 
 
-    // MARK: - BaseModuleDelegate
+    // MARK: - Dismissal and go-back hooks
 
     /// Handles a dismissal request.
     /// By default it dismisses the currently top most presented view controller, if there is any.
@@ -235,6 +235,11 @@ extension BaseCoordinator: ActivityIndicatorable {}
 
 // MARK: - AlertPresentable
 extension BaseCoordinator: AlertPresentable {}
+
+
+// MARK: - BaseModuleDelegate
+@available(*, deprecated, message: "Call presentAlertView, present, dismiss() or pop() on the coordinator directly.")
+extension BaseCoordinator: BaseModuleDelegate {}
 
 
 // MARK: - Dismissable

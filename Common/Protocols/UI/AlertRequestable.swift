@@ -5,6 +5,7 @@
 // MARK: - AlertRequestable
 /// A protocol for objects that can request the presentation of an alert.
 /// - Note: Legacy: in new modules an alert is a `ViewEvent` that the view controller presents; a coordinator calls `presentAlertView` directly (guide §6).
+@available(*, deprecated, message: "Fire a ViewEvent that the view controller presents; a coordinator calls presentAlertView directly (guide §6).")
 @MainActor
 public protocol AlertRequestable: AnyObject {
     
@@ -24,6 +25,7 @@ public protocol AlertRequestable: AnyObject {
 }
 
 // MARK: - where Self: AlertPresentable
+@available(*, deprecated, message: "Use presentAlertView(type:acceptAction:cancelAction:).")
 extension AlertRequestable where Self: AlertPresentable {
     public func onPresentAlertRequested(title: String = .DefaultValues.Alerts.title, message: String, handler: CompletionHandler = nil, cancelHandler: CompletionHandler = nil) {
         presentAlertView(
@@ -35,6 +37,7 @@ extension AlertRequestable where Self: AlertPresentable {
 }
 
 // MARK: - where Self: BaseCoordinator
+@available(*, deprecated, message: "Use presentAlertView(viewModel:onDismissRequested:).")
 extension AlertRequestable where Self: BaseCoordinator {
     public func onPresentAlertRequested(viewModel: AlertViewModel) { presentAlertView(viewModel: viewModel, onDismissRequested: { [weak self] in self?.onDismissRequested() }) }
 }

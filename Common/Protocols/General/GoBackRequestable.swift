@@ -5,6 +5,7 @@
 // MARK: - GoBackRequestable
 /// A protocol for objects that can request to navigate back in a navigation stack.
 /// - Note: Legacy: a new module fires `onRequested(.goBack)` and the coordinator pops (guide §6).
+@available(*, deprecated, message: "Send a Requested case through onRequested; the coordinator calls pop() (guide §6).")
 @MainActor
 public protocol GoBackRequestable: AnyObject {
     

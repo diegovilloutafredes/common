@@ -7,10 +7,10 @@ import UIKit
 // MARK: - BaseViewModelableViewController
 
 /// A base view controller that is driven by a View Model.
-/// It conforms to `ViewModelableViewController` and `ContentReloadable`.
+/// It conforms to `ViewModelableViewController`.
 /// View controllers that own a collection view should subclass
 /// `BaseCollectionViewableViewController` instead.
-open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewController, ContentReloadable {
+open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewController {
 
     /// The view model associated with this view controller.
     open var viewModel: ViewModelType {
@@ -21,11 +21,9 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
     }
 
     private var _asViewLifecycleable: ViewLifecycleable?
-    private var _asReloadContentRequestable: ReloadContentRequestable?
 
     private func cacheViewModelRoles() {
         _asViewLifecycleable = viewModel as? ViewLifecycleable
-        _asReloadContentRequestable = viewModel as? ReloadContentRequestable
     }
 
     /// Initializes a new view controller with the given view model.
@@ -88,8 +86,13 @@ open class BaseViewModelableViewController<ViewModelType>: ViewModelableViewCont
     }
 
     // MARK: - ContentReloadable
+    @available(*, deprecated, message: "Call an intent on the view model; the controller re-renders in updateContent() (guide §6).")
     open func reloadContent() {
         Logger.log(self)
-        _asReloadContentRequestable?.onReloadContentRequested()
+        (viewModel as? ReloadContentRequestable)?.onReloadContentRequested()
     }
 }
+
+// MARK: - ContentReloadable
+@available(*, deprecated, message: "Let the view model reload itself from an intent or a ViewLifecycleable hook; the controller re-renders in updateContent() (guide §6).")
+extension BaseViewModelableViewController: ContentReloadable {}

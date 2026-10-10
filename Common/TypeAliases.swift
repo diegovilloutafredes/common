@@ -9,6 +9,7 @@ import UIKit
 /// A composition of protocols defining the base delegate requirements for a module.
 /// Includes capabilities for requesting activity controllers, alerts, dismissals, and navigation back.
 /// - Note: Legacy: new modules hold no delegate; their ViewModel reports through `onRequested` and `onPerformed` closures (guide §6).
+@available(*, deprecated, message: "Give the view model onRequested and onPerformed closures and fire ViewEvents instead of holding a delegate (guide §6).")
 public typealias BaseModuleDelegate = ActivityControllerRequestable & AlertRequestable & DismissRequestable & GoBackRequestable
 
 

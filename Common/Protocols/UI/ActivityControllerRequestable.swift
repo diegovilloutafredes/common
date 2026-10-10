@@ -7,6 +7,7 @@ import UIKit
 // MARK: - ActivityControllerRequestable
 /// A protocol for objects that can request to present a `UIActivityViewController`.
 /// - Note: Legacy: in new modules a share sheet is a `ViewEvent` that the view controller presents (guide §6).
+@available(*, deprecated, message: "Fire a ViewEvent and present a UIActivityViewController from the view controller (guide §6).")
 @MainActor
 public protocol ActivityControllerRequestable: AnyObject {
     
@@ -16,6 +17,7 @@ public protocol ActivityControllerRequestable: AnyObject {
 }
 
 // MARK: - Default implementation
+@available(*, deprecated, message: "Present a UIActivityViewController with present(.overCurrent, viewController:).")
 extension ActivityControllerRequestable {
     public func onPresentActivityControllerRequested(with item: Any) {
         let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
