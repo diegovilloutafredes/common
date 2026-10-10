@@ -15,14 +15,18 @@ extension Array where Element: FloatingPoint {
 }
 
 extension Array where Element: FloatingPoint {
-    /// Calculates the variance of the elements in the array.
+    /// The sample variance: the sum of the squared deviations from `average`, divided by `count - 1`.
+    ///
+    /// NaN for a single element, and a value equal to zero for an empty array.
     public var variance: Element {
         let avg = average
-        return reduce(0) { $0 + ($1 - avg) * ($1 - avg) }
+        return reduce(0) { $0 + ($1 - avg) * ($1 - avg) } / (Element(count) - 1)
     }
 }
 
 extension Array where Element: FloatingPoint {
-    /// Calculates the standard deviation of the elements in the array.
-    public var standardDeviation: Element { sqrt(variance / (Element(count) - 1)) }
+    /// The sample standard deviation: the square root of `variance`.
+    ///
+    /// NaN for a single element, and a value equal to zero for an empty array.
+    public var standardDeviation: Element { sqrt(variance) }
 }
