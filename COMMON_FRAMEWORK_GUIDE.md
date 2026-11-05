@@ -353,6 +353,8 @@ UITextField()
     .autocorrectionType(.no)
 ```
 
+A border color set here is resolved once, through `cgColor`. A form whose borders must follow a dark-mode switch sets them in `updateContent()` on every pass and declares the interface style in `contentUpdateTraits` (§5, *Trait changes on iOS 17–18*).
+
 **Event handlers:**
 
 ```swift
@@ -615,7 +617,7 @@ someView.widthAnchor.constraint(equalToConstant: 120)
 - **Do** use `setConstraints` — it handles `translatesAutoresizingMaskIntoConstraints` and deferred activation.
 - **Do** use `snap(to: $1.safeAreaLayoutGuide)` for root-level content.
 - **Do** combine all constraints for a view into a **single** `setConstraints { }` call — calling it twice overwrites the first handler (only one handler is stored per view via associated object).
-- **Don't** activate constraints manually via `NSLayoutConstraint.activate` — `setConstraints` covers scroll-view content too (see UIScrollView wrapping in section 2).
+- **Don't** activate constraints manually via `NSLayoutConstraint.activate`: `setConstraints` covers scroll-view content too (see UIScrollView wrapping in section 2). The exception is a constraint whose constant `updateContent()` writes: keep it in a `lazy var` and activate it once in `setupView()` (§5, *Observation-driven updates*).
 - **Don't** confuse `.setRatio()` (1:1 square) with `.setRatio(w/h)` — always be explicit.
 - **Don't** use the default `.fill` distribution in HStack/VStack when arranged subviews have explicit size constraints — it will silently stretch one view to fill remaining space. Use `.equalSpacing` when each child keeps its own size.
 
@@ -893,7 +895,7 @@ final class ProfileCell: BaseViewModelableCell<ProfileModel> {
 
 Rules:
 - Read state and write views inside the hook only. Mutate models anywhere on the main actor except inside the hook: in manual mode (iOS 17–18) a write there to state the same pass reads is lost. It lands before the pass arms its observer, so the hook doesn't re-run and the view keeps the value it read before the write. Move such writes to `onViewWillAppear()` or a `Task`. Native mode isn't verified to behave differently, so treat both modes the same.
-- Constraint constants may be written in the hook; the layout pass that follows applies them. To animate one, write the state through the controller's `animateContentChange { [weak self] in self?.viewModel.toggle() }`: the update pass the write causes, the hook and the layout that applies what it wrote, runs inside the animation on every OS, with no `#available` or mode branch. On iOS 17–18 it lays out the controller's view only, so a change that moves views outside it doesn't animate. Geometry *derived* from layout (a list's content height) only exists after layout: sync it in `viewDidLayoutSubviews()` (or after `super.layoutSubviews()` in a view), not in the hook.
+- Constraint constants may be written in the hook; the layout pass that follows applies them. Keep such a constraint in a `lazy var` built from an anchor, activate it once in `setupView()`, and write its constant in `updateContent()`, as the DemoApp's Observation module does with its bar: `private lazy var panelHeight = panel.heightAnchor.constraint(equalToConstant: 44)`, then `panelHeight.isActive = true` in `setupView()` and `panelHeight.constant = viewModel.isOpen ? 120 : 44` in the hook. It's the one constraint you activate yourself, because `setConstraints` doesn't hand its constraints back (§4). To animate it, write the state through the controller's `animateContentChange(_:options:changes:completion:)`, whose duration and options default to `.DefaultValues.animationDuration` (0.3 s) and `.curveEaseInOut`, and whose completion is optional: `animateContentChange { [weak self] in self?.viewModel.toggle() }`. The update pass the write causes, the hook and the layout that applies what it wrote, runs inside the animation on every OS, with no `#available` or mode branch. On iOS 17–18 it lays out the controller's view only, so a change that moves views outside it doesn't animate. Geometry *derived* from layout (a list's content height) only exists after layout: sync it in `viewDidLayoutSubviews()` (or after `super.layoutSubviews()` in a view), not in the hook.
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
 - Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`. In cells, views and reusable views the base implementation is empty, so `super` is optional there.
