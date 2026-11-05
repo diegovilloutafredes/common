@@ -8,11 +8,11 @@ import Observation
 
 // MARK: - ObservationViewModelProtocol
 @MainActor
-protocol ObservationViewModelProtocol: CollectionViewable, ViewModel, ViewLifecycleable {
+protocol ObservationViewModelProtocol: CollectionViewable, RevisionTrackable, ViewModel, ViewLifecycleable {
     var title: String { get }
     var count: Int { get }
     var saves: Int { get }
-    /// Bumps when `messages` changes membership; the controller reloads the list on it.
+    /// Bumps when `messages` changes membership (`RevisionTrackable`): the base controller reloads the list on it.
     var revision: Int { get }
     var messages: [MessageItem] { get }
     /// Drives a constraint constant in the controller's hook (the *Constraints from state* card).

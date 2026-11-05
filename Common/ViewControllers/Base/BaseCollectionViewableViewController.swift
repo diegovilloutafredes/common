@@ -40,6 +40,7 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
             let lists = servedLists
             servedCollectionViews.removeAllObjects()
             lists.forEach { $0.reloadData() }
+            if lists.isNotEmpty { listsDidReload() }
         }
     }
 
@@ -57,16 +58,37 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
     open func bottomInsetForLastCollectionSection() -> CGFloat { .zero }
 
     /// Reloads each list this controller serves whose data was loaded at a revision other than the current one of a
-    /// `RevisionTrackable` view model. A list that loads during the first pass is current and isn't reloaded; one that
-    /// loaded earlier, at an older revision, is. Subclasses that override this hook call `super.updateContent()`.
+    /// `RevisionTrackable` view model, then calls `listsDidReload()` once if it reloaded any. A list that loads during
+    /// the first pass is current and isn't reloaded; one that loaded earlier, at an older revision, is. Subclasses that
+    /// override this hook call `super.updateContent()`.
     open override func updateContent() {
         super.updateContent()
         guard let revision = asRevisionTrackable?.revision else { return }
-        servedLists.filter { servedCollectionViews.object(forKey: $0)?.value != revision }.forEach {
+        let behind = servedLists.filter { servedCollectionViews.object(forKey: $0)?.value != revision }
+        behind.forEach {
             servedCollectionViews.setObject(.init(revision), forKey: $0)
             $0.reloadData()
         }
+        if behind.isNotEmpty { listsDidReload() }
     }
+
+    /// Called once after the controller reloads its lists: at the end of an update pass in which a `RevisionTrackable`
+    /// view model's revision moved and one or more lists reloaded, and right after replacing the view model reloads the
+    /// lists the controller serves. Not called when nothing reloaded. Empty by default.
+    ///
+    /// Override it to refresh what depends on the rows, such as a count or a badge, by scheduling that work here:
+    ///
+    /// ```swift
+    /// override func listsDidReload() {
+    ///     super.listsDidReload()
+    ///     badge.setNeedsContentUpdate()
+    /// }
+    /// ```
+    ///
+    /// `reloadData()` only asks a list to reload, and its rows load on the list's next layout, so don't read them here.
+    /// After a revision move it runs inside the update pass, from `super.updateContent()`: in a subclass that calls
+    /// `super` first it runs before the rest of its hook, and on iOS 17–18 what it reads is tracked like the hook's reads.
+    open func listsDidReload() {}
 
     private var servedLists: [UICollectionView] {
         servedCollectionViews.keyEnumerator().allObjects.compactMap { $0 as? UICollectionView }

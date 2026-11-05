@@ -64,10 +64,6 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
     /// Sized to the list's content in `viewDidLayoutSubviews()` — derived geometry, kept out of the hook.
     private lazy var listHeight = list.heightAnchor.constraint(equalToConstant: MessageCell.height * 4)
 
-    /// The revision last pushed into the list; `updateContent()` re-runs for any tracked change,
-    /// so the reload is gated on the revision it read.
-    private var renderedRevision: Int = .zero
-
     /// Acts on each `viewModel.event` once, however many times the hook re-runs.
     private var eventCursor = ViewEventCursor()
 
@@ -104,7 +100,7 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
                 }
                 demoSection(
                     title: "Collections behind a revision",
-                    description: "The array is @ObservationIgnored; membership changes bump a tracked revision and the controller reloads the list above only when the revision it rendered moved. Tapping a row never reloads."
+                    description: "The array is @ObservationIgnored; membership changes bump a tracked revision. The view model adopts RevisionTrackable, so the base controller reloads the list above when the revision moves and then calls listsDidReload(), where this screen refreshes the badge. Tapping a row never reloads."
                 ) {
                     HStack(distribution: .fillEqually, spacing: 8) {
                         addMessageButton
@@ -148,8 +144,8 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
         barWidth.isActive = true
     }
 
-    /// Single render point: text, flags and the bar's constraint constant. The list height is
-    /// derived from layout and is synced after it instead.
+    /// Single render point: text, flags and the bar's constraint constant. `super` reloads the list when
+    /// `revision` moves. The list height is derived from layout and is synced after it instead.
     override func updateContent() {
         super.updateContent()
         countLabel.text("Count: \(viewModel.count)")
@@ -158,16 +154,18 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
         removeMessageButton.isEnabled(viewModel.messages.isNotEmpty)
         barWidth.constant = viewModel.isBarExpanded ? Layout.barWide : Layout.barNarrow   // applied by the layout pass that follows
         barLabel.text("bar.width = \(Int(barWidth.constant))")
-        if renderedRevision != viewModel.revision {
-            renderedRevision = viewModel.revision
-            list.reloadData()
-            badge.setNeedsContentUpdate()   // the badge's rows changed; its own tracking only covers isRead
-        }
         if let event = eventCursor.take(viewModel.event) {
             switch event {
             case .draftSaved: Snackbar.show(.init(message: "Draft saved"))
             }
         }
+    }
+
+    /// The base controller reloaded the list because `revision` moved: the badge's rows changed, and its own tracking
+    /// only covers `isRead`.
+    override func listsDidReload() {
+        super.listsDidReload()
+        badge.setNeedsContentUpdate()
     }
 
     override func viewDidLayoutSubviews() {

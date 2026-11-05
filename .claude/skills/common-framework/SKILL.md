@@ -336,6 +336,9 @@ final class FooListViewController: BaseCollectionViewableViewController<FooListV
 
     @UIViewBuilder override var mainView: UIView { list }
     // An updateContent() override for other state calls super.updateContent() first: that's where the list reloads.
+    // Work that depends on the rows (a count, a badge) goes in an override of listsDidReload(), which the base calls
+    // once after it reloads: schedule it there (badge.setNeedsContentUpdate()), and don't read the rows, which load on
+    // the list's next layout.
 }
 
 // FooListViewModel.swift — the cell contract the base VC calls at runtime.
