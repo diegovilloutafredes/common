@@ -38,7 +38,7 @@ extension AlertPresentable {
     /// Where the default alerts go without a presentation anchor: the application's top-most controller.
     var presentationTarget: UIViewController? { UIApplication.shared.topMostViewController }
 
-    public func presentAlertView(type: AlertViewType, acceptAction: ((UIAlertAction) -> Void)? = nil, cancelAction: ((UIAlertAction) -> Void)? = nil) {
+    public func presentAlertView(type: AlertViewType, acceptAction: Handler<UIAlertAction>? = nil, cancelAction: Handler<UIAlertAction>? = nil) {
         presentAlertView(
             type: type,
             acceptTitle: .DefaultValues.Alerts.acceptActionTitle,
@@ -62,8 +62,8 @@ extension AlertPresentable {
         type: AlertViewType,
         acceptTitle: String = .DefaultValues.Alerts.acceptActionTitle,
         cancelTitle: String = .DefaultValues.Alerts.cancelActionTitle,
-        acceptAction: ((UIAlertAction) -> Void)? = nil,
-        cancelAction: ((UIAlertAction) -> Void)? = nil
+        acceptAction: Handler<UIAlertAction>? = nil,
+        cancelAction: Handler<UIAlertAction>? = nil
     ) {
         var alertTitle: String = .empty
         var alertMessage: String = .empty

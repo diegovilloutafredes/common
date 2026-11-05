@@ -12,11 +12,11 @@ public protocol Withable: AnyObject {
     /// Provides a closure to configure instances inline.
     /// - Parameter closure: A closure with `self` as the argument.
     /// - Returns: Simply returns the instance after calling the `closure`.
-    @discardableResult func with(_ closure: (_ instance: T) -> Void) -> T
+    @discardableResult func with(_ closure: Handler<T>) -> T
 }
 
 extension Withable {
-    @discardableResult public func with(_ closure: (_ instance: Self) -> Void) -> Self {
+    @discardableResult public func with(_ closure: Handler<Self>) -> Self {
         closure(self)
         return self
     }

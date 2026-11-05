@@ -13,7 +13,7 @@ public enum Logger {
     /// capture frames deterministically instead of hijacking stdout; the frame
     /// atomicity (no interleaving under concurrent logging) is part of the
     /// contract and is pinned by LoggerOrderingTests.
-    nonisolated(unsafe) internal static var printHandler: (String) -> Void = { print($0) }
+    nonisolated(unsafe) internal static var printHandler: Handler<String> = { print($0) }
 
 
     /// Logs a generic item to the console.

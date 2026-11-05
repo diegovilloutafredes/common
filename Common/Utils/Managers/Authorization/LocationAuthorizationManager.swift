@@ -61,7 +61,7 @@ public final class LocationAuthorizationManager: NSObject {
     }
 
     /// Runs `work` on the main thread: right away when already there, otherwise as a main-actor task.
-    private func onMainThread(_ work: @escaping () -> Void) {
+    private func onMainThread(_ work: @escaping Action) {
         guard Thread.isMainThread else { Task { @MainActor in work() }; return }
         work()
     }

@@ -164,7 +164,7 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
             .numberOfLines(2)
     }
 
-    private func makeButton(title: String, color: UIColor, action: @escaping () -> Void) -> UIButton {
+    private func makeButton(title: String, color: UIColor, action: @escaping Action) -> UIButton {
         UIButton(
             configuration: .filled()
                 .with {

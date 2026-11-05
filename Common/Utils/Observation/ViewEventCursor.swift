@@ -79,7 +79,7 @@ public struct ViewEventCursor {
     /// - Parameters:
     ///   - event: The view model's slot.
     ///   - handle: What to do with the payload.
-    public mutating func consume<Payload>(_ event: ViewEvent<Payload>?, _ handle: (Payload) -> Void) {
+    public mutating func consume<Payload>(_ event: ViewEvent<Payload>?, _ handle: Handler<Payload>) {
         consume(event, ifAble: true, handle)
     }
 
@@ -97,7 +97,7 @@ public struct ViewEventCursor {
     ///   - event: The view model's slot.
     ///   - ifAble: Whether the controller can act on the event in this pass.
     ///   - handle: What to do with the payload.
-    public mutating func consume<Payload>(_ event: ViewEvent<Payload>?, ifAble: Bool, _ handle: (Payload) -> Void) {
+    public mutating func consume<Payload>(_ event: ViewEvent<Payload>?, ifAble: Bool, _ handle: Handler<Payload>) {
         if let payload = take(event, ifAble: ifAble) { handle(payload) }
     }
 }

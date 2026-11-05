@@ -8,7 +8,7 @@ extension UserDefaults: KeyValueStorage {
     
     /// Adds a value to UserDefaults using a key-value pair tuple.
     /// - Parameter item: A tuple containing the key and the stored value.
-    public func add(item: (key: String, value: Storable)) {
+    public func add(item: KeyValue<Storable>) {
         guard let data = item.value.asData() else { return }
         set(data, forKey: item.key)
     }

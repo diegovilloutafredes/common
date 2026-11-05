@@ -19,7 +19,7 @@ final class DemoFeatureCellViewModelImpl: DemoFeatureCellViewModel {
     let subtitle: String
     let action: Action
 
-    init(title: String, subtitle: String, action: @escaping () -> Void) {
+    init(title: String, subtitle: String, action: @escaping Action) {
         self.title = title
         self.subtitle = subtitle
         self.action = action

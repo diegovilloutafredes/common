@@ -19,11 +19,11 @@ public final class Debouncer {
     ///   - id: An optional unique identifier to distinguish multiple calls from the same function.
     ///   - seconds: The debounce delay in seconds.
     ///   - function: The function to execute after the delay.
-    public static func debounce(from: String = #function, id: String = .empty, seconds: TimeInterval, function: @escaping () -> Void) {
+    public static func debounce(from: String = #function, id: String = .empty, seconds: TimeInterval, function: @escaping Action) {
         shared._debounce(key: from + id, seconds: seconds, function: function)
     }
 
-    private func _debounce(key: String, seconds: TimeInterval, function: @escaping () -> Void) {
+    private func _debounce(key: String, seconds: TimeInterval, function: @escaping Action) {
         timers[key]?.invalidate()
         let timer = Timer(timeInterval: seconds, repeats: false) { [weak self, key] _ in
             function()

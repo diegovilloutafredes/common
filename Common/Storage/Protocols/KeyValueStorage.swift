@@ -3,7 +3,10 @@
 //
 
 // MARK: - Typealias
+/// A key and its value as a labeled tuple, `(key: Key, value: Value)`.
 public typealias Tuple<Key, Value> = (key: Key, value: Value)
+
+/// A `Tuple` keyed by a `String`, `(key: String, value: Value)`: the item that `KeyValueStorage.add(item:)` stores.
 public typealias KeyValue<Value> = Tuple<String, Value>
 
 // MARK: - KeyValueStorage

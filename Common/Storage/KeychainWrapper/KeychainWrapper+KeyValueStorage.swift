@@ -10,7 +10,7 @@ extension KeychainWrapper: KeyValueStorage {
     /// Adds an item to the keychain, with this wrapper's default accessibility. Saving a key that already exists moves
     /// the item to that accessibility.
     /// - Parameter item: A tuple containing the key and the storable value.
-    public func add(item: (key: String, value: Storable)) {
+    public func add(item: KeyValue<Storable>) {
         guard let data = item.value.asData() else { return }
         set(data, forKey: item.key, withAccessibility: defaultAccessibility)
     }

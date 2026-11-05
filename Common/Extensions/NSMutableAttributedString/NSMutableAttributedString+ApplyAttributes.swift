@@ -11,7 +11,7 @@ extension NSMutableAttributedString {
     ///   - attribute: The attribute (key-value pair) to apply.
     ///   - range: The range to apply the attribute to.
     /// - Returns: Self (chainable).
-    @discardableResult public func apply(_ attribute: (key: NSAttributedString.Key, value: Any), range: NSRange) -> Self {
+    @discardableResult public func apply(_ attribute: Tuple<NSAttributedString.Key, Any>, range: NSRange) -> Self {
         with { $0.addAttribute(attribute.key, value: attribute.value, range: range) }
     }
 }
@@ -23,7 +23,7 @@ extension NSMutableAttributedString {
     ///   - attribute: The attribute (key-value pair) to apply.
     ///   - range: The range to apply the attribute to.
     /// - Returns: Self (chainable).
-    @discardableResult public func apply(_ attribute: (key: NSAttributedString.Key, value: Any), range: Range<String.Index>) -> Self {
+    @discardableResult public func apply(_ attribute: Tuple<NSAttributedString.Key, Any>, range: Range<String.Index>) -> Self {
         apply(
             attribute,
             range: .init(range: range, originalText: string)

@@ -2528,16 +2528,26 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 
 ## 14. Core Protocols and Typealiases
 
-### Closure typealiases
+### Closure and key/value typealiases
+
+Every closure and key/value tuple alias Common declares, with the type it spells. §19 says when to use each.
 
 | Type | Signature |
 |------|-----------|
-| `Handler<T>` | `(T) -> Void` |
-| `CompletionHandler` | `(() -> Void)?` |
 | `Action` | `() -> Void` |
-| `EmptyResultHandler` | `Handler<EmptyResult<Error>>` — `EmptyResult` is Common's own payload-less enum (`.success` / `.failure(Error)`), not `Swift.Result<Void, _>` |
+| `CompletionHandler` | `(() -> Void)?`, an optional completion (an optional action that isn't a completion is `Action?`) |
+| `Handler<T>` | `(T) -> Void` |
+| `InOutHandler<T>` | `(T) -> T` |
+| `ResultHandler<T>` | `(Result<T, Error>) -> Void` |
 | `NetworkResultHandler<T>` | `(Result<T, NetworkError>) -> Void` |
+| `CustomErrorResultHandler<T, E>` | `(Result<T, E>) -> Void`, for any `E: Error` |
+| `EmptyResultHandler` | `(EmptyResult<Error>) -> Void`. `EmptyResult` is Common's own payload-less enum (`.success` / `.failure(Error)`), not `Swift.Result<Void, _>` |
 | `NetworkEmptyResultHandler` | `(EmptyResult<NetworkError>) -> Void` |
+| `CustomErrorEmptyResultHandler<E>` | `(EmptyResult<E>) -> Void`, for any `E: Error` |
+| `Tuple<Key, Value>` | `(key: Key, value: Value)` |
+| `KeyValue<Value>` | `(key: String, value: Value)`, the item `KeyValueStorage.add(item:)` stores |
+| `UIView.ViewHandler` | `(UIView) -> Void`: `onLayoutSubviews(_:)`, and `setConstraints { $0.set(height: 38) }` |
+| `UIView.ViewAndSuperviewHandler` | `((view: UIView, superview: UIView)) -> Void`: `setConstraints { $0.snap(to: $1) }` and `onMoveToSuperview(_:)` |
 
 ### Key protocols
 
@@ -2968,9 +2978,34 @@ The framework's conventions — follow them for any code that lives in `Common/`
   constrained default implementation (`extension X where Self: Y`).
 - **Fluent chainables**: `@discardableResult func x(_ value: X) -> Self { with { $0.x = value } }`,
   one file per chainable property (`UILabel+Font.swift`), rooted in `Withable`.
-- **Closure vocabulary**: `Action`, `Handler<T>`, `NetworkResultHandler<T>`,
-  `CompletionHandler` — a raw `(T) -> Void` in a public signature is a
-  violation. Name protocol compositions (the deprecated `BaseModuleDelegate` is one).
+- **Closure vocabulary**: in `Common/` and the DemoApp, every closure or
+  key/value tuple type, at any access level, is spelled through the alias
+  Common declares for it (§14 lists them all, with their types):
+  - `() -> Void` is `Action`, `(T) -> Void` is `Handler<T>`, and `(T) -> T` is
+    `InOutHandler<T>`.
+  - `(Result<T, Error>) -> Void` is `ResultHandler<T>`,
+    `(Result<T, NetworkError>) -> Void` is `NetworkResultHandler<T>`, and
+    `(Result<T, E>) -> Void` is `CustomErrorResultHandler<T, E>`. Over
+    `EmptyResult` they are `EmptyResultHandler`, `NetworkEmptyResultHandler`
+    and `CustomErrorEmptyResultHandler<E>`.
+  - `(key: K, value: V)` is `Tuple<K, V>`, and `(key: String, value: V)` is
+    `KeyValue<V>`. On `UIView`, `ViewHandler` is `(UIView) -> Void` and
+    `ViewAndSuperviewHandler` is `((view: UIView, superview: UIView)) -> Void`.
+  - An optional completion is `CompletionHandler`, `(() -> Void)?`. An optional
+    closure that isn't a completion, such as a tap action, stays `Action?`. A
+    stored `var x: CompletionHandler` gets no implicit `= nil`, because the
+    alias names an `Optional`: write `= nil`.
+  - Where no alias fits, the type stays raw: a closure with an attribute
+    (`@MainActor`, `@Sendable`: the alias without it names another type), an
+    `async` or `throws` closure, an `inout` parameter, two or more parameters
+    (`(A, B) -> Void` is not `Handler<(A, B)>`), a result other than `Void` or
+    the parameter's own type, and a closure expression's own signature. The
+    Alamofire-port encoders in `Common/Network/Encoders/` keep their raw types
+    until the network layer is decided.
+  - Swapping a raw type for its alias changes no exported symbol (mangling uses
+    the canonical type), but it changes the `.swiftinterface` text, so a
+    release's interface diff lists those declarations.
+  - Name protocol compositions (the deprecated `BaseModuleDelegate` is one).
 - **Semantic sugar**: `.empty` over `""`, `.zero` over `0`, `.init()` shorthand
   where the type is inferable, `.isNotNil` / `.isNotEmpty` over negations.
 - **DocC on every public symbol**; `- Note:` / `- Warning:` / `- Important:`
