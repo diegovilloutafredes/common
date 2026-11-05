@@ -153,9 +153,9 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
 
     override func updateContent() {
         super.updateContent()
-        eventCursor.consume(viewModel.event) { [weak self] event in
+        if let event = eventCursor.take(viewModel.event) {
             switch event {
-            case .showCustomAlert(let style): self?.showCustomAlert(style: style)
+            case .showCustomAlert(let style): showCustomAlert(style: style)
             }
         }
     }

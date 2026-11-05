@@ -163,7 +163,7 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
             list.reloadData()
             badge.setNeedsContentUpdate()   // the badge's rows changed; its own tracking only covers isRead
         }
-        eventCursor.consume(viewModel.event) { event in
+        if let event = eventCursor.take(viewModel.event) {
             switch event {
             case .draftSaved: Snackbar.show(.init(message: "Draft saved"))
             }

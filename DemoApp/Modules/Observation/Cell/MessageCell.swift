@@ -7,8 +7,8 @@ import Common
 import UIKit
 
 // MARK: - MessageCell
-/// No `viewModel didSet` here: assignment schedules `updateContent()`, and a later
-/// `isRead` change on the bound model re-runs it.
+/// No `viewModel didSet` here: assignment runs `updateContent()` synchronously, and a later
+/// `isRead` change on the bound model re-runs it. A recycled cell bound to nil renders as an empty row.
 final class MessageCell: BaseViewModelableCell<MessageItem> {
     /// Estimated height only: rows self-size to their preview text (see `preferredLayoutAttributesFitting`).
     static let height: Double = 56
@@ -49,12 +49,13 @@ final class MessageCell: BaseViewModelableCell<MessageItem> {
     }
 
     override func updateContent() {
-        guard let viewModel else { return }
+        // A nil model is a state to render: returning early would leave a recycled cell showing its last message.
+        let isRead = viewModel?.isRead ?? true
         senderLabel
-            .text(viewModel.sender)
-            .font(.systemFont(ofSize: 15, weight: viewModel.isRead ? .regular : .semibold))
-        previewLabel.text(viewModel.preview)
+            .text(viewModel?.sender)
+            .font(.systemFont(ofSize: 15, weight: isRead ? .regular : .semibold))
+        previewLabel.text(viewModel?.preview)
         // alpha rather than isHidden: the row geometry never changes, a pure updateProperties-style change.
-        unreadDot.alpha(viewModel.isRead ? .zero : 1)
+        unreadDot.alpha(isRead ? .zero : 1)
     }
 }

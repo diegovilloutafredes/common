@@ -36,7 +36,7 @@ final class ListsViewController: BaseCollectionViewableViewController<ListsViewM
         if !viewModel.isRefreshing, list.refreshControl?.isRefreshing == true {
             list.refreshControl?.endRefreshing()
         }
-        eventCursor.consume(viewModel.event) { event in
+        if let event = eventCursor.take(viewModel.event) {
             switch event {
             case .tapped(let title): Snackbar.show(.init(message: "Tapped: \(title)"))
             }

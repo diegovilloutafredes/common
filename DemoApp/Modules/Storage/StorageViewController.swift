@@ -55,7 +55,7 @@ final class StorageViewController: BaseViewModelableViewController<StorageViewMo
         } else {
             directStatusLabel.text("Empty — nothing stored").textColor(.secondaryLabel)
         }
-        eventCursor.consume(viewModel.event) { event in
+        if let event = eventCursor.take(viewModel.event) {
             Snackbar.show(.init(message: Self.message(for: event)))
         }
     }

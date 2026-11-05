@@ -167,7 +167,7 @@ final class NetworkingViewController: BaseCollectionViewableViewController<Netwo
         super.updateContent()
         statusLabel.text(viewModel.statusText)
         setActivityIndicator(visible: viewModel.isLoading)   // idempotent: safe on every pass
-        eventCursor.consume(viewModel.event) { event in
+        if let event = eventCursor.take(viewModel.event) {
             switch event {
             case .failed(let message): Snackbar.show(.init(message: "Error: \(message)"))
             }

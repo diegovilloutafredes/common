@@ -65,8 +65,8 @@ final class CoordinatorDemoViewModel: CoordinatorDemoViewModelProtocol {
     }
 
     func refreshStats(children: Int, navStack: Int) {
-        // Observation fires on every assignment, so only write what actually changed.
-        if self.children != children { self.children = children }
-        if self.navStack != navStack { self.navStack = navStack }
+        // No guard needed: assigning an equal value doesn't notify (the @Observable macro compares first).
+        self.children = children
+        self.navStack = navStack
     }
 }

@@ -160,7 +160,7 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
     /// border per field. Re-runs after every `validate(field:value:)` and `submit`.
     override func updateContent() {
         super.updateContent()
-        eventCursor.consume(viewModel.event) { event in
+        if let event = eventCursor.take(viewModel.event) {
             switch event {
             case .submitted(let message): Snackbar.show(.init(message: message))
             }

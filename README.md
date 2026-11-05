@@ -242,7 +242,7 @@ final class ProfileViewController: BaseViewModelableViewController<ProfileViewMo
     override func updateContent() {
         super.updateContent()
         nameLabel.text(viewModel.name)
-        eventCursor.consume(viewModel.event) { _ in Snackbar.show(.init(message: "Saved")) }
+        if eventCursor.take(viewModel.event).isNotNil { Snackbar.show(.init(message: "Saved")) }
     }
 }
 ```

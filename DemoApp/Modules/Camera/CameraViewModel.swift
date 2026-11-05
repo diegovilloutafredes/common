@@ -40,7 +40,7 @@ final class CameraViewModelImpl: CameraViewModelProtocol {
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 frameCount += 1
-                // Throttle BEFORE the observable write: observation fires on every assignment.
+                // Throttle BEFORE the observable write: every changed value notifies, and this one changes every frame.
                 if frameCount % 30 == 1 { displayedFrameCount = frameCount }
             }
         }

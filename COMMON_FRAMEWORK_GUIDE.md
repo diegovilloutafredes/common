@@ -298,7 +298,7 @@ registerParams.with { $0.password = encryptedPassword }
 |----------|-------------|
 | `.backgroundColor(_ color:)` | Background color |
 | `.tintColor(_ color:)` | Tint color |
-| `.borderColor(_ color:)` | Layer border color |
+| `.borderColor(_ color:)` | Layer border color, resolved once (`.cgColor`): on iOS 17–18 a dynamic color doesn't follow a dark-mode switch by itself (§5, *Trait changes on iOS 17–18*) |
 | `.borderWidth(_ width:)` | Layer border width |
 | `.round(corners:radius:)` | Sets `cornerRadius` + `maskedCorners` — **does not set `clipsToBounds`** |
 | `.setAsRoundedView()` | Pill shape (radius = half height), sets `clipsToBounds = true`, re-registers on layout |
@@ -656,17 +656,26 @@ Extends `BaseViewController` with a typed view model injected via `required init
 
 ```swift
 final class ProfileViewController: BaseViewModelableViewController<ProfileViewModel> {
+    private lazy var nameLabel = UILabel()
+    private lazy var emailLabel = UILabel()
+
     @UIViewBuilder
     override var mainView: UIView {
         VStack(spacing: 16) {
-            UILabel(viewModel.userName)
-            UILabel(viewModel.email)
+            nameLabel
+            emailLabel
         }.setConstraints { $0.snap(to: $1.safeAreaLayoutGuide) }
     }
 
     override func setupView() {
         super.setupView()
         addBackButton { [weak self] in self?.viewModel.onBackTapped() }
+    }
+
+    override func updateContent() {
+        super.updateContent()
+        nameLabel.text(viewModel.userName)
+        emailLabel.text(viewModel.email)
     }
 }
 ```
@@ -751,15 +760,22 @@ For custom views with a view model:
 
 ```swift
 final class ItemView: BaseViewModelableView<ItemViewModel> {
+    private lazy var titleLabel = UILabel()
+    private lazy var subtitleLabel = UILabel()
+
     @UIViewBuilder
     override var mainView: UIView {
-        HStack(spacing: 12) {
-            UILabel(viewModel.title)
-            UILabel(viewModel.subtitle)
-        }
+        HStack(spacing: 12) { titleLabel; subtitleLabel }
+    }
+
+    override func updateContent() {
+        titleLabel.text(viewModel.title)
+        subtitleLabel.text(viewModel.subtitle)
     }
 }
 ```
+
+`init(viewModel:)` binds the content before it returns, as assigning `viewModel` does, so a view can be measured or captured right after it is created. The binding runs after `setupView()` and after a subclass's stored properties are set, but before the rest of a subclass's own initializer, so keep whatever `updateContent()` depends on in stored properties or in `setupView()`.
 
 ### `BaseViewModelableCell<ViewModelType>`
 
@@ -854,7 +870,9 @@ final class ProfileViewController: BaseViewModelableViewController<ProfileViewMo
         super.updateContent()
         nameLabel.text(viewModel.name)            // tracked reads
         saveButton.isEnabled(viewModel.canSave)
-        eventCursor.consume(viewModel.event) { _ in Snackbar.show(.init(message: "Saved")) }   // once per firing
+        if let event = eventCursor.take(viewModel.event) {                  // once per firing
+            switch event { case .saved: Snackbar.show(.init(message: "Saved")) }
+        }
     }
 }
 
@@ -869,8 +887,8 @@ final class ProfileCell: BaseViewModelableCell<ProfileModel> {
 
 | Runtime | Mode | How |
 |---|---|---|
-| iOS 26+ | `.native` | UIKit's `updateProperties()` — runs before layout; text/color changes cost no layout pass |
-| iOS 17–18 | `.manual` | Common wraps the hook in `withObservationTracking` from `layoutSubviews` / `viewWillLayoutSubviews` and re-arms on the next pass; no Info.plist key needed. On iOS 18 with `UIObservationTrackingEnabled` set, UIKit also tracks the same reads: both invalidate (UIKit synchronously, Common on the next main-actor hop), which can cost a second layout pass per change but stays correct because the hook is idempotent |
+| iOS 26+ | `.native` | UIKit's `updateProperties()`, which runs before layout. A color change costs no layout pass; a label's new text changes its intrinsic size, so the label is laid out again |
+| iOS 17–18 | `.manual` | Common wraps the hook in `withObservationTracking` from `layoutSubviews` / `viewWillLayoutSubviews` and re-arms on the next pass; no Info.plist key needed. A write on the main thread invalidates synchronously, inside the write; a write from another thread invalidates after one main-actor hop. On iOS 18 with `UIObservationTrackingEnabled` set, UIKit also tracks the same reads: both invalidate and mark the same pending pass, which stays correct because the hook is idempotent. Two differences from the native mode: a trait change doesn't re-run the hook, and a plain view bound while another render is in progress renders in its own layout pass (both are rules below) |
 | never, since 1.9.0 | `.unavailable` | The mode iOS 16 had: the hook ran on every layout pass, untracked. iOS 17 is the minimum now, so `current` doesn't return it; the case stays in the enum |
 
 Rules:
@@ -879,9 +897,12 @@ Rules:
 - The hook may run more than once per change; make it idempotent.
 - Do not call `updateContent()` / `updateProperties()` yourself — call `setNeedsContentUpdate()`.
 - Always call `super.updateContent()` first in a controller override: the base forwards to the view model's `onUpdateProperties()`. In cells, views and reusable views the base implementation is empty, so `super` is optional there.
-- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`consume(_:_:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. To keep it pending until the sheet is gone, consume it with `eventCursor.consume(viewModel.event, ifAble: presentedViewController == nil) { … }`, and call `setNeedsContentUpdate()` once the sheet is dismissed, for example `dismiss(animated: true) { [weak self] in self?.setNeedsContentUpdate() }` (or from `presentationControllerDidDismiss(_:)` for a swipe-down): `presentedViewController` isn't observed, so its change alone schedules no pass. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) show even under a sheet. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
+- **Events are state with identity.** Text, flags, counts and collections are plain observed state. One-shot effects (a snackbar, an error alert, "submitted") go through a `ViewEvent<Payload>?` slot on the ViewModel: assigning `.init(payload)` gives the firing a fresh `UUID`, so the controller's `ViewEventCursor` (`take(_:ifAble:)` in the hook) acts once per firing however many times the hook re-runs, and never writes ViewModel state to do so. Keep one cursor per slot (a cursor remembers the last eight events it handled, so one shared by a few slots still acts once per firing, but don't rely on it). `take` releases the cursor before you act, so acting may render the same controller again; `consume(_:_:)` runs its handler while it still holds the cursor, and a handler that renders the same controller synchronously traps on exclusive access. Ceilings: the slot is last-writer-wins between two passes (screens that can burst keep an array behind a `revision`). A controller covered by a push or a full-screen presentation leaves the window and consumes a pending event when it returns on screen. One covered by a sheet (`.pageSheet`, `.formSheet`) or an `.overFullScreen` presentation stays in the window, so its hook keeps running and consumes the event underneath. There, a handler that calls the controller's own `present(_:animated:)` fails, because the controller is already presenting, and the event is spent. To keep it pending until the sheet is gone, take it with `if let event = eventCursor.take(viewModel.event, ifAble: presentedViewController == nil) { … }`, and call `setNeedsContentUpdate()` once the sheet is dismissed, for example `dismiss(animated: true) { [weak self] in self?.setNeedsContentUpdate() }` (or from `presentationControllerDidDismiss(_:)` for a swipe-down): `presentedViewController` isn't observed, so its change alone schedules no pass. `presentAlertView` (presented from the top-most controller) and `Snackbar` (added to the key window) show even under a sheet. A modal effect over the current screen is an event the controller presents; anything that starts a module or flow is an `onRequested` case the coordinator answers (§6).
 - **`onUpdateProperties()` is an escape hatch.** The ViewModel-side hook runs in the same pass and tracks the same way, but it needs somewhere to push into — a view reference the module contract no longer has. Keep it for code written against earlier releases; new modules render in the controller's `updateContent()` only.
-- **Observation fires on every assignment, not on every change.** Guard setters that run often (`scrollViewDidScroll`, frame counters): `guard currentPage != new else { return }`, and throttle before the observable write.
+- **An equal assignment doesn't notify; every change does.** For an `Equatable` property (and an object, by identity), the `@Observable` macro compares the new value with the current one and skips the notification when they are equal, so re-assigning the current value costs nothing and needs no guard. A changed value, and an in-place mutation of a collection, notify every time: throttle values that change often (`scrollViewDidScroll`, frame counters) before the observable write.
+- **Read event slots before any early return in the hook.** An early exit also stops tracking: a slot the hook would have read after it goes unwatched, and its next firing doesn't re-run the hook.
+- **Bind a child view's view model once,** in `setupView()` or where you create the child, not on every pass of the parent. On iOS 17–18 a child bound while the parent renders defers its own render to its layout pass, so it doesn't make the parent depend on what the child reads; binding once avoids the extra pass entirely. Keep forced layout (`layoutIfNeeded()`) out of the hook: a cell bound by it still renders inside the hook, and the hook then tracks what the cell reads.
+- **Trait changes on iOS 17–18.** The native mode re-runs a hook whose traits changed; the manual mode doesn't. A hook that reads a trait, or sets a layer color through `.cgColor` (as `borderColor(_:)` does), registers the trait and asks for a pass: `registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: Self, _: UITraitCollection) in view.setNeedsContentUpdate() }` in `setupView()`. Colors set on views (`backgroundColor`, `textColor`, `tintColor`) adapt by themselves.
 - **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and adopt `RevisionTrackable` on the ViewModel protocol: `BaseCollectionViewableViewController` then reloads its lists whenever the revision moves (*`BaseCollectionViewableViewController`*, above). This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view. A controller that rebuilds a stack of rows instead of a list compares the revision it last rendered itself.
 - Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
 - A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
@@ -910,12 +931,12 @@ final class FooViewController: BaseCollectionViewableViewController<FooViewModel
         super.updateContent()                                // reloads the list when `revision` moves
         statusLabel.text(viewModel.statusText)
         setActivityIndicator(visible: viewModel.isLoading)
-        eventCursor.consume(viewModel.event) { [weak self] in self?.handle($0) }
+        if let event = eventCursor.take(viewModel.event) { handle(event) }
     }
 }
 ```
 
-Every DemoApp module is written this way; the **Observation** module additionally shows a *Collections behind a revision* card (adding or removing a row reloads through the tracked `revision`, while a row tap re-runs only that cell), a *Constraints from state* card (a width constant written in the hook, animated per the rule above) and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a `ViewEvent` the same hook consumes once through its cursor.
+Every DemoApp module is written this way; the **Observation** module additionally shows a *Collections behind a revision* card (adding or removing a row reloads through the tracked `revision`, while a row tap re-runs only that cell), a *Constraints from state* card (a width constant written in the hook, animated per the rule above) and a *State vs events* card where one tap both mutates observed state (rendered in the hook) and fires a `ViewEvent` the same hook takes once through its cursor.
 
 ### System notification observers
 
@@ -1098,7 +1119,7 @@ final class ProfileViewController: BaseViewModelableViewController<ProfileViewMo
     override func updateContent() {
         super.updateContent()
         nameLabel.text(viewModel.name)                           // tracked read
-        eventCursor.consume(viewModel.event) { event in          // once per firing
+        if let event = eventCursor.take(viewModel.event) {        // once per firing
             switch event {
             case .saved: Snackbar.show(.init(message: "Saved"))
             case .failed(let message): Snackbar.show(.init(message: message))
@@ -2539,7 +2560,7 @@ UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
 |------|---------|
 | `Handler<T>` | `(T) -> Void`; the type of `onRequested` / `onPerformed` closures |
 | `ViewEvent<Payload>` | A one-shot effect as observed state: `UUID` identity + payload; assign a fresh value to fire (§5, §6) |
-| `ViewEventCursor` | Controller-side `consume(_:_:)` that acts once per `ViewEvent` id inside `updateContent()`; `consume(_:ifAble:_:)` keeps the event pending until the controller can act on it |
+| `ViewEventCursor` | Controller-side bookkeeping, one per event slot: `take(_:ifAble:)` returns each `ViewEvent`'s payload once inside `updateContent()`, keeps it pending while `ifAble` is `false`, and releases the cursor before you act; `consume(_:_:)` and `consume(_:ifAble:_:)` run a handler instead, while holding the cursor |
 
 ### Controller capability vocabulary
 
