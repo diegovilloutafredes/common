@@ -102,7 +102,7 @@ final public class KeychainWrapper {
             secMatchLimit: kSecMatchLimitAll
         ]
 
-        if let accessGroup = self.accessGroup {
+        if let accessGroup {
             keychainQueryDictionary[secAttrAccessGroup] = accessGroup
         }
 
@@ -274,12 +274,8 @@ final public class KeychainWrapper {
 
         keychainQueryDictionary[secValueData] = value
 
-        if let accessibility = accessibility {
-            keychainQueryDictionary[secAttrAccessible] = accessibility.keychainAttrValue
-        } else {
-            // Assign default protection - Protect the keychain entry so it's only valid when the device is unlocked
-            keychainQueryDictionary[secAttrAccessible] = KeychainItemAccessibility.whenUnlocked.keychainAttrValue
-        }
+        // Assign default protection - Protect the keychain entry so it's only valid when the device is unlocked
+        keychainQueryDictionary[secAttrAccessible] = (accessibility ?? .whenUnlocked).keychainAttrValue
 
         let status: OSStatus = SecItemAdd(keychainQueryDictionary as CFDictionary, nil)
         
@@ -314,7 +310,7 @@ final public class KeychainWrapper {
         keychainQueryDictionary[secAttrService] = serviceName
 
         // Set the keychain access group if defined
-        if let accessGroup = self.accessGroup {
+        if let accessGroup {
             keychainQueryDictionary[secAttrAccessGroup] = accessGroup
         }
 
@@ -383,7 +379,7 @@ final public class KeychainWrapper {
         var updateDictionary: [String: Any] = [secValueData: value]
 
         // on update, only set accessibility if passed in: it moves the item; without it, the item keeps its own
-        if let accessibility = accessibility {
+        if let accessibility {
             updateDictionary[secAttrAccessible] = accessibility.keychainAttrValue
         }
 
@@ -407,12 +403,12 @@ final public class KeychainWrapper {
         keychainQueryDictionary[secAttrService] = serviceName
         
         // Only set accessibiilty if its passed in, we don't want to default it here in case the user didn't want it set
-        if let accessibility = accessibility {
+        if let accessibility {
             keychainQueryDictionary[secAttrAccessible] = accessibility.keychainAttrValue
         }
         
         // Set the keychain access group if defined
-        if let accessGroup = self.accessGroup {
+        if let accessGroup {
             keychainQueryDictionary[secAttrAccessGroup] = accessGroup
         }
         

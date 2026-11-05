@@ -90,7 +90,7 @@ extension AlertPresentable {
 
         alertController.addAction(acceptAlertAction)
 
-        if let cancelAction = cancelAction {
+        if let cancelAction {
             let cancelAlertAction = UIAlertAction(
                 title: cancelTitle,
                 style: .cancel,

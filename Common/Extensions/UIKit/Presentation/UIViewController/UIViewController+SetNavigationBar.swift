@@ -64,7 +64,7 @@ extension UIViewController {
             .forEach {
                 $0.tintColor = leftBarButtonItemTintColor
 
-                if let barButtonItemFont = barButtonItemFont {
+                if let barButtonItemFont {
                     $0.setTitleTextAttributes(
                         [.font: barButtonItemFont],
                         for: .normal
@@ -77,7 +77,7 @@ extension UIViewController {
             .forEach {
                 $0.tintColor = rightBarButtonItemTintColor
 
-                if let barButtonItemFont = barButtonItemFont {
+                if let barButtonItemFont {
                     $0.setTitleTextAttributes(
                         [.font: barButtonItemFont],
                         for: .normal
