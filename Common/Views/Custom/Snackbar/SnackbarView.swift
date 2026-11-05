@@ -95,16 +95,28 @@ final class SnackbarView: BaseViewModelableView<SnackbarViewModel> {
 
 extension SnackbarView {
     func present() {
-        guard let hostWindow else {
+        guard hostWindow.isNotNil else {
             // No host window — the snackbar cannot show, but the caller still
             // gets its dismissal callback. dismiss()'s nil-window branch
             // delivers it without animating.
             return dismiss()
         }
 
+        // The slide-in lays out the whole host window, which must not happen inside the caller's pass: a snackbar shown
+        // from a controller's updateContent() would lay that controller out again from inside its own pass. Hidden until
+        // then, so the commit at the end of this turn can't show it at rest before the transform moves it down.
+        isHidden(true)
+        Task { @MainActor [weak self] in self?.slideIn() }
+    }
+
+    /// Lays the snackbar out, slides it in and starts its auto-dismiss timer, unless its dismissal already began.
+    private func slideIn() {
+        guard !isDismissing, let hostWindow else { return }
+
         hostWindow.layoutIfNeeded()
 
         transform(.init(translationX: .zero, y: translationDistance))
+        isHidden(false)
 
         UIView.animate(
             withDuration: .DefaultValues.animationDuration,

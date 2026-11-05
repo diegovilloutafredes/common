@@ -9,11 +9,21 @@ import XCTest
 @MainActor
 final class SnackbarTests: XCTestCase {
 
-    private var window: UIWindow!
+    /// A window that counts its own layout passes.
+    private final class LayoutCountingWindow: UIWindow {
+        private(set) var layoutPasses: Int = .zero
+
+        override func layoutSubviews() {
+            layoutPasses += 1
+            super.layoutSubviews()
+        }
+    }
+
+    private var window: LayoutCountingWindow!
     private var originalHostWindow: (() -> UIWindow?)!
 
     override func setUp() async throws {
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 640))
+        window = LayoutCountingWindow(frame: .init(x: 0, y: 0, width: 320, height: 640))
         window.makeKeyAndVisible()
         originalHostWindow = Snackbar.hostWindow
         Snackbar.hostWindow = { [weak window] in window }
@@ -26,6 +36,7 @@ final class SnackbarTests: XCTestCase {
         Snackbar.current?.dismiss()
         UIView.setAnimationsEnabled(true)
         Snackbar.hostWindow = originalHostWindow
+        ObservationMode.override = nil
         window.isHidden = true
         window = nil
     }
@@ -56,6 +67,9 @@ final class SnackbarTests: XCTestCase {
 
         first.dismiss()
         Snackbar.show(.init(message: "second"))
+        // The dismissal completion and the newer snackbar's slide-in land on later run-loop passes: poll them out.
+        let deadline = Date(timeIntervalSinceNow: 2)
+        while (firstDismissed == 0 || snackbars().count > 1) && Date() < deadline { pumpRunLoop() }
         pumpRunLoop()
 
         XCTAssertEqual(firstDismissed, 1)
@@ -240,5 +254,97 @@ final class SnackbarTests: XCTestCase {
 
         XCTAssertEqual(snackbars().count, 1, "a dismissed snackbar must not break the next show")
         XCTAssertTrue(Snackbar.current === snackbars().first)
+    }
+
+    // MARK: - Slide-in on a later turn
+
+    /// The defect: presenting laid out the whole host window right away, so a snackbar shown from a controller's
+    /// update pass could lay that controller out again from inside its own pass.
+    func test_show_doesNotLayOutTheHostWindowBeforeReturning() {
+        window.layoutIfNeeded()
+        let passesBefore = window.layoutPasses
+
+        Snackbar.show(.init(message: "no layout yet"))
+
+        XCTAssertEqual(window.layoutPasses, passesBefore)
+    }
+
+    func test_show_installsTheSnackbarHidden_andSlidesItInOnALaterTurn() throws {
+        Snackbar.show(.init(message: "later"))
+        let snackbar = try XCTUnwrap(Snackbar.current)
+
+        XCTAssertTrue(snackbars().contains { $0 === snackbar }, "installed before show returns")
+        XCTAssertTrue(snackbar.isHidden, "hidden until its slide-in starts")
+
+        let deadline = Date(timeIntervalSinceNow: 2)
+        while snackbar.isHidden && Date() < deadline { pumpRunLoop() }
+
+        XCTAssertFalse(snackbar.isHidden)
+    }
+
+    func test_replacedInTheTurnItWasShown_neverSlidesIn() throws {
+        var firstDismissed = 0
+        Snackbar.show(.init(message: "first", onDismiss: { firstDismissed += 1 }))
+        let first = try XCTUnwrap(Snackbar.current)
+
+        Snackbar.show(.init(message: "second"))
+        let second = try XCTUnwrap(Snackbar.current)
+        // The first one's dismissal completion lands on a later run-loop pass: poll it out.
+        let deadline = Date(timeIntervalSinceNow: 2)
+        while (firstDismissed == 0 || second.isHidden) && Date() < deadline { pumpRunLoop() }
+
+        XCTAssertTrue(first.isHidden, "the replaced snackbar's slide-in never started")
+        XCTAssertEqual(firstDismissed, 1)
+        XCTAssertFalse(second.isHidden, "the newer snackbar slid in")
+    }
+
+    // MARK: - Shown from an update pass
+
+    /// Shows a snackbar from its hook and flags itself for another pass while doing so, as a handler that also changes
+    /// observed state does. It uses `consume`, whose handler still holds the cursor, so a pass of this controller
+    /// nested in the handler would trap on exclusive access.
+    private final class ShowingViewController: BaseViewController {
+        var event: ViewEvent<String>?
+        private(set) var deepestPass: Int = .zero
+        private var depth: Int = .zero
+        private var cursor = ViewEventCursor()
+
+        override func updateContent() {
+            super.updateContent()
+            depth += 1
+            defer { depth -= 1 }
+            deepestPass = max(deepestPass, depth)
+            cursor.consume(event) { [weak self] message in
+                self?.setNeedsContentUpdate()
+                Snackbar.show(.init(message: message))
+            }
+        }
+    }
+
+    func test_manualMode_showingFromAnUpdatePass_doesNotRenderThatControllerInsideIt() {
+        ObservationMode.override = .manual
+        let vc = ShowingViewController()
+        vc.event = .init("from the hook")
+        window.rootViewController = vc
+
+        window.layoutIfNeeded()
+        pumpRunLoop()
+
+        XCTAssertEqual(vc.deepestPass, 1)
+        XCTAssertNotNil(Snackbar.current)
+    }
+
+    func test_nativeMode_showingFromAnUpdatePass_doesNotRenderThatControllerInsideIt() throws {
+        guard #available(iOS 26.0, *) else { throw XCTSkip("native path needs iOS 26") }
+        ObservationMode.override = .native
+        let vc = ShowingViewController()
+        vc.event = .init("from the hook")
+        window.rootViewController = vc
+
+        window.layoutIfNeeded()
+        pumpRunLoop()
+
+        XCTAssertEqual(vc.deepestPass, 1)
+        XCTAssertNotNil(Snackbar.current)
     }
 }
