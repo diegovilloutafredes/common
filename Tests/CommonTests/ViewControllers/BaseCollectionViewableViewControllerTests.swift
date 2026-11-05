@@ -118,6 +118,39 @@ final class BaseCollectionViewableViewControllerTests: XCTestCase {
         XCTAssertEqual(vc.collectionView(collectionView, numberOfItemsInSection: 0), 7)
     }
 
+    /// `count` small items, each in a plain registered cell.
+    private final class CountedItemsViewModel: CollectionViewDataSourceable, CollectionViewDelegateable, CollectionViewSizeable {
+        static let cellIdentifier = "cell"
+        let count: Int
+        init(count: Int) { self.count = count }
+
+        func getNumberOfItems(in section: Int) -> Int { count }
+        func onCellForItem(in section: Int, at index: Int) -> ViewModel? { nil }
+        func onReuseIdentifierRequested(in section: Int, at index: Int) -> String { Self.cellIdentifier }
+        func onSizeForItem(in section: Int, at index: Int) -> Size { (width: 20, height: 20) }
+    }
+
+    /// The defect: the list kept the counts of the replaced view model, and asked the new one for items it may not
+    /// have; with an array-backed model, scrolling then indexed out of range.
+    func test_reassigningViewModel_reloadsALoadedList() {
+        let window = UIWindow(frame: .init(x: .zero, y: .zero, width: 300, height: 300))
+        window.isHidden = false
+        defer { window.isHidden = true }
+        let vc = BaseCollectionViewableViewController<CountedItemsViewModel>(viewModel: .init(count: 7))
+        let list = UICollectionView(frame: window.bounds, collectionViewLayout: UICollectionViewFlowLayout())
+        list.register(UICollectionViewCell.self, forCellWithReuseIdentifier: CountedItemsViewModel.cellIdentifier)
+        list.dataSource = vc
+        list.delegate = vc
+        window.addSubview(list)
+        list.layoutIfNeeded()
+        XCTAssertEqual(list.numberOfItems(inSection: .zero), 7)
+
+        vc.viewModel = .init(count: 3)
+        list.layoutIfNeeded()
+
+        XCTAssertEqual(list.numberOfItems(inSection: .zero), 3)
+    }
+
     func test_sectionsSelectionAndSizing_routeToViewModel() {
         let viewModel = SpyViewModel()
         let vc = BaseCollectionViewableViewController<SpyViewModel>(viewModel: viewModel)

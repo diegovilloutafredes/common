@@ -690,7 +690,7 @@ The base class accesses the ViewModel via `viewModel as? CollectionViewable` at 
 
 Override `bottomInsetForLastCollectionSection()` when the screen sits above a tab bar (default returns `.zero`).
 
-**Reloading when the items change.** Keep the items `@ObservationIgnored`, bump a tracked `revision` when they change, and adopt `RevisionTrackable` on the ViewModel protocol. The base controller then reloads every list it is the data source of whenever `revision` moves, from its own `updateContent()`: status-only changes don't reload, and neither does the first pass, when the lists load anyway. A subclass that overrides `updateContent()` calls `super.updateContent()` and writes no compare of its own.
+**Reloading when the items change.** Keep the items `@ObservationIgnored`, bump a tracked `revision` when they change, and adopt `RevisionTrackable` on the ViewModel protocol. The base controller remembers the revision at which each list it is the data source of loaded its data, and from its own `updateContent()` reloads the lists that are behind: status-only changes don't reload, a list that loads during the first pass isn't reloaded by it, and one that loaded earlier at an older revision is. A list counts as served once it asks the controller for its section or item counts. A reload asks the view model again for every cell, header and footer model, so a header that shows a count of its rows stays current. Assigning a new view model to the controller reloads its lists, whatever the new model conforms to. A subclass that overrides `updateContent()` calls `super.updateContent()` and writes no compare of its own.
 
 ```swift
 @MainActor

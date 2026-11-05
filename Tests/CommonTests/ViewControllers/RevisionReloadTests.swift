@@ -108,4 +108,71 @@ final class RevisionReloadTests: XCTestCase {
 
         XCTAssertEqual(list.reloadCount, .zero)
     }
+
+    // MARK: - Each list against the revision it loaded at
+
+    /// The defect: the first pass only recorded the revision, so a list that loaded earlier, at an older revision,
+    /// kept its old rows. That happens when a list loads in `setupView()` and the view model loads its items in
+    /// `onViewDidLoad()`, which runs after it.
+    func test_listLoadedBeforeTheFirstPassAtAnOlderRevision_reloadsInThatPass() {
+        ObservationMode.override = .manual
+        let viewModel = RevisionViewModel()
+        let list = SpyCollectionView()
+        let vc = BaseCollectionViewableViewController(viewModel: viewModel)
+        vc.loadViewIfNeeded()
+        vc.view.frame = .init(x: .zero, y: .zero, width: 320, height: 480)
+        _ = vc.numberOfSections(in: list)
+        viewModel.revision = 1
+
+        vc.view.layoutIfNeeded()
+
+        XCTAssertEqual(list.reloadCount, 1)
+    }
+
+    /// Asks for its counts the way UIKit does, but counts its sections itself, without `super`.
+    private final class OwnSectionCountViewController: BaseCollectionViewableViewController<RevisionViewModel> {
+        override func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
+    }
+
+    /// The defect: only `numberOfSections(in:)` registered a list, so a subclass that overrides it without `super`
+    /// never had its list reloaded.
+    func test_subclassCountingSectionsWithoutSuper_stillReloadsOnARevisionChange() async {
+        ObservationMode.override = .manual
+        let viewModel = RevisionViewModel()
+        let list = SpyCollectionView()
+        let vc = OwnSectionCountViewController(viewModel: viewModel)
+        vc.loadViewIfNeeded()
+        vc.view.frame = .init(x: .zero, y: .zero, width: 320, height: 480)
+        _ = vc.numberOfSections(in: list)
+        _ = vc.collectionView(list, numberOfItemsInSection: .zero)
+        vc.view.layoutIfNeeded()
+
+        viewModel.revision += 1
+        await runScheduledPass(vc)
+
+        XCTAssertEqual(list.reloadCount, 1)
+    }
+
+    // MARK: - Replacing the view model
+
+    /// The defect: replacing the view model only re-cached it, and the revision the controller remembered carried
+    /// over, so a new model at the same revision never reloaded the lists.
+    func test_replacingTheViewModel_reloadsEveryServedListOnce_evenAtAnEqualRevision() {
+        let lists = [SpyCollectionView(), SpyCollectionView()]
+        let vc = makeLoaded(RevisionViewModel(), serving: lists)
+
+        vc.viewModel = RevisionViewModel()
+        vc.view.layoutIfNeeded()
+
+        XCTAssertEqual(lists.map(\.reloadCount), [1, 1], "the pass the assignment schedules doesn't reload them again")
+    }
+
+    func test_replacingTheViewModel_withoutRevisionTracking_stillReloads() {
+        let list = SpyCollectionView()
+        let vc = makeLoaded(PlainViewModel(), serving: [list])
+
+        vc.viewModel = PlainViewModel()
+
+        XCTAssertEqual(list.reloadCount, 1)
+    }
 }

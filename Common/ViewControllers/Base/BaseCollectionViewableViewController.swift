@@ -25,15 +25,21 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
     private var asCollectionViewable: CollectionViewable?
     /// Cached the same way: read on every update pass.
     private var asRevisionTrackable: RevisionTrackable?
-    /// The collection views this controller is the data source of, recorded as they ask it for data.
-    private let servedCollectionViews = NSHashTable<UICollectionView>.weakObjects()
-    /// The revision the lists last rendered, `nil` until the first update pass records it.
-    private var renderedRevision: Int?
+    /// The collection views this controller is the data source of, recorded as they ask it for their counts, each with
+    /// the revision its data was loaded at. Weak keys: a list that goes away drops out.
+    private let servedCollectionViews = NSMapTable<UICollectionView, LoadedRevision>.weakToStrongObjects()
 
     open override var viewModel: ViewModelType {
         didSet {
             asCollectionViewable = viewModel as? CollectionViewable
             asRevisionTrackable = viewModel as? RevisionTrackable
+            // Every served list reloads from the new model, whatever it conforms to. Forgetting them first keeps the
+            // pass this assignment schedules from reloading them a second time: each list registers again, at the new
+            // model's revision, as it reloads. Reading no revision here keeps an assignment made inside another
+            // controller's hook out of that hook's tracking.
+            let lists = servedLists
+            servedCollectionViews.removeAllObjects()
+            lists.forEach { $0.reloadData() }
         }
     }
 
@@ -50,26 +56,40 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
 
     open func bottomInsetForLastCollectionSection() -> CGFloat { .zero }
 
-    /// Reloads every list this controller serves when a `RevisionTrackable` view model's `revision` moved since the
-    /// last pass. The first pass only records it, because the lists load their data then anyway. Subclasses that
-    /// override this hook call `super.updateContent()`.
+    /// Reloads each list this controller serves whose data was loaded at a revision other than the current one of a
+    /// `RevisionTrackable` view model. A list that loads during the first pass is current and isn't reloaded; one that
+    /// loaded earlier, at an older revision, is. Subclasses that override this hook call `super.updateContent()`.
     open override func updateContent() {
         super.updateContent()
         guard let revision = asRevisionTrackable?.revision else { return }
-        defer { renderedRevision = revision }
-        guard let renderedRevision, renderedRevision != revision else { return }
-        servedCollectionViews.allObjects.forEach { $0.reloadData() }
+        servedLists.filter { servedCollectionViews.object(forKey: $0)?.value != revision }.forEach {
+            servedCollectionViews.setObject(.init(revision), forKey: $0)
+            $0.reloadData()
+        }
+    }
+
+    private var servedLists: [UICollectionView] {
+        servedCollectionViews.keyEnumerator().allObjects.compactMap { $0 as? UICollectionView }
+    }
+
+    /// Records that `collectionView` loaded its counts from the current view model, at its current revision. Both count
+    /// callbacks record it, so a subclass that overrides one of them without `super` still has its list served.
+    private func recordDataLoad(by collectionView: UICollectionView) {
+        let revision = asRevisionTrackable?.revision
+        if let loaded = servedCollectionViews.object(forKey: collectionView), loaded.value == revision { return }
+        servedCollectionViews.setObject(.init(revision), forKey: collectionView)
     }
 
     // MARK: - UICollectionViewDataSource
 
     open func numberOfSections(in collectionView: UICollectionView) -> Int {
-        servedCollectionViews.add(collectionView)
+        recordDataLoad(by: collectionView)
         return asCollectionViewable?.getNumberOfSections() ?? 1
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        asCollectionViewable?.getNumberOfItems(in: section) ?? .zero
+        recordDataLoad(by: collectionView)
+        return asCollectionViewable?.getNumberOfItems(in: section) ?? .zero
     }
 
     open func collectionView(
@@ -207,4 +227,13 @@ open class BaseCollectionViewableViewController<ViewModelType>: BaseViewModelabl
         withVelocity velocity: CGPoint,
         targetContentOffset: UnsafeMutablePointer<CGPoint>
     ) {}
+}
+
+// MARK: - LoadedRevision
+
+/// The revision a served list's data was loaded at, `nil` when the view model doesn't track revisions.
+private final class LoadedRevision {
+    let value: Int?
+
+    init(_ value: Int?) { self.value = value }
 }
