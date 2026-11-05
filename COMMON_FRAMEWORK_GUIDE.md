@@ -3006,6 +3006,22 @@ The framework's conventions — follow them for any code that lives in `Common/`
     the canonical type), but it changes the `.swiftinterface` text, so a
     release's interface diff lists those declarations.
   - Name protocol compositions (the deprecated `BaseModuleDelegate` is one).
+- **`guard` or `if`**: in `Common/` and the DemoApp, a `guard` states what must
+  hold for the rest of the body to run, and its `else` is the way out: an `if`
+  whose `else` only exits is a `guard`, with the main path after it at the
+  outer level. An early return of a result that was found stays an `if` (a
+  cache or search hit, a priority or type dispatch, handing the call to
+  another object), so the condition isn't negated and the result isn't in an
+  `else`. A two-way branch with work on both sides, a conditional side effect
+  followed by more code, and a result-builder body (where `guard` isn't
+  allowed) stay `if` too. Several outcomes of one value are a `switch`. A
+  closure that captures `[weak self]` and reaches `self` more than once opens
+  with `guard let self else { return }`.
+  - The exception is `updateContent()`: an early exit there also stops
+    tracking what the hook would have read after it. Read every event slot
+    before any early return, render a missing value (a `nil` view model) as a
+    state, and branch with `if` or optional chaining (§5 *Observation-driven
+    updates*).
 - **Semantic sugar**: `.empty` over `""`, `.zero` over `0`, `.init()` shorthand
   where the type is inferable, `.isNotNil` / `.isNotEmpty` over negations.
 - **DocC on every public symbol**; `- Note:` / `- Warning:` / `- Important:`

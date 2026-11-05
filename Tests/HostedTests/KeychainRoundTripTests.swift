@@ -196,4 +196,33 @@ final class KeychainRoundTripTests: XCTestCase {
         XCTAssertEqual(read, secondToken)
         XCTAssertEqual(keychain.accessibilityOfKey(key("legacy")), .whenUnlocked)
     }
+
+    // MARK: - allKeys and tryRemove (strict)
+
+    func test_allKeys_listsTheSavedKeys_andDropsARemovedOne() {
+        keychain.set("first", forKey: key("listed-first"))
+        keychain.set("second", forKey: key("listed-second"))
+
+        XCTAssertTrue(keychain.allKeys().isSuperset(of: [key("listed-first"), key("listed-second")]),
+                      "every saved key must be listed")
+
+        keychain.removeObject(forKey: key("listed-first"))
+
+        let keys = keychain.allKeys()
+        XCTAssertFalse(keys.contains(key("listed-first")), "a removed key must no longer be listed")
+        XCTAssertTrue(keys.contains(key("listed-second")))
+    }
+
+    func test_tryRemove_succeedsForASavedKey() {
+        keychain.set("doomed", forKey: key("try-remove"))
+
+        XCTAssertNoThrow(try keychain.tryRemove(using: key("try-remove")).get())
+
+        XCTAssertFalse(keychain.hasValue(forKey: key("try-remove")))
+    }
+
+    func test_tryRemove_succeedsForAMissingKey() {
+        XCTAssertNoThrow(try keychain.tryRemove(using: key("never-written")).get(),
+                         "a key that isn't there counts as removed (errSecItemNotFound)")
+    }
 }

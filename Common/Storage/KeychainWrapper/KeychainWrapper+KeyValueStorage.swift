@@ -56,7 +56,7 @@ extension KeychainWrapper: KeyValueStorage {
 
     public func tryRemove(using key: String) -> Result<Void, StorageError> {
         let status = removeStatus(forKey: key)
-        if status == errSecSuccess || status == errSecItemNotFound { return .success(()) }
-        return .failure(.keychainError(status))
+        guard status == errSecSuccess || status == errSecItemNotFound else { return .failure(.keychainError(status)) }
+        return .success(())
     }
 }

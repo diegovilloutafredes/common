@@ -36,14 +36,16 @@ final class ChildFlowCoordinator: BaseCoordinator {
             depth: depth,
             maxDepth: maxDepth,
             onRequested: { [weak self] request in
+                guard let self else { return }
                 switch request {
-                case .goDeeper: self?.launchGrandchild()
-                case .abortAll: self?.onAbortAll()
+                case .goDeeper: launchGrandchild()
+                case .abortAll: onAbortAll()
                 }
             },
             onPerformed: { [weak self] result in
+                guard let self else { return }
                 switch result {
-                case .complete: self?.finish()
+                case .complete: finish()
                 }
             }
         )

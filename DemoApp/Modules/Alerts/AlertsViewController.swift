@@ -48,7 +48,8 @@ final class AlertsViewController: BaseViewModelableViewController<AlertsViewMode
     }
 
     private lazy var activityButton = makeButton(title: "Activity Indicator (2s)", color: .systemPurple) { [weak self] in
-        self?.startActivityIndicator()
+        guard let self else { return }
+        startActivityIndicator()
         Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(2))
             self?.stopActivityIndicator()

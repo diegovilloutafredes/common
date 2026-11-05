@@ -28,14 +28,16 @@ public struct UIViewBuilder {
     /// Supports `if let x = optional { SomeView(x) }` at the root level.
     /// - Warning: Returns an invisible `UIView()` when the optional is nil and there is no `else`.
     public static func buildOptional(_ component: UIView?) -> UIView {
-        if let component { return component }
-        #if DEBUG
-        assertionFailure("UIViewBuilder: 'if' without 'else' — add an else branch to avoid an invisible placeholder.")
-        #endif
-        let placeholder = UIView()
-        placeholder.isHidden = true
-        placeholder.isUserInteractionEnabled = false
-        return placeholder
+        guard let component else {
+            #if DEBUG
+            assertionFailure("UIViewBuilder: 'if' without 'else'; add an else branch to avoid an invisible placeholder.")
+            #endif
+            let placeholder = UIView()
+            placeholder.isHidden = true
+            placeholder.isUserInteractionEnabled = false
+            return placeholder
+        }
+        return component
     }
 
     /// Supports `if #available(iOS X, *) { ... }` at the root level.

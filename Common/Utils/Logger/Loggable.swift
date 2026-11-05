@@ -20,8 +20,10 @@ private let _loggableCache = OSAllocatedUnfairLock<[String: Bool]>(initialState:
 
 private var _loggableStore: KeyValueStore {
     _loggableCache.withLock { _ in
-        if _loggableStoreStorage == nil { _loggableStoreStorage = KeyValueStore(type: .secure) }
-        return _loggableStoreStorage!
+        if let store = _loggableStoreStorage { return store }
+        let store = KeyValueStore(type: .secure)
+        _loggableStoreStorage = store
+        return store
     }
 }
 

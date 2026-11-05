@@ -109,18 +109,16 @@ final public class KeychainWrapper {
         var result: AnyObject?
         let status = SecItemCopyMatching(keychainQueryDictionary as CFDictionary, &result)
 
-        guard status == errSecSuccess else { return [] }
+        guard status == errSecSuccess, let results = result as? [[AnyHashable: Any]] else { return [] }
 
         var keys = Set<String>()
-        if let results = result as? [[AnyHashable: Any]] {
-            for attributes in results {
-                if let accountData = attributes[secAttrAccount] as? Data,
-                    let key = String(data: accountData, encoding: String.Encoding.utf8) {
-                    keys.insert(key)
-                } else if let accountData = attributes[kSecAttrAccount] as? Data,
-                    let key = String(data: accountData, encoding: String.Encoding.utf8) {
-                    keys.insert(key)
-                }
+        for attributes in results {
+            if let accountData = attributes[secAttrAccount] as? Data,
+                let key = String(data: accountData, encoding: String.Encoding.utf8) {
+                keys.insert(key)
+            } else if let accountData = attributes[kSecAttrAccount] as? Data,
+                let key = String(data: accountData, encoding: String.Encoding.utf8) {
+                keys.insert(key)
             }
         }
         return keys
@@ -248,11 +246,8 @@ final public class KeychainWrapper {
     /// - parameter isSynchronizable: A bool that describes if the item should be synchronizable, to be synched with the iCloud. If none is provided, will default to false
     /// - returns: True if the save was successful, false otherwise.
     @discardableResult public func set(_ value: String, forKey key: String, withAccessibility accessibility: KeychainItemAccessibility? = nil, isSynchronizable: Bool = false) -> Bool {
-        if let data = value.data(using: .utf8) {
-            return set(data, forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
-        } else {
-            return false
-        }
+        guard let data = value.data(using: .utf8) else { return false }
+        return set(data, forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
     }
 
     /// Save an NSCoding compliant object to the keychain associated with a specified key. If an object already exists for the given key, the object will be overwritten with the new value.
@@ -288,12 +283,10 @@ final public class KeychainWrapper {
 
         let status: OSStatus = SecItemAdd(keychainQueryDictionary as CFDictionary, nil)
         
-        if status == errSecSuccess {
-            return true
-        } else if status == errSecDuplicateItem {
-            return update(value, forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
-        } else {
-            return false
+        return switch status {
+        case errSecSuccess: true
+        case errSecDuplicateItem: update(value, forKey: key, withAccessibility: accessibility, isSynchronizable: isSynchronizable)
+        default: false
         }
     }
 
@@ -349,14 +342,12 @@ final public class KeychainWrapper {
         dict[secValueData] = value
         dict[secAttrAccessible] = accessibility.keychainAttrValue
         let status = SecItemAdd(dict as CFDictionary, nil)
-        if status == errSecDuplicateItem {
-            // Search by identity only, then write the value and the accessibility: accessibility isn't part of a
-            // generic password's identity, so exactly one item matches whatever accessibility it has.
-            let identity = setupKeychainQueryDictionary(forKey: key)
-            let updateDictionary: [String: Any] = [secValueData: value, secAttrAccessible: accessibility.keychainAttrValue]
-            return SecItemUpdate(identity as CFDictionary, updateDictionary as CFDictionary)
-        }
-        return status
+        guard status == errSecDuplicateItem else { return status }
+        // Search by identity only, then write the value and the accessibility: accessibility isn't part of a
+        // generic password's identity, so exactly one item matches whatever accessibility it has.
+        let identity = setupKeychainQueryDictionary(forKey: key)
+        let updateDictionary: [String: Any] = [secValueData: value, secAttrAccessible: accessibility.keychainAttrValue]
+        return SecItemUpdate(identity as CFDictionary, updateDictionary as CFDictionary)
     }
 
     func getDataStatus(forKey key: String) -> (data: Data?, status: OSStatus) {

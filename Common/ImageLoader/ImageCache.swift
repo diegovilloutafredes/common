@@ -87,7 +87,7 @@ public final class ImageCache {
 
         let attrs = try? FileManager.default.attributesOfItem(atPath: filePath.path)
         let modified = attrs?[.modificationDate] as? Date ?? .distantPast
-        if Date().timeIntervalSince(modified) > diskTTL {
+        guard Date().timeIntervalSince(modified) <= diskTTL else {
             try? FileManager.default.removeItem(at: filePath)
             return nil
         }
