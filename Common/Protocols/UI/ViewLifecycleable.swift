@@ -22,9 +22,12 @@ public protocol ViewLifecycleable: AnyObject {
     /// Notifies the object that its view has finished laying out subviews.
     func onViewDidLayoutSubviews()
 
-    /// Called on every content-update pass. Read observable state here and push it into
-    /// the view. On iOS 26 this is UIKit's `updateProperties()`; on iOS 17–18 Common re-runs
-    /// it when any `@Observable` property read inside changes. See `ObservationMode`.
+    /// Called on every content-update pass, from the controller's `updateContent()`, and tracked the same way. On
+    /// iOS 26 that pass is UIKit's `updateProperties()`; on iOS 17–18 Common re-runs it when any `@Observable` property
+    /// read inside changes. See `ObservationMode`.
+    ///
+    /// An escape hatch for code written before the controller rendered its own state: it needs a view to push into,
+    /// which a view model doesn't hold. New modules render in the controller's `updateContent()` only.
     func onUpdateProperties()
 
     /// Notifies the object that its view has appeared.

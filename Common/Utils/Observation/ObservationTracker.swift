@@ -10,6 +10,12 @@ import Observation
 /// Runs a content-update body under the current `ObservationMode`'s tracking policy.
 enum ObservationTracker {
 
+    /// How many manual-mode renders are in progress: above zero while a tracked body runs.
+    @MainActor private(set) static var renderDepth: Int = .zero
+
+    /// Whether a manual-mode render is in progress. Reads made now would merge into that render's tracking.
+    @MainActor static var isRendering: Bool { renderDepth > .zero }
+
     /// Runs `body` now. In `.manual` mode every `@Observable` property read inside it is
     /// tracked and `onInvalidate` runs on the main actor the first time one changes:
     /// synchronously when the mutation happens on the main thread (matching UIKit's native
@@ -21,6 +27,8 @@ enum ObservationTracker {
     @MainActor
     static func run(_ body: @MainActor () -> Void, onInvalidate: @escaping @MainActor () -> Void) {
         guard ObservationMode.current == .manual else { return body() }
+        renderDepth += 1
+        defer { renderDepth -= 1 }
         withObservationTracking {
             body()
         } onChange: {

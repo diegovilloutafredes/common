@@ -48,7 +48,9 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
     ///
     /// On iOS 26 UIKit calls this from `updateProperties()` and re-runs it when any
     /// `@Observable` property read inside changes. On iOS 17–18 Common calls it from
-    /// `layoutSubviews()` under `withObservationTracking` with the same effect.
+    /// `layoutSubviews()` under `withObservationTracking` and
+    /// re-runs it the same way, except that a trait change doesn't re-run it: call `setNeedsContentUpdate()` from a
+    /// `registerForTraitChanges(_:handler:)` handler for the traits the hook reads.
     /// Do not call it directly; call `setNeedsContentUpdate()`.
     open func updateContent() {}
 
@@ -65,6 +67,9 @@ open class BaseCell: UICollectionViewCell, UIViewBuildable {
 
     /// See `ContentUpdatable.needsContentUpdate`.
     var needsContentUpdate = true
+
+    /// See `ContentUpdatable.contentTracking`.
+    lazy var contentTracking = ContentTracking()
 
     @available(iOS 26.0, *)
     open override func updateProperties() {

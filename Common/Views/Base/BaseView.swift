@@ -52,7 +52,10 @@ open class BaseView: UIView, UIViewBuildable {
     ///
     /// On iOS 26 UIKit calls this from `updateProperties()` and re-runs it when any
     /// `@Observable` property read inside changes. On iOS 17–18 Common calls it from
-    /// `layoutSubviews()` under `withObservationTracking` with the same effect.
+    /// `layoutSubviews()` under `withObservationTracking` and re-runs it the same way, with two differences: a trait
+    /// change doesn't re-run it (call `setNeedsContentUpdate()` from a `registerForTraitChanges(_:handler:)` handler
+    /// for the traits the hook reads), and a view bound while another render is in progress renders in its own
+    /// layout pass instead of inside that render.
     /// Do not call it directly; call `setNeedsContentUpdate()`.
     open func updateContent() {}
 
@@ -65,10 +68,16 @@ open class BaseView: UIView, UIViewBuildable {
     /// cells are measured immediately after configuration, before any layout or properties pass,
     /// so the content has to be bound synchronously. Tracking is armed by that run, and later
     /// observable changes are still delivered on the next pass.
+    ///
+    /// On iOS 17–18, while another view's or controller's render is in progress, the update stays scheduled for this
+    /// view's own layout pass instead, so its reads don't join that render's tracking.
     public func updateContentIfNeeded() { flushContentUpdateIfNeeded() }
 
     /// See `ContentUpdatable.needsContentUpdate`.
     var needsContentUpdate = true
+
+    /// See `ContentUpdatable.contentTracking`.
+    lazy var contentTracking = ContentTracking()
 
     @available(iOS 26.0, *)
     open override func updateProperties() {
