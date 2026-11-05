@@ -113,7 +113,7 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
                 }
                 demoSection(
                     title: "Constraints from state",
-                    description: "The bar's width is a constraint constant written in updateContent() from a tracked Bool. The tap mutates inside an animation block — .flushUpdates on iOS 26, animateConstraints(constraintChanges:) below — so the layout pass that applies the hook's change is animated."
+                    description: "The bar's width is a constraint constant written in updateContent() from a tracked Bool. The tap toggles it through animateContentChange, one call on every OS, so the update pass that applies the hook's change is animated."
                 ) {
                     VStack(spacing: 12) {
                         VStack(alignment: .leading) { bar }   // .leading: the bar keeps its own width
@@ -178,14 +178,10 @@ final class ObservationViewController: BaseCollectionViewableViewController<Obse
         listHeight.constant = contentHeight
     }
 
-    /// Mutates inside an animation block so the layout pass that applies the hook's constant change is animated.
-    /// iOS 26 flushes the pending update pass itself; below, `layoutIfNeeded()` runs the hook inside the block.
+    /// Animates the update pass the toggle causes: the hook writes the new constant, and the layout that applies it runs
+    /// inside the animation, on every OS.
     private func toggleBar() {
-        if #available(iOS 26.0, *), ObservationMode.current == .native {
-            UIView.animate(withDuration: 0.3, delay: .zero, options: .flushUpdates) { [weak self] in self?.viewModel.toggleBar() }
-        } else {
-            animateConstraints { [weak self] in self?.viewModel.toggleBar() }
-        }
+        animateContentChange { [weak self] in self?.viewModel.toggleBar() }
     }
 
     private func actionButton(_ title: String, color: UIColor, onTap: @escaping Action) -> UIButton {
