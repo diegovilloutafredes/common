@@ -906,7 +906,7 @@ Rules:
 - **Collections go behind a `revision`.** Keep the array `@ObservationIgnored`, bump a tracked `revision: Int` when it changes, and adopt `RevisionTrackable` on the ViewModel protocol: `BaseCollectionViewableViewController` then reloads its lists whenever the revision moves (*`BaseCollectionViewableViewController`*, above). This keeps status-only changes from reloading, and on iOS 26 it avoids a second dependency: `UICollectionView.layoutSubviews()` is itself tracked, so data-source callbacks reading a tracked array would also invalidate the collection view. A controller that rebuilds a stack of rows instead of a list compares the revision it last rendered itself.
 - Loading indicators: mirror an `isLoading` flag with `setActivityIndicator(visible:)` — idempotent, so it is safe on every pass.
 - A controller whose view is off-window (pushed over) does not re-render while covered; it renders once on return. Expected.
-- Self-sizing cells (`estimatedItemSize = .automaticSize`, `preferredLayoutAttributesFitting`) are measured before any update or layout pass. That is why `viewModel` assignment binds synchronously; if you bind from anywhere else before a measurement, call `updateContentIfNeeded()` first.
+- Self-sizing cells (`estimatedItemSize = .automaticSize`, `preferredLayoutAttributesFitting`) are measured before any update or layout pass. That is why `viewModel` assignment binds synchronously; if you bind from anywhere else before a measurement, call `updateContentIfNeeded()` first. A row whose hook changes its height after it's shown (a label that switches to several lines) is measured again only when its list's `selfSizingInvalidation` is `.enabledIncludingConstraints`: set it where you set `estimatedItemSize`, as in `VList(dataSource: self, delegate: self) { $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize }.with { $0.selfSizingInvalidation = .enabledIncludingConstraints }`. With UIKit's default, `.enabled`, the row keeps the height it was first measured at.
 - Self-sizing rows are estimated at the width `onSizeForItem` returns. Return `availableSize.width` — the list's own width, handed in by the base controller — never `screenWidth`: an inset list (card margins) rejects items wider than itself and renders nothing.
 
 Migration recipe (what the DemoApp modules went through):
@@ -1663,6 +1663,8 @@ CardView(viewModel: CardViewModelPayload(
     rightImage: UIImage(systemName: "chevron.right")
 ))
 ```
+
+`CardView` builds its content once, from the view model it is created with: assigning another view model changes nothing, so show another model with a new `CardView`. `AlertView` works the same way.
 
 ### `Separator`
 

@@ -44,6 +44,9 @@ public struct CardViewModelPayload: CardViewModel {
 }
 
 /// A customizable card view that displays an optional left image, title, content, and an optional right image.
+///
+/// It builds its content once, from the view model it is created with: assigning another view model changes nothing,
+/// so show another model with a new `CardView`.
 public final class CardView: BaseViewModelableView<CardViewModel> {
     @UIViewBuilder public override var mainView: UIView {
         HStack(

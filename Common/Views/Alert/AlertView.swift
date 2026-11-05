@@ -7,6 +7,9 @@ import UIKit
 // MARK: - AlertView
 
 /// A view responsible for displaying the content of an alert, driven by an `AlertViewModel`.
+///
+/// It builds its content once, from the view model it is created with: assigning another view model changes nothing,
+/// so show another model with a new `AlertView`.
 public final class AlertView: BaseViewModelableView<AlertViewModel> {
     private lazy var iconImageView = UIImageView()
         .contentMode(.scaleAspectFit)
