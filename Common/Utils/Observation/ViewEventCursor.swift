@@ -100,4 +100,24 @@ public struct ViewEventCursor {
     public mutating func consume<Payload>(_ event: ViewEvent<Payload>?, ifAble: Bool, _ handle: Handler<Payload>) {
         if let payload = take(event, ifAble: ifAble) { handle(payload) }
     }
+
+    /// Marks an event as handled without handing it over: later `take(_:ifAble:)` and `consume` calls with it return
+    /// `nil` or don't run their handler, and an event fired after it is handed over as usual. `nil` changes nothing.
+    ///
+    /// A controller created for a view model that outlived the previous controller (a screen rebuilt over the same
+    /// model) skips what the slot still holds before its first pass, so it doesn't show that event again:
+    ///
+    /// ```swift
+    /// override func setupView() {
+    ///     super.setupView()
+    ///     eventCursor.skip(viewModel.event)
+    /// }
+    /// ```
+    ///
+    /// `setupView()` runs in `viewDidLoad()`, outside the update pass, so the read isn't tracked. A skipped event counts
+    /// toward the eight the cursor remembers.
+    /// - Parameter event: The view model's slot.
+    public mutating func skip<Payload>(_ event: ViewEvent<Payload>?) {
+        _ = take(event)   // recorded as take records it, the payload dropped
+    }
 }

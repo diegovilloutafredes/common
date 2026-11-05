@@ -15,9 +15,12 @@ import Foundation
 /// func saveDraft() { saves += 1; event = .init(.draftSaved) }
 /// ```
 ///
-/// Every value carries its own identity, so assigning the same payload twice still
-/// invalidates the observing controller twice. The controller takes the slot's event with a
-/// `ViewEventCursor` (one per slot) inside `updateContent()`, and the pass stays free of view-model writes.
+/// Every value carries its own identity, and events are equal by it: two firings with equal payloads are different
+/// events, and an event equals its copies. So each `.init(_:)` fires and invalidates the observing controller, the same
+/// payload included, while assigning the slot the event it already holds doesn't notify (an `@Observable` model skips
+/// an equal assignment). The controller takes the slot's event with a `ViewEventCursor` (one per slot) inside
+/// `updateContent()`, and the pass stays free of view-model writes. A controller created for a view model that outlived
+/// the previous one skips the event the slot still holds with `ViewEventCursor.skip(_:)`.
 ///
 /// Ceilings:
 /// - The slot is last-writer-wins: two events fired between two render passes deliver only
@@ -44,3 +47,17 @@ public struct ViewEvent<Payload> {
         self.payload = payload
     }
 }
+
+// MARK: - Identifiable
+extension ViewEvent: Identifiable {}
+
+// MARK: - Equatable
+extension ViewEvent: Equatable {
+
+    /// Whether two events are the same firing. Compares the `id`s only, never the payloads.
+    public static func == (lhs: ViewEvent, rhs: ViewEvent) -> Bool { lhs.id == rhs.id }
+}
+
+// MARK: - Sendable
+// Declared in this file: Swift accepts a generic struct's Sendable conformance only from the struct's own source file.
+extension ViewEvent: Sendable where Payload: Sendable {}
