@@ -23398,6 +23398,16 @@
       },
       {
         "kind": "Import",
+        "name": "Observation",
+        "printedName": "Observation",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
         "name": "UIKit",
         "printedName": "UIKit",
         "declKind": "Import",
@@ -58624,6 +58634,66 @@
               "RawDocComment"
             ],
             "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "take",
+            "printedName": "take(_:ifAble:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "τ_0_0?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Common.ViewEvent<τ_0_0>?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ViewEvent",
+                    "printedName": "Common.ViewEvent<τ_0_0>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_0_0"
+                      }
+                    ],
+                    "usr": "s:6Common9ViewEventV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15ViewEventCursorV4take_6ifAblexSgAA0bC0VyxGSg_SbtlF",
+            "mangledName": "$s6Common15ViewEventCursorV4take_6ifAblexSgAA0bC0VyxGSg_SbtlF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<Payload>",
+            "declAttributes": [
+              "Mutating",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "Mutating"
           },
           {
             "kind": "Function",
@@ -102640,7 +102710,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
-      "offset": 3075,
+      "offset": 3259,
       "length": 4,
       "value": "true"
     },
@@ -102710,7 +102780,7 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2776,
+      "offset": 2960,
       "length": 4,
       "value": "true"
     },
@@ -102731,21 +102801,21 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2727,
+      "offset": 3261,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ViewControllers\/Base\/BaseViewController.swift",
       "kind": "BooleanLiteral",
-      "offset": 1957,
+      "offset": 2141,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ViewControllers\/Base\/BaseViewController.swift",
       "kind": "BooleanLiteral",
-      "offset": 2834,
+      "offset": 3148,
       "length": 4,
       "value": "true"
     },
@@ -104526,6 +104596,27 @@
       "offset": 794,
       "length": 2,
       "value": "[]"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Observation\/ViewEventCursor.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1400,
+      "length": 1,
+      "value": "8"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Observation\/ViewEventCursor.swift",
+      "kind": "Array",
+      "offset": 1520,
+      "length": 2,
+      "value": "[]"
+    },
+    {
+      "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Utils\/Observation\/ViewEventCursor.swift",
+      "kind": "BooleanLiteral",
+      "offset": 2829,
+      "length": 4,
+      "value": "true"
     }
   ]
 }
