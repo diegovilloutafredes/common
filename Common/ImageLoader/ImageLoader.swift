@@ -83,7 +83,7 @@ public actor ImageLoader {
     /// network request. Errors are silently discarded — preloading is best-effort.
     public func preload(urls: [URL]) {
         for url in urls {
-            guard preloads[url] == nil, inFlightTasks[url] == nil, cache.memoryImage(for: url) == nil else { continue }
+            guard preloads[url].isNil, inFlightTasks[url].isNil, cache.memoryImage(for: url).isNil else { continue }
             let fetch = Task<UIImage, Error>(priority: .utility) {
                 // diskData(for:) promotes a disk hit to memory.
                 if let data = await self.cache.diskData(for: url), let image = UIImage(data: data) { return image }

@@ -57,7 +57,7 @@ public final class AppleLoginManager: NSObject {
 // MARK: - AppleLoginManagerProtocol
 extension AppleLoginManager: AppleLoginManagerProtocol {
     public func performLogin(from context: UIViewController, result: @escaping ResultHandler<AppleLoginCredentials>) {
-        guard authController == nil else { result(.failure(AppleLoginError.alreadyInProgress)); return }
+        guard authController.isNil else { result(.failure(AppleLoginError.alreadyInProgress)); return }
         self.context = context
         self.result = result
 

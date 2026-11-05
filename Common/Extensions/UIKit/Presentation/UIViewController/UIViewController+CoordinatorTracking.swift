@@ -72,7 +72,7 @@ extension UIViewController {
     @objc private func _swizzledDidMoveToParent(_ parent: UIViewController?) {
         _originalDidMoveToParent(parent)
         // Only removals matter; being added to a container is not a flow exit.
-        guard parent == nil else { return }
+        guard parent.isNil else { return }
         let box = objc_getAssociatedObject(self, &coordinatorTrackingKey) as? CoordinatorTrackingBox
         box?.coordinator?.trackedViewControllerDidLeaveContainer(self)
     }

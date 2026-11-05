@@ -35,7 +35,7 @@ public final class AlertView: BaseViewModelableView<AlertViewModel> {
         ]
         defaults.forEach { key, value in
             message.enumerateAttribute(key, in: NSRange(location: .zero, length: message.length)) { existing, range, _ in
-                if existing == nil { message.addAttribute(key, value: value, range: range) }
+                if existing.isNil { message.addAttribute(key, value: value, range: range) }
             }
         }
         return message

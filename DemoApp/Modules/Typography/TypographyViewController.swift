@@ -141,7 +141,7 @@ private extension TypographyViewController {
 
     func makeStyleRow(family: AppFontFamily, style: UIFont.FontStyle) -> UIView {
         let postScriptName = "\(family.uppercasingFirstLetter)-\(style.uppercasingFirstLetter)"
-        let isResolved = UIFont(name: postScriptName, size: 16) != nil
+        let isResolved = UIFont(name: postScriptName, size: 16).isNotNil
 
         let nameLabel = UILabel(style.uppercasingFirstLetter)
             .font(.systemFont(ofSize: 11, weight: .medium))

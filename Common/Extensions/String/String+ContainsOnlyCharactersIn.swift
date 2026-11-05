@@ -11,6 +11,6 @@ extension String {
     /// - Returns: `true` if the string contains only allowed characters, `false` otherwise.
     public func containsOnlyCharactersIn(matchCharacters: String) -> Bool {
         let disallowedCharacterSet = CharacterSet(charactersIn: matchCharacters).inverted
-        return rangeOfCharacter(from: disallowedCharacterSet) == nil
+        return rangeOfCharacter(from: disallowedCharacterSet).isNil
     }
 }

@@ -138,7 +138,7 @@ public final class GIFImageView: UIImageView {
     /// frames to stay on wall time when callbacks were dropped, and decodes at
     /// most one frame per call.
     func advanceClock(to now: CFTimeInterval) {
-        guard imageSource.isNotNil, !frameDurations.isEmpty else { return }
+        guard imageSource.isNotNil, frameDurations.isNotEmpty else { return }
         // Elapsed wall time since the previous tick — not the link's nominal
         // `duration`, which understates it whenever the callback cadence is
         // below the display's maximum rate (ProMotion, Low Power Mode, dropped

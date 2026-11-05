@@ -84,7 +84,7 @@ extension ActivityIndicatorable where Self: UIView {
 
         // Record which subviews were already hidden so stop restores exactly that
         // state. On a double-start the record already exists — keep the original.
-        if objc_getAssociatedObject(self, &preHiddenSubviewsKey) == nil {
+        if objc_getAssociatedObject(self, &preHiddenSubviewsKey).isNil {
             let preHidden = NSHashTable<UIView>.weakObjects()
             subviews
                 .filter { $0.isHidden && !($0 is UIActivityIndicatorView) }
@@ -107,7 +107,7 @@ extension ActivityIndicatorable where Self: UIView {
             let preHidden = objc_getAssociatedObject(self, &preHiddenSubviewsKey) as? NSHashTable<UIView>
 
             // Never started: nothing to restore, don't disturb subview state.
-            guard preHidden != nil || subviews.contains(where: { $0 is UIActivityIndicatorView })
+            guard preHidden.isNotNil || subviews.contains(where: { $0 is UIActivityIndicatorView })
             else { return }
 
             subviews

@@ -25,7 +25,7 @@ import Foundation
 /// - A controller whose view is covered (a child pushed over it) does not render; it takes
 ///   the pending event when it returns on screen, not underneath the child.
 /// - A controller under a sheet keeps rendering, so it would take the event underneath, where its own
-///   presentations fail. `ViewEventCursor.take(_:ifAble:)` with `presentedViewController == nil` keeps the
+///   presentations fail. `ViewEventCursor.take(_:ifAble:)` with `presentedViewController.isNil` keeps the
 ///   event pending until the sheet is dismissed.
 ///
 /// shortcut: single slot, last-writer-wins; upgrade path is a queued variant consumed in order.

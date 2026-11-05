@@ -109,7 +109,7 @@ open class BaseCoordinator: NSObject, Coordinator {
     private var isCoveredByAnEndingAncestor: Bool {
         var ancestor = parent
         while let current = ancestor {
-            if current.isFinished, current.presentedFlow != nil, current.navigationController.presentingViewController != nil {
+            if current.isFinished, current.presentedFlow.isNotNil, current.navigationController.presentingViewController.isNotNil {
                 return true
             }
             ancestor = current.parent

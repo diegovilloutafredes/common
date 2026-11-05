@@ -21,8 +21,8 @@ open class BaseClient {
                 old = _requests
                 _requests = newValue
             }
-            newValue.filter { old[$0.key] == nil }.forEach { Logger.log([$0.key: $0.value]) }
-            old.filter { newValue[$0.key] == nil }.forEach { Logger.log(["removed": $0.key]) }
+            newValue.filter { old[$0.key].isNil }.forEach { Logger.log([$0.key: $0.value]) }
+            old.filter { newValue[$0.key].isNil }.forEach { Logger.log(["removed": $0.key]) }
         }
     }
 

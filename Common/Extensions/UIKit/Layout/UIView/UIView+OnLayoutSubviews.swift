@@ -97,7 +97,7 @@ extension UIView {
     // the next pass rather than re-entering this one.
     private func drainOnLayoutSubviewsQueue() {
         let queued = onLayoutSubviewsHandlers
-        guard !queued.isEmpty else { return }
+        guard queued.isNotEmpty else { return }
         onLayoutSubviewsHandlers = []
         queued.forEach { $0(self) }
     }

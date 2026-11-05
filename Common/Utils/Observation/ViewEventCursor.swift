@@ -44,7 +44,7 @@ public struct ViewEventCursor {
     ///
     /// Returns `nil` for `nil`, for an event it already handled, and for any event while `ifAble` is `false`, which
     /// leaves that event pending: the first later call with `ifAble` `true` returns it. A controller under a sheet,
-    /// whose own presentations would fail, passes `ifAble: presentedViewController == nil`. The cursor schedules no
+    /// whose own presentations would fail, passes `ifAble: presentedViewController.isNil`. The cursor schedules no
     /// pass itself: when the condition clears without a change to observed state, as when that sheet is dismissed,
     /// call `setNeedsContentUpdate()` (for example in the dismissal's completion).
     ///
@@ -52,7 +52,7 @@ public struct ViewEventCursor {
     /// controller again:
     ///
     /// ```swift
-    /// if let event = eventCursor.take(viewModel.event, ifAble: presentedViewController == nil) { present(event) }
+    /// if let event = eventCursor.take(viewModel.event, ifAble: presentedViewController.isNil) { present(event) }
     /// ```
     /// - Parameters:
     ///   - event: The view model's slot.
@@ -87,7 +87,7 @@ public struct ViewEventCursor {
     ///
     /// While `ifAble` is `false` the event stays pending: `handle` doesn't run and the event isn't marked consumed, so
     /// the first later pass that passes `true` handles it. A controller under a sheet, whose own presentations would
-    /// fail, passes `ifAble: presentedViewController == nil`. The cursor schedules no pass itself: when the condition
+    /// fail, passes `ifAble: presentedViewController.isNil`. The cursor schedules no pass itself: when the condition
     /// clears without a change to observed state, as when that sheet is dismissed, call `setNeedsContentUpdate()`
     /// (for example in the dismissal's completion).
     ///
