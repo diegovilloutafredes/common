@@ -31,10 +31,25 @@ open class BaseViewController: UIViewController, UIViewBuildable {
     /// On iOS 26 UIKit calls this from `updateProperties()` and re-runs it when any
     /// `@Observable` property read inside changes. On iOS 17–18 Common calls it from
     /// `viewWillLayoutSubviews()` under `withObservationTracking` and
-    /// re-runs it the same way, except that a trait change doesn't re-run it: call `setNeedsContentUpdate()` from a
-    /// `registerForTraitChanges(_:handler:)` handler for the traits the hook reads.
+    /// re-runs it the same way, except that a trait change re-runs it only for a trait the class declares in
+    /// `contentUpdateTraits`.
     /// Do not call it directly; call `setNeedsContentUpdate()`.
     open func updateContent() {}
+
+    /// The traits `updateContent()` reads, declared so that a change to one of them re-runs the hook on iOS 17 and 18.
+    ///
+    /// The native mode (iOS 26) re-runs a hook whose traits changed by itself. The manual mode (iOS 17–18) doesn't: there
+    /// the controller registers these traits in `viewDidLoad()`, right after `setupView()`, and schedules
+    /// `updateContent()` when one changes. Declare the interface style for a hook that sets a layer color through
+    /// `cgColor` (as `borderColor(_:)` does) or reads `traitCollection`:
+    ///
+    /// ```swift
+    /// override class var contentUpdateTraits: [UITrait] { [UITraitUserInterfaceStyle.self] }
+    /// ```
+    ///
+    /// Empty by default, so nothing is registered. A declared trait costs one more render on first display when the
+    /// window's value differs from the one the controller's view was rendered with.
+    open class var contentUpdateTraits: [UITrait] { [] }
 
     /// Schedules `updateContent()` for the next update pass.
     /// A no-op before the view loads: the first update pass runs the hook anyway, and
@@ -55,6 +70,14 @@ open class BaseViewController: UIViewController, UIViewBuildable {
 
     /// The controller's manual-mode registration (see `ContentTracking`).
     private lazy var contentTracking = ContentTracking()
+
+    /// Registers `contentUpdateTraits` in the manual mode, where a trait change doesn't re-run `updateContent()` by itself.
+    /// Nothing in the native mode, where UIKit already re-runs a hook whose traits changed.
+    fileprivate func registerContentUpdateTraits() {
+        let traits = Self.contentUpdateTraits
+        guard traits.isNotEmpty, ObservationMode.current == .manual else { return }
+        registerForTraitChanges(traits) { (self: BaseViewController, _: UITraitCollection) in self.setNeedsContentUpdate() }
+    }
 
     fileprivate func runContentUpdateIfNeeded() {
         let mode = ObservationMode.current
@@ -88,6 +111,7 @@ extension BaseViewController {
         super.viewDidLoad()
         Logger.log(["From": Self.self])
         setupView()
+        registerContentUpdateTraits()
     }
 
     open override func viewWillLayoutSubviews() {

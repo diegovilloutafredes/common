@@ -35,6 +35,7 @@ open class BaseView: UIView, UIViewBuildable {
         // If the subclass already set up constraints, TAMIC is false — skip to avoid duplicates.
         if content.translatesAutoresizingMaskIntoConstraints { content.snap(to: self) }
         setupView()
+        registerContentUpdateTraits(Self.contentUpdateTraits)
     }
 
     @available(*, unavailable)
@@ -53,11 +54,25 @@ open class BaseView: UIView, UIViewBuildable {
     /// On iOS 26 UIKit calls this from `updateProperties()` and re-runs it when any
     /// `@Observable` property read inside changes. On iOS 17–18 Common calls it from
     /// `layoutSubviews()` under `withObservationTracking` and re-runs it the same way, with two differences: a trait
-    /// change doesn't re-run it (call `setNeedsContentUpdate()` from a `registerForTraitChanges(_:handler:)` handler
-    /// for the traits the hook reads), and a view bound while another render is in progress renders in its own
-    /// layout pass instead of inside that render.
+    /// change re-runs it only for a trait the class declares in `contentUpdateTraits`, and a view bound while another
+    /// render is in progress renders in its own layout pass instead of inside that render.
     /// Do not call it directly; call `setNeedsContentUpdate()`.
     open func updateContent() {}
+
+    /// The traits `updateContent()` reads, declared so that a change to one of them re-runs the hook on iOS 17 and 18.
+    ///
+    /// The native mode (iOS 26) re-runs a hook whose traits changed by itself. The manual mode (iOS 17–18) doesn't: there
+    /// the view registers these traits right after `setupView()` and schedules `updateContent()` when one changes.
+    /// Declare the interface style for a hook that sets a layer color through `cgColor` (as `borderColor(_:)` does) or
+    /// reads `traitCollection`:
+    ///
+    /// ```swift
+    /// override class var contentUpdateTraits: [UITrait] { [UITraitUserInterfaceStyle.self] }
+    /// ```
+    ///
+    /// Empty by default, so nothing is registered. A declared trait costs one more render on first display when the
+    /// window's value differs from the one the view was bound with (a dark window on a device in light mode).
+    open class var contentUpdateTraits: [UITrait] { [] }
 
     /// Schedules `updateContent()` for the next update pass.
     public func setNeedsContentUpdate() { scheduleContentUpdate() }

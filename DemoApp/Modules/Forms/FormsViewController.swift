@@ -68,7 +68,6 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
 
     private lazy var dniField = DNITextField()
         .with { $0.accessibilityIdentifier = "dniField" }
-        .borderColor(.separator)
         .borderWidth(1)
 
     private lazy var submitButton = UIButton(
@@ -146,6 +145,10 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
         }
     }
 
+    /// The hook sets the borders through `cgColor`, which doesn't follow a dark-mode switch by itself: declaring the
+    /// style re-runs it on iOS 17 and 18 too.
+    override class var contentUpdateTraits: [UITrait] { [UITraitUserInterfaceStyle.self] }
+
     override func setupView() {
         super.setupView()
         title = viewModel.title
@@ -157,7 +160,9 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
     private var eventCursor = ViewEventCursor()
 
     /// Renders the validator's observable state: submit gating plus one error label and
-    /// border per field. Re-runs after every `validate(field:value:)` and `submit`.
+    /// border per field, and the DNI field's border. Re-runs after every `validate(field:value:)`
+    /// and `submit`, and on a dark-mode switch. It renders every state, before the first
+    /// keystroke (`nil`) included, so the borders take the new style whenever it re-runs.
     override func updateContent() {
         super.updateContent()
         if let event = eventCursor.take(viewModel.event) {
@@ -165,17 +170,14 @@ final class FormsViewController: BaseViewModelableViewController<FormsViewModelP
             case .submitted(let message): Snackbar.show(.init(message: message))
             }
         }
-        guard let state = viewModel.validation else { return }
-        submitButton.isEnabled(state.isValid)
+        let state = viewModel.validation
+        submitButton.isEnabled(state?.isValid ?? false)
         for field in [FormsViewModel.Field.name, .email, .password, .confirmPassword] {
-            if let message = state.fields[field]?.message {
-                errorLabel(for: field).text(message).isHidden(false)
-                textField(for: field).borderColor(.systemRed)
-            } else {
-                errorLabel(for: field).isHidden(true)
-                textField(for: field).borderColor(.systemGray3)
-            }
+            let message = state?.fields[field]?.message
+            errorLabel(for: field).text(message).isHidden(message.isNil)
+            textField(for: field).borderColor(message.isNil ? .systemGray3 : .systemRed)
         }
+        dniField.borderColor(.separator)
     }
 
     private func onSubmit() {
@@ -196,7 +198,6 @@ extension FormsViewController {
         keyboardType: UIKeyboardType
     ) -> UITextField {
         UITextField()
-            .borderColor(.systemGray3)
             .borderWidth(1)
             .font(.systemFont(ofSize: 16))
             .textColor(.label)

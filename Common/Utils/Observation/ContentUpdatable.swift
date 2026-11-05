@@ -55,6 +55,14 @@ extension ContentUpdatable {
         }
     }
 
+    /// Registers `traits` in the manual mode, where a trait change doesn't re-run `updateContent()` by itself, so that a
+    /// change to one of them schedules the hook. Registers nothing in the native mode, where UIKit already re-runs a
+    /// hook whose traits changed, or when `traits` is empty.
+    func registerContentUpdateTraits(_ traits: [UITrait]) {
+        guard traits.isNotEmpty, ObservationMode.current == .manual else { return }
+        registerForTraitChanges(traits) { (self: Self, _: UITraitCollection) in self.scheduleContentUpdate() }
+    }
+
     /// Manual/unavailable-mode pass: runs the hook under tracking when flagged (always in
     /// `.unavailable`). A no-op in `.native`, where UIKit drives `updateProperties()`.
     func runContentUpdateIfNeeded() {
