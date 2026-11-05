@@ -228,8 +228,8 @@ extension Common::AlertPresentable {
   @_Concurrency::MainActor public var viewController: UIKit::UIViewController? {
     get
   }
-  @_Concurrency::MainActor public func presentAlertView(type: Common::AlertViewType, acceptAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil, cancelAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil)
-  @_Concurrency::MainActor public func presentAlertView(type: Common::AlertViewType, acceptTitle: Swift::String = .DefaultValues.Alerts.acceptActionTitle, cancelTitle: Swift::String = .DefaultValues.Alerts.cancelActionTitle, acceptAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil, cancelAction: ((UIKit::UIAlertAction) -> Swift::Void)? = nil)
+  @_Concurrency::MainActor public func presentAlertView(type: Common::AlertViewType, acceptAction: Common::Handler<UIKit::UIAlertAction>? = nil, cancelAction: Common::Handler<UIKit::UIAlertAction>? = nil)
+  @_Concurrency::MainActor public func presentAlertView(type: Common::AlertViewType, acceptTitle: Swift::String = .DefaultValues.Alerts.acceptActionTitle, cancelTitle: Swift::String = .DefaultValues.Alerts.cancelActionTitle, acceptAction: Common::Handler<UIKit::UIAlertAction>? = nil, cancelAction: Common::Handler<UIKit::UIAlertAction>? = nil)
   @_Concurrency::MainActor public func presentAlertView(viewModel: any Common::AlertViewModel, onDismissRequested handler: Common::CompletionHandler)
 }
 @available(*, deprecated, message: "Fire a ViewEvent that the view controller presents; a coordinator calls presentAlertView directly (guide §6).")
@@ -1274,7 +1274,7 @@ extension Foundation::DateComponents : Common::ValueWithable {
 }
 @_hasMissingDesignatedInitializers @_Concurrency::MainActor final public class Debouncer {
   @_Concurrency::MainActor public static let shared: Common::Debouncer
-  @_Concurrency::MainActor public static func debounce(from: Swift::String = #function, id: Swift::String = .empty, seconds: Foundation::TimeInterval, function: @escaping () -> Swift::Void)
+  @_Concurrency::MainActor public static func debounce(from: Swift::String = #function, id: Swift::String = .empty, seconds: Foundation::TimeInterval, function: @escaping Common::Action)
   @objc deinit
 }
 @available(*, deprecated, message: "Send a Requested case through onRequested; the coordinator calls dismiss() (guide §6).")
@@ -1885,7 +1885,7 @@ extension Common::KeychainItemAccessibility : Common::KeychainAttrRepresentable 
   }
 }
 extension Common::KeychainWrapper : Common::KeyValueStorage {
-  final public func add(item: (key: Swift::String, value: any Swift::Decodable & Swift::Encodable))
+  final public func add(item: Common::KeyValue<any Swift::Decodable & Swift::Encodable>)
   final public func add(item: any Common::Keyable & Common::Storable)
   final public func get<T>(using key: Swift::String) -> T? where T : Swift::Decodable, T : Swift::Encodable
   final public func remove(using key: Swift::String)
@@ -2091,11 +2091,11 @@ extension UIKit::NSLayoutConstraint {
 }
 extension Foundation::NSMutableAttributedString {
   @discardableResult
-  public func apply(_ attribute: (key: Foundation::NSAttributedString.Foundation::Key, value: Any), range: Foundation::NSRange) -> Self
+  public func apply(_ attribute: Common::Tuple<Foundation::NSAttributedString.Foundation::Key, Any>, range: Foundation::NSRange) -> Self
 }
 extension Foundation::NSMutableAttributedString {
   @discardableResult
-  public func apply(_ attribute: (key: Foundation::NSAttributedString.Foundation::Key, value: Any), range: Swift::Range<Swift::String.Swift::Index>) -> Self
+  public func apply(_ attribute: Common::Tuple<Foundation::NSAttributedString.Foundation::Key, Any>, range: Swift::Range<Swift::String.Swift::Index>) -> Self
 }
 extension Foundation::NSMutableAttributedString {
   @discardableResult
@@ -4124,7 +4124,7 @@ extension Common::Uppercaseable where Self : Common::Stringable {
   }
 }
 extension Foundation::UserDefaults : Common::KeyValueStorage {
-  public func add(item: (key: Swift::String, value: any Swift::Decodable & Swift::Encodable))
+  public func add(item: Common::KeyValue<any Swift::Decodable & Swift::Encodable>)
   public func add(item: any Common::Keyable & Common::Storable)
   public func get<T>(using key: Swift::String) -> T? where T : Swift::Decodable, T : Swift::Encodable
   public func remove(using key: Swift::String)
@@ -4183,8 +4183,8 @@ public struct ViewEvent<Payload> {
 public struct ViewEventCursor {
   public init()
   public mutating func take<Payload>(_ event: Common::ViewEvent<Payload>?, ifAble: Swift::Bool = true) -> Payload?
-  public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, _ handle: (Payload) -> Swift::Void)
-  public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, ifAble: Swift::Bool, _ handle: (Payload) -> Swift::Void)
+  public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, _ handle: Common::Handler<Payload>)
+  public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, ifAble: Swift::Bool, _ handle: Common::Handler<Payload>)
 }
 @_Concurrency::MainActor public protocol ViewLifecycleable : AnyObject {
   @_Concurrency::MainActor func onViewDidLoad()
@@ -4248,11 +4248,11 @@ extension WebKit::WKWebView {
 public protocol Withable : AnyObject {
   associatedtype T
   @discardableResult
-  func with(_ closure: (_ instance: Self.T) -> Swift::Void) -> Self.T
+  func with(_ closure: Common::Handler<Self.T>) -> Self.T
 }
 extension Common::Withable {
   @discardableResult
-  public func with(_ closure: (_ instance: Self) -> Swift::Void) -> Self
+  public func with(_ closure: Common::Handler<Self>) -> Self
 }
 extension Common::DefaultButtonTheme : Swift::Equatable {}
 extension Common::DefaultButtonTheme : Swift::Hashable {}
