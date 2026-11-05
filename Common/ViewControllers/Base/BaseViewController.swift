@@ -64,6 +64,22 @@ open class BaseViewController: UIViewController, UIViewBuildable {
         }
     }
 
+    /// Runs a pending `updateContent()` now instead of waiting for the next update pass, for a controller that needs a
+    /// synchronous render, before a snapshot or a custom transition.
+    ///
+    /// Does nothing before the view loads, and doesn't load it, and nothing when no update is pending. On iOS 17–18,
+    /// while another view's or controller's render is in progress, the update stays scheduled for this controller's own
+    /// pass instead, so its reads don't join that render's tracking.
+    public func updateContentIfNeeded() {
+        guard isViewLoaded else { return }
+        if #available(iOS 26.0, *), ObservationMode.current == .native {
+            updatePropertiesIfNeeded()
+        } else {
+            guard !ObservationTracker.isRendering else { return }
+            runContentUpdateIfNeeded()
+        }
+    }
+
     /// Manual/unavailable-mode bookkeeping: `true` until the first pass, then only after an
     /// invalidation, so unrelated layout passes skip the hook.
     private var needsContentUpdate = true

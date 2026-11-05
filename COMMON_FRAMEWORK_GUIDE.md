@@ -851,7 +851,7 @@ Read `@Observable` state in **one** hook and let the framework re-run it. No `di
 
 | Where | Hook | Trigger |
 |---|---|---|
-| `BaseViewController` subclass | `updateContent()` | first pass, then any tracked change |
+| `BaseViewController` subclass | `updateContent()` | first pass, then any tracked change; `updateContentIfNeeded()` runs a pending update now, for a render before a snapshot or a custom transition |
 | `BaseView`, `BaseCell`, `BaseReusableView` subclasses | `updateContent()` | same; view-model-able variants bind synchronously on `viewModel` assignment (`updateContentIfNeeded()`) |
 | Anywhere | `setNeedsContentUpdate()` | forces a re-run on the next pass |
 | ViewModel (`ViewLifecycleable`) | `onUpdateProperties()` | same pass as the controller's hook — an escape hatch, see below |

@@ -10,9 +10,9 @@ import UIKit
 /// (`BaseView`, `BaseCell`, `BaseReusableView`). The conforming class keeps the stored
 /// flag and the `updateProperties()` / `layoutSubviews()` overrides; the mode logic lives here.
 ///
-/// shortcut: `BaseViewController` keeps its own copy — it schedules on `view.setNeedsLayout()` behind
-/// an `isViewLoaded` guard. Upgrade path: drop the `UIView` constraint and add a `scheduleLayoutPass()`
-/// requirement if the controller ever needs `updateContentIfNeeded()`.
+/// shortcut: `BaseViewController` keeps its own copy of this scheduling, `updateContentIfNeeded()` included: it
+/// schedules on `view.setNeedsLayout()` behind an `isViewLoaded` guard. Upgrade path, once a third piece has to be
+/// copied: drop the `UIView` constraint and add a `scheduleLayoutPass()` requirement.
 @MainActor
 protocol ContentUpdatable: UIView {
 

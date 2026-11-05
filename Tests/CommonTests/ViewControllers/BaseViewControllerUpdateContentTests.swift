@@ -174,4 +174,99 @@ final class BaseViewControllerUpdateContentTests: XCTestCase {
         XCTAssertEqual(second.rendered, 8)
         XCTAssertEqual(first.updates, 1, "the old view model is no longer driven")
     }
+
+    // MARK: - updateContentIfNeeded()
+
+    func test_updateContentIfNeeded_manualMode_runsAPendingUpdateBeforeReturning() {
+        ObservationMode.override = .manual
+        let viewModel = CounterViewModel(model: ObservedCounter())
+        let vc = makeLoaded(viewModel)
+        vc.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 1)
+
+        vc.setNeedsContentUpdate()
+        vc.updateContentIfNeeded()
+        XCTAssertEqual(viewModel.updates, 2, "the hook ran before the call returned")
+
+        vc.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 2, "the layout pass that follows doesn't run it again")
+    }
+
+    func test_updateContentIfNeeded_nativeMode_runsAPendingUpdateBeforeReturning() throws {
+        guard #available(iOS 26.0, *) else { throw XCTSkip("native path needs iOS 26") }
+        ObservationMode.override = .native
+        let viewModel = CounterViewModel(model: ObservedCounter())
+        let vc = makeHosted(viewModel)
+        vc.updatePropertiesIfNeeded()
+        XCTAssertEqual(viewModel.updates, 1)
+
+        vc.setNeedsContentUpdate()
+        vc.updateContentIfNeeded()
+
+        XCTAssertEqual(viewModel.updates, 2, "the hook ran before the call returned")
+    }
+
+    func test_updateContentIfNeeded_beforeTheViewLoads_runsNothingAndDoesNotLoadTheView() {
+        for mode in [ObservationMode.manual, .native] {
+            ObservationMode.override = mode
+            let viewModel = CounterViewModel(model: ObservedCounter())
+            let vc = BaseViewModelableViewController<CounterViewModel>(viewModel: viewModel)
+
+            vc.updateContentIfNeeded()
+
+            XCTAssertEqual(viewModel.updates, .zero, "\(mode)")
+            XCTAssertFalse(vc.isViewLoaded, "\(mode)")
+        }
+    }
+
+    func test_updateContentIfNeeded_manualMode_withNothingPending_runsNothing() {
+        ObservationMode.override = .manual
+        let viewModel = CounterViewModel(model: ObservedCounter())
+        let vc = makeLoaded(viewModel)
+        vc.view.layoutIfNeeded()
+
+        vc.updateContentIfNeeded()
+
+        XCTAssertEqual(viewModel.updates, 1)
+    }
+
+    func test_updateContentIfNeeded_nativeMode_withNothingPending_runsNothing() throws {
+        guard #available(iOS 26.0, *) else { throw XCTSkip("native path needs iOS 26") }
+        ObservationMode.override = .native
+        let viewModel = CounterViewModel(model: ObservedCounter())
+        let vc = makeHosted(viewModel)
+        vc.updatePropertiesIfNeeded()
+
+        vc.updateContentIfNeeded()
+
+        XCTAssertEqual(viewModel.updates, 1)
+    }
+
+    /// Asks another controller for its pending update from inside its own hook.
+    private final class OuterViewController: BaseViewController {
+        var inner: BaseViewController?
+
+        override func updateContent() {
+            super.updateContent()
+            inner?.updateContentIfNeeded()
+        }
+    }
+
+    func test_updateContentIfNeeded_manualMode_insideAnotherControllersRender_waitsForItsOwnPass() {
+        ObservationMode.override = .manual
+        let viewModel = CounterViewModel(model: ObservedCounter())
+        let inner = makeLoaded(viewModel)
+        inner.view.layoutIfNeeded()
+        let outer = OuterViewController()
+        outer.loadViewIfNeeded()
+        outer.view.frame = .init(x: .zero, y: .zero, width: 320, height: 480)
+        outer.inner = inner
+        inner.setNeedsContentUpdate()
+
+        outer.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 1, "the hook doesn't run inside the other controller's render")
+
+        inner.view.layoutIfNeeded()
+        XCTAssertEqual(viewModel.updates, 2, "it runs in the controller's own next pass")
+    }
 }
