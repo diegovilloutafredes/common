@@ -647,7 +647,7 @@ Re-run `xcodegen generate` (or `make generate`) whenever `project.yml` changes.
 
 ```bash
 make generate             # Regenerate Common.xcodeproj
-make ci                   # Full local pipeline: tests, Release gates, DemoApp (Debug + Release), XCFramework
+make ci                   # Full local pipeline: tests, the iOS 18 manual-mode lane, Release gates, DemoApp (Debug + Release), XCFramework
 make build_xcframework    # Build Common.xcframework (device + simulator)
 make patch                # Tag and release a patch version
 make minor                # Tag and release a minor version
