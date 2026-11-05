@@ -16,16 +16,16 @@ import Foundation
 /// ```
 ///
 /// Every value carries its own identity, so assigning the same payload twice still
-/// invalidates the observing controller twice. The controller consumes the slot with a
-/// `ViewEventCursor` inside `updateContent()`, and the pass stays free of view-model writes.
+/// invalidates the observing controller twice. The controller takes the slot's event with a
+/// `ViewEventCursor` (one per slot) inside `updateContent()`, and the pass stays free of view-model writes.
 ///
 /// Ceilings:
 /// - The slot is last-writer-wins: two events fired between two render passes deliver only
 ///   the second. Screens that can burst keep an array behind a tracked `revision` instead.
-/// - A controller whose view is covered (a child pushed over it) does not render; it consumes
+/// - A controller whose view is covered (a child pushed over it) does not render; it takes
 ///   the pending event when it returns on screen, not underneath the child.
-/// - A controller under a sheet keeps rendering, so it would consume the event underneath, where its own
-///   presentations fail. `ViewEventCursor.consume(_:ifAble:_:)` with `presentedViewController == nil` keeps the
+/// - A controller under a sheet keeps rendering, so it would take the event underneath, where its own
+///   presentations fail. `ViewEventCursor.take(_:ifAble:)` with `presentedViewController == nil` keeps the
 ///   event pending until the sheet is dismissed.
 ///
 /// shortcut: single slot, last-writer-wins; upgrade path is a queued variant consumed in order.
