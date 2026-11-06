@@ -530,6 +530,9 @@ extension UIKit::UIViewController : Common::BackgroundColorable {
   }
   @_Concurrency::MainActor @preconcurrency open func setupCell()
   @_Concurrency::MainActor @preconcurrency open func updateContent()
+  @_Concurrency::MainActor @preconcurrency open class var contentUpdateTraits: [UIKit::UITrait] {
+    get
+  }
   @_Concurrency::MainActor @preconcurrency public func setNeedsContentUpdate()
   @_Concurrency::MainActor @preconcurrency public func updateContentIfNeeded()
   @available(iOS 26.0, *)
@@ -557,6 +560,7 @@ extension Common::BaseClient : Common::ClientProtocol {
   @_Concurrency::MainActor @preconcurrency required public init?(coder: Foundation::NSCoder)
   @_Concurrency::MainActor @preconcurrency open func bottomInsetForLastCollectionSection() -> CoreFoundation::CGFloat
   @_Concurrency::MainActor @preconcurrency override open func updateContent()
+  @_Concurrency::MainActor @preconcurrency open func listsDidReload()
   @_Concurrency::MainActor @preconcurrency @objc open func numberOfSections(in collectionView: UIKit::UICollectionView) -> Swift::Int
   @_Concurrency::MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit::UICollectionView, numberOfItemsInSection section: Swift::Int) -> Swift::Int
   @_Concurrency::MainActor @preconcurrency @objc open func collectionView(_ collectionView: UIKit::UICollectionView, viewForSupplementaryElementOfKind kind: Swift::String, at indexPath: Foundation::IndexPath) -> UIKit::UICollectionReusableView
@@ -647,6 +651,9 @@ extension Common::BaseCoordinator : Common::PresentationAnchorProviding {
   }
   @_Concurrency::MainActor @preconcurrency open func setupView()
   @_Concurrency::MainActor @preconcurrency open func updateContent()
+  @_Concurrency::MainActor @preconcurrency open class var contentUpdateTraits: [UIKit::UITrait] {
+    get
+  }
   @_Concurrency::MainActor @preconcurrency public func setNeedsContentUpdate()
   @_Concurrency::MainActor @preconcurrency public func updateContentIfNeeded()
   @available(iOS 26.0, *)
@@ -678,6 +685,9 @@ extension Common::BaseCoordinator : Common::PresentationAnchorProviding {
   }
   @_Concurrency::MainActor @preconcurrency open func setupView()
   @_Concurrency::MainActor @preconcurrency open func updateContent()
+  @_Concurrency::MainActor @preconcurrency open class var contentUpdateTraits: [UIKit::UITrait] {
+    get
+  }
   @_Concurrency::MainActor @preconcurrency public func setNeedsContentUpdate()
   @_Concurrency::MainActor @preconcurrency public func updateContentIfNeeded()
   @available(iOS 26.0, *)
@@ -692,7 +702,11 @@ extension Common::BaseCoordinator : Common::PresentationAnchorProviding {
   @_Concurrency::MainActor @preconcurrency @objc override dynamic open func loadView()
   @_Concurrency::MainActor @preconcurrency open func setupView()
   @_Concurrency::MainActor @preconcurrency open func updateContent()
+  @_Concurrency::MainActor @preconcurrency open class var contentUpdateTraits: [UIKit::UITrait] {
+    get
+  }
   @_Concurrency::MainActor @preconcurrency public func setNeedsContentUpdate()
+  @_Concurrency::MainActor @preconcurrency public func updateContentIfNeeded()
   @available(iOS 26.0, *)
   @_Concurrency::MainActor @preconcurrency @objc override dynamic open func updateProperties()
   @_Concurrency::MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift::String?, bundle nibBundleOrNil: Foundation::Bundle?)
@@ -3834,6 +3848,9 @@ extension UIKit::UIViewController {
   @_Concurrency::MainActor @preconcurrency public func animateConstraints(_ duration: Foundation::TimeInterval = .DefaultValues.animationDuration, options: UIKit::UIView.UIKit::AnimationOptions = .curveEaseInOut, constraintChanges: @escaping Common::Action, completion: Common::Handler<Swift::Bool>? = nil)
 }
 extension UIKit::UIViewController {
+  @_Concurrency::MainActor @preconcurrency public func animateContentChange(_ duration: Foundation::TimeInterval = .DefaultValues.animationDuration, options: UIKit::UIView.UIKit::AnimationOptions = .curveEaseInOut, changes: @escaping Common::Action, completion: Common::Handler<Swift::Bool>? = nil)
+}
+extension UIKit::UIViewController {
   @_Concurrency::MainActor @preconcurrency public func closestParentViewController(class someClass: Swift::AnyClass) -> UIKit::UIViewController?
 }
 extension UIKit::UIViewController {
@@ -4180,11 +4197,20 @@ public struct ViewEvent<Payload> {
   public let payload: Payload
   public init(_ payload: Payload)
 }
+extension Common::ViewEvent : Swift::Identifiable {
+  public typealias ID = Foundation::UUID
+}
+extension Common::ViewEvent : Swift::Equatable {
+  public static func == (lhs: Common::ViewEvent<Payload>, rhs: Common::ViewEvent<Payload>) -> Swift::Bool
+}
+extension Common::ViewEvent : Swift::Sendable where Payload : Swift::Sendable {
+}
 public struct ViewEventCursor {
   public init()
   public mutating func take<Payload>(_ event: Common::ViewEvent<Payload>?, ifAble: Swift::Bool = true) -> Payload?
   public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, _ handle: Common::Handler<Payload>)
   public mutating func consume<Payload>(_ event: Common::ViewEvent<Payload>?, ifAble: Swift::Bool, _ handle: Common::Handler<Payload>)
+  public mutating func skip<Payload>(_ event: Common::ViewEvent<Payload>?)
 }
 @_Concurrency::MainActor public protocol ViewLifecycleable : AnyObject {
   @_Concurrency::MainActor func onViewDidLoad()

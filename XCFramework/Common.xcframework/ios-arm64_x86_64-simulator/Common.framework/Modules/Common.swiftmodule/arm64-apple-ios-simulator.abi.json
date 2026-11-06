@@ -9631,6 +9631,83 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Var",
+            "name": "contentUpdateTraits",
+            "printedName": "contentUpdateTraits",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[any UIKit.UITraitDefinition.Type]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ExistentialMetatype",
+                    "printedName": "any UIKit.UITraitDefinition.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UITraitDefinition",
+                        "printedName": "UIKit.UITraitDefinition",
+                        "usr": "s:5UIKit17UITraitDefinitionP"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common8BaseCellC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "mangledName": "$s6Common8BaseCellC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "moduleName": "Common",
+            "static": true,
+            "isOpen": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[any UIKit.UITraitDefinition.Type]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ExistentialMetatype",
+                        "printedName": "any UIKit.UITraitDefinition.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "UITraitDefinition",
+                            "printedName": "UIKit.UITraitDefinition",
+                            "usr": "s:5UIKit17UITraitDefinitionP"
+                          }
+                        ]
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common8BaseCellC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "mangledName": "$s6Common8BaseCellC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "moduleName": "Common",
+                "static": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
             "kind": "Function",
             "name": "setNeedsContentUpdate",
             "printedName": "setNeedsContentUpdate()",
@@ -10327,6 +10404,32 @@
               "Preconcurrency",
               "Custom",
               "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "listsDidReload",
+            "printedName": "listsDidReload()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common36BaseCollectionViewableViewControllerC14listsDidReloadyyF",
+            "mangledName": "$s6Common36BaseCollectionViewableViewControllerC14listsDidReloadyyF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<ViewModelType>",
+            "isOpen": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
               "AccessControl",
               "RawDocComment"
             ],
@@ -13126,6 +13229,83 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Var",
+            "name": "contentUpdateTraits",
+            "printedName": "contentUpdateTraits",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[any UIKit.UITraitDefinition.Type]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ExistentialMetatype",
+                    "printedName": "any UIKit.UITraitDefinition.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UITraitDefinition",
+                        "printedName": "UIKit.UITraitDefinition",
+                        "usr": "s:5UIKit17UITraitDefinitionP"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common16BaseReusableViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "mangledName": "$s6Common16BaseReusableViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "moduleName": "Common",
+            "static": true,
+            "isOpen": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[any UIKit.UITraitDefinition.Type]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ExistentialMetatype",
+                        "printedName": "any UIKit.UITraitDefinition.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "UITraitDefinition",
+                            "printedName": "UIKit.UITraitDefinition",
+                            "usr": "s:5UIKit17UITraitDefinitionP"
+                          }
+                        ]
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common16BaseReusableViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "mangledName": "$s6Common16BaseReusableViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "moduleName": "Common",
+                "static": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
             "kind": "Function",
             "name": "setNeedsContentUpdate",
             "printedName": "setNeedsContentUpdate()",
@@ -13924,6 +14104,83 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Var",
+            "name": "contentUpdateTraits",
+            "printedName": "contentUpdateTraits",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[any UIKit.UITraitDefinition.Type]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ExistentialMetatype",
+                    "printedName": "any UIKit.UITraitDefinition.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UITraitDefinition",
+                        "printedName": "UIKit.UITraitDefinition",
+                        "usr": "s:5UIKit17UITraitDefinitionP"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common8BaseViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "mangledName": "$s6Common8BaseViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "moduleName": "Common",
+            "static": true,
+            "isOpen": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[any UIKit.UITraitDefinition.Type]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ExistentialMetatype",
+                        "printedName": "any UIKit.UITraitDefinition.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "UITraitDefinition",
+                            "printedName": "UIKit.UITraitDefinition",
+                            "usr": "s:5UIKit17UITraitDefinitionP"
+                          }
+                        ]
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common8BaseViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "mangledName": "$s6Common8BaseViewC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "moduleName": "Common",
+                "static": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
             "kind": "Function",
             "name": "setNeedsContentUpdate",
             "printedName": "setNeedsContentUpdate()",
@@ -14322,6 +14579,83 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Var",
+            "name": "contentUpdateTraits",
+            "printedName": "contentUpdateTraits",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[any UIKit.UITraitDefinition.Type]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ExistentialMetatype",
+                    "printedName": "any UIKit.UITraitDefinition.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UITraitDefinition",
+                        "printedName": "UIKit.UITraitDefinition",
+                        "usr": "s:5UIKit17UITraitDefinitionP"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:6Common18BaseViewControllerC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "mangledName": "$s6Common18BaseViewControllerC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvpZ",
+            "moduleName": "Common",
+            "static": true,
+            "isOpen": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[any UIKit.UITraitDefinition.Type]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ExistentialMetatype",
+                        "printedName": "any UIKit.UITraitDefinition.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "UITraitDefinition",
+                            "printedName": "UIKit.UITraitDefinition",
+                            "usr": "s:5UIKit17UITraitDefinitionP"
+                          }
+                        ]
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:6Common18BaseViewControllerC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "mangledName": "$s6Common18BaseViewControllerC19contentUpdateTraitsSay5UIKit17UITraitDefinition_pXpGvgZ",
+                "moduleName": "Common",
+                "static": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
             "kind": "Function",
             "name": "setNeedsContentUpdate",
             "printedName": "setNeedsContentUpdate()",
@@ -14335,6 +14669,29 @@
             "declKind": "Func",
             "usr": "s:6Common18BaseViewControllerC21setNeedsContentUpdateyyF",
             "mangledName": "$s6Common18BaseViewControllerC21setNeedsContentUpdateyyF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "updateContentIfNeeded",
+            "printedName": "updateContentIfNeeded()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common18BaseViewControllerC21updateContentIfNeededyyF",
+            "mangledName": "$s6Common18BaseViewControllerC21updateContentIfNeededyyF",
             "moduleName": "Common",
             "declAttributes": [
               "Preconcurrency",
@@ -55826,6 +56183,16 @@
         ]
       },
       {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "Common",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
         "kind": "TypeDecl",
         "name": "OffsetResetable",
         "printedName": "OffsetResetable",
@@ -58569,6 +58936,58 @@
               "RawDocComment"
             ],
             "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "ViewEvent",
+                "printedName": "Common.ViewEvent<τ_0_0>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "usr": "s:6Common9ViewEventV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "ViewEvent",
+                "printedName": "Common.ViewEvent<τ_0_0>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "τ_0_0"
+                  }
+                ],
+                "usr": "s:6Common9ViewEventV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common9ViewEventV2eeoiySbACyxG_AEtFZ",
+            "mangledName": "$s6Common9ViewEventV2eeoiySbACyxG_AEtFZ",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<Payload>",
+            "static": true,
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Struct",
@@ -58591,10 +59010,53 @@
           },
           {
             "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
             "name": "Escapable",
             "printedName": "Escapable",
             "usr": "s:s9EscapableP",
             "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Identifiable",
+            "printedName": "Identifiable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "ID",
+                "printedName": "ID",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UUID",
+                    "printedName": "Foundation.UUID",
+                    "usr": "s:10Foundation4UUIDV"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s12IdentifiableP",
+            "mangledName": "$ss12IdentifiableP"
           }
         ]
       },
@@ -58821,6 +59283,51 @@
             "declKind": "Func",
             "usr": "s:6Common15ViewEventCursorV7consume_6ifAble_yAA0bC0VyxGSg_SbyxXEtlF",
             "mangledName": "$s6Common15ViewEventCursorV7consume_6ifAble_yAA0bC0VyxGSg_SbyxXEtlF",
+            "moduleName": "Common",
+            "genericSig": "<τ_0_0>",
+            "sugared_genericSig": "<Payload>",
+            "declAttributes": [
+              "Mutating",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "Mutating"
+          },
+          {
+            "kind": "Function",
+            "name": "skip",
+            "printedName": "skip(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Common.ViewEvent<τ_0_0>?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ViewEvent",
+                    "printedName": "Common.ViewEvent<τ_0_0>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "GenericTypeParam",
+                        "printedName": "τ_0_0"
+                      }
+                    ],
+                    "usr": "s:6Common9ViewEventV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:6Common15ViewEventCursorV4skipyyAA0bC0VyxGSglF",
+            "mangledName": "$s6Common15ViewEventCursorV4skipyyAA0bC0VyxGSglF",
             "moduleName": "Common",
             "genericSig": "<τ_0_0>",
             "sugared_genericSig": "<Payload>",
@@ -63759,6 +64266,88 @@
             "declKind": "Func",
             "usr": "s:So16UIViewControllerC6CommonE18animateConstraints_7options17constraintChanges10completionySd_So0A16AnimationOptionsVyycySbcSgtF",
             "mangledName": "$sSo16UIViewControllerC6CommonE18animateConstraints_7options17constraintChanges10completionySd_So0A16AnimationOptionsVyycySbcSgtF",
+            "moduleName": "Common",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "animateContentChange",
+            "printedName": "animateContentChange(_:options:changes:completion:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "hasDefaultArg": true,
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "AnimationOptions",
+                "printedName": "UIKit.UIView.AnimationOptions",
+                "hasDefaultArg": true,
+                "usr": "c:@E@UIViewAnimationOptions"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Bool) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Bool) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Bool",
+                        "printedName": "Swift.Bool",
+                        "usr": "s:Sb"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So16UIViewControllerC6CommonE20animateContentChange_7options7changes10completionySd_So0A16AnimationOptionsVyycySbcSgtF",
+            "mangledName": "$sSo16UIViewControllerC6CommonE20animateContentChange_7options7changes10completionySd_So0A16AnimationOptionsVyycySbcSgtF",
             "moduleName": "Common",
             "declAttributes": [
               "Preconcurrency",
@@ -102598,84 +103187,84 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "FloatLiteral",
-      "offset": 481,
+      "offset": 653,
       "length": 3,
       "value": "0.3"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 563,
+      "offset": 735,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 787,
+      "offset": 959,
       "length": 2,
       "value": "40"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2024,
+      "offset": 2196,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2034,
+      "offset": 2206,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2046,
+      "offset": 2218,
       "length": 2,
       "value": "16"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2057,
+      "offset": 2229,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 2284,
+      "offset": 2456,
       "length": 2,
       "value": "21"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2521,
+      "offset": 2693,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2869,
+      "offset": 3041,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 3295,
+      "offset": 3467,
       "length": 3,
       "value": "120"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Alert\/AlertView.swift",
       "kind": "IntegerLiteral",
-      "offset": 3299,
+      "offset": 3471,
       "length": 2,
       "value": "40"
     },
@@ -102703,14 +103292,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
-      "offset": 1402,
+      "offset": 1464,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseCell.swift",
       "kind": "BooleanLiteral",
-      "offset": 3259,
+      "offset": 4208,
       "length": 4,
       "value": "true"
     },
@@ -102773,14 +103362,14 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
-      "offset": 1426,
+      "offset": 1488,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseReusableView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2960,
+      "offset": 3909,
       "length": 4,
       "value": "true"
     },
@@ -102794,28 +103383,28 @@
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseView.swift",
       "kind": "BooleanLiteral",
-      "offset": 1401,
+      "offset": 1463,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/Views\/Base\/BaseView.swift",
       "kind": "BooleanLiteral",
-      "offset": 3261,
+      "offset": 4201,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ViewControllers\/Base\/BaseViewController.swift",
       "kind": "BooleanLiteral",
-      "offset": 2141,
+      "offset": 3874,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/diegovillouta\/iOS\/Personal\/Libraries\/common\/framework\/Common\/ViewControllers\/Base\/BaseViewController.swift",
       "kind": "BooleanLiteral",
-      "offset": 3148,
+      "offset": 5414,
       "length": 4,
       "value": "true"
     },
